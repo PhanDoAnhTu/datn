@@ -1,0 +1,182 @@
+'use strict'
+const { errorResponse } = require('../core')
+const { discountRepository } = require('../database')
+const { DiscountModel } = require('../database/models')
+
+class DiscountService {
+
+    async createDiscountCode(payload) {
+        const {
+            discount_name,
+            discount_description,
+            discount_type,
+            discount_value,
+            discount_max_value,
+            discount_code,
+            discount_start_date,
+            discount_end_date,
+            discount_max_uses,
+            discount_uses_count,
+            discount_users_used,
+            discount_max_person_uses,
+            discount_max_user_uses,
+            discount_min_order_value,
+            discount_is_active,
+            discount_applies_to,
+            discount_product_ids
+        } = payload
+
+        //kiem tra
+        if (Date.now() > new Date(discount_start_date) || Date.now() > new Date(discount_end_date)) {
+            throw new errorResponse.ForbiddenRequestError('discount code has expired')
+        }
+
+        if (new Date(discount_start_date) >= new Date(discount_end_date)) {
+            throw new errorResponse.ForbiddenRequestError('start date must be before end_date')
+        }
+
+        //create index for discount code
+        const foundDiscount = await DiscountModel.findOne({
+            discount_code: discount_code
+        })
+
+        if (foundDiscount && foundDiscount.discount_is_active) {
+            throw new errorResponse.ForbiddenRequestError('Discount exists')
+
+        }
+        console.log('payload', payload)
+        const newDiscount = await DiscountModel.create({
+            discount_name: discount_name,
+            discount_description: discount_description,
+            discount_type: discount_type, // percentage 
+            discount_value: discount_value, //10.000, 10 
+            discount_max_value: discount_max_value,
+            discount_code: discount_code, // discountCode 
+            discount_start_date: discount_start_date, // ngay bat dau
+            discount_end_date: discount_end_date, // ngyay ket thuc
+            discount_max_uses: discount_max_uses, // so luong discount duoc ap dung 
+            discount_uses_count: discount_uses_count, // so discount da su dung
+            discount_users_used: discount_users_used, // ai da sung
+            discount_max_person_uses: discount_max_person_uses, // số lượng người dùng tối đa
+            discount_max_user_uses: discount_max_user_uses,  // 1 người sử dụng tối đa bao nhiêu lần
+            discount_min_order_value: discount_min_order_value,
+            discount_is_active: discount_is_active,
+            discount_applies_to: discount_applies_to,
+            discount_product_ids: discount_applies_to === 'all' ? [] : discount_product_ids  // so san pham duoc ap dung
+
+        })
+        return newDiscount
+    }
+
+    async getAllDiscountCodeByShop({
+        limit, page
+    }) {
+        const discounts = await discountRepository.findAllDiscountCodeUnSelect({
+            limit: +limit,
+            page: +page,
+            filter: {
+                discount_is_active: true
+            },
+            unSelect: ['__v'],
+            model: DiscountModel
+        })
+
+        return discounts
+
+    }
+    /**
+     * 
+     */
+    async getDiscountAmount({ codeId, userId, products }) {
+
+        const foundDiscount = await discountRepository.checkDiscountExists({
+            model: DiscountModel,
+            filter: {
+                discount_code: codeId
+            }
+        })
+
+        if (!foundDiscount) throw new errorResponse.NotFoundRequestError("discount not found")
+
+        const { discount_is_active, discount_max_uses, discount_min_order_value, discount_users_used, discount_start_date, discount_end_date, discount_max_uses_per_user, discount_type, discount_value, discount_max_value } = foundDiscount
+        if (!discount_is_active) throw new errorResponse.NotFoundRequestError("discount expried")
+        if (!discount_max_uses) throw new errorResponse.NotFoundRequestError("discount are out")
+        if (Date.now() < new Date(discount_start_date) || Date.now() > new Date(discount_end_date)) {
+            throw new errorResponse.NotFoundRequestError('discount ecode has expried!')
+        }
+
+        let totalOrder = 0
+        if (discount_min_order_value > 0) {
+            totalOrder = products.reduce((acc, pro) => {
+                return acc + (pro.quantity * pro.price)
+            }, 0)
+
+            if (totalOrder < discount_min_order_value) {
+                throw new errorResponse.NotFoundRequestError(`discount requires a minium order value of ${discount_min_order_value}`)
+            }
+
+        }
+        if (discount_max_uses_per_user > 0) {
+            const userDiscount = discount_users_used.find(user => user.userId === userId)
+            if (userDiscount) {
+                //ng dung da su dung ma
+            }
+        }
+
+        let amount = discount_type === 'fixed_amount' ? discount_value : totalOrder * (discount_value / 100)
+        if (amount > discount_max_value) {
+            amount = discount_max_value
+        }
+        return {
+            totalOrder,
+            discount: amount,
+            totalPrice: totalOrder - amount
+        }
+
+    }
+
+    //xoa discount
+    async deleteDiscountCode({ codeId }) {
+        const deleted = await DiscountModel.findOneAndDelete({
+            discount_code: codeId
+        })
+        return deleted
+    }
+    //cancel 
+    async cancelDiscountCode({ codeId, userId }) {
+        const foundDiscount = await discountRepository.checkDiscountExists({
+            model: DiscountModel,
+            filter: {
+                discount_code: codeId
+            }
+        })
+        if (!foundDiscount) {
+            throw new ForbiddenRequestError('Discount exists')
+        }
+        const result = await DiscountModel.findByIdAndUpdate(foundDiscount._id, {
+            $pull: {
+                discount_users_used: userId
+            },
+            $inc: {
+                discount_max_uses: 1,
+                discount_uses_count: -1
+            }
+        })
+        return result
+    }
+
+    async serverRPCRequest(payload) {
+        const { type, data } = payload;
+        const { codeId, userId, products } = data
+        switch (type) {
+            case "GET_DISCOUNT_AMOUNT":
+                return this.getDiscountAmount({ codeId, userId, products })
+            default:
+                break;
+        }
+    }
+
+
+}
+
+module.exports = DiscountService
