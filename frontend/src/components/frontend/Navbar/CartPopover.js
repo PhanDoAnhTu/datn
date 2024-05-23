@@ -22,9 +22,6 @@ export default function CartPopover({ Button }) {
 
     // console.log('cart', cart)
 
-
-
-
     return (
         <div className="ml-4 flow-root lg:ml-6">
             <div className="relative" onClick={() => setOpen(true)}>
