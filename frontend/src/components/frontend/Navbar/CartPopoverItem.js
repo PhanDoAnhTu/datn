@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { productById } from '../../../store/actions';
+import { getSpecialOfferBySpuId, productById } from '../../../store/actions';
 import ProductOption from "../listBox/ProductOptions";
 import { NumericFormat } from "react-number-format";
 
@@ -9,20 +9,53 @@ export default function CartPopoverItem({ product }) {
     // const { current_product } = useSelector((state) => state.productReducer);
     // const { spu_info, sku_list } = current_product;
     const [product_item, setProductItem] = useState(null)
-
     const [sku_option, setSku_option] = useState(null)
+    //sale
+    const [spicial_offer, setSpicial_offer] = useState(null);
+    // const [product_price, setProduct_price] = useState(null);
+    const [selectedSKU, setSelectedSKU] = useState(null);
+
+
+    const [sale_sku, setSale_sku] = useState(null);
+
     const productItemApi = async () => {
         const respon = await dispatch(productById({ spu_id: product.productId }))
         console.log('respon', respon)
         setProductItem(respon.payload.metaData)
         setSku_option(respon && respon.payload.metaData.sku_list.find((item) => item._id.toString() === product.sku_id.toString()))
     }
+    const saleApi = async () => {
+        const fetch_spicial_offer = await dispatch(getSpecialOfferBySpuId({ spu_id: product.productId }))
+        setSpicial_offer(fetch_spicial_offer.payload.metaData)
+    }
+    // const onChangePriceBySku = () => {
+
+    // }
+
     useEffect(() => {
         if (!product_item) {
             productItemApi()
         }
-    }, [product.productId])
-    console.log(sku_option)
+    }, [product])
+
+    useEffect(() => {
+        if (!spicial_offer) {
+            saleApi()
+        }
+        spicial_offer && spicial_offer.special_offer_spu_list.filter((spu) => {
+            if (spu.product_id.toString() === product.productId.toString()) {
+                return spu.sku_list.filter((sku) => {
+                    if (sku.sku_id.toString() === product.sku_id.toString()) {
+                        setSale_sku(sku)
+                        return
+                    }
+                })
+            }
+        })
+    }, [spicial_offer])
+    console.log('sku_option', sku_option)
+    console.log('sale_sku', sale_sku)
+    console.log('selectedSKU', selectedSKU)
 
     return (
         <li key={product.productId} className="flex py-4">
@@ -45,7 +78,7 @@ export default function CartPopoverItem({ product }) {
                         <div className="flex flex-col ">
                             <p className="text-md font-medium text-gray-900 dark:text-white">
                                 <NumericFormat
-                                    value={product_item && product_item.spu_info.product_price}
+                                    value={sale_sku ? sale_sku.price_sale : (product_item && product_item.spu_info.product_price)}
                                     displayType={'text'}
                                     thousandSeparator={true}
                                     decimalScale={0}
@@ -55,7 +88,7 @@ export default function CartPopoverItem({ product }) {
                             </p>
                             <p className="text-sm font-medium  text-gray-400/75 line-through decoration-rose-700 ">
                                 <NumericFormat
-                                    value={product_item && product_item.spu_info.product_price}
+                                    value={sale_sku && (product_item && product_item.spu_info.product_price)}
                                     displayType={'text'}
                                     thousandSeparator={true}
                                     decimalScale={0}
@@ -69,7 +102,7 @@ export default function CartPopoverItem({ product }) {
                         {product_item && product_item.spu_info?.product_variations?.map((variation, index) => {
                             return (
                                 <>
-                                    {sku_option && <ProductOption variation={variation} key={index} sku_tier_idx={sku_option.sku_tier_idx[index]} />}
+                                    {sku_option && <ProductOption variation={variation} key={index} sku_tier_idx={sku_option.sku_tier_idx[index]} changeSku={setSelectedSKU} />}
                                 </>
                             )
                         })}

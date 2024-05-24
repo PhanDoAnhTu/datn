@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment,  useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
@@ -7,10 +7,19 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function ProductOption({ variation, sku_tier_idx }) {
+export default function ProductOption({ variation, sku_tier_idx, changeSku }) {
     // console.log(variation.options[sku_tier_idx])
     const [selected, setSelected] = useState(variation.options[sku_tier_idx])
+    // const [selectedOption, setSelectedOption] = useState([])
 
+    // useEffect(() => {
+    //     variation && variation.options.filter((option,index)=>{
+    //         if(option.toString()===selected.toString()){
+    //             setSelectedOption([...index])
+    //         }
+    //     })
+    // }, [selected])
+    console.log(changeSku)
     return (
         <Listbox value={selected} onChange={setSelected} key={variation.name}>
             {({ open }) => (

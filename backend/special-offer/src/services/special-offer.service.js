@@ -34,7 +34,7 @@ class SpecialOfferService {
     }
 
     async getSpecialOfferBySpuId({ spu_id }) {
-        const special = await SpecialOfferModel.find({
+        const special = await SpecialOfferModel.findOne({
             special_offer_is_active: true,
             'special_offer_spu_list.product_id': {
                 $all: [spu_id]

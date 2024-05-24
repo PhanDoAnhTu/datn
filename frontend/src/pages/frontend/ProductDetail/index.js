@@ -7,7 +7,7 @@ import ProductList from '../../../components/frontend/ProductList';
 import { products } from '../../../test/products';
 //
 // import { useGetProductByIdQuery } from "../../../redux/api/productApiSlice";
-import { productById, listImageByProductId } from '../../../store/actions';
+import { productById, listImageByProductId, getSpecialOfferBySpuId } from '../../../store/actions';
 import { useDispatch } from 'react-redux';
 import { NumericFormat } from 'react-number-format';
 // import { setCurrentProduct } from "../../../redux/features/product/productSlice";
@@ -19,89 +19,6 @@ const product = {
         { id: 2, name: 'Clothing', to: '#' },
     ],
 };
-
-// const images = [
-//     {
-//         _id: '6646492bd7bb2369f89853ea',
-//         thumb_url:
-//             'https://tailwindui.com/img/ecommerce-images/product-page-02-secondary-product-shot.jpg',
-//         public_id: '234',
-//         spu_id: '6646492bd7bb2369f89853e0',
-//         sku_id: '6646492bd7bb2369f89853e2',
-//         createdAt: '2024-05-16T17:58:03.104Z',
-//         updatedAt: '2024-05-16T17:58:03.104Z',
-//     },
-//     {
-//         _id: '6646492bd7bb2369f89853ed',
-//         thumb_url:
-//             'https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-01.jpg',
-//         public_id: '234',
-//         spu_id: '6646492bd7bb2369f89853e0',
-//         sku_id: '6646492bd7bb2369f89853e5',
-//         createdAt: '2024-05-16T17:58:03.104Z',
-//         updatedAt: '2024-05-16T17:58:03.104Z',
-//     },
-//     {
-//         _id: '6646492bd7bb2369f89853ec',
-//         thumb_url:
-//             'https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-02.jpg',
-//         public_id: '234',
-//         spu_id: '6646492bd7bb2369f89853e0',
-//         sku_id: '6646492bd7bb2369f89853e4',
-//         createdAt: '2024-05-16T17:58:03.104Z',
-//         updatedAt: '2024-05-16T17:58:03.104Z',
-//     },
-//     {
-//         _id: '6646492bd7bb2369f89853eb',
-//         thumb_url:
-//             'https://tailwindui.com/img/ecommerce-images/product-page-02-featured-product-shot.jpg',
-//         public_id: '234',
-//         spu_id: '6646492bd7bb2369f89853e0',
-//         sku_id: '6646492bd7bb2369f89853e3',
-//         createdAt: '2024-05-16T17:58:03.104Z',
-//         updatedAt: '2024-05-16T17:58:03.104Z',
-//     },
-//     {
-//         _id: '664651759ba3985fdc11cd81',
-//         thumb_url:
-//             'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-02.jpg',
-//         public_id: '234',
-//         spu_id: '664651759ba3985fdc11cd77',
-//         sku_id: '664651759ba3985fdc11cd79',
-//         createdAt: '2024-05-16T18:33:25.121Z',
-//         updatedAt: '2024-05-16T18:33:25.121Z',
-//     },
-//     {
-//         _id: '664651759ba3985fdc11cd82',
-//         thumb_url:
-//             'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-04.jpg',
-//         public_id: '234',
-//         spu_id: '664651759ba3985fdc11cd77',
-//         sku_id: '664651759ba3985fdc11cd7a',
-//         createdAt: '2024-05-16T18:33:25.121Z',
-//         updatedAt: '2024-05-16T18:33:25.121Z',
-//     },
-//     {
-//         _id: '664651759ba3985fdc11cd83',
-//         thumb_url:
-//             'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-02.jpg',
-//         public_id: '234',
-//         spu_id: '664651759ba3985fdc11cd77',
-//         sku_id: '664651759ba3985fdc11cd7b',
-//         createdAt: '2024-05-16T18:33:25.121Z',
-//         updatedAt: '2024-05-16T18:33:25.121Z',
-//     },
-//     {
-//         _id: '664651759ba3985fdc11cd84',
-//         thumb_url:
-//             'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-03.jpg',
-//         public_id: '234',
-//         spu_id: '664651759ba3985fdc11cd77',
-//         sku_id: '664651759ba3985fdc11cd7c',
-//         createdAt: '2024-05-16T18:33:25.121Z',
-//         updatedAt: '2024-05-16T18:33:25.121Z',
-//     },
-// ];
 
 const reviews = { to: '#', average: 4, totalCount: 117 };
 
@@ -122,22 +39,35 @@ export default function ProductDetail() {
     const [selectedImage, setSelectedImage] = useState(null);
     const [product_detail, setProductDetail] = useState(null);
     const [product_images, setProductImages] = useState(null);
+    const [spicial_offer, setSpicial_offer] = useState(null);
+    const [sale_sku, setSale_sku] = useState(null);
 
 
     const getProductDetail = async () => {
         const response = await dispatch(productById({ spu_id: product_id }));
         setProductDetail(response.payload.metaData)
+        const fetch_spicial_offer = await dispatch(getSpecialOfferBySpuId({ spu_id: product_id }))
+        setSpicial_offer(fetch_spicial_offer.payload.metaData)
     }
     const getPhotosByProductDetail = async () => {
         const response = await dispatch(listImageByProductId(product_id));
         setProductImages(response.payload.metaData)
     }
 
+
+
     useEffect(() => {
         if (!product_detail) {
             getProductDetail()
         }
-    }, [product_id, product_detail]);
+        // setSale_sku(
+        //     !sale_sku && spicial_offer.special_offer_spu_list.find((item) => {
+        //         if (item.product_id.toString() === product_id.toString()) {
+        //             setSale_sku(item.sku_list[0])
+        //         }
+        //     })
+        // );
+    }, [product_id, product_detail, spicial_offer]);
 
     useEffect(() => {
         if (product_detail) {
@@ -172,14 +102,25 @@ export default function ProductDetail() {
             if (filteredSKU != null) {
                 setPrice(filteredSKU.sku_price);
                 setStock(filteredSKU.sku_stock);
-                // console.log(filteredSKU)
                 setSelectedImage(
                     product_images && product_images.find((item) => item.sku_id.toString() === filteredSKU._id.toString())
                 );
+                spicial_offer && spicial_offer.special_offer_spu_list.filter((product) => {
+                    if (product.product_id.toString() === product_detail.spu_info._id.toString()) {
+                        return product.sku_list.filter((sku) => {
+                            if (sku.sku_id.toString() === filteredSKU._id.toString()) {
+                                setSale_sku(sku)
+                                return
+                            }
+                        })
+                    }
+                })
                 console.log("filteredSKU", filteredSKU);
+                console.log("pricesale", sale_sku);
+
             }
         }
-    }, [product_id, selectedVariation, product_detail, product_images]);
+    }, [product_id, selectedVariation, product_detail, product_images, spicial_offer, sale_sku]);
 
     const HandleImageChoose = (e) => {
         setSelectedImage(e);
@@ -252,23 +193,25 @@ export default function ProductDetail() {
 
                     {/* Options */}
                     <div className="mt-4 lg:row-span-3 lg:mt-0">
-                        <h2 className="sr-only">Product information</h2>
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl dark:text-white">
                             {name}
                         </h1>
                         <p className="mt-6 text-3xl tracking-tight text-gray-900 dark:text-gray-200">
                             <NumericFormat
-                                value={price}
+                                value={sale_sku ? sale_sku.price_sale : price}
                                 displayType={'text'}
                                 thousandSeparator={true}
                                 decimalScale={0}
                                 id="price"
                                 suffix={'đ'}
                             />
+                            &emsp;
+                            {sale_sku && <span className="bg-red-100 text-red-800 text-xs font-medium py-2 px-5  rounded-full dark:bg-red-900 dark:text-red-300">Giảm {sale_sku.percentage}%</span>}
                         </p>
+
                         <p className="text-2xl tracking-tight text-gray-900 line-through decoration-rose-700 dark:text-gray-200">
                             <NumericFormat
-                                value={price}
+                                value={sale_sku && price}
                                 displayType={'text'}
                                 thousandSeparator={true}
                                 decimalScale={0}
