@@ -7,12 +7,16 @@ import { store } from './store/index.js';
 import { RouterProvider, } from 'react-router'
 import React from 'react';
 import router from './router/index.js';
+import { Suspense } from "react";
+import Loader from './components/frontend/Loader.js';
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <Provider store={store}>
-            <RouterProvider router={router} />
+            <Suspense fallback={<Loader />}>
+                <RouterProvider router={router} />
+            </Suspense>
         </Provider>
     </React.StrictMode>
 );

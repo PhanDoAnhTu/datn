@@ -10,13 +10,13 @@ class UploadController {
 
     uploadImageFormLocalFiles = async (req, res, next) => {
         const { files } = req
-        console.log(req)
+        console.log(req.body)
         if (!files.length) throw new errorResponse.BadRequestError("files missing")
         return new successResponse.SuccessResponse({
             message: "uploadImageFormLocalFiles",
-            metaData: await this.service.uploadImageFormLocalFiles({
-                files
-            })
+            metaData: await this.service.uploadImageFormLocalFiles(
+                files,req.body
+            )
         }).send(res)
     }
 

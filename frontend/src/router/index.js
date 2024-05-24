@@ -1,4 +1,7 @@
-import Login from '../pages/frontend/Auth/Login.js';
+import { lazy } from "react";
+
+const Login =lazy(()=>import("../pages/frontend/Auth/Login.js"))
+// import Login from '../pages/frontend/Auth/Login.js';
 import Register from '../pages/frontend/Auth/Register.js';
 import Home from '../pages/frontend/Home/index.js';
 import PrivateRoute from '../pages/frontend/Auth/PrivateRoute.js';
@@ -12,6 +15,7 @@ import Checkout from '../pages/frontend/Checkout/index.js';
 import Search from '../pages/frontend/Search.js';
 import LoginSuccessSocial from '../pages/frontend/Auth/LoginSuccessSocial.js';
 import { Route, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
+
 import App from '../App.js';
 
 
@@ -31,10 +35,7 @@ const router = createBrowserRouter(
             <Route path="/" element={<PrivateRoute />}>
                 <Route path="/u/:page" element={<Profile />} />
                 <Route path="/checkout" element={<Checkout />} />
-                
             </Route>
-
-
         </Route>
     )
 )

@@ -3,10 +3,11 @@
 const cloudinary = require('../config/cloudinary.config')
 
 class UploadService {
-    async uploadImageFormLocalFiles({
+    async uploadImageFormLocalFiles(
         files,
-        folderName = 'outrunner/products'
-    }) {
+        { folderName = 'outrunner/products', sku_list = "[]" }) {
+
+        console.log(sku_list)
         try {
             if (!files.length) return
             const uploaderUrls = []
@@ -21,7 +22,7 @@ class UploadService {
                         // height: 300,
                         // width: 300,
                     }),
-                    result:result
+                    result: result
                 })
 
             }

@@ -1,4 +1,4 @@
-import { Fragment,  useState } from 'react'
+import { Fragment, useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
@@ -8,10 +8,10 @@ function classNames(...classes) {
 }
 
 export default function ProductOption({ variation, sku_tier_idx, changeSku }) {
-    // console.log(variation.options[sku_tier_idx])
-    const [selected, setSelected] = useState(variation.options[sku_tier_idx])
-    // const [selectedOption, setSelectedOption] = useState([])
 
+    // console.log(variation.options[sku_tier_idx])
+    const [selected, setSelected] = useState(variation.options)
+    // const [selectedOption, setSelectedOption] = useState([])
     // useEffect(() => {
     //     variation && variation.options.filter((option,index)=>{
     //         if(option.toString()===selected.toString()){
@@ -19,9 +19,14 @@ export default function ProductOption({ variation, sku_tier_idx, changeSku }) {
     //         }
     //     })
     // }, [selected])
+
+    const onChangeSelected = async () => {
+        setSelected()
+    }
     console.log(changeSku)
+
     return (
-        <Listbox value={selected} onChange={setSelected} key={variation.name}>
+        <Listbox value={selected[sku_tier_idx]} onChange={(e) => onChangeSelected(e, sku_tier_idx)} key={variation.name}>
             {({ open }) => (
                 <>
                     <Listbox.Label className="block text-sm font-medium leading-5 text-white-900">{variation && variation.name}</Listbox.Label>

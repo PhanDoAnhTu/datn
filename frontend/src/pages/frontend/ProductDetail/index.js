@@ -5,7 +5,6 @@ import classNames from '../../../helpers/classNames';
 import { Link, useParams } from 'react-router-dom';
 import ProductList from '../../../components/frontend/ProductList';
 import { products } from '../../../test/products';
-//
 // import { useGetProductByIdQuery } from "../../../redux/api/productApiSlice";
 import { productById, listImageByProductId, getSpecialOfferBySpuId } from '../../../store/actions';
 import { useDispatch } from 'react-redux';
@@ -21,13 +20,14 @@ const product = {
 };
 
 const reviews = { to: '#', average: 4, totalCount: 117 };
-
 export default function ProductDetail() {
     const { product_id } = useParams();
     ///////////data
+
     const dispatch = useDispatch();
     // const { list_product_image } = useSelector((state) => state.productReducer);
     // const { spu_info, sku_list } = product_detail
+
     const [variations, setVariations] = useState([]);
     const [selectedVariation, setSelectedVariation] = useState(
         variations.length === 1 ? [0] : [0, 0]
@@ -42,7 +42,6 @@ export default function ProductDetail() {
     const [spicial_offer, setSpicial_offer] = useState(null);
     const [sale_sku, setSale_sku] = useState(null);
 
-
     const getProductDetail = async () => {
         const response = await dispatch(productById({ spu_id: product_id }));
         setProductDetail(response.payload.metaData)
@@ -53,8 +52,6 @@ export default function ProductDetail() {
         const response = await dispatch(listImageByProductId(product_id));
         setProductImages(response.payload.metaData)
     }
-
-
 
     useEffect(() => {
         if (!product_detail) {
