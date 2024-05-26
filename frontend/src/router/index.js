@@ -1,8 +1,9 @@
 import { lazy } from "react";
 
-const Login =lazy(()=>import("../pages/frontend/Auth/Login.js"))
+const Login = lazy(() => import("../pages/frontend/Auth/Login.js"))
 // import Login from '../pages/frontend/Auth/Login.js';
-import Register from '../pages/frontend/Auth/Register.js';
+const Register = lazy(() => import("../pages/frontend/Auth/Register.js"))
+// import Register from '../pages/frontend/Auth/Register.js';
 import Home from '../pages/frontend/Home/index.js';
 import PrivateRoute from '../pages/frontend/Auth/PrivateRoute.js';
 import Category from '../pages/frontend/Category/index.js';

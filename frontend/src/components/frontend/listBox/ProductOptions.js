@@ -7,10 +7,10 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function ProductOption({ variation, sku_tier_idx, changeSku }) {
+export default function ProductOption({ variation, sku_tier_idx }) {
 
     // console.log(variation.options[sku_tier_idx])
-    const [selected, setSelected] = useState(variation.options)
+    const [selected, setSelected] = useState(variation.options[sku_tier_idx])
     // const [selectedOption, setSelectedOption] = useState([])
     // useEffect(() => {
     //     variation && variation.options.filter((option,index)=>{
@@ -20,13 +20,14 @@ export default function ProductOption({ variation, sku_tier_idx, changeSku }) {
     //     })
     // }, [selected])
 
-    const onChangeSelected = async () => {
-        setSelected()
+    const onChangeSelected = async (e, sku_tier_idx) => {
+        variation.options
+        console.log("sku_selected", sku_tier_idx)
+        setSelected(e)
     }
-    console.log(changeSku)
 
     return (
-        <Listbox value={selected[sku_tier_idx]} onChange={(e) => onChangeSelected(e, sku_tier_idx)} key={variation.name}>
+        <Listbox value={selected} onChange={(e) => onChangeSelected(e, sku_tier_idx)} key={variation.name}>
             {({ open }) => (
                 <>
                     <Listbox.Label className="block text-sm font-medium leading-5 text-white-900">{variation && variation.name}</Listbox.Label>

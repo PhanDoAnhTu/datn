@@ -12,7 +12,7 @@ export const allProducts = ({ limit, page }) => async (dispatch) => {
 
   } catch (err) {
     console.log(err)
-    return err.response.data
+    // return err.response.data
 
   }
 };
@@ -27,7 +27,7 @@ export const productById = ({ spu_id }) => async (dispatch) => {
 
   } catch (err) {
     console.log(err)
-    return err.response.data
+    // return err.response.data
 
   }
 
@@ -42,7 +42,7 @@ export const listImageByProductId = (product_id) => async (dispatch) => {
 
   } catch (err) {
     console.log(err)
-    return err.response.data
+    // return err.response.data
 
   }
 };

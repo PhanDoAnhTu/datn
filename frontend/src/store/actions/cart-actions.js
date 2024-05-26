@@ -9,8 +9,8 @@ export const getCart = (data) => async (dispatch) => {
         return dispatch({ type: Action.GET_CART, payload: response.data });
 
     } catch (err) {
-        console.log(err)
-        return err.response.data
+        console.error(err)
+        // return err.response.data
 
     }
 };
@@ -21,8 +21,8 @@ export const addToCart = (data) => async (dispatch) => {
         return dispatch({ type: Action.ADD_TO_CART, payload: response.data });
 
     } catch (err) {
-        console.log(err)
-        return err.response.data
+        console.error(err)
+        // return err.response.data
 
     }
 };
@@ -34,8 +34,8 @@ export const UpdateFromCart = (data) => async (dispatch) => {
         return dispatch({ type: Action.UPDATE_FROM_CART, payload: response.data });
 
     } catch (err) {
-        console.log(err)
-        return err.response.data
+        console.error(err)
+        // return err.response.data
 
     }
 };
@@ -46,8 +46,8 @@ export const DeleteToCartItem = (data) => async (dispatch) => {
         return dispatch({ type: Action.DELETE_TO_CART_ITEM, payload: response.data });
 
     } catch (err) {
-        console.log(err)
-        return err.response.data
+        console.error(err)
+        // return err.response.data
 
     }
 };
@@ -58,7 +58,7 @@ export const ClearCartItems = (data) => async (dispatch) => {
         return dispatch({ type: Action.CLEAR_CART_ITEMS, payload: response.data });
 
     } catch (err) {
-        console.log(err)
+        console.error(err)
         return err.response.data
 
     }

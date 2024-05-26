@@ -122,6 +122,8 @@ export default function ProductDetail() {
     const HandleImageChoose = (e) => {
         setSelectedImage(e);
     };
+    console.log("selectedVariation", selectedVariation);
+
 
     return (
         <div className="bg-transparent pt-10 md:pt-20">
@@ -283,7 +285,6 @@ export default function ProductDetail() {
                                                         <RadioGroup.Option
                                                             key={option}
                                                             value={subindex}
-                                                            // disabled={}
                                                             className={({
                                                                 active,
                                                             }) =>

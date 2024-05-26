@@ -12,5 +12,5 @@ module.exports = {
   APP_SECRET: process.env.APP_SECRET,
   EXCHANGE_NAME: process.env.EXCHANGE_NAME,
   MSG_QUEUE_URL: process.env.MSG_QUEUE_URL,
-  PRODUCT_SERVICE: "product_service",
+  SERVICE: "product_service",
 };

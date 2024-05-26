@@ -1,22 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { useDispatch } from "react-redux";
 import { getSpecialOfferBySpuId, productById } from '../../../store/actions';
-import ProductOption from "../listBox/ProductOptions";
+// import ProductOption from "../listBox/ProductOptions";
 import { NumericFormat } from "react-number-format";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { Listbox, Transition } from "@headlessui/react";
 
-export default function CartPopoverItem({ product }) {
+function classNames(...classes) {
+    return classes.filter(Boolean).join(' ')
+}
+export default function CartPopoverItem({ product, update }) {
     const dispatch = useDispatch();
-    // const { current_product } = useSelector((state) => state.productReducer);
-    // const { spu_info, sku_list } = current_product;
+
     const [product_item, setProductItem] = useState(null)
     const [sku_option, setSku_option] = useState(null)
     //sale
     const [spicial_offer, setSpicial_offer] = useState(null);
-    // const [product_price, setProduct_price] = useState(null);
-    const [selectedSKU, setSelectedSKU] = useState(null);
-
-
+    const [selected, setSelected] = useState(null)
     const [sale_sku, setSale_sku] = useState(null);
+    //
+    const [quantity, setQuantity] = useState(null)
 
     const productItemApi = async () => {
         const respon = await dispatch(productById({ spu_id: product.productId }))
@@ -28,15 +31,16 @@ export default function CartPopoverItem({ product }) {
         const fetch_spicial_offer = await dispatch(getSpecialOfferBySpuId({ spu_id: product.productId }))
         setSpicial_offer(fetch_spicial_offer.payload.metaData)
     }
-    // const onChangePriceBySku = () => {
-
-    // }
 
     useEffect(() => {
         if (!product_item) {
             productItemApi()
         }
-    }, [product])
+        product && (
+            !quantity && setQuantity(product.quantity)
+        )
+    }, [product, quantity])
+
 
     useEffect(() => {
         if (!spicial_offer) {
@@ -47,16 +51,56 @@ export default function CartPopoverItem({ product }) {
                 return spu.sku_list.filter((sku) => {
                     if (sku.sku_id.toString() === product.sku_id.toString()) {
                         setSale_sku(sku)
+                        !selected && setSelected(sku.sku_tier_idx)
                         return
                     }
                 })
             }
         })
     }, [spicial_offer])
+
+    useEffect(() => {
+        spicial_offer && spicial_offer.special_offer_spu_list.filter((spu) => {
+            if (spu.product_id.toString() === product.productId.toString()) {
+                return spu.sku_list.filter((sku) => {
+                    if (sku.sku_tier_idx.toString() === selected.toString()) {
+                        setSale_sku(sku)
+                        !selected && setSelected(sku.sku_tier_idx)
+                        return
+                    }
+                })
+            }
+        })
+    }, [selected])
+
+    useEffect(() => {
+        sale_sku && updateCart("updateItem", { productId: product.productId, quantity: quantity, old_quantity: quantity, sku_id: sale_sku.sku_id })
+    }, [sale_sku])
+
     console.log('sku_option', sku_option)
     console.log('sale_sku', sale_sku)
-    console.log('selectedSKU', selectedSKU)
 
+    const handleVariationChange = async (value, variationOrder) => {
+        setSelected((s) => {
+            const newArray = s.slice();
+            newArray[variationOrder] = value;
+            return newArray
+        })
+    }
+
+    const updateCart = async (type, data) => {
+
+        if (type == "updateItem") {
+            const { productId, quantity, old_quantity, sku_id } = data
+            setQuantity(quantity)
+            await update(type, {
+                productId: productId, quantity: quantity, old_quantity: old_quantity, sku_id: sku_id
+            })
+
+        }
+    }
+
+    console.log("selected", selected)
     return (
         <li key={product.productId} className="flex py-4">
             <div className="h-28 w-28 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
@@ -102,7 +146,73 @@ export default function CartPopoverItem({ product }) {
                         {product_item && product_item.spu_info?.product_variations?.map((variation, index) => {
                             return (
                                 <>
-                                    {sku_option && <ProductOption variation={variation} key={index} sku_tier_idx={sku_option.sku_tier_idx[index]} changeSku={setSelectedSKU} />}
+                                    {/* {sku_option && <ProductOption variation={variation} key={index} sku_tier_idx={sku_option.sku_tier_idx[index]} changeSku={setSelectedSKU} />} */}
+                                    {sku_option && (
+                                        <Listbox value={selected && selected[index]} onChange={(e) => handleVariationChange(e, index)} key={index}>
+                                            {({ open }) => (
+                                                <>
+                                                    <Listbox.Label className="block text-sm font-medium leading-5 text-white-900">{variation && variation.name}</Listbox.Label>
+                                                    <div className="relative mt-2 ">
+                                                        <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1 pl-2 pr-8 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-5">
+                                                            <span className="flex items-center">
+                                                                <span className="ml-3 block truncate">{selected && product_item.spu_info?.product_variations[index].options[selected[index]]}</span>
+                                                            </span>
+                                                            <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
+                                                                <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                                            </span>
+                                                        </Listbox.Button>
+
+                                                        <Transition
+                                                            show={open}
+                                                            as={Fragment}
+                                                            leave="transition ease-in duration-100"
+                                                            leaveFrom="opacity-100"
+                                                            leaveTo="opacity-0"
+                                                        >
+                                                            <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                                                {variation.options.map((option, subindex) => (
+                                                                    <Listbox.Option
+                                                                        key={option}
+                                                                        className={({ active }) =>
+                                                                            classNames(
+                                                                                active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                                                                                'relative cursor-default select-none py-1 pl-2 pr-8'
+                                                                            )
+                                                                        }
+                                                                        value={subindex}
+                                                                    >
+                                                                        {({ selected, active }) => (
+                                                                            <>
+                                                                                <div className="flex items-center">
+                                                                                    <span
+                                                                                        className={classNames(selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate')}
+                                                                                    >
+                                                                                        {option}
+                                                                                    </span>
+                                                                                </div>
+
+                                                                                {selected ? (
+                                                                                    <span
+                                                                                        className={classNames(
+                                                                                            active ? 'text-white' : 'text-indigo-600',
+                                                                                            'absolute inset-y-0 right-0 flex items-center pr-4'
+                                                                                        )}
+                                                                                    >
+                                                                                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                                                                    </span>
+                                                                                ) : null}
+                                                                            </>
+                                                                        )}
+                                                                    </Listbox.Option>
+                                                                ))}
+                                                            </Listbox.Options>
+                                                        </Transition>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </Listbox>
+                                    )}
+
                                 </>
                             )
                         })}
@@ -115,13 +225,17 @@ export default function CartPopoverItem({ product }) {
                     <p className="text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
                         Số lượng
                         <div className="inline-flex rounded-md shadow-sm" role="group">
-                            <button type="button" className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-s-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                            <button className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-s-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
                                 -
                             </button>
                             <div type="number" className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
-                                {product && product.quantity}
+                                {quantity && quantity}
                             </div>
-                            <button type="button" className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-e-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                            <button className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-e-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700"
+                                onClick={() => updateCart("updateItem", {
+                                    productId: product.productId, quantity: quantity + 1, old_quantity: quantity, sku_id: sale_sku.sku_id
+                                })}
+                            >
                                 +
                             </button>
                         </div>
@@ -129,7 +243,7 @@ export default function CartPopoverItem({ product }) {
 
                     <div className="flex">
                         <button
-                            type="button"
+                            onClick={() => update("deleteItem", { productId: product.productId })}
                             className="text-magenta-600 hover:text-magenta-500 font-medium"
                         >
                             Xóa

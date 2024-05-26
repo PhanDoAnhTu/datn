@@ -6,7 +6,7 @@ const { wishListRepository } = require("../database");
 const { Types } = require("mongoose");
 
 
-class cartService {
+class WishListService {
 
     async createUserWishList({ userId, productId }) {
         const query = { wish_list_userId: userId, wish_list_state: 'active' }
@@ -65,15 +65,15 @@ class cartService {
     async deleteToWishListByUserId({userId }) {
         return await WishListModel.deleteOne({ wish_list_userId: userId }).lean()
     }
-    async serverRPCRequest(payload) {
-        const { type, data } = payload;
-        const { } = data
-        switch (type) {
-            case "":
-            default:
-                break;
-        }
-    }
+    // async serverRPCRequest(payload) {
+    //     const { type, data } = payload;
+    //     const { } = data
+    //     switch (type) {
+    //         case "":
+    //         default:
+    //             break;
+    //     }
+    // }
 }
 
-module.exports = cartService
+module.exports = WishListService

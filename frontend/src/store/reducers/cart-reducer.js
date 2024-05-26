@@ -1,7 +1,10 @@
 import { Action } from '../actions'
 
 const initialState = {
-    cart: localStorage.getItem("cart") ? JSON.parse(localStorage.getItem("cart")) : null,
+    // cart: localStorage.getItem("cart") ? JSON.parse(localStorage.getItem("cart")) : null,
+    cart: null,
+    deleteCartItem:null
+
 }
 
 const CartReducer = (state = initialState, action) => {
@@ -31,12 +34,12 @@ const CartReducer = (state = initialState, action) => {
         case Action.UPDATE_FROM_CART:
             return {
                 ...state,
-                cart: action.payload
+                cart: action.payload.metaData
             }
         case Action.DELETE_TO_CART_ITEM:
             return {
                 ...state,
-                cart: action.payload
+                deleteCartItem: action.payload.metaData
             }
         case Action.CLEAR_CART_ITEMS:
             localStorage.clear();

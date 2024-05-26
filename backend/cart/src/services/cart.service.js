@@ -69,13 +69,14 @@ class cartService {
     async addToCartV2({ userId, shop_order_ids = {} }) {
         const { productId, sku_id, quantity, old_quantity } = shop_order_ids?.item_products
 
-        const foundProduct = await RPCRequest("SPU_RPC", {
-            type: "CHECK_PRODUCT_BY_ID",
-            data: {
-                productId: productId
-            }
-        })
-        if (!foundProduct) throw new errorResponse.NotFoundRequestError('product do not belong to the shop')
+        // const foundProduct = await RPCRequest("SPU_RPC", {
+        //     type: "CHECK_PRODUCT_BY_ID",
+        //     data: {
+        //         productId: productId
+        //     }
+        // })
+        // console.log("foundProduct", foundProduct)
+        // if (!foundProduct) throw new errorResponse.NotFoundRequestError('product do not belong to the shop')
 
         if (quantity === 0) {
 
@@ -106,15 +107,19 @@ class cartService {
         return await CartModel.updateOne(query, updateSet)
     }
 
-    async getUserCart({ userId }) {
-        return await CartModel.findOne({ cart_userId: userId }).lean()
+    async getUserCart({ userId, cart_state = 'active' }) {
+        return await CartModel.findOne({
+            cart_userId: userId, cart_state: cart_state
+        }).lean()
     }
-    async getCartById({ CartId }) {
-        return await CartModel.findOne({ _id: Types.ObjectId(CartId) }).lean()
+    async getCartById({ CartId, cart_state = 'active' }) {
+        return await CartModel.findOne({
+            _id: Types.ObjectId(CartId), cart_state: cart_state
+        }).lean()
     }
 
-    async deleteToCartByCartIdAndUserId({ cartId, userId }) {
-        return await CartModel.deleteOne({ _id: Types.ObjectId(cartId), cart_userId: userId }).lean()
+    async deleteToCartByCartIdAndUserId({ cartId, userId, cart_state = 'active' }) {
+        return await CartModel.deleteOne({ _id: Types.ObjectId(cartId), cart_userId: userId, cart_state: cart_state }).lean()
     }
     async serverRPCRequest(payload) {
         const { type, data } = payload;

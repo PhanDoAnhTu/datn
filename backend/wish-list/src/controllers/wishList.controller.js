@@ -4,10 +4,10 @@
 const WishListService = require('../services/wishList.service');
 const { successResponse } = require('../core');
 class CartController {
+    
     constructor() {
         this.service = new WishListService()
     }
-
     addToWishList = async (req, res, next) => {
         return new successResponse.SuccessResponse({
             message: "add new wish list success",
@@ -17,7 +17,7 @@ class CartController {
     getUserWishList = async (req, res, next) => {
         return new successResponse.SuccessResponse({
             message: "get wish list success",
-            metaData: await this.service.getUserWishList(req.params)
+            metaData: await this.service.getUserWishList(req.query)
         }).send(res)
     }
     deleteToWishListByUserId = async (req, res, next) => {

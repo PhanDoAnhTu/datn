@@ -93,7 +93,7 @@ const AllProducts = async ({ limit = 50, sort = 'ctime', page = 1, filter = { is
     })
 }
 const checkProductById = async ({ productId }) => {
-    return await spuRepository.getProductById(productId)
+    return await spuRepository.getProductById({ productId })
 }
 
 const checkProductByServer = async ({ products }) => {
@@ -104,10 +104,10 @@ const serverRPCRequest = async (payload) => {
     const { type, data } = payload;
     const { products, productId } = data
     switch (type) {
-        case "CHECK_PRODUCT_BY_SERVER":
-            return this.checkProductByServer({ products })
-        case "CHECK_PRODUCT_BY_id":
-            return this.checkProductById({ productId })
+        case"CHECK_PRODUCT_BY_SERVER":
+            return checkProductByServer({ products })
+        case"CHECK_PRODUCT_BY_ID":
+            return checkProductById({ productId })
         default:
             break;
     }

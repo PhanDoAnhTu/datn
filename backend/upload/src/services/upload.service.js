@@ -5,14 +5,13 @@ const cloudinary = require('../config/cloudinary.config')
 class UploadService {
     async uploadImageFormLocalFiles(
         files,
-        { folderName = 'outrunner/products', sku_list = "[]" }) {
+        { folderName = 'outrunner/products', sku_list = "" }) {
 
-        console.log(sku_list)
+        console.log("Array.isArray(sku_list)", Array.isArray(sku_list))
         try {
             if (!files.length) return
             const uploaderUrls = []
             for (const file of files) {
-                console.log(file)
                 const result = await cloudinary.v2.uploader.upload(file.path, {
                     folder: folderName
                 })
@@ -26,6 +25,14 @@ class UploadService {
                 })
 
             }
+            if (Array.isArray(sku_list) == true) {
+                for (let i = 0; i < uploaderUrls.length; i++) {
+                    uploaderUrls[i] = { ...uploaderUrls[i], sku_tier_idx: sku_list[i] }
+                }
+            } else {
+                uploaderUrls[0] = { ...uploaderUrls[0], sku_tier_idx: sku_list }
+            }
+            console.log("uploaderUrls", uploaderUrls)
             return uploaderUrls
 
         } catch (error) {

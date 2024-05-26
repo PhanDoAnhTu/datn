@@ -4,7 +4,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CartPopoverItem from './CartPopoverItem';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCart } from '../../../store/actions';
+import { getCart, UpdateFromCart, DeleteToCartItem } from '../../../store/actions';
 
 
 
@@ -13,12 +13,45 @@ export default function CartPopover({ Button }) {
 
     const { cart } = useSelector((state) => state.cartReducer);
     const dispatch = useDispatch();
-
+    const [updateCartState, SetUpdateCartState] = useState(false)
     useEffect(() => {
         if (!cart) {
             dispatch(getCart({ userId: "6640aa39e94a253a84a5c605" }));
         }
     }, [cart]);
+
+    useEffect(() => {
+        dispatch(getCart({ userId: "6640aa39e94a253a84a5c605" }));
+    }, [updateCartState]);
+    const updateOrDeleteItemFromCart = async (type, data) => {
+        if (type === "deleteItem") {
+            const { productId } = data
+            await dispatch(DeleteToCartItem({
+                userId: "6640aa39e94a253a84a5c605",
+                productId: productId
+            }))
+            SetUpdateCartState(!updateCartState)
+        }
+        if (type === "updateItem") {
+            const { productId, sku_id, quantity, old_quantity } = data
+
+            await dispatch(UpdateFromCart({
+                userId: "6640aa39e94a253a84a5c605",
+                shop_order_ids: {
+                    item_products: {
+                        productId: productId,
+                        sku_id: sku_id,
+                        quantity: quantity,
+                        old_quantity: old_quantity
+                    }
+
+                }
+            }));
+            SetUpdateCartState(!updateCartState)
+        }
+
+
+    }
 
     // console.log('cart', cart)
 
@@ -95,6 +128,7 @@ export default function CartPopover({ Button }) {
                                                                         key={
                                                                             index
                                                                         }
+                                                                        update={updateOrDeleteItemFromCart}
                                                                     />
                                                                 )
                                                             )}

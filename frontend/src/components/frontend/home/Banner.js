@@ -84,7 +84,6 @@ export default function Banner() {
                             </div>
 
                             <Link
-                                to="#"
                                 className="inline-block rounded-md border border-transparent bg-veronica-500 px-8 py-3 text-center font-medium text-white transition-colors duration-200 ease-out hover:bg-veronica-400"
                             >
                                 Shop Collection

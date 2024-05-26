@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
 
 export default function Banner() {
+    const ExecuteScripta = () => {
+         window.scrollTo(0, document.body.scrollHeight);
+    }
     return (
         <div>
             <div className="relative overflow-hidden bg-white dark:bg-stone-700">
@@ -85,7 +88,8 @@ export default function Banner() {
                                 </div>
 
                                 <Link
-                                    to="#"
+                                    id='divElem'
+                                    onClick={ExecuteScripta}
                                     className="bg-magenta-500 hover:bg-magenta-400 inline-block rounded-md border border-transparent px-8 py-3 text-center font-medium text-white transition duration-200 ease-out hover:-translate-y-1"
                                 >
                                     Shop Collection

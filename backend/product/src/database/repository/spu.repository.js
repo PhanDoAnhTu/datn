@@ -4,9 +4,9 @@ const { Types } = require('mongoose');
 const { SpuModel } = require('../models');
 
 
-const getProductById = async (productId) => {
-    return await SpuModel.findOne({ _id: Types.ObjectId(productId) }).lean()
-
+const getProductById = async ({ productId }) => {
+    const product = await SpuModel.findOne({ _id:productId}).lean()
+    return product
 }
 const checkProductByServer = async ({ products }) => {
     return await Promise.all(products.map(async product => {
@@ -64,5 +64,5 @@ const getAllProducts = async ({ limit, sort, page, filter, select }) => {
 
 
 module.exports = {
-    getProductById, checkProductByServer, publishProduct, unPublishProduct, getAllProducts
+checkProductByServer, publishProduct, unPublishProduct, getAllProducts,getProductById
 }
