@@ -73,6 +73,7 @@ const filters = [
 
 // eslint-disable-next-line no-unused-vars
 export default function Category({ CategoryTitle }) {
+
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
     const [isListView, setIsListView] = useState(false);
 
@@ -81,11 +82,11 @@ export default function Category({ CategoryTitle }) {
     const { all_products } = useSelector(
         (state) => state.productReducer
     );
-    console.log(all_products)
     useEffect(() => {
         if (!all_products) {
             dispatch(allProducts({ limit: 10, page: 1 }));
         }
+        console.log('all_products', all_products)
     }, [all_products]);
     ///demo setProducts
 
@@ -432,7 +433,7 @@ export default function Category({ CategoryTitle }) {
                                             <ProductSingle
                                                 product={product}
                                                 key={index}
-                                                
+
                                             />)) : <></>)
                                         : (all_products ? all_products.map((product, index) => (
                                             <ProductSingleList

@@ -1,22 +1,37 @@
 // import { Link } from 'react-router-dom';
 
 import { useDispatch, useSelector } from "react-redux";
-import { removeFromWishList } from "../../store/actions";
+import { addToWishList, removeFromWishList } from "../../store/actions";
 import { toast } from "react-toastify";
+import { addFavoriteToLocalStorage, getFavoritesFromLocalStorage, removeFavoriteFromLocalStorage } from "../../utils";
+import { useState } from "react";
 
 export default function ProductSingleList({ product, reload }) {
-    const { userInfo } = useSelector((state) => state.userReducer);
-
     const dispatch = useDispatch();
 
+    const { userInfo } = useSelector((state) => state.userReducer);
+    const [favories_products, setfavoriesProduct] = useState(getFavoritesFromLocalStorage())
+
     const HandleRemoveFromWishList = async ({ userId, productId }) => {
-        console.log("product wl", productId)
         await dispatch(removeFromWishList({
             userId: userId,
             productId: productId
         }))
-        reload()
+        await removeFavoriteFromLocalStorage(productId)
+        setfavoriesProduct(getFavoritesFromLocalStorage())
+        reload && reload()
         toast.success("Đã xóa sản phẩm ra mục yêu thích!")
+    }
+
+    const HandleAddToWishList = async ({ userId, productId }) => {
+        await dispatch(addToWishList({
+            userId: userId,
+            productId: productId
+        }))
+        await addFavoriteToLocalStorage(productId)
+        setfavoriesProduct(getFavoritesFromLocalStorage())
+        reload && reload()
+        toast.success("Đã thêm sản phẩm vào mục yêu thích!")
     }
 
     return (
@@ -75,11 +90,24 @@ export default function ProductSingleList({ product, reload }) {
                         <button className="border-2 px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
                             Add to cart
                         </button>
-                        {userInfo &&
+                        {userInfo ? (favories_products.some((p_id) => p_id.toString() === product._id.toString()) == true ?
+                            <button onClick={() => HandleRemoveFromWishList({ userId: userInfo._id, productId: product._id })} className="border-2 px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                                Bỏ thích
+                            </button>
+                            :
+                            <button onClick={() => HandleAddToWishList({ userId: userInfo._id, productId: product._id })} className="border-2 px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                                Thêm vào yêu thích
+                            </button>
+                        ) :
+                            <button className="border-2 px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                                Thêm vào yêu thích
+                            </button>
+                        }
+                        {/* {userInfo &&
                             <button onClick={() => HandleRemoveFromWishList({ userId: userInfo._id, productId: product._id })} className="border-2 px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
                                 Remove
                             </button>
-                        }
+                        } */}
                     </div>
                 </div>
             </div>

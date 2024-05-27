@@ -1,23 +1,39 @@
 import { lazy } from "react";
 
-const Login = lazy(() => import("../pages/frontend/Auth/Login.js"))
+
+// import App from '../App.js';
+// import Category from '../pages/frontend/Category/index.js';
 // import Login from '../pages/frontend/Auth/Login.js';
-const Register = lazy(() => import("../pages/frontend/Auth/Register.js"))
 // import Register from '../pages/frontend/Auth/Register.js';
-import Home from '../pages/frontend/Home/index.js';
-import PrivateRoute from '../pages/frontend/Auth/PrivateRoute.js';
-import Category from '../pages/frontend/Category/index.js';
-import Profile from '../pages/frontend/Profile/Profile.js';
-import News from '../pages/frontend/News/index.js';
-import NewDetail from '../pages/frontend/News/NewDetail.js';
-import ProductDetail from '../pages/frontend/ProductDetail/index.js';
-import Contact from '../pages/frontend/Contact/index.js';
-import Checkout from '../pages/frontend/Checkout/index.js';
-import Search from '../pages/frontend/Search.js';
-import LoginSuccessSocial from '../pages/frontend/Auth/LoginSuccessSocial.js';
+// import Home from '../pages/frontend/Home/index.js';
+// import PrivateRoute from '../pages/frontend/Auth/PrivateRoute.js';
+// import Profile from '../pages/frontend/Profile/Profile.js';
+// import News from '../pages/frontend/News/index.js';
+// import NewDetail from '../pages/frontend/News/NewDetail.js';
+// import ProductDetail from '../pages/frontend/ProductDetail/index.js';
+// import Contact from '../pages/frontend/Contact/index.js';
+// import Checkout from '../pages/frontend/Checkout/index.js';
+// import Search from '../pages/frontend/Search.js';
+// import LoginSuccessSocial from '../pages/frontend/Auth/LoginSuccessSocial.js';
+
+const App = lazy(() => import("../App.js"))
+const Login = lazy(() => import("../pages/frontend/Auth/Login.js"))
+const Register = lazy(() => import("../pages/frontend/Auth/Register.js"))
+const Home = lazy(() => import("../pages/frontend/Home/index.js"))
+const PrivateRoute = lazy(() => import("../pages/frontend/Auth/PrivateRoute.js"))
+const Profile = lazy(() => import("../pages/frontend/Profile/Profile.js"))
+const Category = lazy(() => import("../pages/frontend/Category/index.js"))
+const News = lazy(() => import("../pages/frontend/News/index.js"))
+const NewDetail = lazy(() => import("../pages/frontend/News/NewDetail.js"))
+const ProductDetail = lazy(() => import("../pages/frontend/ProductDetail/index.js"))
+const Contact = lazy(() => import("../pages/frontend/Contact/index.js"))
+const Checkout = lazy(() => import("../pages/frontend/Checkout/index.js"))
+const Search = lazy(() => import("../pages/frontend/Search.js"))
+const LoginSuccessSocial = lazy(() => import("../pages/frontend/Auth/LoginSuccessSocial.js"))
+
+
 import { Route, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
 
-import App from '../App.js';
 
 
 const router = createBrowserRouter(

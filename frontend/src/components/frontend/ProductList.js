@@ -57,7 +57,7 @@ export default function ProductList({ title, summary, products }) {
     }, []);
 
     return (
-        <div className="">
+        <div key={title}>
             <div
                 className={`mx-auto max-w-screen-2xl py-4 sm:py-8 lg:max-w-screen-2xl`}
             >

@@ -224,13 +224,20 @@ export default function CartPopoverItem({ product, update }) {
                 <div className="flex flex-1 items-end justify-between text-sm mt-3">
                     <p className="text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
                         Số lượng
-                        <div className="inline-flex rounded-md shadow-sm" role="group">
+                        <div className="inline-flex rounded-md shadow-sm w-1/2" role="group">
                             <button className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-s-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
                                 -
                             </button>
-                            <div type="number" className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                            <input
+                                type="text"
+                                value={quantity && quantity}
+                                name="quantity"
+                                id="quantity"
+                                className="block w-full border-0  text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
+                            />
+                            {/* <div type="number" className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
                                 {quantity && quantity}
-                            </div>
+                            </div> */}
                             <button className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-e-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700"
                                 onClick={() => updateCart("updateItem", {
                                     productId: product.productId, quantity: quantity + 1, old_quantity: quantity, sku_id: sale_sku.sku_id

@@ -7,14 +7,18 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { NumericFormat } from 'react-number-format';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToWishList } from '../../store/actions';
+import { addToWishList, removeFromWishList } from '../../store/actions';
 import { toast } from 'react-toastify';
+import { addFavoriteToLocalStorage, getFavoritesFromLocalStorage, removeFavoriteFromLocalStorage } from '../../utils';
+import { useState } from 'react';
 
-export default function ProductSingle({ product }) {
-    const { userInfo } = useSelector((state) => state.userReducer);
+export default function ProductSingle({ product, reload }) {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    const { userInfo } = useSelector((state) => state.userReducer);
+    const [favories_products, setfavoriesProduct] = useState(getFavoritesFromLocalStorage())
 
 
     const HandleAddToWishList = async ({ userId, productId }) => {
@@ -22,11 +26,22 @@ export default function ProductSingle({ product }) {
             userId: userId,
             productId: productId
         }))
+        await addFavoriteToLocalStorage(productId)
+        setfavoriesProduct(getFavoritesFromLocalStorage())
+        reload && reload()
         toast.success("Đã thêm sản phẩm vào mục yêu thích!")
-        
     }
 
-
+    const HandleRemoveFromWishList = async ({ userId, productId }) => {
+        await dispatch(removeFromWishList({
+            userId: userId,
+            productId: productId
+        }))
+        await removeFavoriteFromLocalStorage(productId)
+        setfavoriesProduct(getFavoritesFromLocalStorage())
+        reload && reload()
+        toast.success("Đã xóa sản phẩm ra khỏi mục yêu thích!")
+    }
     return (
         <div key={product._id} className="group relative py-2">
             <div className="h-56 w-40 snap-start overflow-hidden rounded-md bg-gray-200 transition-all duration-200 ease-out lg:aspect-none group-hover:opacity-75 lg:h-80 lg:w-56">
@@ -41,12 +56,16 @@ export default function ProductSingle({ product }) {
                 <button className="group-hover:delay-50 z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-xanthous-500 group-hover:-translate-y-10 group-hover:opacity-100">
                     <ShoppingBagIcon className="h-6 w-6" />
                 </button>
-                {userInfo ?
-                    <button onClick={() => HandleAddToWishList({ userId: userInfo._id, productId: product._id })} className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-rose-500 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 ">
+                {userInfo ? (favories_products.some((p_id) => p_id.toString() === product._id.toString()) == true ?
+                    <button onClick={() => HandleRemoveFromWishList({ userId: userInfo._id, productId: product._id })} className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-red-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 ">
                         <HeartIcon className="h-6 w-6" />
                     </button>
                     :
-                    <button className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-rose-500 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 ">
+                    <button onClick={() => HandleAddToWishList({ userId: userInfo._id, productId: product._id })} className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-red-500 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 ">
+                        <HeartIcon className="h-6 w-6" />
+                    </button>
+                ) :
+                    <button className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-red-500 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 ">
                         <HeartIcon className="h-6 w-6" />
                     </button>
                 }
@@ -84,7 +103,7 @@ export default function ProductSingle({ product }) {
                         suffix={'đ'}
                     />
                 </p>
-                <p className="text-sm font-medium  text-gray-400/75 line-through decoration-rose-700 ">
+                <p className="text-sm font-medium  text-gray-400/75 line-through decoration-red-700 ">
                     <NumericFormat
                         value={product.product_price}
                         displayType={'text'}

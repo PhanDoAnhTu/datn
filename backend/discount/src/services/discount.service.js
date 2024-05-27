@@ -21,6 +21,7 @@ class DiscountService {
             discount_max_person_uses,
             discount_max_user_uses,
             discount_min_order_value,
+            discount_min_order_qty,
             discount_is_active,
             discount_applies_to,
             discount_product_ids
@@ -60,6 +61,7 @@ class DiscountService {
             discount_max_person_uses: discount_max_person_uses, // số lượng người dùng tối đa
             discount_max_user_uses: discount_max_user_uses,  // 1 người sử dụng tối đa bao nhiêu lần
             discount_min_order_value: discount_min_order_value,
+            discount_min_order_qty:discount_min_order_qty,
             discount_is_active: discount_is_active,
             discount_applies_to: discount_applies_to,
             discount_product_ids: discount_applies_to === 'all' ? [] : discount_product_ids  // so san pham duoc ap dung

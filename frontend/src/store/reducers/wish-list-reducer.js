@@ -1,8 +1,8 @@
 import { Action } from '../actions'
 
 const initialState = {
-    wish_list: localStorage.getItem("favorites") ? JSON.parse(localStorage.getItem("favorites")) : null,
-    hasRemove: false
+    wish_list: null,
+    update: false,
 
 }
 
@@ -10,7 +10,7 @@ const WishListReducer = (state = initialState, action) => {
 
     switch (action.type) {
         case Action.GET_WISHLIST:
-            localStorage.setItem("favorites", JSON.stringify(action.payload.metaData));
+            action.payload.metaData && localStorage.setItem("favorites", JSON.stringify(action.payload.metaData.wish_list_products));
             return {
                 ...state,
                 wish_list: action.payload.metaData
@@ -18,17 +18,18 @@ const WishListReducer = (state = initialState, action) => {
         case Action.ADD_TO_WISH_LIST:
             return {
                 ...state,
-                wish_list: action.payload.metaData
+                update: true
             }
         case Action.REMOVE_FROM_WISH_LIST:
             return {
                 ...state,
-                hasRemove: true
+                update: true
             }
         case Action.DELETE_WISH_LIST:
+            localStorage.removeItem("favorites");
             return {
                 ...state,
-                wish_list: null
+                wish_list: { wish_list_products: [] }
             }
         default:
             return state;
