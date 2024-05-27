@@ -7,7 +7,7 @@ module.exports = async (app, channel) => {
 
     // app.use(apiKey)
     // app.use(permission('0000'))
-    app.use('/v1/wish-list', require('./wish-list'))
+    app.use('/v1', require('./wish-list'))
 
 
 

@@ -7,8 +7,8 @@ const { wishListController } = require('../../controllers');
 const { authentication } = require('../../auth/authUtils');
 
 router.post('/addProduct', asynchandler(wishListController.addToWishList))
-router.get('/getUserWishList', asynchandler(wishListController.getUserWishList))
-router.delete('/deleteToWishListItem', asynchandler(wishListController.deleteToWishListItem))
-router.delete('/deleteToWishListByUserId', asynchandler(wishListController.deleteToWishListByUserId))
+router.post('/getUserWishList', asynchandler(wishListController.getUserWishList))
+router.post('/removeWishListItem', asynchandler(wishListController.removeWishListItem))
+router.post('/deleteToWishListByUserId', asynchandler(wishListController.deleteToWishListByUserId))
 
 module.exports = router

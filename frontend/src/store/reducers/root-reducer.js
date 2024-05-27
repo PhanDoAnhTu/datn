@@ -1,12 +1,14 @@
 import { combineReducers } from 'redux';
-import  UserReducer  from './user-reducer';
+import UserReducer from './user-reducer';
 import CartReducer from './cart-reducer';
 import ProductReducer from './product-reducer';
+import WishListReducer from './wish-list-reducer';
 
 
 const reducers = combineReducers({
     userReducer: UserReducer,
     productReducer: ProductReducer,
-   cartReducer: CartReducer,
+    cartReducer: CartReducer,
+    wishListReducer: WishListReducer
 })
 export default reducers

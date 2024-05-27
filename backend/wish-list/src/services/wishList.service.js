@@ -46,7 +46,6 @@ class WishListService {
 
 
     async deleteToWishListItem({ userId, productId }) {
-
         const query = {
             wish_list_userId: userId,
             wish_list_state: 'active'

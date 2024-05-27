@@ -2,6 +2,8 @@ export * from './user-actions';
 export * from './product-actions';
 export * from './cart-actions';
 export * from './spicial-offer-actions';
+export * from './wish-list-actions';
+
 export const Action = {
   //auth
   ERROR: "ERROR",
@@ -30,6 +32,11 @@ export const Action = {
   SPICIAL_OFFER_BY_PRODUCT: "SPICIAL_OFFER_BY_PRODUCT",
 
 
+  //
+  ADD_TO_WISH_LIST: "ADD_TO_WISHLIST",
+  REMOVE_FROM_WISH_LIST: "REMOVE_FROM_WISHLIST",
+  GET_WISHLIST: "GET_WISHLIST",
+  DELETE_WISH_LIST:"DELETE_WISH_LIST",
 
 
 
@@ -38,8 +45,6 @@ export const Action = {
 
   // LANDING_PRODUCTS: "LANDING_PRODUCTS",
   // PRODUCT_DETAILS: "PRODUCT_DETAILS",
-  // ADD_TO_WISHLIST: "ADD_TO_WISHLIST",
-  // REMOVE_FROM_WISHLIST: "REMOVE_FROM_WISHLIST",
 
 
   // ADDED_NEW_ADDRESS: "ADDED_NEW_ADDRESS",

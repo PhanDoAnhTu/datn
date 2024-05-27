@@ -5,11 +5,9 @@ import classNames from '../../../helpers/classNames';
 import { Link, useParams } from 'react-router-dom';
 import ProductList from '../../../components/frontend/ProductList';
 import { products } from '../../../test/products';
-// import { useGetProductByIdQuery } from "../../../redux/api/productApiSlice";
 import { productById, listImageByProductId, getSpecialOfferBySpuId } from '../../../store/actions';
 import { useDispatch } from 'react-redux';
 import { NumericFormat } from 'react-number-format';
-// import { setCurrentProduct } from "../../../redux/features/product/productSlice";
 
 const product = {
     to: '#',

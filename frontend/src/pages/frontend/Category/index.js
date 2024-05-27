@@ -12,7 +12,6 @@ import {
 import classNames from '../../../helpers/classNames';
 import { Link } from 'react-router-dom';
 import ProductSingle from '../../../components/frontend/ProductSingle';
-// import { products } from '../../../test/products';
 import Pagination from '../../../components/frontend/Pagination';
 import ProductSingleList from '../../../components/frontend/ProductSingleList';
 import { useDispatch, useSelector } from 'react-redux';

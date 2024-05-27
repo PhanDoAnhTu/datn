@@ -29,8 +29,6 @@ const CartReducer = (state = initialState, action) => {
                     cart: action.payload.metaData
                 }
             }
-
-
         case Action.UPDATE_FROM_CART:
             return {
                 ...state,

@@ -44,11 +44,11 @@ export const PutData = async (endPoint, options) => {
   }
 }
 
-export const DeleteData = async (endPoint) => {
+export const DeleteData = async (endPoint, options) => {
 
   try {
     setHeader();
-    const response = await api.delete(endPoint);
+    const response = await api.delete(endPoint, options);
     return response
   } catch (error) {
     return error

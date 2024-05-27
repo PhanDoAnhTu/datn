@@ -1,50 +1,90 @@
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
-export default function ProductSingleList({ product }) {
+import { useDispatch, useSelector } from "react-redux";
+import { removeFromWishList } from "../../store/actions";
+import { toast } from "react-toastify";
+
+export default function ProductSingleList({ product, reload }) {
+    const { userInfo } = useSelector((state) => state.userReducer);
+
+    const dispatch = useDispatch();
+
+    const HandleRemoveFromWishList = async ({ userId, productId }) => {
+        console.log("product wl", productId)
+        await dispatch(removeFromWishList({
+            userId: userId,
+            productId: productId
+        }))
+        reload()
+        toast.success("Đã xóa sản phẩm ra mục yêu thích!")
+    }
+
     return (
         <div
             key={product._id}
-            className="group relative flex justify-between space-x-3 px-1 py-2"
+            className="flex w-full pt-6 sm:space-x-2"
         >
-            <div className="w-36 snap-start overflow-hidden rounded-md bg-gray-200 transition-all duration-200 ease-out lg:aspect-none group-hover:opacity-75 md:w-48 lg:h-80 lg:w-56">
+            <div className="h-fit w-32 overflow-hidden rounded-md md:w-40">
                 <img
-                    src={product.imageSrc}
-                    alt={product.imageAlt}
-                    className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                    src={product.product_thumb}
+                    className="object-contain object-center"
                 />
             </div>
-            <div className="flex-1">
-                <Link
-                    to={'/test/detail/test/test'}
-                    className="max-sm:text-md line-clamp-2 overflow-hidden text-ellipsis text-wrap text-xl font-bold text-gray-700 max-sm:w-44 dark:text-white"
-                >
-                    <span aria-hidden="true" className="absolute inset-0" />
-                    {product.product_name}
-                </Link>
-                <div className="flex max-sm:flex-col sm:space-x-1">
-                    <p className="text-xl font-medium text-gray-900 max-sm:text-sm dark:text-white">
-                        {product.price}000000VND
-                    </p>
-                    <p className="text-xl font-medium text-gray-500 line-through decoration-rose-700 max-sm:text-sm dark:text-gray-300">
-                        {product.price}000000VND
-                    </p>
+            <div className="flex flex-1 text-white">
+                <div className="flex flex-1 flex-col space-y-1 overflow-hidden px-2">
+                    <div className="flex">
+                        <div className="flex-1">
+                            <h1 className="truncate text-wrap text-sm font-bold max-sm:w-36 md:text-xl">
+                                {product.product_name}
+                            </h1>
+                            <div className="text-md text-gray-300">
+                                Brand
+                            </div>
+                        </div>
+                        <div className="flex">
+                            <span className="font-bold md:text-2xl">
+                                {product.product_price}
+                            </span>
+                            <span className="text-xs font-semibold line-through md:text-lg">
+                                {product.product_price}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="text-md pt-2 text-justify ">
+                        Lorem ipsum dolor sit
+                        amet consectetur,
+                        adipisicing elit. Soluta
+                        rerum asperiores
+                        molestiae sit
+                        accusantium consectetur.
+                        Accusantium unde
+                        accusamus in. Expedita
+                        praesentium fuga
+                        voluptatibus numquam
+                        aliquid, reiciendis iste
+                        ad quisquam, dolorem
+                        aut, cumque dolor a eum
+                        assumenda? Repellendus
+                        officiis, unde a
+                        consequatur provident
+                        saepe, asperiores in ab
+                        et est voluptatum quam!
+                    </div>
+                    <div className="flex justify-end space-x-2 pt-1">
+                        <button className="border-2 px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                            Add to cart
+                        </button>
+                        {userInfo &&
+                            <button onClick={() => HandleRemoveFromWishList({ userId: userInfo._id, productId: product._id })} className="border-2 px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                                Remove
+                            </button>
+                        }
+                    </div>
                 </div>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">
-                    {product.color}
-                </p>
-                <p className="text-md mt-1 line-clamp-4 overflow-hidden text-ellipsis text-gray-500 dark:text-gray-100">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Sed, itaque deserunt! Magnam, odit. Adipisci repellat saepe
-                    sunt, delectus, eveniet quis reprehenderit quidem at ipsa
-                    natus nulla, rerum voluptates alias consectetur! Odio,
-                    incidunt facilis! Non omnis excepturi itaque molestias nisi,
-                    aspernatur eos at fugiat, exercitationem ratione nemo hic
-                    quam, officiis et. Quas officia eum repellat recusandae
-                    excepturi explicabo dolorum debitis sed corporis quod
-                    officiis odio, numquam nobis laboriosam aliquid velit! Quam
-                    nostrum voluptates nobis reiciendis ipsam!
-                </p>
             </div>
         </div>
     );
 }
+
+

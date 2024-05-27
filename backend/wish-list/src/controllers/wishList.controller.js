@@ -17,7 +17,7 @@ class CartController {
     getUserWishList = async (req, res, next) => {
         return new successResponse.SuccessResponse({
             message: "get wish list success",
-            metaData: await this.service.getUserWishList(req.query)
+            metaData: await this.service.getUserWishList(req.body)
         }).send(res)
     }
     deleteToWishListByUserId = async (req, res, next) => {
@@ -26,7 +26,7 @@ class CartController {
             metaData: await this.service.deleteToWishListByUserId(req.body)
         }).send(res)
     }
-    deleteToWishListItem = async (req, res, next) => {
+    removeWishListItem = async (req, res, next) => {
         return new successResponse.SuccessResponse({
             message: "delete to wish list item success",
             metaData: await this.service.deleteToWishListItem(req.body)

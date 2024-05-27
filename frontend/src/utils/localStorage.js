@@ -1,8 +1,8 @@
 // Add a product to a localStorage
-export const addFavoriteToLocalStorage = (product) => {
-  const favorites = getFavoritesFromLocalStorage();
-  if (!favorites.some((p) => p._id === product._id)) {
-    favorites.push(product);
+export const addFavoriteToLocalStorage = (productId) => {
+  const favorites = getFavoritesFromLocalStorage(); 
+  if (!favorites.wish_list_products.some((p_id) => p_id.toString() === productId.toString())) {
+    favorites.wish_list_products.push(productId);
     localStorage.setItem("favorites", JSON.stringify(favorites));
   }
 };
@@ -10,8 +10,8 @@ export const addFavoriteToLocalStorage = (product) => {
 // Remove  product from a localStorage
 export const removeFavoriteFromLocalStorage = (productId) => {
   const favorites = getFavoritesFromLocalStorage();
-  const updateFavorites = favorites.filter(
-    (product) => product._id !== productId
+  const updateFavorites = favorites.wish_list_products.filter(
+    (p_id) => p_id.toString() !== productId.toString()
   );
 
   localStorage.setItem("favorites", JSON.stringify(updateFavorites));
