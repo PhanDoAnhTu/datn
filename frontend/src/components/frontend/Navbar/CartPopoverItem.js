@@ -19,6 +19,8 @@ export default function CartPopoverItem({ product, update }) {
     const [selected, setSelected] = useState(null)
     const [sale_sku, setSale_sku] = useState(null);
     //
+    const [selected_sku, setSelected_sku] = useState(null)
+
     const [quantity, setQuantity] = useState(null)
 
     const productItemApi = async () => {
@@ -46,39 +48,42 @@ export default function CartPopoverItem({ product, update }) {
         if (!spicial_offer) {
             saleApi()
         }
-        spicial_offer && spicial_offer.special_offer_spu_list.filter((spu) => {
-            if (spu.product_id.toString() === product.productId.toString()) {
-                return spu.sku_list.filter((sku) => {
-                    if (sku.sku_id.toString() === product.sku_id.toString()) {
-                        setSale_sku(sku)
-                        !selected && setSelected(sku.sku_tier_idx)
-                        return
-                    }
-                })
-            }
-        })
     }, [spicial_offer])
 
     useEffect(() => {
-        spicial_offer && spicial_offer.special_offer_spu_list.filter((spu) => {
-            if (spu.product_id.toString() === product.productId.toString()) {
-                return spu.sku_list.filter((sku) => {
-                    if (sku.sku_tier_idx.toString() === selected.toString()) {
-                        setSale_sku(sku)
-                        !selected && setSelected(sku.sku_tier_idx)
-                        return
-                    }
-                })
-            }
-        })
+        selected && (
+            spicial_offer && spicial_offer.special_offer_spu_list.filter((spu) => {
+                if (spu.product_id.toString() === product.productId.toString()) {
+                    return spu.sku_list.filter((sku) => {
+                        if (sku.sku_tier_idx.toString() === selected.toString()) {
+                            setSale_sku(sku)
+                            return
+                        }
+                    })
+                }
+            })
+        )
+    }, [selected, spicial_offer])
+
+    useEffect(() => {
+        sku_option && setSelected(sku_option.sku_tier_idx)
+        console.log('sku_option', sku_option)
+
+    }, [sku_option])
+
+    useEffect(() => {
+        product_item && (
+            selected && setSelected_sku(product_item.sku_list.find((item) => item.sku_tier_idx.toString() === selected.toString()))
+        )
     }, [selected])
 
     useEffect(() => {
-        sale_sku && updateCart("updateItem", { productId: product.productId, quantity: quantity, old_quantity: quantity, sku_id: sale_sku.sku_id })
-    }, [sale_sku])
+        console.log("selected", selected)
+        console.log('sale_sku', sale_sku)
+        console.log('selected_sku', selected_sku)
+        selected_sku && updateCart("updateItem", { productId: product.productId, quantity: quantity, old_quantity: quantity, sku_id: selected_sku._id })
+    }, [selected_sku])
 
-    console.log('sku_option', sku_option)
-    console.log('sale_sku', sale_sku)
 
     const handleVariationChange = async (value, variationOrder) => {
         setSelected((s) => {
@@ -100,7 +105,6 @@ export default function CartPopoverItem({ product, update }) {
         }
     }
 
-    console.log("selected", selected)
     return (
         <li key={product.productId} className="flex py-4">
             <div className="h-28 w-28 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
@@ -240,7 +244,7 @@ export default function CartPopoverItem({ product, update }) {
                             </div> */}
                             <button className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-e-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700"
                                 onClick={() => updateCart("updateItem", {
-                                    productId: product.productId, quantity: quantity + 1, old_quantity: quantity, sku_id: sale_sku.sku_id
+                                    productId: product.productId, quantity: quantity + 1, old_quantity: quantity, sku_id: sku_option._id
                                 })}
                             >
                                 +

@@ -2,6 +2,7 @@ import {
     HeartIcon,
     MagnifyingGlassIcon,
     ShoppingBagIcon,
+    StarIcon,
 } from '@heroicons/react/20/solid';
 
 import { Link, useNavigate } from 'react-router-dom';
@@ -11,6 +12,8 @@ import { addToWishList, removeFromWishList } from '../../store/actions';
 import { toast } from 'react-toastify';
 import { addFavoriteToLocalStorage, getFavoritesFromLocalStorage, removeFavoriteFromLocalStorage } from '../../utils';
 import { useState } from 'react';
+import classNames from '../../helpers/classNames';
+const reviews = { to: '#', average: 4, totalCount: 117 };
 
 export default function ProductSingle({ product, reload }) {
 
@@ -91,6 +94,20 @@ export default function ProductSingle({ product, reload }) {
                         {product.product_name}
                     </Link>
                 </h3>
+            </div>
+            <div className="flex items-center">
+                {[0, 1, 2, 3, 4].map((rating) => (
+                    <StarIcon
+                        key={rating}
+                        className={classNames(
+                            reviews.average > rating
+                                ? 'text-xanthous-500'
+                                : 'text-gray-200',
+                            'h-5 w-5 flex-shrink-0'
+                        )}
+                        aria-hidden="true"
+                    />
+                ))}
             </div>
             <div className="flex flex-col ">
                 <p className="text-md font-medium text-gray-900 dark:text-white">

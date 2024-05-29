@@ -5,9 +5,10 @@ import classNames from '../../../helpers/classNames';
 import { Link, useParams } from 'react-router-dom';
 import ProductList from '../../../components/frontend/ProductList';
 import { products } from '../../../test/products';
-import { productById, listImageByProductId, getSpecialOfferBySpuId } from '../../../store/actions';
-import { useDispatch } from 'react-redux';
+import { productById, listImageByProductId, getSpecialOfferBySpuId, addToCart } from '../../../store/actions';
+import { useDispatch, useSelector } from 'react-redux';
 import { NumericFormat } from 'react-number-format';
+import { toast } from 'react-toastify';
 
 const product = {
     to: '#',
@@ -19,13 +20,11 @@ const product = {
 
 const reviews = { to: '#', average: 4, totalCount: 117 };
 export default function ProductDetail() {
+
     const { product_id } = useParams();
-    ///////////data
-
     const dispatch = useDispatch();
-    // const { list_product_image } = useSelector((state) => state.productReducer);
-    // const { spu_info, sku_list } = product_detail
 
+    const { userInfo } = useSelector((state) => state.userReducer);
     const [variations, setVariations] = useState([]);
     const [selectedVariation, setSelectedVariation] = useState(
         variations.length === 1 ? [0] : [0, 0]
@@ -37,8 +36,12 @@ export default function ProductDetail() {
     const [selectedImage, setSelectedImage] = useState(null);
     const [product_detail, setProductDetail] = useState(null);
     const [product_images, setProductImages] = useState(null);
+    const [selected_sku, setSelectedSku] = useState(null)
     const [spicial_offer, setSpicial_offer] = useState(null);
     const [sale_sku, setSale_sku] = useState(null);
+    const [quantity, setQuantity] = useState(1)
+
+
 
     const getProductDetail = async () => {
         const response = await dispatch(productById({ spu_id: product_id }));
@@ -55,13 +58,6 @@ export default function ProductDetail() {
         if (!product_detail) {
             getProductDetail()
         }
-        // setSale_sku(
-        //     !sale_sku && spicial_offer.special_offer_spu_list.find((item) => {
-        //         if (item.product_id.toString() === product_id.toString()) {
-        //             setSale_sku(item.sku_list[0])
-        //         }
-        //     })
-        // );
     }, [product_id, product_detail, spicial_offer]);
 
     useEffect(() => {
@@ -79,7 +75,7 @@ export default function ProductDetail() {
     }, [product_id, product_images]);
 
 
-    /////////data
+    /////////selected variation
     const handleVariationChange = (value, variationOrder) => {
         setSelectedVariation((s) => {
             const newArray = s.slice();
@@ -122,7 +118,43 @@ export default function ProductDetail() {
     };
     console.log("selectedVariation", selectedVariation);
 
+    useEffect(() => {
+        setSelectedSku(product_detail
+            ? product_detail.sku_list.find(
+                (item) => item.sku_tier_idx.toString() === selectedVariation.toString()
+            )
+            : null)
+    }, [product_detail, selectedVariation])
 
+    ////////////quantity
+    const handleDecrement = async (quantity) => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1)
+        }
+    }
+    const handleIncrement = async (quantity, stock) => {
+        if (quantity < stock) {
+            setQuantity(quantity + 1)
+
+        }
+    }
+
+    ////addtoCart
+    const handleAddToCart = async (userId, { productId, sku_id, quantity }) => {
+        if (quantity <= stock) {
+            // console.log('selected_sku', sku_id + productId + sku_id)
+            await dispatch(addToCart({
+                userId: userId,
+                product: {
+                    productId: productId,
+                    sku_id: sku_id,
+                    quantity: quantity
+                }
+            }))
+            toast.success('Đã thêm sản phẩm vào giỏ hàng!')
+
+        }
+    }
     return (
         <div className="bg-transparent pt-10 md:pt-20">
             <div className="pt-6">
@@ -254,7 +286,7 @@ export default function ProductDetail() {
                             data-size=""
                             data-share="true"
                         ></div>
-                        <form className="mt-10">
+                        <div className="mt-10">
                             {variations.map((item, index) => (
                                 <>
                                     <div className="mt-10" key={index}>
@@ -362,22 +394,49 @@ export default function ProductDetail() {
                                 </>
                             ))}
 
-                            <div className="mt-10 space-y-1">
+                            <div className=" flex flex-col mt-10 space-y-1">
                                 {stock != null ? (
                                     <span className="font-bold text-gray-900 dark:text-white">
-                                        Số lượng tồn kho: {stock}
+                                        Số lượng có sẵn: {stock}
                                     </span>
                                 ) : (
                                     ''
                                 )}
-                                <button
-                                    type="submit"
-                                    className=" flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400 focus:ring-offset-2"
-                                >
-                                    Thêm vào giỏ hàng
+                                <div className="inline-flex rounded-md shadow-sm" role="group">
+                                    <button onClick={() => handleDecrement(quantity)} className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-s-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                                        -
+                                    </button>
+
+                                    <div className=" w-10 p-4 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                                        <span>{quantity}</span>
+                                    </div>
+                                    <button onClick={() => handleIncrement(quantity, stock)} className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-e-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                                        +
+                                    </button>
+                                </div>
+                                <button className="border-2 px-3 py-2 text-slate-50 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                                    Thêm vào yêu thích
                                 </button>
+
+                                {product_detail && (
+                                    selected_sku
+                                        ?
+                                        <button
+                                            onClick={() => handleAddToCart(userInfo._id, { productId: product_detail.spu_info._id, sku_id: selected_sku._id, quantity: quantity })}
+                                            className=" flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400 focus:ring-offset-2"
+                                        >
+                                            Thêm vào giỏ hàng
+                                        </button>
+                                        :
+                                        <button
+                                            className=" flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400 focus:ring-offset-2"
+                                        >
+                                            Thêm vào giỏ hàng
+                                        </button>
+                                )
+                                }
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
                 <div className="mx-auto max-w-2xl space-y-4 px-4 pb-16 pt-10 sm:px-6 lg:max-w-7xl lg:px-8 lg:pb-24 lg:pt-16">

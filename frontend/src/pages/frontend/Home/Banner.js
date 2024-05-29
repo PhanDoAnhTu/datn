@@ -92,7 +92,7 @@ export default function Banner() {
                                     onClick={ExecuteScripta}
                                     className="bg-magenta-500 hover:bg-magenta-400 inline-block rounded-md border border-transparent px-8 py-3 text-center font-medium text-white transition duration-200 ease-out hover:-translate-y-1"
                                 >
-                                    Shop Collection
+                                    Đăng ký ngay
                                 </Link>
                             </div>
                         </div>

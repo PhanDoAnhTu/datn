@@ -5,6 +5,9 @@ import { addToWishList, removeFromWishList } from "../../store/actions";
 import { toast } from "react-toastify";
 import { addFavoriteToLocalStorage, getFavoritesFromLocalStorage, removeFavoriteFromLocalStorage } from "../../utils";
 import { useState } from "react";
+import { StarIcon } from "@heroicons/react/20/solid";
+import classNames from "../../helpers/classNames";
+const reviews = { to: '#', average: 4, totalCount: 117 };
 
 export default function ProductSingleList({ product, reload }) {
     const dispatch = useDispatch();
@@ -65,26 +68,23 @@ export default function ProductSingleList({ product, reload }) {
                             </span>
                         </div>
                     </div>
+                    <div className="flex items-center">
+                        {[0, 1, 2, 3, 4].map((rating) => (
+                            <StarIcon
+                                key={rating}
+                                className={classNames(
+                                    reviews.average > rating
+                                        ? 'text-xanthous-500'
+                                        : 'text-gray-200',
+                                    'h-5 w-5 flex-shrink-0'
+                                )}
+                                aria-hidden="true"
+                            />
+                        ))}
+                    </div>
 
                     <div className="text-md pt-2 text-justify ">
                         Lorem ipsum dolor sit
-                        amet consectetur,
-                        adipisicing elit. Soluta
-                        rerum asperiores
-                        molestiae sit
-                        accusantium consectetur.
-                        Accusantium unde
-                        accusamus in. Expedita
-                        praesentium fuga
-                        voluptatibus numquam
-                        aliquid, reiciendis iste
-                        ad quisquam, dolorem
-                        aut, cumque dolor a eum
-                        assumenda? Repellendus
-                        officiis, unde a
-                        consequatur provident
-                        saepe, asperiores in ab
-                        et est voluptatum quam!
                     </div>
                     <div className="flex justify-end space-x-2 pt-1">
                         <button className="border-2 px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
@@ -99,7 +99,7 @@ export default function ProductSingleList({ product, reload }) {
                                 Thêm vào yêu thích
                             </button>
                         ) :
-                            <button className="border-2 px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                            <button className="border-2  px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
                                 Thêm vào yêu thích
                             </button>
                         }

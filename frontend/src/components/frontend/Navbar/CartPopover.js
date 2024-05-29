@@ -10,24 +10,25 @@ import { getCart, UpdateFromCart, DeleteToCartItem } from '../../../store/action
 
 export default function CartPopover({ Button }) {
     const [open, setOpen] = useState(false);
+    const { userInfo } = useSelector((state) => state.userReducer);
 
     const { cart } = useSelector((state) => state.cartReducer);
     const dispatch = useDispatch();
     const [updateCartState, SetUpdateCartState] = useState(false)
     useEffect(() => {
         if (!cart) {
-            dispatch(getCart({ userId: "6640aa39e94a253a84a5c605" }));
+            dispatch(getCart({ userId: userInfo._id }));
         }
     }, [cart]);
 
     useEffect(() => {
-        dispatch(getCart({ userId: "6640aa39e94a253a84a5c605" }));
+        dispatch(getCart({ userId: userInfo._id }));
     }, [updateCartState]);
     const updateOrDeleteItemFromCart = async (type, data) => {
         if (type === "deleteItem") {
             const { productId } = data
             await dispatch(DeleteToCartItem({
-                userId: "6640aa39e94a253a84a5c605",
+                userId: userInfo._id,
                 productId: productId
             }))
             SetUpdateCartState(!updateCartState)
@@ -36,7 +37,7 @@ export default function CartPopover({ Button }) {
             const { productId, sku_id, quantity, old_quantity } = data
 
             await dispatch(UpdateFromCart({
-                userId: "6640aa39e94a253a84a5c605",
+                userId: userInfo._id,
                 shop_order_ids: {
                     item_products: {
                         productId: productId,
