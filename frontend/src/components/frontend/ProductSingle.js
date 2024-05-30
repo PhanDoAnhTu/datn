@@ -75,7 +75,7 @@ export default function ProductSingle({ product, reload }) {
                 <button
                     onClick={() =>
                         navigate(
-                            `/:category_slug/${product.product_slug}/${product._id}`
+                            `/san-pham/${product.product_slug}-${product._id}`
                         )
                     }
                     className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-gray-700 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-150 max-lg:hidden"

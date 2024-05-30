@@ -18,7 +18,7 @@ export const GetData = async (endPoint, options) => {
     const response = await api.get(endPoint, options);
     return response
   } catch (error) {
-    return error
+    console.error(error)
   }
 
 }
@@ -29,7 +29,7 @@ export const PostData = async (endPoint, options) => {
     const response = await api.post(endPoint, options);
     return response
   } catch (error) {
-    return error
+    console.error(error)
   }
 }
 
@@ -40,7 +40,7 @@ export const PutData = async (endPoint, options) => {
     const response = await api.put(endPoint, options);
     return response
   } catch (error) {
-    return error
+    console.error(error)
   }
 }
 
@@ -51,6 +51,6 @@ export const DeleteData = async (endPoint, options) => {
     const response = await api.delete(endPoint, options);
     return response
   } catch (error) {
-    return error
+    console.error(error)
   }
 }

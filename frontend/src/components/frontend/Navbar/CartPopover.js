@@ -26,15 +26,16 @@ export default function CartPopover({ Button }) {
     }, [updateCartState]);
     const updateOrDeleteItemFromCart = async (type, data) => {
         if (type === "deleteItem") {
-            const { productId } = data
+            const { productId, sku_id } = data
             await dispatch(DeleteToCartItem({
                 userId: userInfo._id,
-                productId: productId
+                productId: productId,
+                sku_id: sku_id
             }))
             SetUpdateCartState(!updateCartState)
         }
         if (type === "updateItem") {
-            const { productId, sku_id, quantity, old_quantity } = data
+            const { productId, sku_id, sku_id_old, quantity, old_quantity } = data
 
             await dispatch(UpdateFromCart({
                 userId: userInfo._id,
@@ -42,6 +43,7 @@ export default function CartPopover({ Button }) {
                     item_products: {
                         productId: productId,
                         sku_id: sku_id,
+                        sku_id_old: sku_id_old,
                         quantity: quantity,
                         old_quantity: old_quantity
                     }

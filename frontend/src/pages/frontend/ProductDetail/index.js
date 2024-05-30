@@ -21,9 +21,12 @@ const product = {
 const reviews = { to: '#', average: 4, totalCount: 117 };
 export default function ProductDetail() {
 
-    const { product_id } = useParams();
-    const dispatch = useDispatch();
+    const { product_slug_id } = useParams();
+    const product_id = product_slug_id.split('-').pop()
 
+
+    const dispatch = useDispatch();
+    // const [product_id, setProduct_id] = useState(null);
     const { userInfo } = useSelector((state) => state.userReducer);
     const [variations, setVariations] = useState([]);
     const [selectedVariation, setSelectedVariation] = useState(
@@ -54,12 +57,13 @@ export default function ProductDetail() {
         setProductImages(response.payload.metaData)
     }
 
+    /////////////////////////////
     useEffect(() => {
         if (!product_detail) {
             getProductDetail()
         }
     }, [product_id, product_detail, spicial_offer]);
-
+    /////////////
     useEffect(() => {
         if (product_detail) {
             setVariations(product_detail.spu_info.product_variations);
@@ -288,7 +292,7 @@ export default function ProductDetail() {
                         ></div>
                         <div className="mt-10">
                             {variations.map((item, index) => (
-                                <>
+                                <div key={index}>
                                     <div className="mt-10" key={index}>
                                         <div className="flex items-center justify-between">
                                             <h3 className="text-sm font-medium capitalize text-gray-900 dark:text-white">
@@ -391,7 +395,7 @@ export default function ProductDetail() {
                                             </div>
                                         </RadioGroup>
                                     </div>
-                                </>
+                                </div>
                             ))}
 
                             <div className=" flex flex-col mt-10 space-y-1">

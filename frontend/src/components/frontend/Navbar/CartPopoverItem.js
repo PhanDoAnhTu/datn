@@ -21,6 +21,9 @@ export default function CartPopoverItem({ product, update }) {
     //
     const [selected_sku, setSelected_sku] = useState(null)
 
+    const [selected_sku_old, setSelected_sku_old] = useState(null)
+    const [selected_old, setSelected_old] = useState(null)
+
     const [quantity, setQuantity] = useState(null)
 
     const productItemApi = async () => {
@@ -42,6 +45,11 @@ export default function CartPopoverItem({ product, update }) {
             !quantity && setQuantity(product.quantity)
         )
     }, [product, quantity])
+
+
+    // useEffect(() => {
+    //     product && setQuantity(product.quantity)
+    // }, [quantity])
 
 
     useEffect(() => {
@@ -66,9 +74,8 @@ export default function CartPopoverItem({ product, update }) {
     }, [selected, spicial_offer])
 
     useEffect(() => {
-        sku_option && setSelected(sku_option.sku_tier_idx)
+        sku_option && (setSelected(sku_option.sku_tier_idx) && setSelected_old(sku_option.sku_tier_idx))
         console.log('sku_option', sku_option)
-
     }, [sku_option])
 
     useEffect(() => {
@@ -81,26 +88,39 @@ export default function CartPopoverItem({ product, update }) {
         console.log("selected", selected)
         console.log('sale_sku', sale_sku)
         console.log('selected_sku', selected_sku)
-        selected_sku && updateCart("updateItem", { productId: product.productId, quantity: quantity, old_quantity: quantity, sku_id: selected_sku._id })
+        !selected_sku_old ? (
+            selected_sku && updateCart("updateItem", { productId: product.productId, quantity: quantity, old_quantity: quantity, sku_id: selected_sku._id, sku_id_old: selected_sku._id })
+        ) : (
+            selected_sku && updateCart("updateItem", { productId: product.productId, quantity: quantity, old_quantity: quantity, sku_id: selected_sku._id, sku_id_old: selected_sku_old._id })
+        )
     }, [selected_sku])
-
 
     const handleVariationChange = async (value, variationOrder) => {
         setSelected((s) => {
+            console.log(s)
+            setSelected_old(s)
             const newArray = s.slice();
             newArray[variationOrder] = value;
             return newArray
         })
     }
+    useEffect(() => {
+        selected_old && setSelected_sku_old(product_item.sku_list.find((item) => item.sku_tier_idx.toString() === selected_old.toString()))
+        console.log(selected_sku_old)
+    }, [selected_old])
 
     const updateCart = async (type, data) => {
 
         if (type == "updateItem") {
-            const { productId, quantity, old_quantity, sku_id } = data
-            setQuantity(quantity)
-            await update(type, {
-                productId: productId, quantity: quantity, old_quantity: old_quantity, sku_id: sku_id
-            })
+            const { productId, quantity, old_quantity, sku_id, sku_id_old } = data
+            console.log(productId, quantity, old_quantity, sku_id, sku_id_old)
+            if (quantity >= 1) {
+                setQuantity(quantity)
+                await update(type, {
+                    productId: productId, quantity: quantity, old_quantity: old_quantity, sku_id: sku_id, sku_id_old: sku_id_old
+                })
+            }
+
 
         }
     }
@@ -146,13 +166,12 @@ export default function CartPopoverItem({ product, update }) {
                             </p>
                         </div>
                     </div>
-                    <p className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
+                    <div className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
                         {product_item && product_item.spu_info?.product_variations?.map((variation, index) => {
                             return (
-                                <>
-                                    {/* {sku_option && <ProductOption variation={variation} key={index} sku_tier_idx={sku_option.sku_tier_idx[index]} changeSku={setSelectedSKU} />} */}
+                                <div key={index}>
                                     {sku_option && (
-                                        <Listbox value={selected && selected[index]} onChange={(e) => handleVariationChange(e, index)} key={index}>
+                                        <Listbox value={selected && selected[index]} onChange={(e) => handleVariationChange(e, index)} key={index} >
                                             {({ open }) => (
                                                 <>
                                                     <Listbox.Label className="block text-sm font-medium leading-5 text-white-900">{variation && variation.name}</Listbox.Label>
@@ -217,44 +236,48 @@ export default function CartPopoverItem({ product, update }) {
                                         </Listbox>
                                     )}
 
-                                </>
+                                </div>
                             )
                         })}
-                    </p>
+                    </div>
                     {/* <p className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
                     aaa
                     </p> */}
                 </div>
                 <div className="flex flex-1 items-end justify-between text-sm mt-3">
-                    <p className="text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
+                    <div className="text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
                         Số lượng
                         <div className="inline-flex rounded-md shadow-sm w-1/2" role="group">
-                            <button className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-s-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                            <button onClick={() => updateCart("updateItem", {
+                                productId: product.productId, quantity: quantity - 1, old_quantity: quantity, sku_id: sku_option._id, sku_id_old: selected_sku_old ? selected_sku_old._id : sku_option._id
+                            })}
+                                className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-s-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
                                 -
                             </button>
-                            <input
+                            {/* <input
                                 type="text"
                                 value={quantity && quantity}
+                                defaultValue={quantity && quantity}
                                 name="quantity"
                                 id="quantity"
                                 className="block w-full border-0  text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
-                            />
-                            {/* <div type="number" className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                            /> */}
+                            <div type="number" className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
                                 {quantity && quantity}
-                            </div> */}
+                            </div>
                             <button className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-e-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700"
                                 onClick={() => updateCart("updateItem", {
-                                    productId: product.productId, quantity: quantity + 1, old_quantity: quantity, sku_id: sku_option._id
+                                    productId: product.productId, quantity: quantity + 1, old_quantity: quantity, sku_id: sku_option._id, sku_id_old: selected_sku_old ? selected_sku_old._id : sku_option._id
                                 })}
                             >
                                 +
                             </button>
                         </div>
-                    </p>
+                    </div>
 
                     <div className="flex">
                         <button
-                            onClick={() => update("deleteItem", { productId: product.productId })}
+                            onClick={() => update("deleteItem", { productId: product.productId, sku_id: sku_option._id })}
                             className="text-magenta-600 hover:text-magenta-500 font-medium"
                         >
                             Xóa
@@ -263,6 +286,6 @@ export default function CartPopoverItem({ product, update }) {
 
                 </div>
             </div>
-        </li>
+        </li >
     );
 }

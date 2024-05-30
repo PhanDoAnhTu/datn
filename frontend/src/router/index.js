@@ -43,7 +43,7 @@ const router = createBrowserRouter(
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/category/:gender/:test" element={<Category />} />
-            <Route path="/:category_slug/:product_slug?/:product_id?" element={<ProductDetail />} />
+            <Route path="/san-pham/:product_slug_id?" element={<ProductDetail />} />
             <Route path="/news/:page" element={<News />} />
             <Route path="/new/d/:slug" element={<NewDetail />} />
             <Route path="/contact" element={<Contact />} />

@@ -28,11 +28,28 @@ class cartService {
         const query = {
             cart_userId: userId,
             'cart_products.productId': productId,
+            'cart_products.sku_id': sku_id,
             cart_state: 'active'
         }, updateSet = {
             $inc: {
                 'cart_products.$.quantity': quantity
-            },
+            }
+        }, options = {
+            upsert: true,
+            new: true
+        }
+
+        return await CartModel.findOneAndUpdate(query, updateSet, options)
+    }
+    async updateUserCartSku({ userId, product }) {
+
+        const { productId, sku_id, sku_id_old } = product
+        const query = {
+            cart_userId: userId,
+            'cart_products.productId': productId,
+            'cart_products.sku_id': sku_id_old,
+            cart_state: 'active'
+        }, updateSet = {
             $set: {
                 'cart_products.$.sku_id': sku_id
             }
@@ -62,13 +79,19 @@ class cartService {
             userCart.cart_products = [...userCart.cart_products, product]
             return await userCart.save()
         }
-
+        let hasSkuId = await userCart.cart_products.find((pro) => {
+            return pro.sku_id === product.sku_id
+        })
+        if (hasProduct && !hasSkuId) {
+            userCart.cart_products = [...userCart.cart_products, product]
+            return await userCart.save()
+        }
         return await this.updateUserCartQuantity({ userId, product })
     }
 
     async addToCartV2({ userId, shop_order_ids = {} }) {
-        const { productId, sku_id, quantity, old_quantity } = shop_order_ids?.item_products
-
+        const { productId, sku_id, quantity, old_quantity, sku_id_old } = shop_order_ids?.item_products
+        console.log(sku_id, sku_id_old, quantity, old_quantity)
         // const foundProduct = await RPCRequest("SPU_RPC", {
         //     type: "CHECK_PRODUCT_BY_ID",
         //     data: {
@@ -77,30 +100,60 @@ class cartService {
         // })
         // console.log("foundProduct", foundProduct)
         // if (!foundProduct) throw new errorResponse.NotFoundRequestError('product do not belong to the shop')
-
         if (quantity === 0) {
 
         }
-
-        return await this.updateUserCartQuantity({
-            userId,
-            product: {
-                productId,
-                quantity: quantity - old_quantity,
-                sku_id
-            },
-
+        const userCart = await CartModel.findOne({ cart_userId: userId })
+        if (!userCart) {
+            return null
+        }
+        if (quantity != old_quantity && sku_id.toString() === sku_id_old.toString()) {
+            return await this.updateUserCartQuantity({
+                userId,
+                product: {
+                    productId,
+                    quantity: quantity - old_quantity,
+                    sku_id
+                }
+            })
+        }
+        let hasSkuId = await userCart.cart_products.find((pro) => {
+            return pro.sku_id === sku_id
         })
+
+        if (hasSkuId && sku_id.toString() !== sku_id_old.toString()) {
+            this.deleteToCartItem({ userId: userId, productId: productId, sku_id: sku_id_old })
+            return await this.updateUserCartQuantity({
+                userId,
+                product: {
+                    productId,
+                    quantity: quantity,
+                    sku_id: hasSkuId.sku_id
+                }
+            })
+            // console.log(hasSkuId)
+        }
+        if (sku_id.toString() != sku_id_old.toString() && quantity == old_quantity) {
+            return await this.updateUserCartSku({
+                userId,
+                product: {
+                    productId,
+                    sku_id,
+                    sku_id_old
+                }
+            })
+        }
+        return userCart
     }
 
-    async deleteToCartItem({ userId, productId }) {
+    async deleteToCartItem({ userId, productId, sku_id }) {
 
         const query = {
             cart_userId: userId,
             cart_state: 'active'
         }, updateSet = {
             $pull: {
-                cart_products: { productId }
+                cart_products: { sku_id }
             }
         }
 
@@ -110,6 +163,11 @@ class cartService {
     async getUserCart({ userId, cart_state = 'active' }) {
         return await CartModel.findOne({
             cart_userId: userId, cart_state: cart_state
+        }).lean()
+    }
+    async findProductIncartBySkuId({ userId, cart_state = 'active', productId, sku_id }) {
+        return await CartModel.findOne({
+            cart_userId: userId, cart_state: cart_state, 'cart_products.productId': productId, 'cart_products.sku_id': sku_id
         }).lean()
     }
     async getCartById({ CartId, cart_state = 'active' }) {

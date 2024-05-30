@@ -103,11 +103,6 @@ export default function ProductSingleList({ product, reload }) {
                                 Thêm vào yêu thích
                             </button>
                         }
-                        {/* {userInfo &&
-                            <button onClick={() => HandleRemoveFromWishList({ userId: userInfo._id, productId: product._id })} className="border-2 px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
-                                Remove
-                            </button>
-                        } */}
                     </div>
                 </div>
             </div>
