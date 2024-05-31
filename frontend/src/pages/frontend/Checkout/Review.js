@@ -13,19 +13,21 @@ export default function Review({ step, setStep, information, paymentMethod }) {
         alert('successfully');
     };
     return (
-        <div className="w-screen flex-shrink-0 px-4 max-sm:px-1 md:px-32">
+        <div
+            className={`w-screen flex-shrink-0 px-4 md:px-32 ${step === 3 ? '' : 'hidden'}`}
+        >
             <button
                 onClick={() => setStep(step - 1)}
                 className="mb-6 flex items-center"
             >
                 <ChevronLeftIcon className="h-6 w-6 text-white" />
-                <span className="text-lg font-bold text-white">Back</span>
+                <span className="text-lg font-bold text-white">Quay lại</span>
             </button>
-            <div className="mdgap-16 grid xl:grid-cols-2">
+            <div className="grid md:gap-16">
                 <div>
                     <div className="h-fit bg-zinc-900/100 p-10">
                         <h1 className="text-lg font-bold text-white">
-                            Shipping information
+                            Thông tin giao hàng
                         </h1>
                         <div className="space-y-4 pt-4">
                             <div className="flex flex-col">
@@ -45,7 +47,7 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                             <div className="flex max-sm:flex-col max-sm:space-y-3 sm:space-x-3">
                                 <div className="flex flex-col sm:w-1/2">
                                     <span className="text-sm text-white">
-                                        Full name
+                                        Tên người nhận
                                     </span>
                                     <input
                                         type="text"
@@ -59,7 +61,7 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                 </div>
                                 <div className="flex flex-col sm:w-1/2">
                                     <span className="text-sm text-white">
-                                        Phone number
+                                        Số điện thoại
                                     </span>
                                     <input
                                         type="text"
@@ -75,7 +77,7 @@ export default function Review({ step, setStep, information, paymentMethod }) {
 
                             <div className="flex flex-col">
                                 <span className="text-sm text-white">
-                                    Shipping address
+                                    Địa chỉ nhận hàng
                                 </span>
                                 <input
                                     type="text"
@@ -87,25 +89,6 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                     className="border-b-2 border-l-0 border-r-0 border-t-0 border-white bg-transparent pl-0 text-white placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0 disabled:border-zinc-400 disabled:text-zinc-400"
                                 />
                             </div>
-                        </div>
-                    </div>
-                    <div className="mt-5 h-fit bg-zinc-900/100 p-10">
-                        <div className="flex justify-between">
-                            <h1 className="text-lg font-bold text-white">
-                                Payment method
-                            </h1>
-                            {paymentMethod === 0 ? (
-                                <h1 className="text-lg font-bold text-white">
-                                    Cash on delivery
-                                </h1>
-                            ) : (
-                                <div className="flex space-x-2 text-lg text-white">
-                                    <MastercardCard className="h-8 w-8" />
-                                    <span className="text-white">
-                                        Card ending in 9276
-                                    </span>
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>
@@ -150,9 +133,26 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                         </div>
                         <div className="mt-6 flex py-4">
                             <div className="flex flex-1 flex-col">
+                                <div className="flex justify-end space-x-5">
+                                    <h1 className="text-md font-bold text-white">
+                                        Phương thức thanh toán:
+                                    </h1>
+                                    {paymentMethod === 'COD' ? (
+                                        <h1 className="text-md font-bold text-white">
+                                            Thanh toán khi nhận hàng
+                                        </h1>
+                                    ) : (
+                                        <div className="text-md flex space-x-2 text-white">
+                                            <MastercardCard className="h-8 w-8" />
+                                            <span className="text-white">
+                                                Thẻ kết thúc bằng 9276
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
                                 <div>
                                     <div className="flex justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                        <h3>Subtotal</h3>
+                                        <h3>Tạm tính</h3>
                                         <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                             $122.00
                                         </p>
@@ -160,13 +160,13 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                 </div>
                                 <div className="border-t-2">
                                     <div className="flex justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                        <h3>Shipping</h3>
+                                        <h3>Phí giao hàng</h3>
                                         <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                             $5.00
                                         </p>
                                     </div>
                                     <div className="flex justify-between pb-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                        <h3>Discount</h3>
+                                        <h3>Giảm giá</h3>
                                         <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                             $0.00
                                         </p>
@@ -174,7 +174,7 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                 </div>
                                 <div className="border-t-2">
                                     <div className="flex  justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                        <h3>Total due</h3>
+                                        <h3>Tổng</h3>
                                         <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                             $127.00
                                         </p>
@@ -185,7 +185,7 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                     </div>
 
                     <ButtonWithBorder
-                        Title={'Place order'}
+                        Title={'Đặt hàng'}
                         HandleClick={handlePlaceOrder}
                         className={'mt-4 w-full p-2 font-bold'}
                     />

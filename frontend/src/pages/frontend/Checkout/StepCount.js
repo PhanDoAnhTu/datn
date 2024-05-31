@@ -8,7 +8,7 @@ export default function StepCount({ step }) {
                     1
                 </div>
                 <span className="text-sm font-bold text-white max-sm:text-xs">
-                    Cart & Shipping
+                    Thông tin cơ bản
                 </span>
             </div>
             <div className="flex flex-col items-center space-y-1">
@@ -18,7 +18,7 @@ export default function StepCount({ step }) {
                     2
                 </div>
                 <span className="text-sm font-bold text-white max-sm:text-xs">
-                    Payment
+                    Phương thức thanh toán
                 </span>
             </div>
             <div className="flex flex-col items-center space-y-1">
@@ -28,7 +28,7 @@ export default function StepCount({ step }) {
                     3
                 </div>
                 <span className="text-sm font-bold text-white max-sm:text-xs">
-                    Review your order
+                    Kiểm tra lại
                 </span>
             </div>
         </div>

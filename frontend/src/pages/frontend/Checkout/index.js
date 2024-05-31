@@ -47,7 +47,7 @@ export default function Checkout() {
     const [expireYear, setExpireYear] = useState('');
     const [securityCode, setSecurityCode] = useState('');
 
-    const [paymentMethod, setPaymentMethod] = useState(0);
+    const [paymentMethod, setPaymentMethod] = useState('COD');
 
     const handleNextStep = () => {
         if (
@@ -68,7 +68,7 @@ export default function Checkout() {
             <div
                 className={`flex ${step === 2 ? '-translate-x-full' : step === 3 ? '-translate-x-2full' : ''} transition duration-500 ease-out`}
             >
-                <div className="w-screen flex-shrink-0 md:px-32">
+                <div className="w-screen flex-shrink-0 px-1 md:px-32">
                     <div className="grid gap-16 sm:px-4 xl:grid-cols-2">
                         <div className="h-fit bg-zinc-900 p-10 text-white">
                             <div className="flow-root">
@@ -116,20 +116,20 @@ export default function Checkout() {
                                         <div className="flex items-center justify-between space-x-2 border-2 px-2 py-2 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                             <div className="relative">
                                                 <button className="block border-2 px-2 py-2 text-xs shadow-md transition duration-500 ease-out hover:-translate-y-0.5 hover:border-magenta-500 hover:bg-magenta-500">
-                                                    Change
+                                                    Áp dụng
                                                 </button>
                                             </div>
 
                                             <input
                                                 type="text"
                                                 className="flex-1 border-0 bg-transparent pl-0 text-center uppercase placeholder:text-zinc-300 focus:placeholder-transparent focus:ring-0"
-                                                placeholder="Discount code"
+                                                placeholder="Mã giảm giá"
                                             />
                                         </div>
                                     </div>
                                     <div>
                                         <div className="flex justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                            <h3>Subtotal</h3>
+                                            <h3>Tạm tính</h3>
                                             <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                 $122.00
                                             </p>
@@ -137,13 +137,7 @@ export default function Checkout() {
                                     </div>
                                     <div className="border-t-2">
                                         <div className="flex justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                            <h3>Shipping</h3>
-                                            <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                $5.00
-                                            </p>
-                                        </div>
-                                        <div className="flex justify-between pb-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                            <h3>Discount</h3>
+                                            <h3>Giảm giá</h3>
                                             <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                 $0.00
                                             </p>
@@ -151,7 +145,7 @@ export default function Checkout() {
                                     </div>
                                     <div className="border-t-2">
                                         <div className="flex  justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                            <h3>Total due</h3>
+                                            <h3>Tổng</h3>
                                             <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                 $127.00
                                             </p>
@@ -164,7 +158,7 @@ export default function Checkout() {
                             <div className="h-fit bg-zinc-900/100 p-10">
                                 <div className="flex space-x-4">
                                     <h1 className="text-lg font-bold text-white">
-                                        Shipping information
+                                        Thông tin giao hàng
                                     </h1>
                                     <button className="bg-white px-2 py-2 text-xs font-bold text-black transition duration-500 ease-out hover:bg-magenta-500 hover:text-white">
                                         Change
@@ -190,7 +184,7 @@ export default function Checkout() {
                                     <div className="flex max-sm:flex-col max-sm:space-y-3 sm:space-x-3">
                                         <div className="flex flex-col sm:w-1/2">
                                             <span className="text-sm text-white">
-                                                Full name
+                                                Tên người nhận
                                             </span>
                                             <input
                                                 type="text"
@@ -206,7 +200,7 @@ export default function Checkout() {
                                         </div>
                                         <div className="flex flex-col sm:w-1/2">
                                             <span className="text-sm text-white">
-                                                Phone number
+                                                Số điện thoại
                                             </span>
                                             <input
                                                 type="text"
@@ -226,7 +220,7 @@ export default function Checkout() {
 
                                     <div className="flex flex-col">
                                         <span className="text-sm text-white">
-                                            Shipping address
+                                            Địa chỉ giao hàng
                                         </span>
                                         <input
                                             type="text"
@@ -246,7 +240,7 @@ export default function Checkout() {
                                 <ButtonWithBorder
                                     HandleClick={handleNextStep}
                                     className={'w-full py-2 font-bold'}
-                                    Title={'Next step'}
+                                    Title={'Tiếp theo'}
                                 />
                             </div>
                         </div>

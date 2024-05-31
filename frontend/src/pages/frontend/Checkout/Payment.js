@@ -38,27 +38,17 @@ export default function Payment({
         setSecurityCode(payments.find((i) => i.id === e).cvv);
     };
     const handleNextStep = () => {
-        if (
-            cardNumber === '' ||
-            nameOnCard === '' ||
-            expireMonth === '' ||
-            expireYear === '' ||
-            securityCode === ''
-        ) {
-            alert('khong dc trong');
-            return;
-        }
         setStep(step + 1);
     };
 
     return (
-        <div className="w-screen flex-shrink-0 px-4 max-sm:px-1 md:px-32">
+        <div className={`w-screen flex-shrink-0 px-4 md:px-32`}>
             <button
                 onClick={() => setStep(step - 1)}
                 className="mb-6 flex items-center"
             >
                 <ChevronLeftIcon className="h-6 w-6 text-white" />
-                <span className="text-lg font-bold text-white">Back</span>
+                <span className="text-lg font-bold text-white">Quay lại</span>
             </button>
             <div className="grid gap-16 xl:grid-cols-2">
                 <div>
@@ -138,34 +128,36 @@ export default function Payment({
                             <div>
                                 <div
                                     className="flex cursor-pointer justify-between text-white"
-                                    onClick={() => setPaymentMethod(0)}
+                                    onClick={() => setPaymentMethod('COD')}
                                 >
                                     <span className="pointer-events-none">
-                                        Cash on delivery
+                                        Thanh toán khi nhận hàng
                                     </span>
                                     <input
                                         type="checkbox"
                                         className="pointer-events-none rounded-full border-0 focus:ring-0"
-                                        checked={paymentMethod === 0}
+                                        checked={paymentMethod === 'COD'}
                                     />
                                 </div>
                             </div>
                             <div>
                                 <div
                                     className="flex cursor-pointer justify-between text-white"
-                                    onClick={() => setPaymentMethod(1)}
+                                    onClick={() =>
+                                        setPaymentMethod('CREDITCARD')
+                                    }
                                 >
                                     <span className="pointer-events-none">
-                                        Credit card
+                                        Thanh toán bằng Visa/Mastercard
                                     </span>
                                     <input
                                         type="checkbox"
                                         className="pointer-events-none rounded-full border-0 focus:ring-0"
-                                        checked={paymentMethod === 1}
+                                        checked={paymentMethod === 'CREDITCARD'}
                                     />
                                 </div>
                                 <div
-                                    className={`${paymentMethod === 1 ? 'block' : 'hidden'} mt-2 border-t-2 pt-2`}
+                                    className={`${paymentMethod === 'CREDITCARD' ? 'block' : 'hidden'} mt-2 border-t-2 pt-2`}
                                 >
                                     <div
                                         className={`mb-4 border-x-0 border-b-2 border-t-0 transition duration-500 ease-out dark:border-white`}
@@ -393,10 +385,25 @@ export default function Payment({
                                     </div>
                                 </div>
                             </div>
+                            <div>
+                                <div
+                                    className="flex cursor-pointer justify-between text-white"
+                                    onClick={() => setPaymentMethod('MOMO')}
+                                >
+                                    <span className="pointer-events-none">
+                                        Thanh toán qua MoMo
+                                    </span>
+                                    <input
+                                        type="checkbox"
+                                        className="pointer-events-none rounded-full border-0 focus:ring-0"
+                                        checked={paymentMethod === 'MOMO'}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <ButtonWithBorder
-                        Title={'Next'}
+                        Title={'Tiếp theo'}
                         HandleClick={handleNextStep}
                         className={'mt-4 w-full p-2 font-bold'}
                     />
