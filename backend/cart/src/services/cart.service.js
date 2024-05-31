@@ -27,7 +27,7 @@ class cartService {
         const { productId, quantity, sku_id } = product
         const query = {
             cart_userId: userId,
-            'cart_products.productId': productId,
+            // 'cart_products.productId': productId,
             'cart_products.sku_id': sku_id,
             cart_state: 'active'
         }, updateSet = {
@@ -70,6 +70,7 @@ class cartService {
 
         if (!userCart.cart_products.length) {
             userCart.cart_products = [product]
+            userCart.cart_count_product = userCart.cart_count_product + 1
             return await userCart.save()
         }
         let hasProduct = await userCart.cart_products.find((pro) => {
@@ -77,6 +78,7 @@ class cartService {
         })
         if (!hasProduct) {
             userCart.cart_products = [...userCart.cart_products, product]
+            userCart.cart_count_product = userCart.cart_count_product + 1
             return await userCart.save()
         }
         let hasSkuId = await userCart.cart_products.find((pro) => {
@@ -84,6 +86,7 @@ class cartService {
         })
         if (hasProduct && !hasSkuId) {
             userCart.cart_products = [...userCart.cart_products, product]
+            userCart.cart_count_product = userCart.cart_count_product + 1
             return await userCart.save()
         }
         return await this.updateUserCartQuantity({ userId, product })
@@ -103,11 +106,8 @@ class cartService {
         if (quantity === 0) {
 
         }
-        const userCart = await CartModel.findOne({ cart_userId: userId })
-        if (!userCart) {
-            return null
-        }
-        if (quantity != old_quantity && sku_id.toString() === sku_id_old.toString()) {
+        if (quantity != old_quantity && sku_id == sku_id_old) {
+            console.log("aa", quantity - old_quantity)
             return await this.updateUserCartQuantity({
                 userId,
                 product: {
@@ -117,11 +117,14 @@ class cartService {
                 }
             })
         }
+        const userCart = await CartModel.findOne({ cart_userId: userId })
+        if (!userCart) {
+            return null
+        }
         let hasSkuId = await userCart.cart_products.find((pro) => {
             return pro.sku_id === sku_id
         })
-
-        if (hasSkuId && sku_id.toString() !== sku_id_old.toString()) {
+        if (hasSkuId && sku_id != sku_id_old) {
             this.deleteToCartItem({ userId: userId, productId: productId, sku_id: sku_id_old })
             return await this.updateUserCartQuantity({
                 userId,
@@ -133,7 +136,7 @@ class cartService {
             })
             // console.log(hasSkuId)
         }
-        if (sku_id.toString() != sku_id_old.toString() && quantity == old_quantity) {
+        if (sku_id != sku_id_old && quantity == old_quantity) {
             return await this.updateUserCartSku({
                 userId,
                 product: {
@@ -143,21 +146,30 @@ class cartService {
                 }
             })
         }
-        return userCart
+        if (sku_id == sku_id_old && quantity == old_quantity) {
+            return userCart
+
+        }
+        return null
     }
 
     async deleteToCartItem({ userId, productId, sku_id }) {
-
         const query = {
             cart_userId: userId,
-            cart_state: 'active'
+            cart_state: 'active',
         }, updateSet = {
             $pull: {
                 cart_products: { sku_id }
+            },
+            $inc: {
+                cart_count_product: -1
             }
-        }
 
-        return await CartModel.updateOne(query, updateSet)
+        }, options = {
+            upsert: true,
+            new: true
+        }
+        return await CartModel.findOneAndUpdate(query, updateSet, options)
     }
 
     async getUserCart({ userId, cart_state = 'active' }) {

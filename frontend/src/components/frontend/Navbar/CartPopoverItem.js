@@ -11,26 +11,26 @@ function classNames(...classes) {
 }
 export default function CartPopoverItem({ product, update }) {
     const dispatch = useDispatch();
-
+    console.log('product', product)
     const [product_item, setProductItem] = useState(null)
-    const [sku_option, setSku_option] = useState(null)
+    const [sku_default, setSku_default] = useState(null)
+    const [selected, setSelected] = useState(null)
+    const [selected_sku, setSelected_sku] = useState(null)
     //sale
     const [spicial_offer, setSpicial_offer] = useState(null);
-    const [selected, setSelected] = useState(null)
-    const [sale_sku, setSale_sku] = useState(null);
-    //
-    const [selected_sku, setSelected_sku] = useState(null)
+    const [sku_sale, setSku_sale] = useState(null);
 
+    //
     const [selected_sku_old, setSelected_sku_old] = useState(null)
     const [selected_old, setSelected_old] = useState(null)
 
-    const [quantity, setQuantity] = useState(null)
+    const [_quantity, setQuantity] = useState(null)
 
     const productItemApi = async () => {
         const respon = await dispatch(productById({ spu_id: product.productId }))
         console.log('respon', respon)
-        setProductItem(respon.payload.metaData)
-        setSku_option(respon && respon.payload.metaData.sku_list.find((item) => item._id.toString() === product.sku_id.toString()))
+        setProductItem(respon && respon.payload.metaData)
+        setSku_default(respon && respon.payload.metaData.sku_list.find((item) => item._id.toString() === product.sku_id.toString()))
     }
     const saleApi = async () => {
         const fetch_spicial_offer = await dispatch(getSpecialOfferBySpuId({ spu_id: product.productId }))
@@ -38,33 +38,24 @@ export default function CartPopoverItem({ product, update }) {
     }
 
     useEffect(() => {
-        if (!product_item) {
-            productItemApi()
-        }
         product && (
-            !quantity && setQuantity(product.quantity)
+            productItemApi()
         )
-    }, [product, quantity])
+        !product_item && productItemApi()
+        !_quantity && setQuantity(product.quantity)
+    }, [product])
 
-
-    // useEffect(() => {
-    //     product && setQuantity(product.quantity)
-    // }, [quantity])
-
-
+    // console.log('sku_default',sku_default)
     useEffect(() => {
         if (!spicial_offer) {
             saleApi()
         }
-    }, [spicial_offer])
-
-    useEffect(() => {
         selected && (
             spicial_offer && spicial_offer.special_offer_spu_list.filter((spu) => {
                 if (spu.product_id.toString() === product.productId.toString()) {
                     return spu.sku_list.filter((sku) => {
                         if (sku.sku_tier_idx.toString() === selected.toString()) {
-                            setSale_sku(sku)
+                            setSku_sale(sku)
                             return
                         }
                     })
@@ -74,9 +65,16 @@ export default function CartPopoverItem({ product, update }) {
     }, [selected, spicial_offer])
 
     useEffect(() => {
-        sku_option && (setSelected(sku_option.sku_tier_idx) && setSelected_old(sku_option.sku_tier_idx))
-        console.log('sku_option', sku_option)
-    }, [sku_option])
+        sku_default && (
+            !selected_old &&
+            setSelected_old(sku_default.sku_tier_idx)
+        )
+        sku_default && (
+            !selected &&
+            setSelected(sku_default.sku_tier_idx)
+        )
+        console.log('sku_default', sku_default)
+    }, [sku_default])
 
     useEffect(() => {
         product_item && (
@@ -86,42 +84,39 @@ export default function CartPopoverItem({ product, update }) {
 
     useEffect(() => {
         console.log("selected", selected)
-        console.log('sale_sku', sale_sku)
         console.log('selected_sku', selected_sku)
-        !selected_sku_old ? (
-            selected_sku && updateCart("updateItem", { productId: product.productId, quantity: quantity, old_quantity: quantity, sku_id: selected_sku._id, sku_id_old: selected_sku._id })
-        ) : (
-            selected_sku && updateCart("updateItem", { productId: product.productId, quantity: quantity, old_quantity: quantity, sku_id: selected_sku._id, sku_id_old: selected_sku_old._id })
+        selected_sku && (
+            selected_sku_old && updateCart("updateItem", { productId: product.productId, quantity: _quantity, old_quantity: _quantity, sku_id: selected_sku._id, sku_id_old: selected_sku_old._id })
         )
     }, [selected_sku])
 
+    useEffect(() => {
+        product_item && (
+            selected_old && setSelected_sku_old(product_item.sku_list.find((item) => item.sku_tier_idx.toString() === selected_old.toString()))
+        )
+    }, [selected_old])
+
+
+
     const handleVariationChange = async (value, variationOrder) => {
         setSelected((s) => {
-            console.log(s)
+            // console.log(s)
             setSelected_old(s)
             const newArray = s.slice();
             newArray[variationOrder] = value;
             return newArray
         })
     }
-    useEffect(() => {
-        selected_old && setSelected_sku_old(product_item.sku_list.find((item) => item.sku_tier_idx.toString() === selected_old.toString()))
-        console.log(selected_sku_old)
-    }, [selected_old])
-
     const updateCart = async (type, data) => {
-
         if (type == "updateItem") {
             const { productId, quantity, old_quantity, sku_id, sku_id_old } = data
-            console.log(productId, quantity, old_quantity, sku_id, sku_id_old)
             if (quantity >= 1) {
-                setQuantity(quantity)
+                console.log('selected_sku_old', sku_id_old)
                 await update(type, {
                     productId: productId, quantity: quantity, old_quantity: old_quantity, sku_id: sku_id, sku_id_old: sku_id_old
                 })
+                setQuantity(quantity)
             }
-
-
         }
     }
 
@@ -146,17 +141,17 @@ export default function CartPopoverItem({ product, update }) {
                         <div className="flex flex-col ">
                             <p className="text-md font-medium text-gray-900 dark:text-white">
                                 <NumericFormat
-                                    value={sale_sku ? sale_sku.price_sale : (product_item && product_item.spu_info.product_price)}
+                                    value={sku_sale ? sku_sale.price_sale : (selected_sku && selected_sku.sku_price)}
                                     displayType={'text'}
                                     thousandSeparator={true}
                                     decimalScale={0}
-                                    id="price"
+                                    id="price_sale"
                                     suffix={'đ'}
                                 />
                             </p>
                             <p className="text-sm font-medium  text-gray-400/75 line-through decoration-rose-700 ">
                                 <NumericFormat
-                                    value={sale_sku && (product_item && product_item.spu_info.product_price)}
+                                    value={sku_sale && (selected_sku && selected_sku.sku_price)}
                                     displayType={'text'}
                                     thousandSeparator={true}
                                     decimalScale={0}
@@ -170,7 +165,7 @@ export default function CartPopoverItem({ product, update }) {
                         {product_item && product_item.spu_info?.product_variations?.map((variation, index) => {
                             return (
                                 <div key={index}>
-                                    {sku_option && (
+                                    {sku_default && (
                                         <Listbox value={selected && selected[index]} onChange={(e) => handleVariationChange(e, index)} key={index} >
                                             {({ open }) => (
                                                 <>
@@ -249,7 +244,7 @@ export default function CartPopoverItem({ product, update }) {
                         Số lượng
                         <div className="inline-flex rounded-md shadow-sm w-1/2" role="group">
                             <button onClick={() => updateCart("updateItem", {
-                                productId: product.productId, quantity: quantity - 1, old_quantity: quantity, sku_id: sku_option._id, sku_id_old: selected_sku_old ? selected_sku_old._id : sku_option._id
+                                productId: product.productId, quantity: _quantity - 1, old_quantity: _quantity, sku_id: selected_sku._id, sku_id_old: selected_sku_old ? selected_sku_old._id : selected_sku._id
                             })}
                                 className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-s-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
                                 -
@@ -263,11 +258,11 @@ export default function CartPopoverItem({ product, update }) {
                                 className="block w-full border-0  text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
                             /> */}
                             <div type="number" className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
-                                {quantity && quantity}
+                                {_quantity && _quantity}
                             </div>
                             <button className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-e-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700"
                                 onClick={() => updateCart("updateItem", {
-                                    productId: product.productId, quantity: quantity + 1, old_quantity: quantity, sku_id: sku_option._id, sku_id_old: selected_sku_old ? selected_sku_old._id : sku_option._id
+                                    productId: product.productId, quantity: _quantity + 1, old_quantity: _quantity, sku_id: selected_sku._id, sku_id_old: selected_sku_old ? selected_sku_old._id : selected_sku._id
                                 })}
                             >
                                 +
@@ -277,7 +272,7 @@ export default function CartPopoverItem({ product, update }) {
 
                     <div className="flex">
                         <button
-                            onClick={() => update("deleteItem", { productId: product.productId, sku_id: sku_option._id })}
+                            onClick={() => update("deleteItem", { productId: product.productId, sku_id: selected_sku._id })}
                             className="text-magenta-600 hover:text-magenta-500 font-medium"
                         >
                             Xóa

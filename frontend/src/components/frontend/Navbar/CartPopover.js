@@ -5,25 +5,30 @@ import { Link } from 'react-router-dom';
 import CartPopoverItem from './CartPopoverItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCart, UpdateFromCart, DeleteToCartItem } from '../../../store/actions';
+// import { getCartFromLocalStorage } from '../../../utils';
 
 
 
 export default function CartPopover({ Button }) {
     const [open, setOpen] = useState(false);
     const { userInfo } = useSelector((state) => state.userReducer);
-
     const { cart } = useSelector((state) => state.cartReducer);
+
     const dispatch = useDispatch();
-    const [updateCartState, SetUpdateCartState] = useState(false)
     useEffect(() => {
         if (!cart) {
             dispatch(getCart({ userId: userInfo._id }));
         }
     }, [cart]);
 
-    useEffect(() => {
-        dispatch(getCart({ userId: userInfo._id }));
-    }, [updateCartState]);
+
+    // useEffect(() => {
+    //     cart && (
+    //         getCartFromLocalStorage().toString() !== cart.cart_products.toString() && dispatch(getCart({ userId: userInfo._id }))
+    //     )
+    // }, [cart])
+
+
     const updateOrDeleteItemFromCart = async (type, data) => {
         if (type === "deleteItem") {
             const { productId, sku_id } = data
@@ -32,11 +37,17 @@ export default function CartPopover({ Button }) {
                 productId: productId,
                 sku_id: sku_id
             }))
-            SetUpdateCartState(!updateCartState)
+            // removeCartItemFromLocalStorage(
+            //     {
+            //         productId: productId,
+            //         sku_id: sku_id
+            //     }
+            // )
         }
         if (type === "updateItem") {
             const { productId, sku_id, sku_id_old, quantity, old_quantity } = data
 
+            console.log(productId, sku_id, sku_id_old, quantity, old_quantity)
             await dispatch(UpdateFromCart({
                 userId: userInfo._id,
                 shop_order_ids: {
@@ -50,17 +61,18 @@ export default function CartPopover({ Button }) {
 
                 }
             }));
-            SetUpdateCartState(!updateCartState)
+
         }
-
-
+         await dispatch(getCart({ userId: userInfo._id }));
     }
-
-    // console.log('cart', cart)
+    const OpenCart = async () => {
+        // dispatch(getCart({ userId: userInfo._id }));
+        setOpen(true)
+    }
 
     return (
         <div className="ml-4 flow-root lg:ml-6">
-            <div className="relative" onClick={() => setOpen(true)}>
+            <div className="relative" onClick={() => OpenCart()}>
                 {Button}
             </div>
             <Transition.Root show={open} as={Fragment}>
@@ -94,7 +106,7 @@ export default function CartPopover({ Button }) {
                                             <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                                                 <div className="flex items-start justify-between">
                                                     <Dialog.Title className="text-lg font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                        Shopping cart
+                                                        Shopping cart {cart && cart.cart_products.length}
                                                     </Dialog.Title>
                                                     <div className="ml-3 flex h-7 items-center">
                                                         <button

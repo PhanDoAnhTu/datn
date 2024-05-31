@@ -5,10 +5,11 @@ import classNames from '../../../helpers/classNames';
 import { Link, useParams } from 'react-router-dom';
 import ProductList from '../../../components/frontend/ProductList';
 import { products } from '../../../test/products';
-import { productById, listImageByProductId, getSpecialOfferBySpuId, addToCart } from '../../../store/actions';
+import { productById, listImageByProductId, getSpecialOfferBySpuId, addToCart, removeFromWishList, addToWishList } from '../../../store/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { NumericFormat } from 'react-number-format';
 import { toast } from 'react-toastify';
+import {  addFavoriteToLocalStorage, getFavoritesFromLocalStorage, removeFavoriteFromLocalStorage } from '../../../utils';
 
 const product = {
     to: '#',
@@ -22,12 +23,13 @@ const reviews = { to: '#', average: 4, totalCount: 117 };
 export default function ProductDetail() {
 
     const { product_slug_id } = useParams();
-    const product_id = product_slug_id.split('-').pop()
-
-
     const dispatch = useDispatch();
-    // const [product_id, setProduct_id] = useState(null);
+
+    const product_id = product_slug_id.split('-').pop()
     const { userInfo } = useSelector((state) => state.userReducer);
+    const [favories_products, setfavoriesProduct] = useState(getFavoritesFromLocalStorage())
+
+    // const [product_id, setProduct_id] = useState(null);
     const [variations, setVariations] = useState([]);
     const [selectedVariation, setSelectedVariation] = useState(
         variations.length === 1 ? [0] : [0, 0]
@@ -156,8 +158,32 @@ export default function ProductDetail() {
                 }
             }))
             toast.success('Đã thêm sản phẩm vào giỏ hàng!')
-
+            // addCartItemToLocalStorage({
+            //     productId: productId,
+            //     sku_id: sku_id,
+            //     quantity: quantity
+            // })
         }
+    }
+    ////////////////wishList
+    const HandleAddToWishList = async ({ userId, productId }) => {
+        await dispatch(addToWishList({
+            userId: userId,
+            productId: productId
+        }))
+        await addFavoriteToLocalStorage(productId)
+        setfavoriesProduct(getFavoritesFromLocalStorage())
+        toast.success("Đã thêm sản phẩm vào mục yêu thích!")
+    }
+
+    const HandleRemoveFromWishList = async ({ userId, productId }) => {
+        await dispatch(removeFromWishList({
+            userId: userId,
+            productId: productId
+        }))
+        await removeFavoriteFromLocalStorage(productId)
+        setfavoriesProduct(getFavoritesFromLocalStorage())
+        toast.success("Đã xóa sản phẩm ra khỏi mục yêu thích!")
     }
     return (
         <div className="bg-transparent pt-10 md:pt-20">
@@ -418,9 +444,19 @@ export default function ProductDetail() {
                                         +
                                     </button>
                                 </div>
-                                <button className="border-2 px-3 py-2 text-slate-50 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
-                                    Thêm vào yêu thích
-                                </button>
+                                {userInfo ? (favories_products.some((p_id) => p_id.toString() === product_detail.spu_info._id.toString()) == true ?
+                                    <button onClick={() => HandleRemoveFromWishList({ userId: userInfo._id, productId: product_detail.spu_info._id })} className="border-2 px-3 py-2  text-slate-50 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                                        Bỏ thích
+                                    </button>
+                                    :
+                                    <button onClick={() => HandleAddToWishList({ userId: userInfo._id, productId: product_detail.spu_info._id })} className="border-2 px-3 py-2  text-slate-50 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                                        Thêm vào yêu thích
+                                    </button>
+                                ) :
+                                    <button className="border-2  px-3 py-2  text-slate-50 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                                        Thêm vào yêu thích
+                                    </button>
+                                }
 
                                 {product_detail && (
                                     selected_sku

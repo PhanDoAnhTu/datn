@@ -24,7 +24,7 @@ class CartController {
     deleteToCartItem = async (req, res, next) => {
 
         return new successResponse.SuccessResponse({
-            message: "deleted cart success",
+            message: "deleted cart item success",
             metaData: await this.service.deleteToCartItem(req.body)
         }).send(res)
     }
