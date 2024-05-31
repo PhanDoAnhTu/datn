@@ -1,8 +1,8 @@
-import CreditCardPin from '../../../assets/frontend/svg/CreditCardPin.svg?react';
-import VisaLogo from '../../../assets/frontend/svg/VisaLogo.svg?react';
-import MastercardLogo from '../../../assets/frontend/svg/MastercardLogo.svg?react';
-import MastercardCard from '../../../assets/frontend/svg/MastercardCard.svg?react';
-import VisaCard from '../../../assets/frontend/svg/VisaCard.svg?react';
+import { ReactComponent as CreditCardPin } from '../../../assets/frontend/svg/CreditCardPin.svg';
+import { ReactComponent as VisaLogo } from '../../../assets/frontend/svg/VisaLogo.svg';
+import { ReactComponent as MastercardLogo } from '../../../assets/frontend/svg/MastercardLogo.svg';
+import { ReactComponent as MastercardCard } from '../../../assets/frontend/svg/MastercardCard.svg';
+import { ReactComponent as VisaCard } from '../../../assets/frontend/svg/VisaCard.svg';
 import { Tab } from '@headlessui/react';
 import { useState } from 'react';
 import { payments } from '../../../test/payments';

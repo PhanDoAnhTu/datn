@@ -61,6 +61,7 @@ export default function Checkout() {
         }
         setStep(step + 1);
     };
+
     return (
         <div className="overflow-hidden pb-7 pt-10 md:pt-24">
             <StepCount step={step} />

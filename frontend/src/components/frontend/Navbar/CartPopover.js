@@ -4,10 +4,12 @@ import { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CartPopoverItem from './CartPopoverItem';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCart, UpdateFromCart, DeleteToCartItem } from '../../../store/actions';
+import {
+    getCart,
+    UpdateFromCart,
+    DeleteToCartItem,
+} from '../../../store/actions';
 // import { getCartFromLocalStorage } from '../../../utils';
-
-
 
 export default function CartPopover({ Button }) {
     const [open, setOpen] = useState(false);
@@ -21,22 +23,22 @@ export default function CartPopover({ Button }) {
         }
     }, [cart]);
 
-
     // useEffect(() => {
     //     cart && (
     //         getCartFromLocalStorage().toString() !== cart.cart_products.toString() && dispatch(getCart({ userId: userInfo._id }))
     //     )
     // }, [cart])
 
-
     const updateOrDeleteItemFromCart = async (type, data) => {
-        if (type === "deleteItem") {
-            const { productId, sku_id } = data
-            await dispatch(DeleteToCartItem({
-                userId: userInfo._id,
-                productId: productId,
-                sku_id: sku_id
-            }))
+        if (type === 'deleteItem') {
+            const { productId, sku_id } = data;
+            await dispatch(
+                DeleteToCartItem({
+                    userId: userInfo._id,
+                    productId: productId,
+                    sku_id: sku_id,
+                })
+            );
             // removeCartItemFromLocalStorage(
             //     {
             //         productId: productId,
@@ -44,31 +46,32 @@ export default function CartPopover({ Button }) {
             //     }
             // )
         }
-        if (type === "updateItem") {
-            const { productId, sku_id, sku_id_old, quantity, old_quantity } = data
+        if (type === 'updateItem') {
+            const { productId, sku_id, sku_id_old, quantity, old_quantity } =
+                data;
 
-            console.log(productId, sku_id, sku_id_old, quantity, old_quantity)
-            await dispatch(UpdateFromCart({
-                userId: userInfo._id,
-                shop_order_ids: {
-                    item_products: {
-                        productId: productId,
-                        sku_id: sku_id,
-                        sku_id_old: sku_id_old,
-                        quantity: quantity,
-                        old_quantity: old_quantity
-                    }
-
-                }
-            }));
-
+            console.log(productId, sku_id, sku_id_old, quantity, old_quantity);
+            await dispatch(
+                UpdateFromCart({
+                    userId: userInfo._id,
+                    shop_order_ids: {
+                        item_products: {
+                            productId: productId,
+                            sku_id: sku_id,
+                            sku_id_old: sku_id_old,
+                            quantity: quantity,
+                            old_quantity: old_quantity,
+                        },
+                    },
+                })
+            );
         }
-         await dispatch(getCart({ userId: userInfo._id }));
-    }
+        await dispatch(getCart({ userId: userInfo._id }));
+    };
     const OpenCart = async () => {
         // dispatch(getCart({ userId: userInfo._id }));
-        setOpen(true)
-    }
+        setOpen(true);
+    };
 
     return (
         <div className="ml-4 flow-root lg:ml-6">
@@ -102,11 +105,15 @@ export default function CartPopover({ Button }) {
                                     leaveTo="translate-x-full"
                                 >
                                     <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
-                                        <div className="flex h-full flex-col overflow-y-scroll bg-stone-100  shadow-xl transition-all duration-200 ease-out dark:bg-licorice-400">
+                                        <div className="flex h-full flex-col overflow-y-scroll bg-stone-100  shadow-xl transition-all duration-200 ease-out dark:bg-zinc-950">
                                             <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                                                 <div className="flex items-start justify-between">
                                                     <Dialog.Title className="text-lg font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                        Shopping cart {cart && cart.cart_products.length}
+                                                        Giỏ hàng (
+                                                        {cart &&
+                                                            cart.cart_products
+                                                                .length}
+                                                        )
                                                     </Dialog.Title>
                                                     <div className="ml-3 flex h-7 items-center">
                                                         <button
@@ -131,22 +138,25 @@ export default function CartPopover({ Button }) {
                                                 <div className="mt-8">
                                                     <div className="flow-root">
                                                         <ul className="-my-6 divide-y divide-gray-200 transition-colors duration-200 ease-out dark:divide-stone-700">
-                                                            {cart && cart.cart_products.map(
-                                                                (
-                                                                    product,
-                                                                    index
-                                                                ) => (
-                                                                    <CartPopoverItem
-                                                                        product={
-                                                                            product
-                                                                        }
-                                                                        key={
-                                                                            index
-                                                                        }
-                                                                        update={updateOrDeleteItemFromCart}
-                                                                    />
-                                                                )
-                                                            )}
+                                                            {cart &&
+                                                                cart.cart_products.map(
+                                                                    (
+                                                                        product,
+                                                                        index
+                                                                    ) => (
+                                                                        <CartPopoverItem
+                                                                            product={
+                                                                                product
+                                                                            }
+                                                                            key={
+                                                                                index
+                                                                            }
+                                                                            update={
+                                                                                updateOrDeleteItemFromCart
+                                                                            }
+                                                                        />
+                                                                    )
+                                                                )}
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -154,12 +164,12 @@ export default function CartPopover({ Button }) {
 
                                             <div className="border-t border-gray-200 px-4 py-6 sm:px-6 dark:border-stone-700">
                                                 <div className="flex justify-between text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                    <p>Subtotal</p>
+                                                    <p>Tạm tính</p>
                                                     <p>$262.00</p>
                                                 </div>
                                                 <p className="mt-0.5 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
-                                                    Shipping and taxes
-                                                    calculated at checkout.
+                                                    Phí ship sẽ được tính lúc
+                                                    thanh toán.
                                                 </p>
                                                 <div className="mt-6">
                                                     <Link
@@ -169,12 +179,12 @@ export default function CartPopover({ Button }) {
                                                         }
                                                         className="flex items-center justify-center rounded-md border border-transparent bg-magenta-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-magenta-700"
                                                     >
-                                                        Checkout
+                                                        Thanh toán
                                                     </Link>
                                                 </div>
                                                 <div className="mt-6 flex justify-center text-center text-sm text-gray-500 dark:text-gray-300">
                                                     <p>
-                                                        or{' '}
+                                                        hoặc{' '}
                                                         <button
                                                             type="button"
                                                             className="font-medium text-magenta-600 hover:text-magenta-500"
@@ -182,7 +192,7 @@ export default function CartPopover({ Button }) {
                                                                 setOpen(false)
                                                             }
                                                         >
-                                                            Continue Shopping
+                                                            Tiếp tục mua sắm
                                                             <span aria-hidden="true">
                                                                 {' '}
                                                                 &rarr;

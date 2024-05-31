@@ -1,5 +1,5 @@
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
-import MastercardCard from '../../../assets/frontend/svg/MastercardCard.svg?react';
+import { ReactComponent as MastercardCard } from '../../../assets/frontend/svg/MastercardCard.svg';
 import ButtonWithBorder from '../../../components/frontend/ButtonWithBorder';
 import { products } from '../../../test/products';
 import { Link } from 'react-router-dom';

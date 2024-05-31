@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react';
-import MastercardCard from '../../../assets/frontend/svg/MastercardCard.svg?react';
-import VisaCard from '../../../assets/frontend/svg/VisaCard.svg?react';
+import { ReactComponent as MastercardCard } from '../../../assets/frontend/svg/MastercardCard.svg';
+import { ReactComponent as VisaCard } from '../../../assets/frontend/svg/VisaCard.svg';
 import {
     ChevronLeftIcon,
     ChevronUpIcon,

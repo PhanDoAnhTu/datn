@@ -258,12 +258,6 @@ export default function PCNavbar({ navigation, setOpen }) {
                                     {page.name}
                                 </Link>
                             ))}
-                            <Link
-                                to={'#'}
-                                className="flex items-center text-sm font-medium text-gray-700 transition-colors duration-200 ease-out hover:text-gray-800 dark:text-gray-100 dark:hover:text-magenta-500"
-                            >
-                                Admin
-                            </Link>
                         </div>
                     </Popover.Group>
 
