@@ -7,11 +7,12 @@ import { addFavoriteToLocalStorage, getFavoritesFromLocalStorage, removeFavorite
 import { useState } from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import classNames from "../../helpers/classNames";
+import { useNavigate } from "react-router";
 const reviews = { to: '#', average: 4, totalCount: 117 };
 
 export default function ProductSingleList({ product, reload }) {
     const dispatch = useDispatch();
-
+    const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.userReducer);
     const [favories_products, setfavoriesProduct] = useState(getFavoritesFromLocalStorage())
 
@@ -42,7 +43,11 @@ export default function ProductSingleList({ product, reload }) {
             key={product._id}
             className="flex w-full pt-6 sm:space-x-2"
         >
-            <div className="h-fit w-32 overflow-hidden rounded-md md:w-40">
+            <div className="h-fit w-32 overflow-hidden rounded-md md:w-40" onClick={() =>
+                navigate(
+                    `/san-pham/${product.product_slug}-${product._id}`
+                )
+            }>
                 <img
                     src={product.product_thumb}
                     className="object-contain object-center"
@@ -90,7 +95,7 @@ export default function ProductSingleList({ product, reload }) {
                         <button className="border-2 px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
                             Add to cart
                         </button>
-                        {userInfo ? (favories_products.some((p_id) => p_id.toString() === product._id.toString()) == true ?
+                        {userInfo ? (favories_products.some((p_id) => p_id === product._id) == true ?
                             <button onClick={() => HandleRemoveFromWishList({ userId: userInfo._id, productId: product._id })} className="border-2 px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
                                 Bỏ thích
                             </button>

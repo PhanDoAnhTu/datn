@@ -21,7 +21,7 @@ export default function ProductSingle({ product, reload }) {
     const dispatch = useDispatch();
 
     const { userInfo } = useSelector((state) => state.userReducer);
-    const [favories_products, setfavoriesProduct] = useState(getFavoritesFromLocalStorage())
+    const [favories_products, setfavoriesProduct] = useState(getFavoritesFromLocalStorage)
 
 
     const HandleAddToWishList = async ({ userId, productId }) => {
@@ -59,18 +59,25 @@ export default function ProductSingle({ product, reload }) {
                 <button className="group-hover:delay-50 z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-xanthous-500 group-hover:-translate-y-10 group-hover:opacity-100">
                     <ShoppingBagIcon className="h-6 w-6" />
                 </button>
-                {userInfo ? (favories_products.some((p_id) => p_id.toString() === product._id.toString()) == true ?
-                    <button onClick={() => HandleRemoveFromWishList({ userId: userInfo._id, productId: product._id })} className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-red-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 ">
-                        <HeartIcon className="h-6 w-6" />
-                    </button>
-                    :
-                    <button onClick={() => HandleAddToWishList({ userId: userInfo._id, productId: product._id })} className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-red-500 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 ">
-                        <HeartIcon className="h-6 w-6" />
-                    </button>
-                ) :
-                    <button className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-red-500 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 ">
-                        <HeartIcon className="h-6 w-6" />
-                    </button>
+                {product && (
+                    userInfo
+                        ? (
+                            favories_products.some((p_id) => p_id === product._id) == true
+                                ?
+                                <button onClick={() => HandleRemoveFromWishList({ userId: userInfo._id, productId: product._id })} className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-red-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 ">
+                                    <HeartIcon className="h-6 w-6" />
+                                </button>
+                                :
+                                <button onClick={() => HandleAddToWishList({ userId: userInfo._id, productId: product._id })} className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-red-500 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 ">
+                                    <HeartIcon className="h-6 w-6" />
+                                </button>
+                        )
+                        :
+                        (<button className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-red-500 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 ">
+                            <HeartIcon className="h-6 w-6" />
+                        </button>)
+                )
+
                 }
                 <button
                     onClick={() =>

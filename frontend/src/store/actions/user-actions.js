@@ -20,7 +20,7 @@ export const onSignup = ({ customer_email, customer_password, customer_name }) =
 
   } catch (err) {
     console.log(err)
-    return err.response.data
+    // return err.response.data
 
   }
 
@@ -41,7 +41,7 @@ export const onLogin = ({ customer_email, customer_password }) => async (dispatc
 
   } catch (err) {
     console.error(err);
-    return err.response.data
+    // return err.response.data
   }
 };
 
@@ -59,7 +59,7 @@ export const onLoginWithFacebook = ({ userId, provider }) => async (dispatch) =>
 
   } catch (err) {
     console.log(err)
-    return err.response.data
+    // return err.response.data
 
   }
 };
@@ -77,7 +77,7 @@ export const onLoginWithGoogle = ({ userId, provider }) => async (dispatch) => {
 
   } catch (err) {
     console.log(err)
-    return err.response.data
+    // return err.response.data
 
   }
 };
@@ -93,7 +93,7 @@ export const onViewProfile = () => async (dispatch) => {
 
   } catch (err) {
     console.log(err)
-    return err.response.data
+    // return err.response.data
 
   }
 };
@@ -105,7 +105,7 @@ export const onLogout = () => async (dispatch) => {
     return dispatch({ type: Action.LOGOUT, payload: response.data });
   } catch (err) {
     console.log(err)
-    return err.response.data
+    // return err.response.data
 
   }
 };

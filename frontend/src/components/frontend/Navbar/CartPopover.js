@@ -33,7 +33,7 @@ export default function CartPopover({ Button }) {
     const updateOrDeleteItemFromCart = async (type, data) => {
         if (type === 'deleteItem') {
             const { productId, sku_id } = data;
-            await dispatch(
+            dispatch(
                 DeleteToCartItem({
                     userId: userInfo._id,
                     productId: productId,
@@ -52,7 +52,7 @@ export default function CartPopover({ Button }) {
                 data;
 
             console.log(productId, sku_id, sku_id_old, quantity, old_quantity);
-            await dispatch(
+            dispatch(
                 UpdateFromCart({
                     userId: userInfo._id,
                     shop_order_ids: {
@@ -67,7 +67,7 @@ export default function CartPopover({ Button }) {
                 })
             );
         }
-        await dispatch(getCart({ userId: userInfo._id }));
+        dispatch(getCart({ userId: userInfo._id }));
     };
     const OpenCart = async () => {
         // dispatch(getCart({ userId: userInfo._id }));
