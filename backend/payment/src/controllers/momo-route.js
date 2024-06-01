@@ -10,7 +10,7 @@ router.post("/", async (req, res) => {
   //https://developers.momo.vn/#/docs/en/aiov2/?id=payment-method
   //parameters
   var partnerCode = "MOMO";
-  var redirectUrl = "https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b";
+  var redirectUrl = "http://localhost:3000/checking-order";
   var ipnUrl = "http://localhost:5000/api/payment/momo/callback";
   var requestType = "payWithMethod";
   var orderExpireTime = 5;
@@ -101,7 +101,6 @@ router.post("/callback", async (req, res) => {
   console.log(req.body);
 
   //update order
-  res.redirect(`http://localhost:3000/checking-order`);
 });
 
 router.post("/transaction-status", async (req, res) => {
@@ -127,7 +126,7 @@ router.post("/transaction-status", async (req, res) => {
     method: "POST",
     url: "https://test-payment.momo.vn/v2/gateway/api/query",
     headers: {
-      "Content-Type": "routelication/json",
+      "Content-Type": "application/json",
     },
     data: requestBody,
   };

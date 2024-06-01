@@ -1,6 +1,5 @@
 import {
     BellIcon,
-    CreditCardIcon,
     HeartIcon,
     HomeIcon,
     ShoppingBagIcon,
@@ -10,7 +9,6 @@ import { Tab } from '@headlessui/react';
 import ProfileTabItem from '../../../components/frontend/Profile/ProfileTabItem';
 import Information from './Information';
 import Address from './Address';
-import Payment from './Payment';
 import Notification from './Notification';
 // import { useEffect } from 'react';
 import Order from './Order';
@@ -47,10 +45,6 @@ export default function Profile() {
                             Title={'Addresses'}
                         />
                         <ProfileTabItem
-                            Icon={<CreditCardIcon className="h-6 w-6" />}
-                            Title={'Payment'}
-                        />
-                        <ProfileTabItem
                             Icon={<BellIcon className="h-6 w-6" />}
                             Title={'Notification'}
                         />
@@ -58,9 +52,8 @@ export default function Profile() {
                     <Tab.Panels className="h-fit flex-1 bg-stone-900/30 dark:bg-stone-900/50">
                         <Information />
                         <Order />
-                        <Favorites/>
+                        <Favorites />
                         <Address />
-                        <Payment />
                         <Notification />
                     </Tab.Panels>
                 </Tab.Group>

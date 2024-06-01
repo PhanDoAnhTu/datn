@@ -1,22 +1,26 @@
-import { Action } from '../actions'
+import { Action } from '../actions';
 
 const initialState = {
-    momo: null
-}
+    momo: null,
+    status: null,
+};
 
 const PaymentReducer = (state = initialState, action) => {
-
     switch (action.type) {
         case Action.PAYMENT_MOMO:
             return {
                 ...state,
-                momo: action.payload
-            }
-      
+                momo: action.payload.data,
+            };
+        case Action.transaction_status:
+            return {
+                ...state,
+                status: action.payload,
+            };
+
         default:
             return state;
     }
+};
 
-}
-
-export default PaymentReducer
+export default PaymentReducer;

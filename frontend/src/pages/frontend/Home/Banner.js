@@ -3,7 +3,7 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a lo
 import { Carousel } from 'react-responsive-carousel';
 export default function Banner() {
     const ExecuteScripta = () => {
-        window.scrollTo(0, document.body.scrollHeight);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
     return (
         <div>

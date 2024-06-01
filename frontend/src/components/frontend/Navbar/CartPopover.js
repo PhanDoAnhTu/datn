@@ -1,7 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Fragment, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import CartPopoverItem from './CartPopoverItem';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -12,6 +12,7 @@ import {
 // import { getCartFromLocalStorage } from '../../../utils';
 
 export default function CartPopover({ Button }) {
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const { userInfo } = useSelector((state) => state.userReducer);
     const { cart } = useSelector((state) => state.cartReducer);
@@ -172,15 +173,18 @@ export default function CartPopover({ Button }) {
                                                     thanh toán.
                                                 </p>
                                                 <div className="mt-6">
-                                                    <Link
-                                                        to="/checkout"
-                                                        onClick={() =>
-                                                            setOpen(false)
-                                                        }
-                                                        className="flex items-center justify-center rounded-md border border-transparent bg-magenta-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-magenta-700"
+                                                    <button
+                                                        onClick={() => {
+                                                            navigate(
+                                                                '/checkout'
+                                                            );
+                                                            setOpen(false);
+                                                        }}
+                                                        disabled={false}
+                                                        className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-magenta-700 disabled:pointer-events-none disabled:opacity-50"
                                                     >
                                                         Thanh toán
-                                                    </Link>
+                                                    </button>
                                                 </div>
                                                 <div className="mt-6 flex justify-center text-center text-sm text-gray-500 dark:text-gray-300">
                                                     <p>
