@@ -1,13 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const { default: axios } = require("axios");
 const crypto = require("crypto");
 const dotEnv = require("dotenv");
 dotEnv.config();
 
-
 router.post("/", async (req, res) => {
-  const { orderInfo, amount } = req.body
+  const { orderInfo, amount } = req.body;
   //https://developers.momo.vn/#/docs/en/aiov2/?id=payment-method
   //parameters
   var partnerCode = "MOMO";
@@ -21,7 +20,7 @@ router.post("/", async (req, res) => {
   var orderGroupId = "";
   var autoCapture = true;
   var lang = "vi";
-  console.log(process.env.ACCESS_KEY)
+  console.log(process.env.ACCESS_KEY);
   //before sign HMAC SHA256 with format
   //accessKey=$accessKey&amount=$amount&extraData=$extraData&ipnUrl=$ipnUrl&orderId=$orderId&orderInfo=$orderInfo&partnerCode=$partnerCode&redirectUrl=$redirectUrl&requestId=$requestId&requestType=$requestType
   var rawSignature =
@@ -53,6 +52,7 @@ router.post("/", async (req, res) => {
     .createHmac("sha256", process.env.SECRET_KEY)
     .update(rawSignature)
     .digest("hex");
+
   console.log("--------------------SIGNATURE----------------");
   console.log(signature);
 
@@ -75,7 +75,7 @@ router.post("/", async (req, res) => {
     orderGroupId: orderGroupId,
     signature: signature,
   });
-  console.log("requestBody", requestBody)
+  console.log("requestBody", requestBody);
   //options for axios
   const options = {
     method: "POST",
@@ -102,7 +102,6 @@ router.post("/callback", async (req, res) => {
 
   //update order
   res.redirect(`http://localhost:3000/checking-order`);
-
 });
 
 router.post("/transaction-status", async (req, res) => {

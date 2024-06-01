@@ -1,5 +1,4 @@
-import { lazy } from "react";
-
+import { lazy } from 'react';
 
 // import App from '../App.js';
 // import Category from '../pages/frontend/Category/index.js';
@@ -16,25 +15,35 @@ import { lazy } from "react";
 // import Search from '../pages/frontend/Search.js';
 // import LoginSuccessSocial from '../pages/frontend/Auth/LoginSuccessSocial.js';
 
-const App = lazy(() => import("../App.js"))
-const Login = lazy(() => import("../pages/frontend/Auth/Login.js"))
-const Register = lazy(() => import("../pages/frontend/Auth/Register.js"))
-const Home = lazy(() => import("../pages/frontend/Home/index.js"))
-const PrivateRoute = lazy(() => import("../pages/frontend/Auth/PrivateRoute.js"))
-const Profile = lazy(() => import("../pages/frontend/Profile/Profile.js"))
-const Category = lazy(() => import("../pages/frontend/Category/index.js"))
-const News = lazy(() => import("../pages/frontend/News/index.js"))
-const NewDetail = lazy(() => import("../pages/frontend/News/NewDetail.js"))
-const ProductDetail = lazy(() => import("../pages/frontend/ProductDetail/index.js"))
-const Contact = lazy(() => import("../pages/frontend/Contact/index.js"))
-const Checkout = lazy(() => import("../pages/frontend/Checkout/index.js"))
-const Search = lazy(() => import("../pages/frontend/Search.js"))
-const LoginSuccessSocial = lazy(() => import("../pages/frontend/Auth/LoginSuccessSocial.js"))
+const App = lazy(() => import('../App.js'));
+const Login = lazy(() => import('../pages/frontend/Auth/Login.js'));
+const Register = lazy(() => import('../pages/frontend/Auth/Register.js'));
+const Home = lazy(() => import('../pages/frontend/Home/index.js'));
+const PrivateRoute = lazy(
+    () => import('../pages/frontend/Auth/PrivateRoute.js')
+);
+const Profile = lazy(() => import('../pages/frontend/Profile/Profile.js'));
+const Category = lazy(() => import('../pages/frontend/Category/index.js'));
+const News = lazy(() => import('../pages/frontend/News/index.js'));
+const NewDetail = lazy(() => import('../pages/frontend/News/NewDetail.js'));
+const ProductDetail = lazy(
+    () => import('../pages/frontend/ProductDetail/index.js')
+);
+const Contact = lazy(() => import('../pages/frontend/Contact/index.js'));
+const Checkout = lazy(() => import('../pages/frontend/Checkout/index.js'));
+const Search = lazy(() => import('../pages/frontend/Search.js'));
+const LoginSuccessSocial = lazy(
+    () => import('../pages/frontend/Auth/LoginSuccessSocial.js')
+);
+const TransactionCheck = lazy(
+    () => import('../pages/frontend/Checkout/TransactionCheck.js')
+);
 
-
-import { Route, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
-
-
+import {
+    Route,
+    createBrowserRouter,
+    createRoutesFromElements,
+} from 'react-router-dom';
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -43,19 +52,26 @@ const router = createBrowserRouter(
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/category/:gender/:test" element={<Category />} />
-            <Route path="/san-pham/:product_slug_id?" element={<ProductDetail />} />
+            <Route
+                path="/san-pham/:product_slug_id?"
+                element={<ProductDetail />}
+            />
             <Route path="/news/:page" element={<News />} />
             <Route path="/new/d/:slug" element={<NewDetail />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/search/:keyword" element={<Search />} />
-            <Route path="/login-success/:userId?/:provider?" element={<LoginSuccessSocial />} />
+
+            <Route
+                path="/login-success/:userId?/:provider?"
+                element={<LoginSuccessSocial />}
+            />
             <Route path="/" element={<PrivateRoute />}>
                 <Route path="/u/:page" element={<Profile />} />
                 <Route path="/checkout" element={<Checkout />} />
+                <Route path="/checking-order" element={<TransactionCheck />} />
             </Route>
         </Route>
     )
-)
+);
 
-
-export default router
+export default router;

@@ -5,7 +5,14 @@ import classNames from '../../../helpers/classNames';
 import { Link, useParams } from 'react-router-dom';
 import ProductList from '../../../components/frontend/ProductList';
 import { products } from '../../../test/products';
-import { productById, listImageByProductId, getSpecialOfferBySpuId, addToCart, removeFromWishList, addToWishList } from '../../../store/actions';
+import {
+    productById,
+    listImageByProductId,
+    getSpecialOfferBySpuId,
+    addToCart,
+    removeFromWishList,
+    addToWishList,
+} from '../../../store/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { NumericFormat } from 'react-number-format';
 import { toast } from 'react-toastify';
@@ -21,13 +28,14 @@ const product = {
 
 const reviews = { to: '#', average: 4, totalCount: 117 };
 export default function ProductDetail() {
-
     const { product_slug_id } = useParams();
     const dispatch = useDispatch();
 
-    const product_id = product_slug_id.split('-').pop()
+    const product_id = product_slug_id.split('-').pop();
     const { userInfo } = useSelector((state) => state.userReducer);
-    const [favories_products, setfavoriesProduct] = useState(getFavoritesFromLocalStorage())
+    const [favories_products, setfavoriesProduct] = useState(
+        getFavoritesFromLocalStorage()
+    );
 
     const [variations, setVariations] = useState([]);
     const [selectedVariation, setSelectedVariation] = useState(
@@ -40,12 +48,10 @@ export default function ProductDetail() {
     const [selectedImage, setSelectedImage] = useState(null);
     const [product_detail, setProductDetail] = useState(null);
     const [product_images, setProductImages] = useState(null);
-    const [selected_sku, setSelectedSku] = useState(null)
+    const [selected_sku, setSelectedSku] = useState(null);
     const [spicial_offer, setSpicial_offer] = useState(null);
     const [sale_sku, setSale_sku] = useState(null);
-    const [quantity, setQuantity] = useState(1)
-
-
+    const [quantity, setQuantity] = useState(1);
 
     const getProductDetail = async () => {
         const response = await dispatch(productById({ spu_id: product_id }));
@@ -58,10 +64,11 @@ export default function ProductDetail() {
         response && setProductImages(response.payload.metaData)
     }
 
+
     /////////////////////////////
     useEffect(() => {
         if (!product_detail) {
-            getProductDetail()
+            getProductDetail();
         }
     }, [product_id, product_detail]);
     /////////////
@@ -75,10 +82,9 @@ export default function ProductDetail() {
 
     useEffect(() => {
         if (!product_images) {
-            getPhotosByProductDetail()
+            getPhotosByProductDetail();
         }
     }, [product_id, product_images]);
-
 
     /////////selected variation
     const handleVariationChange = (value, variationOrder) => {
@@ -92,98 +98,127 @@ export default function ProductDetail() {
         if (product_detail) {
             const filteredSKU = product_detail.sku_list
                 ? product_detail.sku_list.find(
-                    (item) => item.sku_tier_idx.toString() === selectedVariation.toString()
+                    (item) =>
+                        item.sku_tier_idx.toString() ===
+                        selectedVariation.toString()
                 )
                 : null;
             if (filteredSKU != null) {
                 setPrice(filteredSKU.sku_price);
                 setStock(filteredSKU.sku_stock);
                 setSelectedImage(
-                    product_images && product_images.find((item) => item.sku_id.toString() === filteredSKU._id.toString())
+                    product_images &&
+                    product_images.find(
+                        (item) =>
+                            item.sku_id.toString() ===
+                            filteredSKU._id.toString()
+                    )
                 );
-                spicial_offer && spicial_offer.special_offer_spu_list.filter((product) => {
-                    if (product.product_id.toString() === product_detail.spu_info._id.toString()) {
-                        return product.sku_list.filter((sku) => {
-                            if (sku.sku_id.toString() === filteredSKU._id.toString()) {
-                                setSale_sku(sku)
-                                return
-                            }
-                        })
-                    }
-                })
-                console.log("filteredSKU", filteredSKU);
-                console.log("pricesale", sale_sku);
-
+                spicial_offer &&
+                    spicial_offer.special_offer_spu_list.filter((product) => {
+                        if (
+                            product.product_id.toString() ===
+                            product_detail.spu_info._id.toString()
+                        ) {
+                            return product.sku_list.filter((sku) => {
+                                if (
+                                    sku.sku_id.toString() ===
+                                    filteredSKU._id.toString()
+                                ) {
+                                    setSale_sku(sku);
+                                    return;
+                                }
+                            });
+                        }
+                    });
+                console.log('filteredSKU', filteredSKU);
+                console.log('pricesale', sale_sku);
             }
         }
-    }, [product_id, selectedVariation, product_detail, product_images, spicial_offer, sale_sku]);
+    }, [
+        product_id,
+        selectedVariation,
+        product_detail,
+        product_images,
+        spicial_offer,
+        sale_sku,
+    ]);
 
     const HandleImageChoose = (e) => {
         setSelectedImage(e);
     };
-    console.log("selectedVariation", selectedVariation);
+    console.log('selectedVariation', selectedVariation);
 
     useEffect(() => {
-        setSelectedSku(product_detail
-            ? product_detail.sku_list.find(
-                (item) => item.sku_tier_idx.toString() === selectedVariation.toString()
-            )
-            : null)
-    }, [product_detail, selectedVariation])
+        setSelectedSku(
+            product_detail
+                ? product_detail.sku_list.find(
+                    (item) =>
+                        item.sku_tier_idx.toString() ===
+                        selectedVariation.toString()
+                )
+                : null
+        );
+    }, [product_detail, selectedVariation]);
 
     ////////////quantity
     const handleDecrement = async (quantity) => {
         if (quantity > 1) {
-            setQuantity(quantity - 1)
+            setQuantity(quantity - 1);
         }
-    }
+    };
     const handleIncrement = async (quantity, stock) => {
         if (quantity < stock) {
-            setQuantity(quantity + 1)
-
+            setQuantity(quantity + 1);
         }
-    }
+    };
 
     ////addtoCart
     const handleAddToCart = async (userId, { productId, sku_id, quantity }) => {
         if (quantity <= stock) {
             // console.log('selected_sku', sku_id + productId + sku_id)
-            await dispatch(addToCart({
-                userId: userId,
-                product: {
-                    productId: productId,
-                    sku_id: sku_id,
-                    quantity: quantity
-                }
-            }))
-            toast.success('Đã thêm sản phẩm vào giỏ hàng!')
+            await dispatch(
+                addToCart({
+                    userId: userId,
+                    product: {
+                        productId: productId,
+                        sku_id: sku_id,
+                        quantity: quantity,
+                    },
+                })
+            );
+            toast.success('Đã thêm sản phẩm vào giỏ hàng!');
             // addCartItemToLocalStorage({
             //     productId: productId,
             //     sku_id: sku_id,
             //     quantity: quantity
             // })
         }
-    }
+    };
     ////////////////wishList
     const HandleAddToWishList = async ({ userId, productId }) => {
-        await dispatch(addToWishList({
-            userId: userId,
-            productId: productId
-        }))
-        await addFavoriteToLocalStorage(productId)
-        setfavoriesProduct(getFavoritesFromLocalStorage())
-        toast.success("Đã thêm sản phẩm vào mục yêu thích!")
-    }
+        await dispatch(
+            addToWishList({
+                userId: userId,
+                productId: productId,
+            })
+        );
+        await addFavoriteToLocalStorage(productId);
+        setfavoriesProduct(getFavoritesFromLocalStorage());
+        toast.success('Đã thêm sản phẩm vào mục yêu thích!');
+    };
 
     const HandleRemoveFromWishList = async ({ userId, productId }) => {
-        await dispatch(removeFromWishList({
-            userId: userId,
-            productId: productId
-        }))
-        await removeFavoriteFromLocalStorage(productId)
-        setfavoriesProduct(getFavoritesFromLocalStorage())
-        toast.success("Đã xóa sản phẩm ra khỏi mục yêu thích!")
-    }
+        await dispatch(
+            removeFromWishList({
+                userId: userId,
+                productId: productId,
+            })
+        );
+        await removeFavoriteFromLocalStorage(productId);
+        setfavoriesProduct(getFavoritesFromLocalStorage());
+        toast.success('Đã xóa sản phẩm ra khỏi mục yêu thích!');
+    };
     return (
         <div className="bg-transparent pt-10 md:pt-20">
             <div className="pt-6">
@@ -224,21 +259,22 @@ export default function ProductDetail() {
                 </nav>
                 {/* Product info */}
                 <div className="mx-auto max-w-2xl px-4 pb-16 pt-10 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pt-16">
-                    <div className="lg:h-square flex flex-col-reverse lg:col-span-2 lg:flex-row lg:space-x-5 lg:border-r lg:border-gray-200 lg:pr-8 dark:lg:border-stone-700">
+                    <div className="flex flex-col-reverse lg:col-span-2 lg:h-square lg:flex-row lg:space-x-5 lg:border-r lg:border-gray-200 lg:pr-8 dark:lg:border-stone-700">
                         <div className="no-scrollbar flex w-full flex-row overflow-hidden max-lg:mt-3 max-lg:space-x-3 max-lg:overflow-x-scroll max-lg:pb-1 lg:w-44 lg:flex-col lg:space-y-3 lg:overflow-y-scroll">
-                            {product_images && product_images.map((item, index) => (
-                                <button
-                                    onClick={() => HandleImageChoose(item)}
-                                    key={index}
-                                    className="h-36 w-24 flex-shrink-0 sm:overflow-hidden sm:rounded-lg lg:w-full"
-                                >
-                                    <img
-                                        src={item.thumb_url}
-                                        alt={item.thumb_url}
-                                        className="h-full w-full object-cover object-center"
-                                    />
-                                </button>
-                            ))}
+                            {product_images &&
+                                product_images.map((item, index) => (
+                                    <button
+                                        onClick={() => HandleImageChoose(item)}
+                                        key={index}
+                                        className="h-36 w-24 flex-shrink-0 sm:overflow-hidden sm:rounded-lg lg:w-full"
+                                    >
+                                        <img
+                                            src={item.thumb_url}
+                                            alt={item.thumb_url}
+                                            className="h-full w-full object-cover object-center"
+                                        />
+                                    </button>
+                                ))}
                         </div>
                         <div className="w-full sm:overflow-hidden sm:rounded-lg">
                             <img
@@ -264,7 +300,11 @@ export default function ProductDetail() {
                                 suffix={'đ'}
                             />
                             &emsp;
-                            {sale_sku && <span className="bg-red-100 text-red-800 text-xs font-medium py-2 px-5  rounded-full dark:bg-red-900 dark:text-red-300">Giảm {sale_sku.percentage}%</span>}
+                            {sale_sku && (
+                                <span className="rounded-full bg-red-100 px-5 py-2 text-xs font-medium  text-red-800 dark:bg-red-900 dark:text-red-300">
+                                    Giảm {sale_sku.percentage}%
+                                </span>
+                            )}
                         </p>
 
                         <p className="text-2xl tracking-tight text-gray-900 line-through decoration-rose-700 dark:text-gray-200">
@@ -423,7 +463,7 @@ export default function ProductDetail() {
                                 </div>
                             ))}
 
-                            <div className=" flex flex-col mt-10 space-y-1">
+                            <div className=" mt-10 flex flex-col space-y-1">
                                 {stock != null ? (
                                     <span className="font-bold text-gray-900 dark:text-white">
                                         Số lượng có sẵn: {stock}
@@ -431,18 +471,32 @@ export default function ProductDetail() {
                                 ) : (
                                     ''
                                 )}
-                                <div className="inline-flex rounded-md shadow-sm" role="group">
-                                    <button onClick={() => handleDecrement(quantity)} className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-s-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                                <div
+                                    className="inline-flex rounded-md shadow-sm"
+                                    role="group"
+                                >
+                                    <button
+                                        onClick={() =>
+                                            handleDecrement(quantity)
+                                        }
+                                        className="rounded-s-lg border border-gray-900 bg-transparent px-2 py-3 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-2 focus:ring-gray-500 dark:border-white dark:text-white dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700"
+                                    >
                                         -
                                     </button>
 
-                                    <div className=" w-10 p-4 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                                    <div className=" w-10 border-b border-t border-gray-900 bg-transparent p-4 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-2 focus:ring-gray-500 dark:border-white dark:text-white dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700">
                                         <span>{quantity}</span>
                                     </div>
-                                    <button onClick={() => handleIncrement(quantity, stock)} className="py-3 px-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-e-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                                    <button
+                                        onClick={() =>
+                                            handleIncrement(quantity, stock)
+                                        }
+                                        className="rounded-e-lg border border-gray-900 bg-transparent px-2 py-3 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-2 focus:ring-gray-500 dark:border-white dark:text-white dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700"
+                                    >
                                         +
                                     </button>
                                 </div>
+
                                 {product_detail && (
                                     userInfo ?
                                         (
@@ -463,23 +517,27 @@ export default function ProductDetail() {
                                         )
                                 )}
 
-                                {product_detail && (
-                                    selected_sku
-                                        ?
+                                {product_detail &&
+                                    (selected_sku ? (
                                         <button
-                                            onClick={() => handleAddToCart(userInfo._id, { productId: product_detail.spu_info._id, sku_id: selected_sku._id, quantity: quantity })}
+                                            onClick={() =>
+                                                handleAddToCart(userInfo._id, {
+                                                    productId:
+                                                        product_detail.spu_info
+                                                            ._id,
+                                                    sku_id: selected_sku._id,
+                                                    quantity: quantity,
+                                                })
+                                            }
                                             className=" flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400 focus:ring-offset-2"
                                         >
                                             Thêm vào giỏ hàng
                                         </button>
-                                        :
-                                        <button
-                                            className=" flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400 focus:ring-offset-2"
-                                        >
+                                    ) : (
+                                        <button className=" flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400 focus:ring-offset-2">
                                             Thêm vào giỏ hàng
                                         </button>
-                                )
-                                }
+                                    ))}
                             </div>
                         </div>
                     </div>
