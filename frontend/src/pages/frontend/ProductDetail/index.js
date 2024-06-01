@@ -9,7 +9,7 @@ import { productById, listImageByProductId, getSpecialOfferBySpuId, addToCart, r
 import { useDispatch, useSelector } from 'react-redux';
 import { NumericFormat } from 'react-number-format';
 import { toast } from 'react-toastify';
-import {  addFavoriteToLocalStorage, getFavoritesFromLocalStorage, removeFavoriteFromLocalStorage } from '../../../utils';
+import { addFavoriteToLocalStorage, getFavoritesFromLocalStorage, removeFavoriteFromLocalStorage } from '../../../utils';
 
 const product = {
     to: '#',
@@ -29,7 +29,6 @@ export default function ProductDetail() {
     const { userInfo } = useSelector((state) => state.userReducer);
     const [favories_products, setfavoriesProduct] = useState(getFavoritesFromLocalStorage())
 
-    // const [product_id, setProduct_id] = useState(null);
     const [variations, setVariations] = useState([]);
     const [selectedVariation, setSelectedVariation] = useState(
         variations.length === 1 ? [0] : [0, 0]
@@ -50,13 +49,13 @@ export default function ProductDetail() {
 
     const getProductDetail = async () => {
         const response = await dispatch(productById({ spu_id: product_id }));
-        setProductDetail(response.payload.metaData)
+        response && setProductDetail(response.payload.metaData)
         const fetch_spicial_offer = await dispatch(getSpecialOfferBySpuId({ spu_id: product_id }))
-        setSpicial_offer(fetch_spicial_offer.payload.metaData)
+        fetch_spicial_offer && setSpicial_offer(fetch_spicial_offer.payload.metaData)
     }
     const getPhotosByProductDetail = async () => {
         const response = await dispatch(listImageByProductId(product_id));
-        setProductImages(response.payload.metaData)
+        response && setProductImages(response.payload.metaData)
     }
 
     /////////////////////////////
@@ -64,7 +63,7 @@ export default function ProductDetail() {
         if (!product_detail) {
             getProductDetail()
         }
-    }, [product_id, product_detail, spicial_offer]);
+    }, [product_id, product_detail]);
     /////////////
     useEffect(() => {
         if (product_detail) {
@@ -444,19 +443,25 @@ export default function ProductDetail() {
                                         +
                                     </button>
                                 </div>
-                                {userInfo ? (favories_products.some((p_id) => p_id.toString() === product_detail.spu_info._id.toString()) == true ?
-                                    <button onClick={() => HandleRemoveFromWishList({ userId: userInfo._id, productId: product_detail.spu_info._id })} className="border-2 px-3 py-2  text-slate-50 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
-                                        Bỏ thích
-                                    </button>
-                                    :
-                                    <button onClick={() => HandleAddToWishList({ userId: userInfo._id, productId: product_detail.spu_info._id })} className="border-2 px-3 py-2  text-slate-50 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
-                                        Thêm vào yêu thích
-                                    </button>
-                                ) :
-                                    <button className="border-2  px-3 py-2  text-slate-50 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
-                                        Thêm vào yêu thích
-                                    </button>
-                                }
+                                {product_detail && (
+                                    userInfo ?
+                                        (
+                                            favories_products.some((p_id) => p_id === product_detail.spu_info._id) == true
+                                                ?
+                                                <button onClick={() => HandleRemoveFromWishList({ userId: userInfo._id, productId: product_detail.spu_info._id })} className="border-2 px-3 py-2  text-slate-50 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                                                    Bỏ thích
+                                                </button>
+                                                :
+                                                <button onClick={() => HandleAddToWishList({ userId: userInfo._id, productId: product_detail.spu_info._id })} className="border-2 px-3 py-2  text-slate-50 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                                                    Thêm vào yêu thích
+                                                </button>
+                                        ) :
+                                        (
+                                            <button className="border-2  px-3 py-2  text-slate-50 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                                                Thêm vào yêu thích
+                                            </button>
+                                        )
+                                )}
 
                                 {product_detail && (
                                     selected_sku
@@ -493,6 +498,6 @@ export default function ProductDetail() {
                     />
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

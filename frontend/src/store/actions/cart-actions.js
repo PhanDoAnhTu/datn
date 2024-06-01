@@ -59,7 +59,7 @@ export const ClearCartItems = (data) => async (dispatch) => {
 
     } catch (err) {
         console.error(err)
-        return err.response.data
+        // return err.response.data
 
     }
 };

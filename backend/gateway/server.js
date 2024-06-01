@@ -6,9 +6,8 @@ const morgan = require("morgan");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const compression = require("compression");
 
-// Create an instance of Express app
-const app = express();
 
+const app = express();
 
 // Middleware setup
 app.use(cors()); // Enable CORS
