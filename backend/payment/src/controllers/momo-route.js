@@ -45,11 +45,16 @@ router.post("/", async (req, res) => {
     "&requestType=" +
     requestType;
   //puts raw signature
+  console.log("--------------------RAW SIGNATURE----------------");
+  console.log(rawSignature);
   //signature
   var signature = crypto
     .createHmac("sha256", process.env.SECRET_KEY)
     .update(rawSignature)
     .digest("hex");
+
+  console.log("--------------------SIGNATURE----------------");
+  console.log(signature);
 
   //json object send to MoMo endpoint
   const requestBody = JSON.stringify({
