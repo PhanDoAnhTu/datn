@@ -3,6 +3,7 @@ export * from './product-actions';
 export * from './cart-actions';
 export * from './spicial-offer-actions';
 export * from './wish-list-actions';
+export * from './payment-actions';
 
 export const Action = {
   //auth
@@ -36,10 +37,11 @@ export const Action = {
   ADD_TO_WISH_LIST: "ADD_TO_WISHLIST",
   REMOVE_FROM_WISH_LIST: "REMOVE_FROM_WISHLIST",
   GET_WISHLIST: "GET_WISHLIST",
-  DELETE_WISH_LIST:"DELETE_WISH_LIST",
+  DELETE_WISH_LIST: "DELETE_WISH_LIST",
 
 
-
+  //payment
+  PAYMENT_MOMO: "PAYMENT_MOMO"
   // PROFILE: "PROFILE",
   // DISSMISS: "DISSMISS",
 

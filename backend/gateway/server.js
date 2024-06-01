@@ -63,7 +63,10 @@ const services = [
     route: "/api/blog",
     target: "http://localhost:3011",
   },
-
+  {
+    route: "/api/payment",
+    target: "http://localhost:3013",
+  },
   // Add more services as needed either deployed or locally.
 ];
 
