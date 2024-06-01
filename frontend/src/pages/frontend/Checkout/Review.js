@@ -3,14 +3,29 @@ import { ReactComponent as MastercardCard } from '../../../assets/frontend/svg/M
 import ButtonWithBorder from '../../../components/frontend/ButtonWithBorder';
 import { products } from '../../../test/products';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Review({ step, setStep, information, paymentMethod }) {
-    const handlePlaceOrder = () => {
-        //a progression that will upload order on the DB
-        //Then, set an alert with a timer to display that user has been placed order successfully
-        //After 2-3 secs, run a function that will retrieve id of the order above
-        //Then, navigate user to profile/order with the id retrieved
-        alert('successfully');
+    const handlePlaceOrder = async () => {
+        if (paymentMethod === 'COD') {
+            alert('successfully');
+            return;
+        }
+        if (paymentMethod === 'MOMO') {
+            await axios
+                .create({
+                    baseURL: 'http://localhost:6000/payment',
+                    timeout: 6000,
+                    headers: { 'X-Custom-Header': 'foobar' },
+                    timeoutErrorMessage: 'Timeout',
+                })
+                .post('/payment')
+                .then((res) => {
+                    if (res.data.resultCode === 0) {
+                        window.location.replace(res.data.payUrl);
+                    }
+                });
+        }
     };
     return (
         <div

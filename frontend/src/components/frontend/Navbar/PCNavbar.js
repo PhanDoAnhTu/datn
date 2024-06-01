@@ -54,7 +54,7 @@ export default function PCNavbar({ navigation, setOpen }) {
     return (
         <nav
             aria-label="Top"
-            className={`${scrollY > 299 ? 'lg:bg-stone-100 dark:bg-licorice-300' : 'lg:bg-stone-100/50 lg:dark:bg-licorice-300/50'} lg:fixed  ${bgWhite ? 'duration-75 lg:fixed lg:bg-stone-100/100  lg:dark:bg-licorice-300/100' : '  duration-200 lg:delay-100 '} bg-opacityy-50 left-0 right-0 top-0 z-20 mx-auto max-w-full  px-4 transition ease-in-out max-lg:bg-stone-100 sm:px-6 lg:px-8 dark:max-lg:bg-licorice-300`}
+            className={`${scrollY > 299 ? 'lg:bg-stone-100 dark:bg-zinc-950' : 'lg:bg-stone-100/50 lg:dark:bg-zinc-950/50'} lg:fixed  ${bgWhite ? 'duration-75 lg:fixed lg:bg-stone-100/100  lg:dark:bg-zinc-950/100' : '  duration-200 lg:delay-100 '} bg-opacityy-50 left-0 right-0 top-0 z-20 mx-auto max-w-full  px-4 transition ease-in-out max-lg:bg-stone-100 sm:px-6 lg:px-8 dark:max-lg:bg-zinc-950`}
         >
             <div className="border-b border-gray-200 transition duration-500 ease-in-out dark:border-gray-700">
                 <div className="flex h-16 items-center">
@@ -131,7 +131,7 @@ export default function PCNavbar({ navigation, setOpen }) {
                                                         aria-hidden="true"
                                                     />
 
-                                                    <div className="relative bg-stone-100 dark:bg-licorice-300">
+                                                    <div className="relative bg-stone-100 dark:bg-zinc-950">
                                                         <div className="mx-auto max-w-7xl px-8">
                                                             <div className="grid grid-cols-2 gap-x-8 gap-y-10 py-16">
                                                                 <div className="col-start-2 grid grid-cols-2 gap-x-8">

@@ -9,7 +9,7 @@ export default function Blog() {
                 <div className="flex items-center">
                     <div className="flex-1">
                         <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            Explore our news
+                            Khám phá thêm tin tức sau đây
                         </h2>
                         <h3 className="text-sm text-gray-400 lg:text-lg">
                             Here you can see the update on our products

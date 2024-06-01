@@ -2,8 +2,10 @@ const { default: axios } = require("axios");
 const express = require("express");
 const app = express();
 const crypto = require("crypto");
+const cors = require("cors");
 
 app.use(express.json());
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 //tao duong link thanh toan
@@ -18,8 +20,8 @@ app.post("/payment", async (req, res) => {
   var redirectUrl = "https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b";
   var ipnUrl = "https://d6a0-112-197-100-135.ngrok-free.app/callback";
   var requestType = "payWithMethod";
-  var amount = "50000";
-  var orderExpireTime = 1;
+  var amount = "200000";
+  var orderExpireTime = 5;
   var orderId = partnerCode + new Date().getTime();
   var requestId = orderId;
   var extraData = "";
@@ -100,6 +102,12 @@ app.post("/payment", async (req, res) => {
     return res.status(500).json({ statusCode: 500, message: "server error" });
   }
 });
+const asynchandler = (fn) => {
+  return (req, res, next) => {
+    fn(req, res, next).catch(next);
+  };
+};
+app.use("/", require("./route"));
 
 app.post("/callback", async (req, res) => {
   console.log("callback::");
@@ -142,6 +150,11 @@ app.post("/transaction-status", async (req, res) => {
   return res.status(200).json(result.data);
 });
 
-app.listen(6000, () => {
-  console.log("server is running at port 6000");
-});
+app
+  .listen(6000, () => {
+    console.log("server is running at port 6000");
+  })
+  .on("error", (err) => {
+    console.log(err);
+    process.exit();
+  });

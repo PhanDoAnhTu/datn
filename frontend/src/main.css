@@ -20,9 +20,11 @@
 ::-webkit-scrollbar-thumb:hover {
     background: #f80cd2;
 }
+
 .checkout::-webkit-scrollbar {
     width: 0;
 }
+
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
