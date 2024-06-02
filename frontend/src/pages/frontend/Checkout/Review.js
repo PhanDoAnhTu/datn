@@ -4,11 +4,11 @@ import ButtonWithBorder from '../../../components/frontend/ButtonWithBorder';
 import { products } from '../../../test/products';
 import { Link } from 'react-router-dom';
 import { paymentByMoMo } from '../../../store/actions';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 export default function Review({ step, setStep, information, paymentMethod }) {
     const dispatch = useDispatch();
-    const { momo } = useSelector((state) => state.paymentReducer);
+    // const { momo } = useSelector((state) => state.paymentReducer);
 
     const handlePlaceOrder = async () => {
         if (paymentMethod === 'COD') {
@@ -16,12 +16,14 @@ export default function Review({ step, setStep, information, paymentMethod }) {
             return;
         }
         if (paymentMethod === 'MOMO') {
-            dispatch(
+            const payment_momo = await dispatch(
                 paymentByMoMo({ orderInfo: 'pay with MoMo', amount: 200000 })
             );
-            momo && window.location.replace(momo.payUrl);
+            // console.log(payment_momo)
+            payment_momo && window.location.replace(payment_momo.payload.payUrl);
         }
     };
+
     return (
         <div
             className={`w-screen flex-shrink-0 px-4 md:px-32 ${step === 3 ? '' : 'hidden'}`}
@@ -196,7 +198,7 @@ export default function Review({ step, setStep, information, paymentMethod }) {
 
                     <ButtonWithBorder
                         Title={'Đặt hàng'}
-                        HandleClick={handlePlaceOrder}
+                        HandleClick={() => handlePlaceOrder()}
                         className={'mt-4 w-full p-2 font-bold'}
                     />
                 </div>

@@ -3,10 +3,10 @@ import { ReactComponent as Check } from '../../../assets/Check.svg';
 import Loading from '../../../assets/Loading.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkOrderByMoMo } from '../../../store/actions/payment-actions.js';
-import { useNavigate } from 'react-router';
+// import { useNavigate } from 'react-router';
 
 export default function TransactionCheck() {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const searchParams = new URLSearchParams(window.location.search);
     const [isLoading, setIsLoading] = useState(false);
     const { status } = useSelector((state) => state.paymentReducer);
@@ -26,11 +26,11 @@ export default function TransactionCheck() {
                     ? setIsLoading(true)
                     : setIsLoading(false));
         }, 2000);
-        if (isLoading === true) {
-            setTimeout(() => {
-                navigate('/');
-            }, 3000);
-        }
+        // if (isLoading === true) {
+        //     setTimeout(() => {
+        //         navigate('/');
+        //     }, 3000);
+        // }
     }, [status]);
 
     return (

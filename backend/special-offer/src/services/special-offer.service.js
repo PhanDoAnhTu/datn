@@ -12,7 +12,6 @@ class SpecialOfferService {
             special_offer_description, special_offer_spu_list = []
         } = payload
 
-
         if (Date.now() > new Date(special_offer_start_date) || Date.now() > new Date(special_offer_end_date)) {
             throw new errorResponse.ForbiddenRequestError('discount code has expired')
         }
