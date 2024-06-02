@@ -11,13 +11,25 @@ class OrderController {
     checkoutReview = async (req, res, next) => {
 
         return new successResponse.SuccessResponse({
-            message: "created new order success",
+            message: "created checkout review success",
             metaData: await this.service.checkoutReview(req.body)
         }).send(res)
     }
 
+    createOrder = async (req, res, next) => {
 
+        return new successResponse.SuccessResponse({
+            message: "created new order success",
+            metaData: await this.service.orderByUser(req.body)
+        }).send(res)
+    }
+    changeStatusOrderByOrderId = async (req, res, next) => {
 
+        return new successResponse.SuccessResponse({
+            message: "change status order success",
+            metaData: await this.service.changeStatusOrderByOrderId(req.body)
+        }).send(res)
+    }
 }
 
 module.exports = new OrderController()

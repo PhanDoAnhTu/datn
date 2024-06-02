@@ -7,6 +7,8 @@ const { orderController } = require('../../controllers');
 const { authentication } = require('../../auth/authUtils');
 
 router.post('/checkoutReview', asynchandler(orderController.checkoutReview))
+router.post('/createOrder', asynchandler(orderController.createOrder))
+router.post('/changeStatusOrderByOrderId', asynchandler(orderController.changeStatusOrderByOrderId))
 
 
 

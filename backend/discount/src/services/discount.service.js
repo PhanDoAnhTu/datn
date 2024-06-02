@@ -99,9 +99,8 @@ class DiscountService {
         })
 
         if (!foundDiscount) throw new errorResponse.NotFoundRequestError("discount not found")
-
+        console.log(foundDiscount)
         const {
-
             discount_name,
             discount_description,
             discount_type,
@@ -126,7 +125,7 @@ class DiscountService {
         const uniqueSet = new Set(discount_users_used);
         const discount_users_used_unique = [...uniqueSet];
         if (discount_users_used_unique.length >= discount_max_user_uses) throw new errorResponse.NotFoundRequestError("discount are out")
-        if (Date.now() < new Date(discount_start_date) || Date.now() > new Date(discount_end_date)) {
+        if (Date.now() > new Date(discount_start_date) || Date.now() > new Date(discount_end_date) || new Date(discount_start_date) > new Date(discount_end_date)) {
             throw new errorResponse.NotFoundRequestError('discount ecode has expried!')
         }
         if (discount_max_person_uses > 0) {
@@ -135,41 +134,37 @@ class DiscountService {
                 //ng dung da su dung ma
             }
         }
-
         let totalOrder = 0
+        let totalOrderDiscount = 0
         if (discount_min_order_value > 0) {
-            if (discount_applies_to == "specific") {
-                const discount_applies_to_products = await products.find((product) => {
-                    discount_product_ids.includes(product.productId) == true
-                })
-                totalOrder = discount_applies_to_products.reduce((acc, pro) => {
+            totalOrder = products.reduce((acc, pro) => {
+                return acc + (pro.quantity * pro.price)
+            }, 0)
+            if (discount_applies_to === "specific") {
+                const discount_applies_to_products = await products.filter((product) => discount_product_ids.includes(product.productId) == true)
+                console.log(discount_applies_to_products)
+                totalOrderDiscount = discount_applies_to_products.reduce((acc, pro) => {
                     return acc + (pro.quantity * pro.price)
                 }, 0)
                 console.log("discount_applies_to_products", discount_applies_to_products)
             }
-            if (discount_applies_to == "all") {
-                totalOrder = products.reduce((acc, pro) => {
-                    return acc + (pro.quantity * pro.price)
-                }, 0)
+            if (discount_applies_to === "all") {
+                totalOrderDiscount = totalOrder
             }
-
             if (totalOrder < discount_min_order_value) {
                 throw new errorResponse.NotFoundRequestError(`discount requires a minium order value of ${discount_min_order_value}`)
             }
         }
 
-
-
-        let amount = discount_type === 'fixed_amount' ? discount_value : totalOrder * (discount_value / 100)
+        let amount = discount_type === 'fixed_amount' ? discount_value : totalOrderDiscount * (discount_value / 100)
         if (amount > discount_max_value) {
             amount = discount_max_value
         }
         return {
             totalOrder,
             discount: amount,
-            totalPrice: totalOrder - amount
+            totalCheckout: totalOrder - amount
         }
-
     }
 
     //xoa discount
@@ -190,7 +185,8 @@ class DiscountService {
         if (!foundDiscount) {
             throw new ForbiddenRequestError('Discount exists')
         }
-        const result = await DiscountModel.findByIdAndUpdate(foundDiscount._id, {
+        const result = await DiscountModel.findByIdAndUpdate(
+            foundDiscount._id, {
             $pull: {
                 discount_users_used: userId
             },

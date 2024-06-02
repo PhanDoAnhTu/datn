@@ -1,9 +1,9 @@
 'use strict'
 const { errorResponse } = require('../core')
-const { acquireLock, releaseLock } = require('./redis.service')
+// const { acquireLock, releaseLock } = require('./redis.service')
 const { OrderModel } = require('../database/models')
 const { RPCRequest } = require('../utils')
-
+const { v4: uuidv4 } = require('uuid');
 
 class CheckoutService {
     async checkoutReview({ cartId, userId, order_ids }) {
@@ -52,7 +52,7 @@ class CheckoutService {
             item_products: item_products
         }
         if (shop_discounts.length > 0) {
-            const { totalPrice = 0, discount = 0 } = await RPCRequest("DISCOUNT_RPC", {
+            const { discount = 0 } = await RPCRequest("DISCOUNT_RPC", {
                 type: "GET_DISCOUNT_AMOUNT",
                 data: {
                     codeId: shop_discounts[0].codeId,
@@ -60,6 +60,7 @@ class CheckoutService {
                     products: item_products
                 }
             })
+
             //tong discount 
             checkout_oder.totalDiscount += discount
             //neu tien giam gia >0
@@ -82,7 +83,7 @@ class CheckoutService {
         order_ids,
         cartId,
         userId,
-        user_address = {},
+        order_shipping = {},
         user_payment = {}
     }) {
         const { order_ids_new, checkout_oder } = await this.checkoutReview({
@@ -90,38 +91,60 @@ class CheckoutService {
         })
         //check lai xem co vuot ton kho hay k
         //get new array product
-        const products = order_ids_new.flatMap(order => order.item_products)
-        console.log(products)
-        const acquireProduct = []
-        //optimistic locks
-        for (let i = 0; i < products.length; i++) {
-            const { productId, quantity } = products[i];
-            const keyLock = await acquireLock(productId, quantity, cartId)
-            acquireProduct.push(keyLock ? true : false)
-            console.log(keyLock)
-            if (keyLock) {
-                await releaseLock(keyLock)
-            }
-        }
+        // const products = order_ids_new.itemCheckout.item_products
+        // console.log(products)
+        // const acquireProduct = []
+        // //optimistic locks
+        // for (let i = 0; i < products.length; i++) {
+        //     const { productId, quantity } = products[i];
+        //     const keyLock = await acquireLock(productId, quantity, cartId)
+        //     acquireProduct.push(keyLock ? true : false)
+        //     console.log(keyLock)
+        //     if (keyLock) {
+        //         await releaseLock(keyLock)
+        //     }
+        // }
 
-        //check
-        if (acquireProduct.includes(false)) {
-            throw new errorResponse.BadRequestError('mot so sp da duoc cap nhat ...')
-        }
+        // //check
+        // if (acquireProduct.includes(false)) {
+        //     throw new errorResponse.BadRequestError('mot so sp da duoc cap nhat ...')
+        // }
+        const order_trackingNumber = `#${uuidv4()}`
+
         const newOrder = await OrderModel.create({
             order_userId: userId,
             order_checkout: checkout_oder,
-            order_shipping: user_address,
+            order_shipping: order_shipping,
             order_product: order_ids_new,
-            order_payment: user_payment
+            order_payment: user_payment,
+            order_trackingNumber: order_trackingNumber
         })
         //neu them thanh cong remove pro co trong gio hanag
         // if(){
 
         // }
-
         return newOrder
     }
+    async changeStatusOrderByOrderId({
+        order_id,
+        order_status
+    }) {
+
+        if (['pending', 'confirmed', 'shipped', 'cancelled'].includes(order_status) == false) throw new errorResponse.BadRequestError('status not exitsts')
+            
+        const query = { _id: order_id }
+        const updateOrInsert = {
+            $set: {
+                order_status: order_status
+            }
+        }, options = {
+            upsert: true,
+            new: true
+        }
+        return await OrderModel.findOneAndUpdate(query, updateOrInsert, options)
+    }
+
+
 
 }
 module.exports = CheckoutService
