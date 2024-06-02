@@ -38,6 +38,7 @@ export const Action = {
 
     //payment
     PAYMENT_MOMO: 'PAYMENT_MOMO',
+    PAYMENT_ZALOPAY: 'PAYMENT_ZALOPAY',
     transaction_status: 'transaction_status',
     // PROFILE: "PROFILE",
     // DISSMISS: "DISSMISS",

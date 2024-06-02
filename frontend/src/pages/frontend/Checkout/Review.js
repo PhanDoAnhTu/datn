@@ -3,12 +3,11 @@ import { ReactComponent as MastercardCard } from '../../../assets/frontend/svg/M
 import ButtonWithBorder from '../../../components/frontend/ButtonWithBorder';
 import { products } from '../../../test/products';
 import { Link } from 'react-router-dom';
-import { paymentByMoMo } from '../../../store/actions';
-import { useDispatch, useSelector } from 'react-redux';
+import { paymentByMoMo, paymentByZaloPay } from '../../../store/actions';
+import { useDispatch } from 'react-redux';
 
 export default function Review({ step, setStep, information, paymentMethod }) {
     const dispatch = useDispatch();
-    const { momo } = useSelector((state) => state.paymentReducer);
 
     const handlePlaceOrder = async () => {
         if (paymentMethod === 'COD') {
@@ -16,10 +15,23 @@ export default function Review({ step, setStep, information, paymentMethod }) {
             return;
         }
         if (paymentMethod === 'MOMO') {
-            dispatch(
-                paymentByMoMo({ orderInfo: 'pay with MoMo', amount: 200000 })
+            const result = await dispatch(
+                paymentByMoMo({
+                    orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
+                    amount: 200000,
+                })
             );
-            momo && window.location.replace(momo.payUrl);
+            result && window.location.replace(result.payload.payUrl);
+        }
+        if (paymentMethod === 'ZALOPAY') {
+            const result = await dispatch(
+                paymentByZaloPay({
+                    orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
+                    amount: 200000,
+                })
+            );
+
+            result && window.location.replace(result.payload.order_url);
         }
     };
     return (

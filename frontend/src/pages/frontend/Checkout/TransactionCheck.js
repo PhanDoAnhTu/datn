@@ -2,36 +2,48 @@ import { useEffect, useState } from 'react';
 import { ReactComponent as Check } from '../../../assets/Check.svg';
 import Loading from '../../../assets/Loading.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { checkOrderByMoMo } from '../../../store/actions/payment-actions.js';
+import {
+    checkOrderByMoMo,
+    checkOrderByZaloPay,
+} from '../../../store/actions/payment-actions.js';
 import { useNavigate } from 'react-router';
 
 export default function TransactionCheck() {
-    const navigate = useNavigate();
     const searchParams = new URLSearchParams(window.location.search);
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const { status } = useSelector((state) => state.paymentReducer);
 
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (!status) {
+        if (status == null) {
             searchParams.get('orderId') &&
                 dispatch(
                     checkOrderByMoMo({ orderId: searchParams.get('orderId') })
                 );
+            searchParams.get('apptransid') &&
+                dispatch(
+                    checkOrderByZaloPay({
+                        apptransid: searchParams.get('apptransid'),
+                    })
+                );
         }
         setTimeout(() => {
             status &&
-                (status.resultCode === 0
+                (status.resultCode === 0 || status.return_code === 1
                     ? setIsLoading(true)
                     : setIsLoading(false));
         }, 2000);
+    }, [status]);
+
+    useEffect(() => {
         if (isLoading === true) {
             setTimeout(() => {
                 navigate('/');
-            }, 3000);
+            }, 2000);
         }
-    }, [status]);
+    }, [isLoading]);
 
     return (
         <div className="flex h-screen justify-center overflow-hidden pb-7 pt-10 text-white md:pt-24">
