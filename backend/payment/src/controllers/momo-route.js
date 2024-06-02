@@ -11,8 +11,9 @@ router.post("/", async (req, res) => {
   //parameters
   var partnerCode = "MOMO";
   var redirectUrl = "http://localhost:3000/checking-order";
-  var ipnUrl = "http://localhost:5000/api/payment/momo/callback";
-  var requestType = "captureWallet";
+  var ipnUrl =
+    "https://abc4-112-197-100-135.ngrok-free.app/api/payment/momo/callback";
+  var requestType = "payWithMethod";
   var orderExpireTime = 5;
   var orderId = partnerCode + new Date().getTime();
   var requestId = orderId;
@@ -25,7 +26,7 @@ router.post("/", async (req, res) => {
   //accessKey=$accessKey&amount=$amount&extraData=$extraData&ipnUrl=$ipnUrl&orderId=$orderId&orderInfo=$orderInfo&partnerCode=$partnerCode&redirectUrl=$redirectUrl&requestId=$requestId&requestType=$requestType
   var rawSignature =
     "accessKey=" +
-    process.env.ACCESS_KEY +
+    process.env.MOMO_ACCESS_KEY +
     "&amount=" +
     amount +
     "&extraData=" +
@@ -49,7 +50,7 @@ router.post("/", async (req, res) => {
   console.log(rawSignature);
   //signature
   var signature = crypto
-    .createHmac("sha256", process.env.SECRET_KEY)
+    .createHmac("sha256", process.env.MOMO_SECRET_KEY)
     .update(rawSignature)
     .digest("hex");
 
@@ -106,10 +107,10 @@ router.post("/callback", async (req, res) => {
 router.post("/transaction-status", async (req, res) => {
   const { orderId } = req.body;
 
-  const rawSignature = `accessKey=${process.env.ACCESS_KEY}&orderId=${orderId}&partnerCode=MOMO&requestId=${orderId}`;
+  const rawSignature = `accessKey=${process.env.MOMO_ACCESS_KEY}&orderId=${orderId}&partnerCode=MOMO&requestId=${orderId}`;
 
   const signature = crypto
-    .createHmac("sha256", process.env.SECRET_KEY)
+    .createHmac("sha256", process.env.MOMO_SECRET_KEY)
     .update(rawSignature)
     .digest("hex");
 

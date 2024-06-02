@@ -3,24 +3,34 @@ import { ReactComponent as MastercardCard } from '../../../assets/frontend/svg/M
 import ButtonWithBorder from '../../../components/frontend/ButtonWithBorder';
 import { products } from '../../../test/products';
 import { Link } from 'react-router-dom';
-import { paymentByMoMo } from '../../../store/actions';
+import { paymentByMoMo, paymentByZaloPay } from '../../../store/actions';
 import { useDispatch } from 'react-redux';
 
 export default function Review({ step, setStep, information, paymentMethod }) {
     const dispatch = useDispatch();
-    // const { momo } = useSelector((state) => state.paymentReducer);
-
     const handlePlaceOrder = async () => {
         if (paymentMethod === 'COD') {
             alert('successfully');
             return;
         }
         if (paymentMethod === 'MOMO') {
-            const payment_momo = await dispatch(
-                paymentByMoMo({ orderInfo: 'pay with MoMo', amount: 200000 })
+            const result = await dispatch(
+                paymentByMoMo({
+                    orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
+                    amount: 200000,
+                })
             );
-            // console.log(payment_momo)
-            payment_momo && window.location.replace(payment_momo.payload.payUrl);
+            result && window.location.replace(result.payload.payUrl);
+        }
+        if (paymentMethod === 'ZALOPAY') {
+            const result = await dispatch(
+                paymentByZaloPay({
+                    orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
+                    amount: 200000,
+                })
+            );
+
+            result && window.location.replace(result.payload.order_url);
         }
     };
 

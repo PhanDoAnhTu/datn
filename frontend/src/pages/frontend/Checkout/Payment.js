@@ -127,6 +127,21 @@ export default function Payment({
                                     />
                                 </div>
                             </div>
+                            <div>
+                                <div
+                                    className="flex cursor-pointer justify-between text-white"
+                                    onClick={() => setPaymentMethod('ZALOPAY')}
+                                >
+                                    <span className="pointer-events-none">
+                                        Thanh toán qua ZaloPay
+                                    </span>
+                                    <input
+                                        type="checkbox"
+                                        className="pointer-events-none rounded-full border-0 focus:ring-0"
+                                        checked={paymentMethod === 'ZALOPAY'}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <ButtonWithBorder
