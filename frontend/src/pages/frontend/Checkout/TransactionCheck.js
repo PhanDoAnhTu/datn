@@ -16,6 +16,31 @@ export default function TransactionCheck() {
 
     const dispatch = useDispatch();
 
+    //if zalopay
+    // ?amount=200000
+    // &appid=2554
+    // &apptransid=240602_216290
+    // &bankcode=CC
+    // &checksum=b379b9e8d39559d9dfca37566e48ab7a4fd47b70b2e4ea0a4e3173ecb08de038
+    // &discountamount=0
+    // &pmcid=36
+    // &status=1
+
+    //if momo
+    // ?partnerCode=MOMO
+    // &orderId=MOMO1717242402161
+    // &requestId=MOMO1717242402161
+    // &amount=200000
+    // &orderInfo=pay+with+MoMo
+    // &orderType=momo_wallet
+    // &transId=4052104925
+    // &resultCode=0
+    // &message=Thành+công.
+    // &payType=qr
+    // &responseTime=1717242548427
+    // &extraData=
+    // &signature=bbb84ba6afe4144bf8d783c1591910bea0a38a873fc04ef9a8b85a57b80e4123
+
     useEffect(() => {
         if (status == null) {
             searchParams.get('orderId') &&
