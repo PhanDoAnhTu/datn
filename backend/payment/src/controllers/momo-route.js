@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
   var partnerCode = "MOMO";
   var redirectUrl = "http://localhost:3000/checking-order";
   var ipnUrl = "http://localhost:5000/api/payment/momo/callback";
-  var requestType = "payWithMethod";
+  var requestType = "captureWallet";
   var orderExpireTime = 5;
   var orderId = partnerCode + new Date().getTime();
   var requestId = orderId;
@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
   var orderGroupId = "";
   var autoCapture = true;
   var lang = "vi";
-  console.log(process.env.ACCESS_KEY);
+  // console.log(process.env.ACCESS_KEY);
   //before sign HMAC SHA256 with format
   //accessKey=$accessKey&amount=$amount&extraData=$extraData&ipnUrl=$ipnUrl&orderId=$orderId&orderInfo=$orderInfo&partnerCode=$partnerCode&redirectUrl=$redirectUrl&requestId=$requestId&requestType=$requestType
   var rawSignature =
