@@ -68,7 +68,7 @@ export default function ForgotPassword() {
                     type="button"
                     className="font-bold text-magenta-500 transition duration-200 ease-out hover:text-magenta-600 max-sm:text-xs"
                 >
-                    Forgot password?
+                    Quên mật khẩu?
                 </button>
             </div>
 
@@ -107,13 +107,12 @@ export default function ForgotPassword() {
                                                     as="h3"
                                                     className="text-lg font-bold leading-6 text-gray-900 dark:text-white"
                                                 >
-                                                    Forgot your password?
+                                                    Quên mật khẩu?
                                                 </Dialog.Title>
                                                 <div>
                                                     <p className="text-sm text-gray-400">
-                                                        We&apos;ll send you an
-                                                        email based on the email
-                                                        you give us.
+                                                        Chúng tôi sẽ gửi cho bạn
+                                                        một mã OTP để xác nhận.
                                                     </p>
                                                 </div>
 
@@ -140,7 +139,7 @@ export default function ForgotPassword() {
                                                             handleIsForgot(-1)
                                                         }
                                                     >
-                                                        Cancel
+                                                        Hủy
                                                     </button>
                                                     <button
                                                         type="button"
@@ -149,7 +148,7 @@ export default function ForgotPassword() {
                                                             handleIsForgot(1)
                                                         }
                                                     >
-                                                        Next
+                                                        Tiếp theo
                                                     </button>
                                                 </div>
                                             </div>
@@ -158,20 +157,20 @@ export default function ForgotPassword() {
                                                     as="h3"
                                                     className="text-lg font-bold leading-6 text-gray-900 dark:text-white"
                                                 >
-                                                    Verification Step
+                                                    Xác minh
                                                 </Dialog.Title>
                                                 <div>
                                                     <p className="text-sm text-gray-400">
-                                                        Enter verification code
-                                                        we have sent to your
-                                                        email.
+                                                        Vui lòng nhập OTP mà
+                                                        chúng tôi đã gửi cho
+                                                        email của bạn.
                                                     </p>
                                                 </div>
 
                                                 <div className="mt-7 flex flex-col">
                                                     <input
                                                         type="text"
-                                                        placeholder="Verification Code"
+                                                        placeholder="XXX-XXX-XXX"
                                                         required
                                                         value={verificationCode}
                                                         onChange={(e) =>
@@ -211,18 +210,18 @@ export default function ForgotPassword() {
                                                     as="h3"
                                                     className="text-lg font-bold leading-6 text-gray-900 dark:text-white"
                                                 >
-                                                    Reset your password
+                                                    Tiến hành đổi mật khẩu
                                                 </Dialog.Title>
                                                 <div>
                                                     <p className="text-sm text-gray-400">
-                                                        Enter your new password
+                                                        Nhập mật khẩu mới
                                                     </p>
                                                 </div>
 
                                                 <div className="mt-7 flex flex-col space-y-3">
                                                     <input
                                                         type="password"
-                                                        placeholder="New password"
+                                                        placeholder="Mật khẩu mới"
                                                         required
                                                         value={password}
                                                         onChange={(e) =>
@@ -235,7 +234,7 @@ export default function ForgotPassword() {
                                                     />
                                                     <input
                                                         type="password"
-                                                        placeholder="Confirm password"
+                                                        placeholder="Xác nhận mật khẩu"
                                                         required
                                                         value={repassword}
                                                         onChange={(e) =>

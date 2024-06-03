@@ -9,6 +9,7 @@ import {
     UpdateFromCart,
     DeleteToCartItem,
 } from '../../../store/actions';
+import { ShoppingBagIcon } from '@heroicons/react/20/solid';
 // import { getCartFromLocalStorage } from '../../../utils';
 
 export default function CartPopover({ Button }) {
@@ -129,117 +130,161 @@ export default function CartPopover({ Button }) {
                                 >
                                     <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
                                         <div className="flex h-full flex-col overflow-y-scroll bg-stone-100  shadow-xl transition-all duration-200 ease-out dark:bg-zinc-950">
-                                            <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-                                                <div className="flex items-start justify-between">
-                                                    <Dialog.Title className="text-lg font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                        Giỏ hàng (
-                                                        {cart &&
-                                                            cart.cart_products
-                                                                .length}
-                                                        )
-                                                    </Dialog.Title>
+                                            {cart ? (
+                                                <>
+                                                    <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+                                                        <div className="flex items-start justify-between">
+                                                            <Dialog.Title className="text-lg font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
+                                                                Giỏ hàng (
+                                                                {cart &&
+                                                                    cart
+                                                                        .cart_products
+                                                                        .length}
+                                                                )
+                                                            </Dialog.Title>
 
-                                                    <div className="ml-3 flex h-7 items-center">
-                                                        <button
-                                                            type="button"
-                                                            className="relative -m-2 p-2 text-gray-400 transition-colors duration-200 ease-out hover:text-gray-500 dark:text-white dark:hover:text-gray-500"
-                                                            onClick={() =>
-                                                                setOpen(false)
-                                                            }
-                                                        >
-                                                            <span className="absolute -inset-0.5" />
-                                                            <span className="sr-only">
-                                                                Close panel
-                                                            </span>
-                                                            <XMarkIcon
-                                                                className="h-6 w-6"
-                                                                aria-hidden="true"
-                                                            />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div className="mt-4 flex max-w-full justify-start">
-                                                    <Dialog.Title className="text-sm font-small text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                        Chọn tất cả
-                                                        <input
-                                                            type="checkbox"
-                                                            className="border-0 ml-2 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
-                                                        />
-                                                    </Dialog.Title>
+                                                            <div className="ml-3 flex h-7 items-center">
+                                                                <button
+                                                                    type="button"
+                                                                    className="relative -m-2 p-2 text-gray-400 transition-colors duration-200 ease-out hover:text-gray-500 dark:text-white dark:hover:text-gray-500"
+                                                                    onClick={() =>
+                                                                        setOpen(
+                                                                            false
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <span className="absolute -inset-0.5" />
+                                                                    <span className="sr-only">
+                                                                        Close
+                                                                        panel
+                                                                    </span>
+                                                                    <XMarkIcon
+                                                                        className="h-6 w-6"
+                                                                        aria-hidden="true"
+                                                                    />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div className="mt-4 flex max-w-full justify-start">
+                                                            <Dialog.Title className="font-small text-sm text-gray-900 transition-colors duration-200 ease-out dark:text-white">
+                                                                Chọn tất cả
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="ml-2 border-0 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
+                                                                />
+                                                            </Dialog.Title>
+                                                        </div>
 
-                                                </div>
-
-                                                <div className="mt-8">
-
-                                                    <div className="flow-root">
-                                                        <ul className="-my-6 divide-y divide-gray-200 transition-colors duration-200 ease-out dark:divide-stone-700">
-                                                            {cart &&
-                                                                cart.cart_products.map(
-                                                                    (
-                                                                        product,
-                                                                        index
-                                                                    ) => (
-                                                                        <CartPopoverItem
-                                                                            product={
-                                                                                product
-                                                                            }
-                                                                            key={
+                                                        <div className="mt-8">
+                                                            <div className="flow-root">
+                                                                <ul className="-my-6 divide-y divide-gray-200 transition-colors duration-200 ease-out dark:divide-stone-700">
+                                                                    {cart &&
+                                                                        cart.cart_products.map(
+                                                                            (
+                                                                                product,
                                                                                 index
-                                                                            }
-                                                                            update={
-                                                                                updateOrDeleteItemFromCart
-                                                                            }
-                                                                            checkbox={changeSelectedProductFromCart}
-                                                                        />
+                                                                            ) => (
+                                                                                <CartPopoverItem
+                                                                                    product={
+                                                                                        product
+                                                                                    }
+                                                                                    key={
+                                                                                        index
+                                                                                    }
+                                                                                    update={
+                                                                                        updateOrDeleteItemFromCart
+                                                                                    }
+                                                                                    checkbox={changeSelectedProductFromCart}
+                                                                                />
+                                                                            )
+                                                                        )}
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="border-t border-gray-200 px-4 py-6 sm:px-6 dark:border-stone-700">
+                                                        <div className="flex justify-between text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
+                                                            <p>Tạm tính</p>
+                                                            <p>$262.00</p>
+                                                        </div>
+                                                        <p className="mt-0.5 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
+                                                            Phí ship sẽ được
+                                                            tính lúc thanh toán.
+                                                        </p>
+                                                        <div className="mt-6">
+                                                            <button
+                                                                onClick={() => {
+                                                                    navigate(
+                                                                        '/checkout'
+                                                                    );
+                                                                    setOpen(
+                                                                        false
+                                                                    );
+                                                                }}
+                                                                disabled={false}
+                                                                className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-magenta-700 disabled:pointer-events-none disabled:opacity-50"
+                                                            >
+                                                                Thanh toán
+                                                            </button>
+                                                        </div>
+                                                        <div className="mt-6 flex justify-center text-center text-sm text-gray-500 dark:text-gray-300">
+                                                            <p>
+                                                                hoặc{' '}
+                                                                <button
+                                                                    type="button"
+                                                                    className="font-medium text-magenta-600 hover:text-magenta-500"
+                                                                    onClick={() =>
+                                                                        setOpen(
+                                                                            false
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Tiếp tục mua
+                                                                    sắm
+                                                                    <span aria-hidden="true">
+                                                                        {' '}
+                                                                        &rarr;
+                                                                    </span>
+                                                                </button>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div className="relative flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+                                                    <div className="flex items-start justify-end">
+                                                        <div className="ml-3 flex h-7 items-center">
+                                                            <button
+                                                                type="button"
+                                                                className="relative -m-2 p-2 text-gray-400 transition-colors duration-200 ease-out hover:text-gray-500 dark:text-white dark:hover:text-gray-500"
+                                                                onClick={() =>
+                                                                    setOpen(
+                                                                        false
                                                                     )
-                                                                )}
-                                                        </ul>
+                                                                }
+                                                            >
+                                                                <span className="absolute -inset-0.5" />
+                                                                <span className="sr-only">
+                                                                    Close panel
+                                                                </span>
+                                                                <XMarkIcon
+                                                                    className="h-6 w-6"
+                                                                    aria-hidden="true"
+                                                                />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div className="relative h-4/5">
+                                                        <div className="absolute bottom-0 left-0 right-0 top-0 flex flex-col items-center justify-center text-gray-900 dark:text-white">
+                                                            <ShoppingBagIcon className="h-24 w-24" />
+                                                            <span className="text-xl font-bold">
+                                                                Giỏ hàng trống
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-
-                                            <div className="border-t border-gray-200 px-4 py-6 sm:px-6 dark:border-stone-700">
-                                                <div className="flex justify-between text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                    <p>Tạm tính</p>
-                                                    <p>$262.00</p>
-                                                </div>
-                                                <p className="mt-0.5 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
-                                                    Phí ship sẽ được tính lúc
-                                                    thanh toán.
-                                                </p>
-                                                <div className="mt-6">
-                                                    <button
-                                                        onClick={() => {
-                                                            navigate(
-                                                                '/checkout'
-                                                            );
-                                                            setOpen(false);
-                                                        }}
-                                                        disabled={false}
-                                                        className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-magenta-700 disabled:pointer-events-none disabled:opacity-50"
-                                                    >
-                                                        Thanh toán
-                                                    </button>
-                                                </div>
-                                                <div className="mt-6 flex justify-center text-center text-sm text-gray-500 dark:text-gray-300">
-                                                    <p>
-                                                        hoặc{' '}
-                                                        <button
-                                                            type="button"
-                                                            className="font-medium text-magenta-600 hover:text-magenta-500"
-                                                            onClick={() =>
-                                                                setOpen(false)
-                                                            }
-                                                        >
-                                                            Tiếp tục mua sắm
-                                                            <span aria-hidden="true">
-                                                                {' '}
-                                                                &rarr;
-                                                            </span>
-                                                        </button>
-                                                    </p>
-                                                </div>
-                                            </div>
+                                            )}
                                         </div>
                                     </Dialog.Panel>
                                 </Transition.Child>

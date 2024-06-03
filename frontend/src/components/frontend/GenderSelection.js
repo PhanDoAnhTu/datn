@@ -6,38 +6,38 @@ import { ChevronUpIcon } from '@heroicons/react/24/outline';
 export default function GenderSelection({
     selectedGender,
     isEditable,
-    setTempGender,
-    tempGender,
+    setGender,
+    gender,
 }) {
     const people = [
-        { gender: 'Male', id: 0 },
-        { gender: 'Female', id: 1 },
-        { gender: 'Secret', id: 2 },
+        { gender: 'Nam', id: 0 },
+        { gender: 'Nữ', id: 1 },
+        { gender: 'Không muốn tiết lộ', id: 2 },
     ];
     const handleGenderChange = (id) => {
-        setTempGender(id);
+        setGender(id);
     };
     useEffect(() => {
         if (isEditable) {
-            setTempGender(selectedGender);
+            setGender(selectedGender);
         } else {
-            setTempGender(0);
+            setGender(0);
         }
-    }, [isEditable, selectedGender, setTempGender]);
+    }, [isEditable, selectedGender, setGender]);
 
     return (
         <div
             className={`border-x-0 border-b-2 border-t-0 transition duration-500 ease-out dark:border-white ${isEditable ? '' : 'brightness-50'}`}
         >
             <Listbox
-                value={isEditable ? people[tempGender] : people[selectedGender]}
+                value={isEditable ? people[gender] : people[selectedGender]}
                 onChange={(e) => handleGenderChange(e.id)}
                 disabled={!isEditable}
             >
                 <div className="relative mt-1 ">
                     <Listbox.Button className="relative w-full cursor-default py-2 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-magenta-300 ui-disabled:brightness-50 sm:text-sm ">
                         <span className="block truncate text-white">
-                            {people[tempGender].gender}
+                            {people[gender].gender}
                         </span>
                         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                             <ChevronUpIcon
