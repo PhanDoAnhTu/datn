@@ -9,7 +9,7 @@ import { ToastContainer } from 'react-toastify';
 
 import { ArrowUpCircleIcon } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
-import { XMarkIcon } from '@heroicons/react/20/solid';
+// eslint-disable-next-line no-unused-vars
 // import { useEffect, useState } from 'react';
 
 const App = () => {
@@ -24,6 +24,7 @@ const App = () => {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
+    // eslint-disable-next-line no-unused-vars
     const [isDarkMode, setIsDarkMode] = useState(false);
 
     useEffect(() => {
@@ -48,18 +49,10 @@ const App = () => {
     return (
         <main className="dark:bg-pattern-dark bg-pattern-light">
             <ToastContainer
-                toastStyle={{
-                    backgroundColor: `${isDarkMode ? 'rgb(24 24 27)' : '#fff'}`,
-                    color: `${isDarkMode ? '#fff' : 'rgb(24 24 27)'}`,
-                }}
-                closeButton={({ closeToast }) => (
-                    <XMarkIcon
-                        onClick={closeToast}
-                        className="h-5 w-5 text-gray-900 hover:cursor-pointer dark:text-white"
-                    />
-                )}
+                theme={'colored'}
                 closeOnClick={true}
                 autoClose={2000}
+                pauseOnHover={false}
             />
             <Header />
             <Outlet />
