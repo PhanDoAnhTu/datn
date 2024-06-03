@@ -99,7 +99,6 @@ export const onViewProfile = () => async (dispatch) => {
 };
 
 export const onLogout = () => async (dispatch) => {
-
   try {
     const response = await PostData('/user/v1/customer/logout', {});
     return dispatch({ type: Action.LOGOUT, payload: response.data });

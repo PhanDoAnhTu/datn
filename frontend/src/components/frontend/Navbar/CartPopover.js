@@ -19,8 +19,8 @@ export default function CartPopover({ Button }) {
 
     const dispatch = useDispatch();
     useEffect(() => {
-        if (!cart) {
-            dispatch(getCart({ userId: userInfo._id }));
+        if (userInfo) {
+            !cart && dispatch(getCart({ userId: userInfo._id }));
         }
     }, [cart]);
 
@@ -116,6 +116,7 @@ export default function CartPopover({ Button }) {
                                                                 .length}
                                                         )
                                                     </Dialog.Title>
+
                                                     <div className="ml-3 flex h-7 items-center">
                                                         <button
                                                             type="button"
@@ -135,8 +136,19 @@ export default function CartPopover({ Button }) {
                                                         </button>
                                                     </div>
                                                 </div>
+                                                <div className="mt-4 flex max-w-full justify-start">
+                                                    <Dialog.Title className="text-sm font-small text-gray-900 transition-colors duration-200 ease-out dark:text-white">
+                                                        Chọn tất cả
+                                                        <input
+                                                            type="checkbox"
+                                                            className="border-0 ml-2 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
+                                                        />
+                                                    </Dialog.Title>
+
+                                                </div>
 
                                                 <div className="mt-8">
+
                                                     <div className="flow-root">
                                                         <ul className="-my-6 divide-y divide-gray-200 transition-colors duration-200 ease-out dark:divide-stone-700">
                                                             {cart &&

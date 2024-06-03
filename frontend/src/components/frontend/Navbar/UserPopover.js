@@ -26,8 +26,8 @@ export default function UserPopover() {
                 bodyClassName: 'grow-font-size',
                 progressClassName: 'fancy-progress-bar',
             });
-            close();
             navigate('/login');
+            close();
         } catch (error) {
             console.error(error);
         }

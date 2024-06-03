@@ -28,7 +28,7 @@ const UserReducer = (state = initialState, action) => {
                 userInfo: action.payload
             }
         case Action.LOGOUT:
-            localStorage.clear();
+            localStorage.removeItem("userInfo");
             return {
                 ...state,
                 userInfo: null

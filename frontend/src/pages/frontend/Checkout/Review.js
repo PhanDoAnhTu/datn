@@ -17,7 +17,7 @@ export default function Review({ step, setStep, information, paymentMethod }) {
             const result = await dispatch(
                 paymentByMoMo({
                     orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
-                    amount: 200000,
+                    amount: 4000000,
                 })
             );
             result && window.location.replace(result.payload.payUrl);
@@ -26,7 +26,7 @@ export default function Review({ step, setStep, information, paymentMethod }) {
             const result = await dispatch(
                 paymentByZaloPay({
                     orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
-                    amount: 200000,
+                    amount: 4000000,
                 })
             );
 
