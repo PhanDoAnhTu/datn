@@ -30,27 +30,35 @@ export default function Login() {
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
-            const dataLogin = await dispatch(onLogin({ customer_email: email, customer_password: password }))
+            const dataLogin = await dispatch(
+                onLogin({ customer_email: email, customer_password: password })
+            );
             // console.log(dataLogin)
-            dataLogin && navigate(redirect)
-            toast.success('User successfully login')
+            dataLogin && navigate(redirect);
+            toast.success('User successfully login');
         } catch (err) {
-            toast.error("Login not successfully");
+            toast.error('Login not successfully');
         }
     };
     const LoginWithFacabook = async () => {
         try {
             // const res = await dispatch(onLoginWithFacebook())
-            window.open(`http://localhost:5000/api/social-authentication/facebook`, '_self')
-            toast.success("Đăng nhập bằng facebook thành công")
+            window.open(
+                `http://localhost:5000/api/social-authentication/facebook`,
+                '_self'
+            );
+            toast.success('Đăng nhập bằng facebook thành công');
         } catch (err) {
             toast.error(err?.data?.message || err);
         }
     };
     const LoginWithGoogle = async () => {
         try {
-            window.open(`http://localhost:5000/api/social-authentication/google`, '_self')
-            toast.success("Đăng nhập bằng google thành công")
+            window.open(
+                `http://localhost:5000/api/social-authentication/google`,
+                '_self'
+            );
+            toast.success('Đăng nhập bằng google thành công');
         } catch (err) {
             toast.error(err?.data?.message || err);
         }
@@ -62,7 +70,7 @@ export default function Login() {
                 <div className="self-center bg-zinc-900/50 pb-12 max-sm:w-full max-sm:px-12 sm:w-3/6">
                     <div className="sm:mx-auto sm:w-full sm:max-w-screen-xl">
                         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 max-sm:text-xl dark:text-white">
-                            Sign in to your account
+                            Đăng nhập vào tài khoản của bạn
                         </h2>
                     </div>
 
@@ -93,7 +101,7 @@ export default function Login() {
                                         setPassword(e.target.value)
                                     }
                                     autoComplete="off"
-                                    placeholder="Password"
+                                    placeholder="*******"
                                     required
                                     className="mt-3 block w-full border-b-2 border-l-0 border-r-0 border-t-0 bg-transparent py-1.5 pl-0 text-gray-900 shadow-sm outline-none ring-0 transition duration-200 ease-out placeholder:font-semibold placeholder:text-gray-300 focus:border-magenta-500 focus:ring-0 sm:text-sm sm:leading-6 dark:border-white dark:text-white"
                                 />
@@ -104,7 +112,7 @@ export default function Login() {
                                             className="rounded-sm border-gray-300 transition duration-200 ease-out checked:text-xanthous-500 focus:ring-xanthous-400 focus:ring-offset-0"
                                         />
                                         <p className="font-bold max-sm:text-xs dark:text-white">
-                                            Remember me
+                                            Nhớ tôi
                                         </p>
                                     </div>
                                     <ForgotPassword />
@@ -117,33 +125,40 @@ export default function Login() {
                                     type="submit"
                                     className="flex w-full justify-center rounded-md bg-magenta-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm transition duration-200 ease-out hover:bg-magenta-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 >
-                                    {/* {isLoading ? 'Signing In...' : 'Sign In'} */}Sign In
+                                    {/* {isLoading ? 'Signing In...' : 'Sign In'} */}
+                                    Đăng nhập
                                 </button>
                             </div>
                         </form>
 
                         <p className="mt-10 text-center text-sm text-gray-500 dark:text-stone-200">
-                            Not member?{' '}
+                            Chưa là thành viên?{' '}
                             <Link
                                 to="/register"
                                 className="font-bold leading-6 text-magenta-500 hover:text-magenta-600"
                             >
-                                Sign up now
+                                Đăng ký ngay
                             </Link>
                         </p>
                         <div className="flex flex-col justify-center space-y-1 pt-7">
                             <span className="text-center text-sm text-gray-500 dark:text-stone-200">
-                                Or sign in with
+                                Hoặc đăng nhập bằng
                             </span>
                             <div className="flex w-full flex-col space-y-2">
-                                <button className="flex items-center justify-center space-x-1 rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold transition duration-200 ease-out" onClick={() => LoginWithFacabook()}>
+                                <button
+                                    className="flex items-center justify-center space-x-1 rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold transition duration-200 ease-out"
+                                    onClick={() => LoginWithFacabook()}
+                                >
                                     <FontAwesomeIcon
                                         icon={faFacebookF}
                                         className="h-4 w-4 text-white"
                                     />
                                     <span className="text-white">Facebook</span>
                                 </button>
-                                <button className="flex items-center justify-center space-x-1 rounded-md bg-rose-500 px-3 py-2 text-sm font-semibold transition duration-200 ease-out" onClick={() => LoginWithGoogle()}>
+                                <button
+                                    className="flex items-center justify-center space-x-1 rounded-md bg-rose-500 px-3 py-2 text-sm font-semibold transition duration-200 ease-out"
+                                    onClick={() => LoginWithGoogle()}
+                                >
                                     <FontAwesomeIcon
                                         icon={faGoogle}
                                         className="h-4 w-4 text-white"

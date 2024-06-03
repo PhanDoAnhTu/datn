@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
-import { StarIcon } from '@heroicons/react/20/solid';
+import {
+    HeartIcon,
+    MinusIcon,
+    PlusIcon,
+    StarIcon,
+} from '@heroicons/react/20/solid';
 import { RadioGroup } from '@headlessui/react';
 import classNames from '../../../helpers/classNames';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import HeartSlashIcon from '../../../assets/HeartIcon.js';
 import ProductList from '../../../components/frontend/ProductList';
 import { products } from '../../../test/products';
 import {
@@ -15,8 +21,14 @@ import {
 } from '../../../store/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { NumericFormat } from 'react-number-format';
+
 import { toast } from 'react-toastify';
-import { addFavoriteToLocalStorage, getFavoritesFromLocalStorage, removeFavoriteFromLocalStorage } from '../../../utils';
+
+import {
+    addFavoriteToLocalStorage,
+    getFavoritesFromLocalStorage,
+    removeFavoriteFromLocalStorage,
+} from '../../../utils';
 
 const product = {
     to: '#',
@@ -28,6 +40,7 @@ const product = {
 
 const reviews = { to: '#', average: 4, totalCount: 117 };
 export default function ProductDetail() {
+    const navigate = useNavigate();
     const { product_slug_id } = useParams();
     const dispatch = useDispatch();
 
@@ -55,15 +68,17 @@ export default function ProductDetail() {
 
     const getProductDetail = async () => {
         const response = await dispatch(productById({ spu_id: product_id }));
-        response && setProductDetail(response.payload.metaData)
-        const fetch_spicial_offer = await dispatch(getSpecialOfferBySpuId({ spu_id: product_id }))
-        fetch_spicial_offer && setSpicial_offer(fetch_spicial_offer.payload.metaData)
-    }
+        response && setProductDetail(response.payload.metaData);
+        const fetch_spicial_offer = await dispatch(
+            getSpecialOfferBySpuId({ spu_id: product_id })
+        );
+        fetch_spicial_offer &&
+            setSpicial_offer(fetch_spicial_offer.payload.metaData);
+    };
     const getPhotosByProductDetail = async () => {
         const response = await dispatch(listImageByProductId(product_id));
-        response && setProductImages(response.payload.metaData)
-    }
-
+        response && setProductImages(response.payload.metaData);
+    };
 
     /////////////////////////////
     useEffect(() => {
@@ -98,21 +113,21 @@ export default function ProductDetail() {
         if (product_detail) {
             const filteredSKU = product_detail.sku_list
                 ? product_detail.sku_list.find(
-                    (item) =>
-                        item.sku_tier_idx.toString() ===
-                        selectedVariation.toString()
-                )
+                      (item) =>
+                          item.sku_tier_idx.toString() ===
+                          selectedVariation.toString()
+                  )
                 : null;
             if (filteredSKU != null) {
                 setPrice(filteredSKU.sku_price);
                 setStock(filteredSKU.sku_stock);
                 setSelectedImage(
                     product_images &&
-                    product_images.find(
-                        (item) =>
-                            item.sku_id.toString() ===
-                            filteredSKU._id.toString()
-                    )
+                        product_images.find(
+                            (item) =>
+                                item.sku_id.toString() ===
+                                filteredSKU._id.toString()
+                        )
                 );
                 spicial_offer &&
                     spicial_offer.special_offer_spu_list.filter((product) => {
@@ -153,10 +168,10 @@ export default function ProductDetail() {
         setSelectedSku(
             product_detail
                 ? product_detail.sku_list.find(
-                    (item) =>
-                        item.sku_tier_idx.toString() ===
-                        selectedVariation.toString()
-                )
+                      (item) =>
+                          item.sku_tier_idx.toString() ===
+                          selectedVariation.toString()
+                  )
                 : null
         );
     }, [product_detail, selectedVariation]);
@@ -175,37 +190,48 @@ export default function ProductDetail() {
 
     ////addtoCart
     const handleAddToCart = async (userId, { productId, sku_id, quantity }) => {
-        if (quantity <= stock) {
-            // console.log('selected_sku', sku_id + productId + sku_id)
-            await dispatch(
-                addToCart({
-                    userId: userId,
-                    product: {
-                        productId: productId,
-                        sku_id: sku_id,
-                        quantity: quantity,
-                    },
-                })
-            );
-            toast.success('Đã thêm sản phẩm vào giỏ hàng!');
-            // addCartItemToLocalStorage({
-            //     productId: productId,
-            //     sku_id: sku_id,
-            //     quantity: quantity
-            // })
+        if (userId) {
+            if (quantity <= stock) {
+                // console.log('selected_sku', sku_id + productId + sku_id)
+                await dispatch(
+                    addToCart({
+                        userId: userId._id,
+                        product: {
+                            productId: productId,
+                            sku_id: sku_id,
+                            quantity: quantity,
+                        },
+                    })
+                );
+                toast.success('Đã thêm sản phẩm vào giỏ hàng!');
+                // addCartItemToLocalStorage({
+                //     productId: productId,
+                //     sku_id: sku_id,
+                //     quantity: quantity
+                // })
+            }
+        } else {
+            toast.error('Vui lòng đăng nhập để tiếp tục');
+            navigate('/login');
         }
     };
     ////////////////wishList
     const HandleAddToWishList = async ({ userId, productId }) => {
-        await dispatch(
-            addToWishList({
-                userId: userId,
-                productId: productId,
-            })
-        );
-        await addFavoriteToLocalStorage(productId);
-        setfavoriesProduct(getFavoritesFromLocalStorage());
-        toast.success('Đã thêm sản phẩm vào mục yêu thích!');
+        if (userId) {
+            await dispatch(
+                addToWishList({
+                    userId: userId._id,
+                    productId: productId,
+                })
+            );
+            await addFavoriteToLocalStorage(productId);
+            setfavoriesProduct(getFavoritesFromLocalStorage());
+            toast.success('Đã thêm sản phẩm vào mục yêu thích!');
+        } else {
+            toast.error('Vui lòng đăng nhập để tiếp tục');
+
+            navigate('/login');
+        }
     };
 
     const HandleRemoveFromWishList = async ({ userId, productId }) => {
@@ -266,7 +292,7 @@ export default function ProductDetail() {
                                     <button
                                         onClick={() => HandleImageChoose(item)}
                                         key={index}
-                                        className="h-36 w-24 flex-shrink-0 sm:overflow-hidden sm:rounded-lg lg:w-full"
+                                        className="h-36 w-24 flex-shrink-0  bg-white sm:overflow-hidden sm:rounded-lg lg:w-full"
                                     >
                                         <img
                                             src={item.thumb_url}
@@ -276,7 +302,7 @@ export default function ProductDetail() {
                                     </button>
                                 ))}
                         </div>
-                        <div className="w-full sm:overflow-hidden sm:rounded-lg">
+                        <div className="w-full bg-white sm:overflow-hidden sm:rounded-lg">
                             <img
                                 src={selectedImage && selectedImage.thumb_url}
                                 alt={selectedImage && selectedImage.thumb_url}
@@ -463,7 +489,7 @@ export default function ProductDetail() {
                                 </div>
                             ))}
 
-                            <div className=" mt-10 flex flex-col space-y-1">
+                            <div className="mt-10 flex flex-col space-y-5">
                                 {stock != null ? (
                                     <span className="font-bold text-gray-900 dark:text-white">
                                         Số lượng có sẵn: {stock}
@@ -472,72 +498,110 @@ export default function ProductDetail() {
                                     ''
                                 )}
                                 <div
-                                    className="inline-flex rounded-md shadow-sm"
+                                    className="inline-flex w-fit overflow-hidden rounded-md border-2 bg-zinc-950 shadow-sm"
                                     role="group"
                                 >
                                     <button
                                         onClick={() =>
                                             handleDecrement(quantity)
                                         }
-                                        className="rounded-s-lg border border-gray-900 bg-transparent px-2 py-3 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-2 focus:ring-gray-500 dark:border-white dark:text-white dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700"
+                                        className="border-gray-900 bg-transparent px-2 text-sm font-medium text-gray-900 transition duration-300 ease-out hover:bg-magenta-500 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:border-magenta-500  dark:hover:text-white dark:focus:border-magenta-400 dark:focus:bg-magenta-400"
                                     >
-                                        -
+                                        <MinusIcon className="h-5 w-5 text-gray-900 dark:text-white" />
                                     </button>
-
-                                    <div className=" w-10 border-b border-t border-gray-900 bg-transparent p-4 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-2 focus:ring-gray-500 dark:border-white dark:text-white dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700">
+                                    <div className="border-none bg-transparent px-4 py-3 text-sm font-medium text-gray-900 focus:z-10 dark:text-white">
                                         <span>{quantity}</span>
                                     </div>
                                     <button
+                                        className="border-gray-900 bg-transparent px-2 text-sm font-medium text-gray-900 transition duration-300 ease-out hover:bg-magenta-500 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:border-magenta-500  dark:hover:text-white dark:focus:border-magenta-400 dark:focus:bg-magenta-400"
                                         onClick={() =>
                                             handleIncrement(quantity, stock)
                                         }
-                                        className="rounded-e-lg border border-gray-900 bg-transparent px-2 py-3 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-2 focus:ring-gray-500 dark:border-white dark:text-white dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700"
                                     >
-                                        +
+                                        <PlusIcon className="h-5 w-5 text-gray-900 dark:text-white" />
                                     </button>
                                 </div>
 
-                                {product_detail && (
-                                    userInfo ?
-                                        (
-                                            favories_products.some((p_id) => p_id === product_detail.spu_info._id) == true
-                                                ?
-                                                <button onClick={() => HandleRemoveFromWishList({ userId: userInfo._id, productId: product_detail.spu_info._id })} className="border-2 px-3 py-2  text-slate-50 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
-                                                    Bỏ thích
-                                                </button>
-                                                :
-                                                <button onClick={() => HandleAddToWishList({ userId: userInfo._id, productId: product_detail.spu_info._id })} className="border-2 px-3 py-2  text-slate-50 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
-                                                    Thêm vào yêu thích
-                                                </button>
-                                        ) :
-                                        (
-                                            <button className="border-2  px-3 py-2  text-slate-50 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
-                                                Thêm vào yêu thích
+                                <div className="flex space-x-2">
+                                    {product_detail &&
+                                        (selected_sku ? (
+                                            <button
+                                                onClick={() =>
+                                                    handleAddToCart(userInfo, {
+                                                        productId:
+                                                            product_detail
+                                                                .spu_info._id,
+                                                        sku_id: selected_sku._id,
+                                                        quantity: quantity,
+                                                    })
+                                                }
+                                                className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
+                                            >
+                                                Thêm vào giỏ hàng
                                             </button>
-                                        )
-                                )}
-
-                                {product_detail &&
-                                    (selected_sku ? (
-                                        <button
-                                            onClick={() =>
-                                                handleAddToCart(userInfo._id, {
-                                                    productId:
-                                                        product_detail.spu_info
-                                                            ._id,
-                                                    sku_id: selected_sku._id,
-                                                    quantity: quantity,
-                                                })
-                                            }
-                                            className=" flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400 focus:ring-offset-2"
-                                        >
-                                            Thêm vào giỏ hàng
-                                        </button>
-                                    ) : (
-                                        <button className=" flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400 focus:ring-offset-2">
-                                            Thêm vào giỏ hàng
-                                        </button>
-                                    ))}
+                                        ) : (
+                                            <button
+                                                disabled
+                                                className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400 focus:ring-offset-2 disabled:opacity-50"
+                                            >
+                                                Thêm vào giỏ hàng
+                                            </button>
+                                        ))}
+                                    {product_detail &&
+                                        (userInfo ? (
+                                            favories_products.some(
+                                                (p_id) =>
+                                                    p_id ===
+                                                    product_detail.spu_info._id
+                                            ) == true ? (
+                                                <button
+                                                    onClick={() =>
+                                                        HandleRemoveFromWishList(
+                                                            {
+                                                                userId: userInfo._id,
+                                                                productId:
+                                                                    product_detail
+                                                                        .spu_info
+                                                                        ._id,
+                                                            }
+                                                        )
+                                                    }
+                                                    className="flex w-fit items-center justify-center rounded-md border border-transparent bg-magenta-500 px-5 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
+                                                >
+                                                    <HeartSlashIcon />
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={() =>
+                                                        HandleAddToWishList({
+                                                            userId: userInfo,
+                                                            productId:
+                                                                product_detail
+                                                                    .spu_info
+                                                                    ._id,
+                                                        })
+                                                    }
+                                                    className="flex w-fit items-center justify-center rounded-md border border-transparent bg-magenta-500 px-5 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
+                                                >
+                                                    <HeartIcon className="h-7 w-7" />
+                                                </button>
+                                            )
+                                        ) : (
+                                            <button
+                                                onClick={() =>
+                                                    HandleAddToWishList({
+                                                        userId: userInfo,
+                                                        productId:
+                                                            product_detail
+                                                                .spu_info._id,
+                                                    })
+                                                }
+                                                className="flex w-fit items-center justify-center rounded-md border border-transparent bg-magenta-500 px-5 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
+                                            >
+                                                <HeartIcon className="h-7 w-7" />
+                                            </button>
+                                        ))}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -556,6 +620,6 @@ export default function ProductDetail() {
                     />
                 </div>
             </div>
-        </div >
+        </div>
     );
 }

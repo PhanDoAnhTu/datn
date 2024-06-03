@@ -1,10 +1,15 @@
 import { Outlet } from 'react-router-dom';
+
 import 'react-toastify/dist/ReactToastify.css';
+
 import Header from './layouts/LayoutSite/Header';
 import Footer from './layouts/LayoutSite/Footer';
+
 import { ToastContainer } from 'react-toastify';
+
 import { ArrowUpCircleIcon } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
+import { XMarkIcon } from '@heroicons/react/20/solid';
 // import { useEffect, useState } from 'react';
 
 const App = () => {
@@ -19,34 +24,41 @@ const App = () => {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
-    // const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
-    // useEffect(() => {
-    //     const darkModeMediaQuery = window.matchMedia(
-    //         '(prefers-color-scheme: dark)'
-    //     );
+    useEffect(() => {
+        const darkModeMediaQuery = window.matchMedia(
+            '(prefers-color-scheme: dark)'
+        );
 
-    //     const handleDarkModeChange = (event) => {
-    //         setIsDarkMode(event.matches);
-    //     };
+        const handleDarkModeChange = (event) => {
+            setIsDarkMode(event.matches);
+        };
 
-    //     darkModeMediaQuery.addEventListener('change', handleDarkModeChange);
-    //     setIsDarkMode(darkModeMediaQuery.matches);
+        darkModeMediaQuery.addEventListener('change', handleDarkModeChange);
+        setIsDarkMode(darkModeMediaQuery.matches);
 
-    //     return () => {
-    //         darkModeMediaQuery.removeEventListener(
-    //             'change',
-    //             handleDarkModeChange
-    //         );
-    //     };
-    // }, []);
+        return () => {
+            darkModeMediaQuery.removeEventListener(
+                'change',
+                handleDarkModeChange
+            );
+        };
+    }, []);
     return (
         <main className="dark:bg-pattern-dark bg-pattern-light">
             <ToastContainer
-                // toastStyle={{
-                //     backgroundColor: `${isDarkMode ? 'rgb(24 24 27)' : '#fff'}`,
-                //     color: `${isDarkMode ? '#fff' : 'rgb(24 24 27)'}`,
-                // }}
+                toastStyle={{
+                    backgroundColor: `${isDarkMode ? 'rgb(24 24 27)' : '#fff'}`,
+                    color: `${isDarkMode ? '#fff' : 'rgb(24 24 27)'}`,
+                }}
+                closeButton={({ closeToast }) => (
+                    <XMarkIcon
+                        onClick={closeToast}
+                        className="h-5 w-5 text-gray-900 hover:cursor-pointer dark:text-white"
+                    />
+                )}
+                closeOnClick={true}
                 autoClose={2000}
             />
             <Header />

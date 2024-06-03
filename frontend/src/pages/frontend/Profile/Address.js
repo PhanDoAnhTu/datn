@@ -31,12 +31,12 @@ export default function Address() {
                     </div>
                 ))}
             </div>
-            <div className="flex justify-end space-x-2 pt-2">
+            <div className="mt-4 flex justify-end space-x-2 border-t-2 border-white pt-2">
                 <button className="border-2 border-white px-2 py-1 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500">
-                    Add a new address
+                    Thêm địa chỉ mới
                 </button>
                 <button className="border-2 border-white px-2 py-1 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500">
-                    Choose as default address
+                    Chọn làm địa chỉ mặc định
                 </button>
             </div>
         </Tab.Panel>

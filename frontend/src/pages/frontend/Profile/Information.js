@@ -1,17 +1,68 @@
 import { Dialog, Tab, Transition } from '@headlessui/react';
 import GenderSelection from '../../../components/frontend/GenderSelection';
-import { Fragment, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 
 export default function Information() {
     const [isEditable, setIsEditable] = useState(false);
-    const [tempUsername, setTempUsername] = useState('');
-    const [tempFullName, setTempFullName] = useState('');
-    const [tempGender, setTempGender] = useState(0);
+    const [username, setUsername] = useState('');
+    const [fullname, setFullName] = useState('');
+    const [email, setEmail] = useState('');
+    const [gender, setGender] = useState(0);
+    let [isOpen, setIsOpen] = useState(false);
+    const [isForgot, setIsForgot] = useState(0);
+    const [password, setPassword] = useState('');
+    const [oldpassword, setOldPassword] = useState('');
+    const [repassword, setRepassword] = useState('');
     const testData = {
         username: 'test123',
         fullname: 'le van test',
         email: 'test@gmail.com',
         gender: 0,
+    };
+    useEffect(() => {
+        if (isEditable === false) {
+            setFullName(testData.fullname);
+            setUsername(testData.username);
+            setGender(testData.gender);
+            setEmail(testData.email);
+        }
+    }, [isEditable]);
+    function closeModal() {
+        setIsOpen(false);
+    }
+
+    function openModal() {
+        setIsOpen(true);
+    }
+    const handleIsForgot = (signal) => {
+        //if signal equal 1, modal will close and set all variable to their default
+        if (signal !== -1) {
+            //if isForgot equal 0 that means user is at enter old password
+            if (isForgot === 0) {
+                //call a service that checking if old password is valid in database
+                setIsForgot(signal);
+                return;
+            }
+            return;
+        }
+        closeModal();
+        setIsForgot(0);
+        setOldPassword('');
+        setPassword('');
+        setRepassword('');
+    };
+    const changePassword = () => {
+        //call a service that change the password here before close modal
+        if (password !== repassword) {
+            alert('Not matching');
+            return;
+        }
+        closeModal();
+        setIsForgot(0);
+        setOldPassword('');
+        setRepassword('');
+        setPassword('');
+        alert(password);
     };
     let [open, setOpen] = useState(false);
     const cancelButtonRef = useRef(null);
@@ -33,7 +84,7 @@ export default function Information() {
                         onClick={() => setOpen(true)}
                         className="w-fit border-2 border-white px-10 py-2 font-bold text-white transition duration-200 ease-out hover:border-magenta-500 hover:text-magenta-500"
                     >
-                        Change
+                        Thay đổi
                     </button>
                     <Transition.Root show={open} as={Fragment}>
                         <Dialog
@@ -73,7 +124,8 @@ export default function Information() {
                                                             as="h3"
                                                             className="text-base font-semibold leading-6 text-gray-900 dark:text-white"
                                                         >
-                                                            Upload avatar
+                                                            Cập nhật ảnh đại
+                                                            diện
                                                         </Dialog.Title>
                                                         <div className="mt-2">
                                                             <input
@@ -86,8 +138,8 @@ export default function Information() {
                                                                 className="mt-1 text-sm text-gray-500 dark:text-gray-300"
                                                                 id="file_input_help"
                                                             >
-                                                                PNG, JPG or
-                                                                (MAX.
+                                                                PNG, JPG, JPEG
+                                                                or (MAX.
                                                                 800x400px).
                                                             </p>
                                                         </div>
@@ -97,7 +149,7 @@ export default function Information() {
                                             <div className="bg-gray-50 px-4  py-3 sm:flex sm:flex-row-reverse sm:px-6 dark:bg-zinc-800">
                                                 <button
                                                     type="button"
-                                                    className="inline-flex w-full justify-center px-3 py-2 text-sm font-semibold text-white shadow-sm outline-none ring-2 ring-inset ring-magenta-500 transition duration-500 ease-out hover:bg-magenta-500 sm:ml-3 sm:w-auto"
+                                                    className="inline-flex w-full justify-center px-3 py-2 text-sm font-semibold text-white shadow-sm outline-none ring-2 ring-inset ring-white transition duration-500 ease-out hover:bg-magenta-500 hover:text-gray-900 hover:ring-magenta-500 sm:ml-3 sm:w-auto"
                                                     onClick={() =>
                                                         setOpen(false)
                                                     }
@@ -106,7 +158,7 @@ export default function Information() {
                                                 </button>
                                                 <button
                                                     type="button"
-                                                    className="mt-3 inline-flex w-full justify-center px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm outline-none ring-2 ring-inset ring-white transition duration-500 ease-out hover:bg-gray-50 hover:text-zinc-900 sm:mt-0 sm:w-auto dark:text-white"
+                                                    className="mt-3 inline-flex w-full justify-center px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm outline-none ring-2 ring-inset ring-white transition  duration-500 ease-out hover:bg-rose-500 hover:text-zinc-900 hover:ring-rose-500 sm:mt-0 sm:w-auto dark:text-white"
                                                     onClick={() =>
                                                         setOpen(false)
                                                     }
@@ -122,86 +174,283 @@ export default function Information() {
                         </Dialog>
                     </Transition.Root>
                     <div className="flex flex-col">
-                        <span className="text-white">File maximum: 24MB</span>
                         <span className="text-white">
-                            File extension: .jpg, .jpeg, .png
+                            Kích thước tối đa: 5MB
+                        </span>
+                        <span className="text-white">
+                            Định dạng: .jpg, .jpeg, .png
                         </span>
                     </div>
                 </div>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-                <div className="flex flex-col -space-y-1">
-                    <span className="w-fit  border-white pr-1 text-white">
-                        Username
-                    </span>
-                    <input
-                        type="text"
-                        disabled={!isEditable}
-                        value={!isEditable ? testData.username : tempUsername}
-                        onChange={(e) => setTempUsername(e.target.value)}
-                        className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-white outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white"
-                    />
-                </div>
-                <div className="flex flex-col -space-y-1">
-                    <span className="w-fit  border-white pr-1 text-white">
-                        Full Name
-                    </span>
-                    <input
-                        type="text"
-                        value={!isEditable ? testData.fullname : tempFullName}
-                        onChange={(e) => setTempFullName(e.target.value)}
-                        disabled={!isEditable}
-                        className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-white outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white"
-                    />
-                </div>
+            <div className="grid grid-cols-1 gap-4">
                 <div className="flex flex-col -space-y-1">
                     <span className="w-fit border-white pr-1 text-white">
                         Email
                     </span>
                     <input
                         type="text"
-                        value={testData.email}
+                        value={email}
                         className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-white outline-none brightness-50 transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white"
                         disabled
                     />
                 </div>
-                <div className="flex flex-col -space-y-1">
-                    <span className="w-fit  border-white pr-1 text-white">
-                        Gender
-                    </span>
-                    <GenderSelection
-                        selectedGender={testData.gender}
-                        isEditable={isEditable}
-                        setTempGender={setTempGender}
-                        tempGender={tempGender}
-                    />
-                </div>
-                <div className="flex flex-col -space-y-1">
-                    <span className="w-fit border-white pr-1 text-white brightness-50">
-                        Phone number
-                    </span>
-                    <div className="flex items-center border-x-0 border-b-2 border-t-0 transition duration-500 ease-out focus:border-magenta-500 dark:border-white/50">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="flex flex-col -space-y-1">
+                        <span className="w-fit  border-white pr-1 text-white">
+                            Tên người dùng
+                        </span>
                         <input
                             type="text"
-                            className="flex-1 border-0 border-gray-900 bg-transparent pl-0 text-white outline-none focus:ring-0 disabled:brightness-50 "
+                            disabled={!isEditable}
+                            value={!isEditable ? testData.username : username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-white outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white"
                         />
-                        <button className="h-fit w-fit border-2 p-1 text-xs font-semibold text-white transition duration-200 ease-out hover:border-magenta-500 hover:text-magenta-500">
-                            Change
-                        </button>
+                    </div>
+                    <div className="flex flex-col -space-y-1">
+                        <span className="w-fit  border-white pr-1 text-white">
+                            Họ và tên
+                        </span>
+                        <input
+                            type="text"
+                            value={!isEditable ? testData.fullname : fullname}
+                            onChange={(e) => setFullName(e.target.value)}
+                            disabled={!isEditable}
+                            className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-white outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white"
+                        />
+                    </div>
+
+                    <div className="flex flex-col -space-y-1">
+                        <span className="w-fit  border-white pr-1 text-white">
+                            Giới tính
+                        </span>
+                        <GenderSelection
+                            selectedGender={testData.gender}
+                            isEditable={isEditable}
+                            setGender={setGender}
+                            gender={gender}
+                        />
+                    </div>
+                    <div className="flex flex-col -space-y-1">
+                        <span className="w-fit border-white pr-1 text-white">
+                            Số điện thoại
+                        </span>
+                        <input
+                            type="text"
+                            value={!isEditable ? testData.fullname : fullname}
+                            onChange={(e) => setFullName(e.target.value)}
+                            disabled={!isEditable}
+                            className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-white outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white"
+                        />
                     </div>
                 </div>
             </div>
+
             <div className="flex items-center justify-end space-x-2">
                 {!isEditable ? (
                     <>
-                        <button className="border-2 border-white px-5 py-1 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500">
-                            Change password
+                        <button
+                            onClick={openModal}
+                            className="border-2 border-white px-5 py-1 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500"
+                        >
+                            Đổi mật khẩu
                         </button>
+                        <Transition appear show={isOpen} as={Fragment}>
+                            <Dialog
+                                as="div"
+                                className="relative z-10"
+                                onClose={() => null}
+                            >
+                                <Transition.Child
+                                    as={Fragment}
+                                    enter="ease-out duration-300"
+                                    enterFrom="opacity-0"
+                                    enterTo="opacity-100"
+                                    leave="ease-in duration-200"
+                                    leaveFrom="opacity-100"
+                                    leaveTo="opacity-0"
+                                >
+                                    <div className="fixed inset-0 bg-black/50" />
+                                </Transition.Child>
+
+                                <div className="fixed inset-0 overflow-y-auto">
+                                    <div className="flex min-h-full items-center justify-center p-4 text-center">
+                                        <Transition.Child
+                                            as={Fragment}
+                                            enter="ease-out duration-300"
+                                            enterFrom="opacity-0 scale-95"
+                                            enterTo="opacity-100 scale-100"
+                                            leave="ease-in duration-200"
+                                            leaveFrom="opacity-100 scale-100"
+                                            leaveTo="opacity-0 scale-95"
+                                        >
+                                            <Dialog.Panel className="w-full max-w-lg transform overflow-hidden bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-zinc-900">
+                                                <div className="group flex flex-nowrap overflow-hidden">
+                                                    <div
+                                                        className={`flex w-full max-w-full transition delay-200 duration-300 ease-out ${isForgot === 1 ? '-translate-x-full' : ''}`}
+                                                    >
+                                                        <div className="w-full max-w-full flex-none px-1">
+                                                            <Dialog.Title
+                                                                as="h3"
+                                                                className="text-lg font-bold leading-6 text-gray-900 dark:text-white"
+                                                            >
+                                                                Đổi mật khẩu
+                                                            </Dialog.Title>
+                                                            <div>
+                                                                <p className="text-sm text-gray-400">
+                                                                    Vui lòng
+                                                                    nhập mật
+                                                                    khẩu cũ.
+                                                                </p>
+                                                            </div>
+
+                                                            <div className="mt-7 flex flex-col">
+                                                                <input
+                                                                    type="password"
+                                                                    placeholder="*******"
+                                                                    required
+                                                                    value={
+                                                                        oldpassword
+                                                                    }
+                                                                    onChange={(
+                                                                        e
+                                                                    ) =>
+                                                                        setOldPassword(
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        )
+                                                                    }
+                                                                    autoFocus={
+                                                                        false
+                                                                    }
+                                                                    className="border-b-2 border-l-0 border-r-0 border-t-0 border-b-white bg-transparent pl-0 text-gray-900 transition duration-500 ease-out placeholder:text-gray-400 focus:border-b-magenta-500 focus:ring-0 dark:text-white"
+                                                                />
+                                                            </div>
+                                                            <div className="mt-5 flex justify-end space-x-3">
+                                                                <button
+                                                                    type="button"
+                                                                    className="inline-flex justify-center border-2 border-white px-4 py-2 text-sm font-semibold transition duration-500 ease-out hover:border-rose-600 hover:text-rose-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:text-white"
+                                                                    onClick={() =>
+                                                                        handleIsForgot(
+                                                                            -1
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Hủy
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    className="inline-flex justify-center border-2 border-white px-4 py-2 text-sm font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:text-white"
+                                                                    onClick={() =>
+                                                                        handleIsForgot(
+                                                                            1
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Tiếp theo
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div
+                                                            className={`w-full max-w-full flex-none px-1 ${isForgot === 1 ? '' : 'hidden'}`}
+                                                        >
+                                                            <Dialog.Title
+                                                                as="h3"
+                                                                className="text-lg font-bold leading-6 text-gray-900 dark:text-white"
+                                                            >
+                                                                Nhập mật khẩu
+                                                                mới
+                                                            </Dialog.Title>
+                                                            <div>
+                                                                <p className="text-sm text-gray-400">
+                                                                    Vui lòng
+                                                                    nhập mật
+                                                                    khẩu mới
+                                                                </p>
+                                                            </div>
+
+                                                            <div className="mt-7 flex flex-col space-y-3">
+                                                                <input
+                                                                    type="password"
+                                                                    placeholder="Mật khẩu mới"
+                                                                    required
+                                                                    value={
+                                                                        password
+                                                                    }
+                                                                    onChange={(
+                                                                        e
+                                                                    ) =>
+                                                                        setPassword(
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        )
+                                                                    }
+                                                                    autoFocus={
+                                                                        false
+                                                                    }
+                                                                    className="border-b-2 border-l-0 border-r-0 border-t-0 border-b-white bg-transparent pl-0 text-gray-900 transition duration-500 ease-out placeholder:text-gray-400 focus:border-b-magenta-500 focus:ring-0 dark:text-white"
+                                                                />
+                                                                <input
+                                                                    type="password"
+                                                                    placeholder="Xác nhận"
+                                                                    required
+                                                                    value={
+                                                                        repassword
+                                                                    }
+                                                                    onChange={(
+                                                                        e
+                                                                    ) =>
+                                                                        setRepassword(
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        )
+                                                                    }
+                                                                    autoFocus={
+                                                                        false
+                                                                    }
+                                                                    className="border-b-2 border-l-0 border-r-0 border-t-0 border-b-white bg-transparent pl-0 text-gray-900 transition duration-500 ease-out placeholder:text-gray-400 focus:border-b-magenta-500 focus:ring-0 dark:text-white"
+                                                                />
+                                                            </div>
+                                                            <div className="mt-5 flex justify-end space-x-3">
+                                                                <button
+                                                                    type="button"
+                                                                    className="inline-flex justify-center border-2 border-white px-4 py-2 text-sm font-semibold transition duration-500 ease-out hover:border-rose-600 hover:text-rose-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:text-white"
+                                                                    onClick={() =>
+                                                                        handleIsForgot(
+                                                                            -1
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Hủy
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    className="inline-flex justify-center border-2 border-white px-4 py-2 text-sm font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:text-white"
+                                                                    onClick={() =>
+                                                                        changePassword()
+                                                                    }
+                                                                >
+                                                                    Đổi mật khẩu
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </Dialog.Panel>
+                                        </Transition.Child>
+                                    </div>
+                                </div>
+                            </Dialog>
+                        </Transition>
                         <button
                             onClick={() => setIsEditable(true)}
                             className="border-2 border-white px-5 py-1 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500"
                         >
-                            Edit
+                            Chỉnh sửa
                         </button>
                     </>
                 ) : (
@@ -210,13 +459,13 @@ export default function Information() {
                             onClick={() => setIsEditable(false)}
                             className="border-2 border-white px-5 py-1 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500"
                         >
-                            Cancel
+                            Hủy
                         </button>
                         <button
                             onClick={() => setIsEditable(false)}
                             className="border-2 border-white px-5 py-1 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500"
                         >
-                            Save
+                            Lưu thay đổi
                         </button>
                     </>
                 )}

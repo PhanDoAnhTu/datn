@@ -57,23 +57,31 @@ export default function Favorites() {
 
     return (
         <Tab.Panel className={'p-3 px-7'}>
-            <div className="mb-4 grid gap-y-4 divide-y">
+            <div className="mb-4 grid gap-y-4">
                 <div className="flex justify-end">
-                    <button
-                        onClick={() => handleReload()}
-                        className="ml-3 border-2 border-white px-3  py-2 font-semibold text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs"
-                    >
-                        Làm mới
-                    </button>
-                    {userInfo && (
-                        <button
-                            onClick={() =>
-                                HandleDeleteWishList({ userId: userInfo._id })
-                            }
-                            className="ml-3 border-2 border-magenta-500 px-3  py-2 font-semibold text-magenta-500 transition duration-500 ease-out hover:border-rose-500 hover:text-rose-500 max-sm:text-xs"
-                        >
-                            Xóa danh sách yêu thích
-                        </button>
+                    {wish_list ? (
+                        <>
+                            <button
+                                onClick={() => handleReload()}
+                                className="ml-3 border-2 border-white px-3  py-2 font-semibold text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs"
+                            >
+                                Làm mới
+                            </button>
+                            {userInfo && (
+                                <button
+                                    onClick={() =>
+                                        HandleDeleteWishList({
+                                            userId: userInfo._id,
+                                        })
+                                    }
+                                    className="ml-3 border-2 border-magenta-500 px-3  py-2 font-semibold text-magenta-500 transition duration-500 ease-out hover:border-rose-500 hover:text-rose-500 max-sm:text-xs"
+                                >
+                                    Xóa danh sách yêu thích
+                                </button>
+                            )}
+                        </>
+                    ) : (
+                        ''
                     )}
                 </div>
 
@@ -97,10 +105,12 @@ export default function Favorites() {
                             })
                     )
                 ) : (
-                    <></>
+                    <div className="text-lg font-bold text-gray-900 dark:text-white">
+                        Không có gì ở đây cả!
+                    </div>
                 )}
             </div>
-            <Pagination />
+            {wish_list ? <Pagination /> : ''}
         </Tab.Panel>
     );
 }
