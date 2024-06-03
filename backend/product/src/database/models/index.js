@@ -6,5 +6,8 @@ module.exports = {
     KeyTokenModel: require('./KeyToken'),
     GalleryModel: require('./Gallery'),
     BrandModel: require('./Brand'),
+    AttributeModel: require('./Attribute'),
+    AttributeValueModel: require('./AtributeValue'),
+    Spu_AttributeModel: require('./Spu_Attribute')
 
 }

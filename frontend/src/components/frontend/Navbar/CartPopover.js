@@ -13,16 +13,32 @@ import {
 
 export default function CartPopover({ Button }) {
     const navigate = useNavigate();
-    const [open, setOpen] = useState(false);
-    const { userInfo } = useSelector((state) => state.userReducer);
-    const { cart } = useSelector((state) => state.cartReducer);
-
     const dispatch = useDispatch();
-    useEffect(() => {
-        if (userInfo) {
-            !cart && dispatch(getCart({ userId: userInfo._id }));
+    const [open, setOpen] = useState(false);
+    const { userInfo } = useSelector((state) => state.userReducer)
+    const { cart } = useSelector((state) => state.cartReducer)
+    const [selectedProductFromCart, setSelectedProductFromCart] = useState([])
+
+    const checkedSelectedProductFromCart = async (sku) => {
+        if (!selectedProductFromCart.some(({ sku_id }) => sku_id == sku.sku_id)) {
+            setSelectedProductFromCart(selectedProductFromCart.push(sku))
         }
-    }, [cart]);
+    }
+    const cancelSelectedProductFromCart = async (sku) => {
+        setSelectedProductFromCart((old_value) => old_value.filter(({ sku_id }) => sku_id == sku.sku_id))
+    }
+    const changeSelectedProductFromCart = async (type, sku) => {
+        if (type == "all_checked") {
+            console.lohg("all")
+        }
+        if (type == "checked") {
+            checkedSelectedProductFromCart(sku)
+        }
+        if (type == "cancel") {
+            cancelSelectedProductFromCart(sku)
+        }
+        console.log('selectedProductFromCart', selectedProductFromCart)
+    }
 
     // useEffect(() => {
     //     cart && (
@@ -73,6 +89,12 @@ export default function CartPopover({ Button }) {
         // dispatch(getCart({ userId: userInfo._id }));
         setOpen(true);
     };
+
+    useEffect(() => {
+        if (userInfo) {
+            !cart && dispatch(getCart({ userId: userInfo._id }));
+        }
+    }, [cart]);
 
     return (
         <div className="ml-4 flow-root lg:ml-6">
@@ -167,6 +189,7 @@ export default function CartPopover({ Button }) {
                                                                             update={
                                                                                 updateOrDeleteItemFromCart
                                                                             }
+                                                                            checkbox={changeSelectedProductFromCart}
                                                                         />
                                                                     )
                                                                 )}

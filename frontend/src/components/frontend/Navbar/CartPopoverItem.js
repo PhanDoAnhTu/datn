@@ -14,7 +14,7 @@ import { Listbox, Transition } from '@headlessui/react';
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
-export default function CartPopoverItem({ product, update }) {
+export default function CartPopoverItem({ product, update, checkbox }) {
     const dispatch = useDispatch();
     console.log('product', product);
     const [product_item, setProductItem] = useState(null);
@@ -39,9 +39,9 @@ export default function CartPopoverItem({ product, update }) {
         setProductItem(respon && respon.payload.metaData);
         setSku_default(
             respon &&
-                respon.payload.metaData.sku_list.find(
-                    (item) => item._id.toString() === product.sku_id.toString()
-                )
+            respon.payload.metaData.sku_list.find(
+                (item) => item._id.toString() === product.sku_id.toString()
+            )
         );
     };
     const saleApi = async () => {
@@ -150,6 +150,15 @@ export default function CartPopoverItem({ product, update }) {
             }
         }
     };
+    const changeCheckbox = async (active, sku) => {
+
+        if (active == true) {
+            checkbox("checked", sku)
+        }
+        if (active == false) {
+            checkbox("cancel", sku)
+        }
+    }
 
     return (
         <li key={product.productId} className="flex py-4">
@@ -167,6 +176,7 @@ export default function CartPopoverItem({ product, update }) {
                 </div>
                 <div className="mt-4 flex max-w-full justify-center">
                     <input
+                        onChange={(e) => changeCheckbox(e.target.checked, { sku_id: selected_sku._id })}
                         type="checkbox"
                         className="border-0 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
                     />
@@ -180,14 +190,14 @@ export default function CartPopoverItem({ product, update }) {
                             <a href={''}>
                                 {product_item &&
                                     (product_item.spu_info.product_name.length >
-                                    25
+                                        25
                                         ? product_item.spu_info.product_name
-                                              .substr(3)
-                                              .padEnd(
-                                                  product_item.spu_info
-                                                      .product_name.length,
-                                                  '...'
-                                              )
+                                            .substr(3)
+                                            .padEnd(
+                                                product_item.spu_info
+                                                    .product_name.length,
+                                                '...'
+                                            )
                                         : product_item.spu_info.product_name)}
                             </a>
                         </h3>
@@ -198,7 +208,7 @@ export default function CartPopoverItem({ product, update }) {
                                         sku_sale
                                             ? sku_sale.price_sale
                                             : selected_sku &&
-                                              selected_sku.sku_price
+                                            selected_sku.sku_price
                                     }
                                     displayType={'text'}
                                     thousandSeparator={true}
@@ -260,9 +270,9 @@ export default function CartPopoverItem({ product, update }) {
                                                                                     index
                                                                                 ]
                                                                                     .options[
-                                                                                    selected[
-                                                                                        index
-                                                                                    ]
+                                                                                selected[
+                                                                                index
+                                                                                ]
                                                                                 ]}
                                                                         </span>
                                                                     </span>

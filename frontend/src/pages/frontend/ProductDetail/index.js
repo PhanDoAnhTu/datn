@@ -175,49 +175,55 @@ export default function ProductDetail() {
 
     ////addtoCart
     const handleAddToCart = async (userId, { productId, sku_id, quantity }) => {
-        if (quantity <= stock) {
-            // console.log('selected_sku', sku_id + productId + sku_id)
-            await dispatch(
-                addToCart({
-                    userId: userId,
-                    product: {
-                        productId: productId,
-                        sku_id: sku_id,
-                        quantity: quantity,
-                    },
-                })
-            );
-            toast.success('Đã thêm sản phẩm vào giỏ hàng!');
-            // addCartItemToLocalStorage({
-            //     productId: productId,
-            //     sku_id: sku_id,
-            //     quantity: quantity
-            // })
+        if (userInfo) {
+            if (quantity <= stock) {
+                // console.log('selected_sku', sku_id + productId + sku_id)
+                await dispatch(
+                    addToCart({
+                        userId: userId,
+                        product: {
+                            productId: productId,
+                            sku_id: sku_id,
+                            quantity: quantity,
+                        },
+                    })
+                );
+                toast.success('Đã thêm sản phẩm vào giỏ hàng!');
+                // addCartItemToLocalStorage({
+                //     productId: productId,
+                //     sku_id: sku_id,
+                //     quantity: quantity
+                // })
+            }
         }
     };
     ////////////////wishList
     const HandleAddToWishList = async ({ userId, productId }) => {
-        await dispatch(
-            addToWishList({
-                userId: userId,
-                productId: productId,
-            })
-        );
-        await addFavoriteToLocalStorage(productId);
-        setfavoriesProduct(getFavoritesFromLocalStorage());
-        toast.success('Đã thêm sản phẩm vào mục yêu thích!');
+        if (userInfo) {
+            await dispatch(
+                addToWishList({
+                    userId: userId,
+                    productId: productId,
+                })
+            );
+            await addFavoriteToLocalStorage(productId);
+            setfavoriesProduct(getFavoritesFromLocalStorage());
+            toast.success('Đã thêm sản phẩm vào mục yêu thích!');
+        }
     };
 
     const HandleRemoveFromWishList = async ({ userId, productId }) => {
-        await dispatch(
-            removeFromWishList({
-                userId: userId,
-                productId: productId,
-            })
-        );
-        await removeFavoriteFromLocalStorage(productId);
-        setfavoriesProduct(getFavoritesFromLocalStorage());
-        toast.success('Đã xóa sản phẩm ra khỏi mục yêu thích!');
+        if (userInfo) {
+            await dispatch(
+                removeFromWishList({
+                    userId: userId,
+                    productId: productId,
+                })
+            );
+            await removeFavoriteFromLocalStorage(productId);
+            setfavoriesProduct(getFavoritesFromLocalStorage());
+            toast.success('Đã xóa sản phẩm ra khỏi mục yêu thích!');
+        }
     };
     return (
         <div className="bg-transparent pt-10 md:pt-20">
