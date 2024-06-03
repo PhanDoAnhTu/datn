@@ -34,7 +34,7 @@ export default function MobileNavbar({ navigation, open, setOpen }) {
                         leaveFrom="translate-x-0"
                         leaveTo="-translate-x-full"
                     >
-                        <Dialog.Panel className="relative flex w-full max-w-xs flex-col overflow-y-auto bg-stone-100 pb-12 shadow-xl  dark:bg-licorice-400">
+                        <Dialog.Panel className="relative flex w-full max-w-xs flex-col overflow-y-auto bg-stone-100 pb-12 shadow-xl  dark:bg-neutral-900">
                             <div className="flex px-4 pb-2 pt-5">
                                 <button
                                     type="button"

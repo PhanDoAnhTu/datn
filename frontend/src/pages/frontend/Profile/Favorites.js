@@ -59,7 +59,7 @@ export default function Favorites() {
         <Tab.Panel className={'p-3 px-7'}>
             <div className="mb-4 grid gap-y-4">
                 <div className="flex justify-end">
-                    {wish_list ? (
+                    {wish_list && wish_list.wish_list_products?.length !== 0 ? (
                         <>
                             <button
                                 onClick={() => handleReload()}
@@ -85,7 +85,7 @@ export default function Favorites() {
                     )}
                 </div>
 
-                {wish_list ? (
+                {wish_list && wish_list.wish_list_products?.length !== 0 ? (
                     wish_list.wish_list_products.map(
                         (product_id) =>
                             all_products &&
@@ -110,7 +110,11 @@ export default function Favorites() {
                     </div>
                 )}
             </div>
-            {wish_list ? <Pagination /> : ''}
+            {wish_list && wish_list.wish_list_products?.length !== 0 ? (
+                <Pagination />
+            ) : (
+                ''
+            )}
         </Tab.Panel>
     );
 }
