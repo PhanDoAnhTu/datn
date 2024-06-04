@@ -46,3 +46,37 @@ export const getCartFromLocalStorage = () => {
   const cart_productsJSON = localStorage.getItem("cart_products");
   return cart_productsJSON ? JSON.parse(cart_productsJSON) : [];
 };
+
+///checked from cart
+//checkSkuFromCart
+export const checkSkuFromCart = (sku) => {
+  const selected_list = getSelectedListFromCart();
+  if (!selected_list.some(({sku_id}) => sku_id.toString() === sku.sku_id.toString())) {
+    selected_list.push(sku);
+    localStorage.setItem("selected_list_from_cart", JSON.stringify(selected_list));
+  }
+};
+
+// cancelSkuFromCart
+export const cancelSkuFromCart = (sku) => {
+  const selected_list = getSelectedListFromCart();
+  const update_selected_list = selected_list.filter(
+    ({sku_id}) => sku_id.toString() !== sku.sku_id.toString()
+  );
+  localStorage.setItem("selected_list_from_cart", JSON.stringify(update_selected_list));
+};
+
+// SelectedAllListFromCart
+export const selectedAllFromCart = (sku_list) => {
+  localStorage.setItem("selected_list_from_cart", JSON.stringify(sku_list));
+
+};
+// CancelAllListFromCart
+export const cancelAllFromCart = () => {
+  localStorage.setItem("selected_list_from_cart", JSON.stringify([]));
+};
+// getSelectedListFromCart
+export const getSelectedListFromCart = () => {
+  const selected_listJSON = localStorage.getItem("selected_list_from_cart");
+  return selected_listJSON ? JSON.parse(selected_listJSON) : [];
+};

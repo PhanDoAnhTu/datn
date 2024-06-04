@@ -9,5 +9,4 @@ const { authentication } = require('../../auth/authUtils');
  router.post('/create', asynchandler(categoryController.createCategory))
  router.post('/getListCategoryByParentId', asynchandler(categoryController.getListCategoryByParentId))
 
-
 module.exports = router

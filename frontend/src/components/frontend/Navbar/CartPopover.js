@@ -10,6 +10,7 @@ import {
     DeleteToCartItem,
 } from '../../../store/actions';
 import { ShoppingBagIcon } from '@heroicons/react/20/solid';
+import { cancelAllFromCart, cancelSkuFromCart, checkSkuFromCart, getSelectedListFromCart, selectedAllFromCart } from '../../../utils';
 // import { getCartFromLocalStorage } from '../../../utils';
 
 export default function CartPopover({ Button }) {
@@ -18,34 +19,32 @@ export default function CartPopover({ Button }) {
     const [open, setOpen] = useState(false);
     const { userInfo } = useSelector((state) => state.userReducer)
     const { cart } = useSelector((state) => state.cartReducer)
-    const [selectedProductFromCart, setSelectedProductFromCart] = useState([])
+    const [selectedProductFromCart, setSelectedProductFromCart] = useState(getSelectedListFromCart)
 
-    const checkedSelectedProductFromCart = async (sku) => {
-        if (!selectedProductFromCart.some(({ sku_id }) => sku_id == sku.sku_id)) {
-            setSelectedProductFromCart(selectedProductFromCart.push(sku))
-        }
-    }
-    const cancelSelectedProductFromCart = async (sku) => {
-        setSelectedProductFromCart((old_value) => old_value.filter(({ sku_id }) => sku_id == sku.sku_id))
-    }
     const changeSelectedProductFromCart = async (type, sku) => {
         if (type == "all_checked") {
-            console.lohg("all")
+            selectedAllFromCart(sku)
+        }
+        if (type == "cancel_all_checked") {
+            cancelAllFromCart()
         }
         if (type == "checked") {
-            checkedSelectedProductFromCart(sku)
+            checkSkuFromCart(sku)
         }
         if (type == "cancel") {
-            cancelSelectedProductFromCart(sku)
+            cancelSkuFromCart(sku)
         }
-        console.log('selectedProductFromCart', selectedProductFromCart)
+        setSelectedProductFromCart(getSelectedListFromCart)
     }
 
-    // useEffect(() => {
-    //     cart && (
-    //         getCartFromLocalStorage().toString() !== cart.cart_products.toString() && dispatch(getCart({ userId: userInfo._id }))
-    //     )
-    // }, [cart])
+    const checkboxAll = async (checked, sku_list) => {
+        if (checked == true) {
+            changeSelectedProductFromCart("all_checked", sku_list)
+        }
+        if (checked == false) {
+            changeSelectedProductFromCart("cancel_all_checked", [])
+        }
+    }
 
     const updateOrDeleteItemFromCart = async (type, data) => {
         if (type === 'deleteItem') {
@@ -90,13 +89,13 @@ export default function CartPopover({ Button }) {
         // dispatch(getCart({ userId: userInfo._id }));
         setOpen(true);
     };
-    console.log(cart);
+    // console.log(cart);
 
     useEffect(() => {
         if (userInfo) {
             !cart && dispatch(getCart({ userId: userInfo._id }));
         }
-    }, [cart]);
+    }, [cart, userInfo]);
     // console.log('cart', cart)
     return (
         <div className="ml-4 flow-root lg:ml-6">
@@ -132,7 +131,7 @@ export default function CartPopover({ Button }) {
                                     <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
                                         <div className="flex h-full flex-col overflow-y-scroll bg-stone-100  shadow-xl transition-all duration-200 ease-out dark:bg-zinc-950">
                                             {cart &&
-                                            cart.cart_products?.length !== 0 ? (
+                                                cart.cart_products?.length !== 0 ? (
                                                 <>
                                                     <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                                                         <div className="flex items-start justify-between">
@@ -170,10 +169,23 @@ export default function CartPopover({ Button }) {
                                                         <div className="mt-4 flex max-w-full justify-start">
                                                             <Dialog.Title className="font-small text-sm text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                                 Chọn tất cả
-                                                                <input
-                                                                    type="checkbox"
-                                                                    className="ml-2 border-0 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
-                                                                />
+                                                                {selectedProductFromCart.length == cart.cart_products.length
+                                                                    ?
+                                                                    <input
+                                                                        checked={true}
+                                                                        onChange={() => checkboxAll(false, cart.cart_products)}
+                                                                        type="checkbox"
+                                                                        className="ml-2 border-0 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
+                                                                    />
+                                                                    :
+                                                                    <input
+                                                                        checked={false}
+                                                                        onChange={() => checkboxAll(true, cart.cart_products)}
+                                                                        type="checkbox"
+                                                                        className="ml-2 border-0 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
+                                                                    />
+                                                                }
+
                                                             </Dialog.Title>
                                                         </div>
 
@@ -197,6 +209,7 @@ export default function CartPopover({ Button }) {
                                                                                         updateOrDeleteItemFromCart
                                                                                     }
                                                                                     checkbox={changeSelectedProductFromCart}
+                                                                                    selected_list={selectedProductFromCart}
                                                                                 />
                                                                             )
                                                                         )}

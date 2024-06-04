@@ -18,12 +18,10 @@ class CategoryService {
         })
         return newCategory
     }
-
     async getListCategoryByParentId({ sort, parent_id }) {
         const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 }
         const listcategory = await CategoryModel.find({
             parent_id: parent_id,
-
         })
         return listcategory
     }

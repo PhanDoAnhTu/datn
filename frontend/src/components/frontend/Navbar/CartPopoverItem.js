@@ -14,22 +14,24 @@ import { Listbox, Transition } from '@headlessui/react';
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
-export default function CartPopoverItem({ product, update, checkbox }) {
+export default function CartPopoverItem({ product, update, checkbox, selected_list }) {
     const dispatch = useDispatch();
-    console.log('product', product);
+    // console.log('product', product);
     const [product_item, setProductItem] = useState(null);
     const [sku_default, setSku_default] = useState(null);
     const [selected, setSelected] = useState(null);
     const [selected_sku, setSelected_sku] = useState(null);
+    const [_quantity, setQuantity] = useState(null);
     //sale
     const [spicial_offer, setSpicial_offer] = useState(null);
     const [sku_sale, setSku_sale] = useState(null);
 
-    //
+    //old
     const [selected_sku_old, setSelected_sku_old] = useState(null);
     const [selected_old, setSelected_old] = useState(null);
 
-    const [_quantity, setQuantity] = useState(null);
+    ////checked
+
 
     const productItemApi = async () => {
         const respon = await dispatch(
@@ -52,7 +54,7 @@ export default function CartPopoverItem({ product, update, checkbox }) {
     };
 
     useEffect(() => {
-        product && productItemApi();
+        // product && productItemApi();
         !product_item && productItemApi();
         !_quantity && setQuantity(product.quantity);
     }, [product]);
@@ -125,13 +127,14 @@ export default function CartPopoverItem({ product, update, checkbox }) {
     }, [selected_old]);
 
     const handleVariationChange = async (value, variationOrder) => {
-        setSelected((s) => {
+        await setSelected((s) => {
             // console.log(s)
             setSelected_old(s);
             const newArray = s.slice();
             newArray[variationOrder] = value;
             return newArray;
         });
+
     };
     const updateCart = async (type, data) => {
         if (type == 'updateItem') {
@@ -159,7 +162,6 @@ export default function CartPopoverItem({ product, update, checkbox }) {
             checkbox("cancel", sku)
         }
     }
-
     return (
         <li key={product.productId} className="flex py-4">
             <div>
@@ -175,11 +177,31 @@ export default function CartPopoverItem({ product, update, checkbox }) {
                     />
                 </div>
                 <div className="mt-4 flex max-w-full justify-center">
-                    <input
-                        onChange={(e) => changeCheckbox(e.target.checked, { sku_id: selected_sku._id })}
-                        type="checkbox"
-                        className="border-0 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
-                    />
+                    {selected_sku
+                        ?
+                        (selected_list.some(({ sku_id }) => sku_id == selected_sku._id) == true
+                            ?
+                            < input
+                                checked={true}
+                                onChange={() => changeCheckbox(false, { sku_id: selected_sku._id, quantity: _quantity, productId: selected_sku.product_id })}
+                                type="checkbox"
+                                className="border-0 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
+                            />
+                            :
+                            < input
+                                checked={false}
+                                onChange={() => changeCheckbox(true, { sku_id: selected_sku._id, quantity: _quantity, productId: selected_sku.product_id })}
+                                type="checkbox"
+                                className="border-0 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
+                            />
+                        )
+                        :
+                        (
+                            <input
+                                type="checkbox"
+                                className="border-0 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
+                            />
+                        )}
                 </div>
             </div>
 
@@ -395,14 +417,6 @@ export default function CartPopoverItem({ product, update, checkbox }) {
                             >
                                 <MinusIcon className="h-5 w-5 text-gray-900 dark:text-white" />
                             </button>
-                            {/* <input
-                                type="text"
-                                value={quantity && quantity}
-                                defaultValue={quantity && quantity}
-                                name="quantity"
-                                id="quantity"
-                                className="block w-full border-0  text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
-                            /> */}
                             <div
                                 type="number"
                                 className="border-none bg-transparent px-2 py-3 text-sm font-medium text-gray-900 focus:z-10 dark:text-white"
