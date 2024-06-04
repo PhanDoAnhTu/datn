@@ -53,7 +53,7 @@ export const checkOrderByZaloPay = (data) => async (dispatch) => {
         );
         console.log('response:', response);
         return dispatch({
-            type: Action.transaction_status,
+            type: Action.TRANSACTION_STATUS,
             payload: response.data,
         });
     } catch (err) {

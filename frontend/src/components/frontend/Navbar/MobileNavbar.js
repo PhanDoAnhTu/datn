@@ -3,8 +3,9 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import classNames from '../../../helpers/classNames';
+import { navigation } from '../../../test/categories';
 
-export default function MobileNavbar({ navigation, open, setOpen }) {
+export default function MobileNavbar({ category, open, setOpen }) {
     return (
         <Transition.Root show={open} as={Fragment}>
             <Dialog
@@ -54,10 +55,14 @@ export default function MobileNavbar({ navigation, open, setOpen }) {
                             <Tab.Group as="div" className="mt-2">
                                 <div className="border-b border-gray-200 transition-colors duration-200 ease-out dark:border-stone-700">
                                     <Tab.List className="-mb-px flex space-x-8 px-4">
-                                        {navigation.categories.map(
-                                            (category) => (
+                                        {category
+                                            ?.slice()
+                                            .filter(
+                                                (og) => og.parent_id == null
+                                            )
+                                            .map((category) => (
                                                 <Tab
-                                                    key={category.name}
+                                                    key={category.category_name}
                                                     className={({ selected }) =>
                                                         classNames(
                                                             selected
@@ -67,20 +72,22 @@ export default function MobileNavbar({ navigation, open, setOpen }) {
                                                         )
                                                     }
                                                 >
-                                                    {category.name}
+                                                    {category.category_name}
                                                 </Tab>
-                                            )
-                                        )}
+                                            ))}
                                     </Tab.List>
                                 </div>
                                 <Tab.Panels as={Fragment}>
-                                    {navigation.categories.map((category) => (
-                                        <Tab.Panel
-                                            key={category.name}
-                                            className="space-y-10 px-4 pb-8 pt-10"
-                                        >
-                                            <div className="grid grid-cols-2 gap-x-4">
-                                                {category.featured.map(
+                                    {category
+                                        ?.slice()
+                                        .filter((og) => og.parent_id == null)
+                                        .map((item) => (
+                                            <Tab.Panel
+                                                key={item.category_name}
+                                                className="space-y-10 px-4 pb-8 pt-10"
+                                            >
+                                                <div className="grid grid-cols-2 gap-x-4">
+                                                    {/* {category.featured.map(
                                                     (item) => (
                                                         <div
                                                             key={item.name}
@@ -115,48 +122,68 @@ export default function MobileNavbar({ navigation, open, setOpen }) {
                                                             </p>
                                                         </div>
                                                     )
-                                                )}
-                                            </div>
-                                            {category.sections.map(
-                                                (section) => (
-                                                    <div key={section.name}>
-                                                        <p
-                                                            id={`${category.id}-${section.id}-heading-mobile`}
-                                                            className="font-medium text-gray-900 dark:text-magenta-600"
+                                                )} */}
+                                                </div>
+                                                {category
+                                                    ?.slice()
+                                                    .filter(
+                                                        (og) =>
+                                                            og.parent_id ===
+                                                            item._id
+                                                    )
+                                                    .map((subitem) => (
+                                                        <div
+                                                            key={
+                                                                subitem.category_name
+                                                            }
                                                         >
-                                                            {section.name}
-                                                        </p>
-                                                        <ul
-                                                            aria-labelledby={`${category.id}-${section.id}-heading-mobile`}
-                                                            className="mt-6 flex flex-col space-y-6"
-                                                        >
-                                                            {section.items.map(
-                                                                (item) => (
-                                                                    <li
-                                                                        key={
-                                                                            item.name
-                                                                        }
-                                                                        className="flow-root"
-                                                                    >
-                                                                        <Link
-                                                                            to={
-                                                                                item.to
-                                                                            }
-                                                                            className="-m-2 block p-2 text-gray-500 dark:text-gray-300"
-                                                                        >
-                                                                            {
-                                                                                item.name
-                                                                            }
-                                                                        </Link>
-                                                                    </li>
-                                                                )
-                                                            )}
-                                                        </ul>
-                                                    </div>
-                                                )
-                                            )}
-                                        </Tab.Panel>
-                                    ))}
+                                                            <p
+                                                                id={`${item._id}-${subitem._id}-heading-mobile`}
+                                                                className="font-medium text-gray-900 dark:text-magenta-600"
+                                                            >
+                                                                {
+                                                                    subitem.category_name
+                                                                }
+                                                            </p>
+                                                            <ul
+                                                                aria-labelledby={`${item._id}-${subitem._id}-heading-mobile`}
+                                                                className="mt-6 flex flex-col space-y-6"
+                                                            >
+                                                                {category
+                                                                    ?.slice()
+                                                                    .filter(
+                                                                        (og) =>
+                                                                            og.parent_id ===
+                                                                            subitem._id
+                                                                    )
+                                                                    .map(
+                                                                        (
+                                                                            subsubitem
+                                                                        ) => (
+                                                                            <li
+                                                                                key={
+                                                                                    subsubitem.category_name
+                                                                                }
+                                                                                className="flow-root"
+                                                                            >
+                                                                                <Link
+                                                                                    to={
+                                                                                        '#'
+                                                                                    }
+                                                                                    className="-m-2 block p-2 text-gray-500 dark:text-gray-300"
+                                                                                >
+                                                                                    {
+                                                                                        subsubitem.category_name
+                                                                                    }
+                                                                                </Link>
+                                                                            </li>
+                                                                        )
+                                                                    )}
+                                                            </ul>
+                                                        </div>
+                                                    ))}
+                                            </Tab.Panel>
+                                        ))}
                                 </Tab.Panels>
                             </Tab.Group>
 
@@ -171,14 +198,6 @@ export default function MobileNavbar({ navigation, open, setOpen }) {
                                         </Link>
                                     </div>
                                 ))}
-                                <div className="flow-root">
-                                    <Link
-                                        to={'#'}
-                                        className="-m-2 block p-2 font-medium text-gray-900 dark:text-magenta-600"
-                                    >
-                                        Admin
-                                    </Link>
-                                </div>
                             </div>
                         </Dialog.Panel>
                     </Transition.Child>

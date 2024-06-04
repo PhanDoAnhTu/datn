@@ -4,6 +4,7 @@ export * from './cart-actions';
 export * from './spicial-offer-actions';
 export * from './wish-list-actions';
 export * from './payment-actions';
+export * from './category-actions';
 
 export const Action = {
     //auth
@@ -26,6 +27,9 @@ export const Action = {
     CLEAR_CART_ITEMS: 'CLEAR_CART_ITEMS',
     //getdata
     CALL_DATA: 'CALL_DATA',
+    //category
+    GET_CATEGORY_BY_PARENT_ID: 'GET_CATEGORY_BY_PARENT_ID',
+    GET_ALL_CATEGORY: 'GET_ALL_CATEGORY',
 
     //spicial-offer
     SPICIAL_OFFER_BY_PRODUCT: 'SPICIAL_OFFER_BY_PRODUCT',

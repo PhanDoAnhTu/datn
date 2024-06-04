@@ -13,8 +13,9 @@ import SearchBar from './SearchBar';
 import CartPopover from './CartPopover';
 import UserPopover from './UserPopover';
 import Logo from '../../../assets/Logo';
+import { navigation } from '../../../test/categories';
 
-export default function PCNavbar({ navigation, setOpen }) {
+export default function PCNavbar({ category, setOpen }) {
     ////////////////
     const [scrollY, setScrollY] = useState(window.scrollY);
     const [bgWhite, setBgWhite] = useState(false);
@@ -96,158 +97,191 @@ export default function PCNavbar({ navigation, setOpen }) {
                     {/* Flyout menus */}
                     <Popover.Group className="hidden lg:block lg:self-stretch">
                         <div className="flex h-full  space-x-8">
-                            {navigation.categories.map((category) => (
-                                <Popover key={category.name} className="flex">
-                                    {({ open, close }) => (
-                                        <>
-                                            <div className="relative flex">
-                                                <Popover.Button
-                                                    className={classNames(
-                                                        open
-                                                            ? 'border-magenta-500 text-magenta-500'
-                                                            : 'border-transparent text-gray-700 hover:text-gray-800 dark:text-gray-100',
-                                                        'relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium outline-none transition-colors duration-200 ease-out hover:border-magenta-500 hover:text-magenta-500'
-                                                    )}
-                                                    onClick={() =>
-                                                        setBgWhite(!open)
-                                                    }
-                                                >
-                                                    {category.name}
-                                                </Popover.Button>
-                                            </div>
-                                            <Transition
-                                                as={Fragment}
-                                                enter="transition ease-out duration-200"
-                                                enterFrom="-translate-y-6 opacity-0"
-                                                enterTo="translate-y-0 opacity-100"
-                                                leave="transition ease-in duration-150"
-                                                leaveFrom="translate-y-0 opacity-100"
-                                                leaveTo="-translate-y-6 opacity-0"
-                                            >
-                                                <Popover.Panel className="absolute inset-x-0 top-full text-sm text-gray-500 dark:text-white">
-                                                    {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow */}
-                                                    <div
-                                                        className="absolute inset-0 top-1/2 bg-white shadow"
-                                                        aria-hidden="true"
-                                                    />
+                            {category?.map((item) => {
+                                if (item?.parent_id == null) {
+                                    return (
+                                        <Popover
+                                            key={item.category_name}
+                                            className="flex"
+                                        >
+                                            {({ open, close }) => (
+                                                <>
+                                                    <div className="relative flex">
+                                                        <Popover.Button
+                                                            className={classNames(
+                                                                open
+                                                                    ? 'border-magenta-500 text-magenta-500'
+                                                                    : 'border-transparent text-gray-700 hover:text-gray-800 dark:text-gray-100',
+                                                                'relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium outline-none transition-colors duration-200 ease-out hover:border-magenta-500 hover:text-magenta-500'
+                                                            )}
+                                                            onClick={() =>
+                                                                setBgWhite(
+                                                                    !open
+                                                                )
+                                                            }
+                                                        >
+                                                            {item.category_name}
+                                                        </Popover.Button>
+                                                    </div>
+                                                    <Transition
+                                                        as={Fragment}
+                                                        enter="transition ease-out duration-200"
+                                                        enterFrom="-translate-y-6 opacity-0"
+                                                        enterTo="translate-y-0 opacity-100"
+                                                        leave="transition ease-in duration-150"
+                                                        leaveFrom="translate-y-0 opacity-100"
+                                                        leaveTo="-translate-y-6 opacity-0"
+                                                    >
+                                                        <Popover.Panel className="absolute inset-x-0 top-full text-sm text-gray-500 dark:text-white">
+                                                            {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow */}
+                                                            <div
+                                                                className="absolute inset-0 top-1/2 bg-white shadow"
+                                                                aria-hidden="true"
+                                                            />
 
-                                                    <div className="relative bg-white dark:bg-neutral-900">
-                                                        <div className="mx-auto max-w-7xl px-8">
-                                                            <div className="grid grid-cols-2 gap-x-8 gap-y-10 py-16">
-                                                                <div className="col-start-2 grid grid-cols-2 gap-x-8">
-                                                                    {category.featured.map(
-                                                                        (
-                                                                            item
-                                                                        ) => (
-                                                                            <div
-                                                                                key={
-                                                                                    item.name
-                                                                                }
-                                                                                className="group relative text-base sm:text-sm"
-                                                                            >
-                                                                                <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 transition-opacity duration-300 ease-out group-hover:opacity-75">
-                                                                                    <img
-                                                                                        src={
-                                                                                            item.imageSrc
+                                                            <div className="relative bg-white dark:bg-neutral-900">
+                                                                <div className="mx-auto max-w-7xl px-8">
+                                                                    <div className="grid grid-cols-2 gap-x-8 gap-y-10 py-16">
+                                                                        <div className="col-start-2 grid grid-cols-2 gap-x-8">
+                                                                            {navigation.categories[0].featured.map(
+                                                                                (
+                                                                                    item
+                                                                                ) => (
+                                                                                    <div
+                                                                                        key={
+                                                                                            item.name
                                                                                         }
-                                                                                        alt={
-                                                                                            item.imageAlt
-                                                                                        }
-                                                                                        className="object-cover object-center"
-                                                                                    />
-                                                                                </div>
-
-                                                                                <Link
-                                                                                    to={
-                                                                                        item.to
-                                                                                    }
-                                                                                    className="mt-6 block font-medium text-gray-900 dark:text-white"
-                                                                                    onClick={async () => {
-                                                                                        close();
-                                                                                    }}
-                                                                                >
-                                                                                    <span
-                                                                                        className="absolute inset-0 z-10"
-                                                                                        aria-hidden="true"
-                                                                                    />
-                                                                                    {
-                                                                                        item.name
-                                                                                    }
-                                                                                </Link>
-
-                                                                                <p
-                                                                                    aria-hidden="true"
-                                                                                    className="mt-1"
-                                                                                >
-                                                                                    Shop
-                                                                                    now
-                                                                                </p>
-                                                                            </div>
-                                                                        )
-                                                                    )}
-                                                                </div>
-                                                                <div className="row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm">
-                                                                    {category.sections.map(
-                                                                        (
-                                                                            section
-                                                                        ) => (
-                                                                            <div
-                                                                                key={
-                                                                                    section.name
-                                                                                }
-                                                                            >
-                                                                                <p
-                                                                                    id={`${section.name}-heading`}
-                                                                                    className="font-medium text-gray-500 dark:text-magenta-600"
-                                                                                >
-                                                                                    {
-                                                                                        section.name
-                                                                                    }
-                                                                                </p>
-                                                                                <ul
-                                                                                    aria-labelledby={`${section.name}-heading`}
-                                                                                    className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
-                                                                                >
-                                                                                    {section.items.map(
-                                                                                        (
-                                                                                            item
-                                                                                        ) => (
-                                                                                            <li
-                                                                                                key={
-                                                                                                    item.name
+                                                                                        className="group relative text-base sm:text-sm"
+                                                                                    >
+                                                                                        <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 transition-opacity duration-300 ease-out group-hover:opacity-75">
+                                                                                            <img
+                                                                                                src={
+                                                                                                    item.imageSrc
                                                                                                 }
-                                                                                                className="flex"
+                                                                                                alt={
+                                                                                                    item.imageAlt
+                                                                                                }
+                                                                                                className="object-cover object-center"
+                                                                                            />
+                                                                                        </div>
+
+                                                                                        <Link
+                                                                                            to={
+                                                                                                item.to
+                                                                                            }
+                                                                                            className="mt-6 block font-medium text-gray-900 dark:text-white"
+                                                                                            onClick={async () => {
+                                                                                                close();
+                                                                                            }}
+                                                                                        >
+                                                                                            <span
+                                                                                                className="absolute inset-0 z-10"
+                                                                                                aria-hidden="true"
+                                                                                            />
+                                                                                            {
+                                                                                                item.name
+                                                                                            }
+                                                                                        </Link>
+
+                                                                                        <p
+                                                                                            aria-hidden="true"
+                                                                                            className="mt-1"
+                                                                                        >
+                                                                                            Shop
+                                                                                            now
+                                                                                        </p>
+                                                                                    </div>
+                                                                                )
+                                                                            )}
+                                                                        </div>
+                                                                        <div className="row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm">
+                                                                            {category
+                                                                                ?.slice()
+                                                                                .filter(
+                                                                                    (
+                                                                                        og
+                                                                                    ) =>
+                                                                                        og.parent_id ===
+                                                                                        item._id
+                                                                                )
+                                                                                .map(
+                                                                                    (
+                                                                                        subitem,
+                                                                                        subindex
+                                                                                    ) => {
+                                                                                        return (
+                                                                                            <div
+                                                                                                key={
+                                                                                                    subindex
+                                                                                                }
                                                                                             >
-                                                                                                <Link
-                                                                                                    to={
-                                                                                                        item.to
-                                                                                                    }
-                                                                                                    onClick={async () => {
-                                                                                                        close();
-                                                                                                    }}
-                                                                                                    className="transition-color duration-200 ease-out hover:text-gray-800 hover:dark:text-magenta-700"
+                                                                                                <p
+                                                                                                    id={`${subitem.category_name}-heading`}
+                                                                                                    className="font-medium text-gray-500 dark:text-magenta-600"
                                                                                                 >
                                                                                                     {
-                                                                                                        item.name
+                                                                                                        subitem.category_name
                                                                                                     }
-                                                                                                </Link>
-                                                                                            </li>
-                                                                                        )
-                                                                                    )}
-                                                                                </ul>
-                                                                            </div>
-                                                                        )
-                                                                    )}
+                                                                                                </p>
+                                                                                                <ul
+                                                                                                    aria-labelledby={`${subitem.category_name}-heading`}
+                                                                                                    className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
+                                                                                                >
+                                                                                                    {category
+                                                                                                        ?.slice()
+                                                                                                        .filter(
+                                                                                                            (
+                                                                                                                og
+                                                                                                            ) =>
+                                                                                                                og.parent_id ===
+                                                                                                                subitem._id
+                                                                                                        )
+                                                                                                        .map(
+                                                                                                            (
+                                                                                                                subsubitem,
+                                                                                                                subsubindex
+                                                                                                            ) => {
+                                                                                                                return (
+                                                                                                                    <li
+                                                                                                                        key={
+                                                                                                                            subsubindex
+                                                                                                                        }
+                                                                                                                        className="flex"
+                                                                                                                    >
+                                                                                                                        <Link
+                                                                                                                            to={
+                                                                                                                                '#'
+                                                                                                                            }
+                                                                                                                            onClick={async () => {
+                                                                                                                                close();
+                                                                                                                            }}
+                                                                                                                            className="transition-color duration-200 ease-out hover:text-gray-800 hover:dark:text-magenta-700"
+                                                                                                                        >
+                                                                                                                            {
+                                                                                                                                subsubitem.category_name
+                                                                                                                            }
+                                                                                                                        </Link>
+                                                                                                                    </li>
+                                                                                                                );
+                                                                                                            }
+                                                                                                        )}
+                                                                                                </ul>
+                                                                                            </div>
+                                                                                        );
+                                                                                    }
+                                                                                )}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    </div>
-                                                </Popover.Panel>
-                                            </Transition>
-                                        </>
-                                    )}
-                                </Popover>
-                            ))}
+                                                        </Popover.Panel>
+                                                    </Transition>
+                                                </>
+                                            )}
+                                        </Popover>
+                                    );
+                                }
+                            })}
 
                             {navigation.pages.map((page) => (
                                 <Link
