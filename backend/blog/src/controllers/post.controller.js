@@ -21,6 +21,12 @@ class PostController {
             metaData: await this.service.getListPosts(req.body)
         }).send(res)
     }
+    getListPostsByTopicId = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: "getListPostsBytipicId success",
+            metaData: await this.service.getListPostsByTopicId(req.body)
+        }).send(res)
+    }
 
 
 }

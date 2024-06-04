@@ -28,24 +28,30 @@ class TopicService {
         return newTopic
 
     }
-    async getListTopic({ sort = "ctime", isPublished = true, select =[]}) {
+    async getListTopic({ limit = 10, page = 1, sort = "ctime", isPublished = true }) {
         const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 }
+        const skip = (page - 1) * limit;
 
         const listTopic = await TopicModel.find({
             isPublished
-        }).select(getSelectData(select))
+        })
+            .skip(skip)
+            .limit(limit)
             .sort(sortBy)
             .lean()
         return listTopic
     }
 
-    async getListTopicByParentId({ sort='ctime', isPublished = true, topic_parent_id=null, select=[] }) {
+    async getListTopicByParentId({ limit = 10, page = 1, sort = 'ctime', isPublished = true, topic_parent_id = null }) {
+        const skip = (page - 1) * limit;
         const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 }
         const listTopicByParentId = await TopicModel.find({
             isPublished,
             topic_parent_id: topic_parent_id
-        }).sort(sortBy)
-            .select(getSelectData(select))
+        })
+            .skip(skip)
+            .limit(limit)
+            .sort(sortBy)
             .lean()
         return listTopicByParentId
     }
