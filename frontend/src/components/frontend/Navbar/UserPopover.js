@@ -38,7 +38,7 @@ export default function UserPopover() {
                 {({ open, close }) => (
                     <>
                         <Popover.Button
-                            className={`${open ? ' dark:text-gray-500' : 'text-gray-300 dark:text-white'}
+                            className={`${open ? ' dark:text-gray-500' : 'text-gray-500 dark:text-white'}
                 group inline-flex items-center py-2 font-medium transition-colors duration-200 ease-out hover:text-gray-900 focus:outline-none dark:hover:text-gray-500`}
                         >
                             <UserIcon className="h-6 w-6" aria-hidden="true" />
@@ -54,7 +54,7 @@ export default function UserPopover() {
                         >
                             <Popover.Panel className="left-1/5 absolute z-10 mt-3 w-52 max-w-sm -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-3xl">
                                 <div className="overflow-hidden rounded-md shadow-lg ring-1 ring-black/5">
-                                    <div className="relative flex flex-col bg-stone-100 p-2 dark:bg-licorice-300">
+                                    <div className="relative flex flex-col bg-stone-100 p-2 dark:bg-neutral-900">
                                         {userInfo ? (
                                             <div className="flex flex-col items-center justify-items-center space-y-2 px-2 py-4 pb-10 text-white">
                                                 <div className="flex h-20 w-20 items-center justify-center rounded-full bg-stone-300 text-gray-500 dark:bg-magenta-400 dark:text-white">

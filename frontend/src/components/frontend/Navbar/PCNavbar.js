@@ -54,7 +54,7 @@ export default function PCNavbar({ navigation, setOpen }) {
     return (
         <nav
             aria-label="Top"
-            className={`${scrollY > 299 ? 'lg:bg-stone-100 dark:bg-zinc-950' : 'lg:bg-stone-100/50 lg:dark:bg-zinc-950/50'} lg:fixed  ${bgWhite ? 'duration-75 lg:fixed lg:bg-stone-100/100  lg:dark:bg-zinc-950/100' : '  duration-200 lg:delay-100 '} bg-opacityy-50 left-0 right-0 top-0 z-20 mx-auto max-w-full  px-4 transition ease-in-out max-lg:bg-stone-100 sm:px-6 lg:px-8 dark:max-lg:bg-zinc-950`}
+            className={`${scrollY > 299 ? 'lg:bg-white dark:bg-neutral-900' : 'lg:bg-white/50 lg:dark:bg-neutral-900/50'} lg:fixed  ${bgWhite ? 'duration-75 lg:fixed lg:bg-white/100  lg:dark:bg-neutral-900/100' : '  duration-200 lg:delay-100 '} bg-opacityy-50 left-0 right-0 top-0 z-20 mx-auto max-w-full  px-4 transition ease-in-out max-lg:bg-white sm:px-6 lg:px-8 dark:max-lg:bg-neutral-900`}
         >
             <div className="border-b border-gray-200 transition duration-500 ease-in-out dark:border-gray-700">
                 <div className="flex h-16 items-center">
@@ -127,11 +127,11 @@ export default function PCNavbar({ navigation, setOpen }) {
                                                 <Popover.Panel className="absolute inset-x-0 top-full text-sm text-gray-500 dark:text-white">
                                                     {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow */}
                                                     <div
-                                                        className="absolute inset-0 top-1/2 bg-stone-100 shadow"
+                                                        className="absolute inset-0 top-1/2 bg-white shadow"
                                                         aria-hidden="true"
                                                     />
 
-                                                    <div className="relative bg-stone-100 dark:bg-zinc-950">
+                                                    <div className="relative bg-white dark:bg-neutral-900">
                                                         <div className="mx-auto max-w-7xl px-8">
                                                             <div className="grid grid-cols-2 gap-x-8 gap-y-10 py-16">
                                                                 <div className="col-start-2 grid grid-cols-2 gap-x-8">
@@ -266,7 +266,7 @@ export default function PCNavbar({ navigation, setOpen }) {
                         <SearchBar
                             Button={
                                 <button
-                                    className={`p-2  text-gray-300 outline-none transition-colors duration-200 ease-out hover:text-gray-900 max-lg:text-gray-300 dark:text-white dark:hover:text-gray-500`}
+                                    className={`p-2 text-gray-500 outline-none transition-colors duration-200 ease-out hover:text-gray-900 dark:text-white dark:hover:text-gray-500`}
                                 >
                                     <span className="sr-only">Search</span>
                                     <MagnifyingGlassIcon
@@ -284,7 +284,7 @@ export default function PCNavbar({ navigation, setOpen }) {
                             Button={
                                 <button className="group -m-2 flex items-center p-2">
                                     <ShoppingBagIcon
-                                        className={`h-6 w-6 flex-shrink-0 text-gray-300 transition-colors duration-200 ease-out group-hover:text-gray-800 max-lg:text-gray-300 dark:text-white dark:group-hover:text-gray-500`}
+                                        className={`h-6 w-6 flex-shrink-0 text-gray-500 transition-colors duration-200 ease-out group-hover:text-gray-800 dark:text-white dark:group-hover:text-gray-500`}
                                         aria-hidden="true"
                                     />
                                     <span className="ml-2 text-sm font-medium text-gray-700 transition-colors duration-200 ease-out group-hover:text-gray-800 dark:text-gray-100 dark:group-hover:text-gray-500">

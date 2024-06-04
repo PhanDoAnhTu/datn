@@ -90,6 +90,7 @@ export default function CartPopover({ Button }) {
         // dispatch(getCart({ userId: userInfo._id }));
         setOpen(true);
     };
+    console.log(cart);
 
     useEffect(() => {
         if (userInfo) {
@@ -130,7 +131,8 @@ export default function CartPopover({ Button }) {
                                 >
                                     <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
                                         <div className="flex h-full flex-col overflow-y-scroll bg-stone-100  shadow-xl transition-all duration-200 ease-out dark:bg-zinc-950">
-                                            {cart ? (
+                                            {cart &&
+                                            cart.cart_products?.length !== 0 ? (
                                                 <>
                                                     <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                                                         <div className="flex items-start justify-between">

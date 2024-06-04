@@ -1,14 +1,9 @@
 import { useEffect, useState } from 'react';
-import {
-    HeartIcon,
-    MinusIcon,
-    PlusIcon,
-    StarIcon,
-} from '@heroicons/react/20/solid';
+import { MinusIcon, PlusIcon, StarIcon } from '@heroicons/react/20/solid';
 import { RadioGroup } from '@headlessui/react';
 import classNames from '../../../helpers/classNames';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import HeartSlashIcon from '../../../assets/HeartIcon.js';
+import HeartSlashIcon from '../../../assets/HeartSlashIcon.js';
 import ProductList from '../../../components/frontend/ProductList';
 import { products } from '../../../test/products';
 import {
@@ -29,6 +24,7 @@ import {
     getFavoritesFromLocalStorage,
     removeFavoriteFromLocalStorage,
 } from '../../../utils';
+import HeartIcon from '../../../assets/HeartIcon.js';
 
 const product = {
     to: '#',
@@ -195,7 +191,6 @@ export default function ProductDetail() {
                 // console.log('selected_sku', sku_id + productId + sku_id)
                 await dispatch(
                     addToCart({
-
                         userId: userId._id,
                         product: {
                             productId: productId,
@@ -211,7 +206,6 @@ export default function ProductDetail() {
                 //     quantity: quantity
                 // })
             }
-
         } else {
             toast.error('Vui lòng đăng nhập để tiếp tục');
             navigate('/login');
@@ -237,17 +231,15 @@ export default function ProductDetail() {
     };
 
     const HandleRemoveFromWishList = async ({ userId, productId }) => {
-        if (userInfo) {
-            await dispatch(
-                removeFromWishList({
-                    userId: userId,
-                    productId: productId,
-                })
-            );
-            await removeFavoriteFromLocalStorage(productId);
-            setfavoriesProduct(getFavoritesFromLocalStorage());
-            toast.success('Đã xóa sản phẩm ra khỏi mục yêu thích!');
-        }
+        await dispatch(
+            removeFromWishList({
+                userId: userId,
+                productId: productId,
+            })
+        );
+        await removeFavoriteFromLocalStorage(productId);
+        setfavoriesProduct(getFavoritesFromLocalStorage());
+        toast.info('Đã xóa sản phẩm ra khỏi mục yêu thích!');
     };
     return (
         <div className="bg-transparent pt-10 md:pt-20">
@@ -296,7 +288,7 @@ export default function ProductDetail() {
                                     <button
                                         onClick={() => HandleImageChoose(item)}
                                         key={index}
-                                        className="h-36 w-24 flex-shrink-0  bg-white sm:overflow-hidden sm:rounded-lg lg:w-full"
+                                        className="h-36 w-24 flex-shrink-0  bg-gray-200 sm:overflow-hidden sm:rounded-lg lg:w-full"
                                     >
                                         <img
                                             src={item.thumb_url}
@@ -306,7 +298,7 @@ export default function ProductDetail() {
                                     </button>
                                 ))}
                         </div>
-                        <div className="w-full bg-white sm:overflow-hidden sm:rounded-lg">
+                        <div className="w-full bg-gray-200 sm:overflow-hidden sm:rounded-lg">
                             <img
                                 src={selectedImage && selectedImage.thumb_url}
                                 alt={selectedImage && selectedImage.thumb_url}
@@ -502,27 +494,27 @@ export default function ProductDetail() {
                                     ''
                                 )}
                                 <div
-                                    className="inline-flex w-fit overflow-hidden rounded-md border-2 bg-zinc-950 shadow-sm"
+                                    className="inline-flex w-fit overflow-hidden rounded-md border-2 bg-gray-200 shadow-sm dark:bg-zinc-950"
                                     role="group"
                                 >
                                     <button
                                         onClick={() =>
                                             handleDecrement(quantity)
                                         }
-                                        className="border-gray-900 bg-transparent px-2 text-sm font-medium text-gray-900 transition duration-300 ease-out hover:bg-magenta-500 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:border-magenta-500  dark:hover:text-white dark:focus:border-magenta-400 dark:focus:bg-magenta-400"
+                                        className="group border-gray-900 bg-transparent px-2 text-sm font-medium text-gray-900 transition duration-300 ease-out hover:bg-magenta-500 hover:text-white focus:z-10 focus:bg-magenta-400 focus:text-white dark:border-white dark:text-white  dark:hover:border-magenta-500 dark:hover:text-white dark:focus:border-magenta-400"
                                     >
-                                        <MinusIcon className="h-5 w-5 text-gray-900 dark:text-white" />
+                                        <MinusIcon className="h-5 w-5 text-gray-900 transition duration-300 ease-out group-hover:text-white dark:text-white" />
                                     </button>
-                                    <div className="border-none bg-transparent px-4 py-3 text-sm font-medium text-gray-900 focus:z-10 dark:text-white">
+                                    <div className="border-none bg-gray-100 px-4 py-3 text-sm font-medium text-gray-900 focus:z-10 dark:bg-stone-400 dark:text-white">
                                         <span>{quantity}</span>
                                     </div>
                                     <button
-                                        className="border-gray-900 bg-transparent px-2 text-sm font-medium text-gray-900 transition duration-300 ease-out hover:bg-magenta-500 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:border-magenta-500  dark:hover:text-white dark:focus:border-magenta-400 dark:focus:bg-magenta-400"
+                                        className="group border-gray-900 bg-transparent px-2 text-sm font-medium text-gray-900 transition duration-300 ease-out hover:bg-magenta-500 hover:text-white focus:z-10 focus:bg-magenta-400 focus:text-white dark:border-white dark:text-white  dark:hover:border-magenta-500 dark:hover:text-white dark:focus:border-magenta-400"
                                         onClick={() =>
                                             handleIncrement(quantity, stock)
                                         }
                                     >
-                                        <PlusIcon className="h-5 w-5 text-gray-900 dark:text-white" />
+                                        <PlusIcon className="h-5 w-5 text-gray-900 transition duration-300 ease-out group-hover:text-white dark:text-white" />
                                     </button>
                                 </div>
 
@@ -587,7 +579,7 @@ export default function ProductDetail() {
                                                     }
                                                     className="flex w-fit items-center justify-center rounded-md border border-transparent bg-magenta-500 px-5 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
                                                 >
-                                                    <HeartIcon className="h-7 w-7" />
+                                                    <HeartIcon />
                                                 </button>
                                             )
                                         ) : (
@@ -602,7 +594,7 @@ export default function ProductDetail() {
                                                 }
                                                 className="flex w-fit items-center justify-center rounded-md border border-transparent bg-magenta-500 px-5 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
                                             >
-                                                <HeartIcon className="h-7 w-7" />
+                                                <HeartIcon />
                                             </button>
                                         ))}
                                 </div>
