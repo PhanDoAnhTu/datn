@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 
 export default function Review({ step, setStep, information, paymentMethod }) {
     const dispatch = useDispatch();
+
     const handlePlaceOrder = async () => {
         if (paymentMethod === 'COD') {
             alert('successfully');
@@ -20,6 +21,7 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                     amount: 4000000,
                 })
             );
+
             result && window.location.replace(result.payload.payUrl);
         }
         if (paymentMethod === 'ZALOPAY') {

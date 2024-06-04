@@ -96,7 +96,7 @@ export default function CartPopover({ Button }) {
             !cart && dispatch(getCart({ userId: userInfo._id }));
         }
     }, [cart]);
-
+    // console.log('cart', cart)
     return (
         <div className="ml-4 flow-root lg:ml-6">
             <div className="relative" onClick={() => OpenCart()}>

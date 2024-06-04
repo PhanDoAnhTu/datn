@@ -65,9 +65,10 @@ const router = createBrowserRouter(
                 path="/login-success/:userId?/:provider?"
                 element={<LoginSuccessSocial />}
             />
+            <Route path="/checkout" element={<Checkout />} />
+
             <Route path="/" element={<PrivateRoute />}>
                 <Route path="/u/:page" element={<Profile />} />
-                <Route path="/checkout" element={<Checkout />} />
                 <Route path="/checking-order" element={<TransactionCheck />} />
             </Route>
         </Route>
