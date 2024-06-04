@@ -51,7 +51,7 @@ export const getCartFromLocalStorage = () => {
 //checkSkuFromCart
 export const checkSkuFromCart = (sku) => {
   const selected_list = getSelectedListFromCart();
-  if (!selected_list.some(({sku_id}) => sku_id.toString() === sku.sku_id.toString())) {
+  if (!selected_list.some(({ sku_id }) => sku_id.toString() === sku.sku_id.toString())) {
     selected_list.push(sku);
     localStorage.setItem("selected_list_from_cart", JSON.stringify(selected_list));
   }
@@ -61,7 +61,7 @@ export const checkSkuFromCart = (sku) => {
 export const cancelSkuFromCart = (sku) => {
   const selected_list = getSelectedListFromCart();
   const update_selected_list = selected_list.filter(
-    ({sku_id}) => sku_id.toString() !== sku.sku_id.toString()
+    ({ sku_id }) => sku_id.toString() !== sku.sku_id.toString()
   );
   localStorage.setItem("selected_list_from_cart", JSON.stringify(update_selected_list));
 };
@@ -79,4 +79,46 @@ export const cancelAllFromCart = () => {
 export const getSelectedListFromCart = () => {
   const selected_listJSON = localStorage.getItem("selected_list_from_cart");
   return selected_listJSON ? JSON.parse(selected_listJSON) : [];
+};
+
+///change quantity
+export const changeQuantitySkuFromCart = (sku) => {
+  const selected_list = getSelectedListFromCart();
+  if (selected_list.some(({ sku_id }) => sku_id.toString() === sku.sku_id.toString())) {
+    let update_selected_list = selected_list.filter(
+      ({ sku_id }) => sku_id.toString() !== sku.sku_id.toString()
+    );
+    update_selected_list.push(sku)
+    localStorage.setItem("selected_list_from_cart", JSON.stringify(update_selected_list));
+  }
+};
+
+///change sku
+export const changeSkuIdFromCart = (sku, cart_products) => {
+  const selected_list = getSelectedListFromCart();
+  if (selected_list.some(({ sku_id }) => sku_id.toString() === sku.sku_id_old.toString())) {
+    let update_selected_list = selected_list.filter(
+      ({ sku_id }) => sku_id.toString() !== sku.sku_id_old.toString()
+    );
+    const sku_new_in_cart = cart_products.find(({ sku_id }) => sku_id == sku.sku_id)
+    const sku_new_in_selected_sku = update_selected_list.find(({ sku_id }) => sku_id == sku.sku_id)
+    console.log("cart_products", sku_new_in_cart, sku_new_in_selected_sku)
+
+    if (sku_new_in_cart && !sku_new_in_selected_sku) {
+      update_selected_list.push({ sku_id: sku.sku_id, quantity: sku.quantity + sku_new_in_cart.quantity, productId: sku.productId })
+      localStorage.setItem("selected_list_from_cart", JSON.stringify(update_selected_list));
+      return
+    }
+    if (sku_new_in_cart && sku_new_in_selected_sku) {
+      let update_selected_list_v2 = update_selected_list.filter(
+        ({ sku_id }) => sku_id.toString() !== sku_new_in_selected_sku.sku_id.toString()
+      );
+      update_selected_list_v2.push({ sku_id: sku.sku_id, quantity: sku.quantity + sku_new_in_cart.quantity, productId: sku.productId })
+      localStorage.setItem("selected_list_from_cart", JSON.stringify(update_selected_list_v2));
+      return
+    }
+    update_selected_list.push({ sku_id: sku.sku_id, quantity: sku.quantity, productId: sku.productId })
+    localStorage.setItem("selected_list_from_cart", JSON.stringify(update_selected_list));
+  }
+
 };

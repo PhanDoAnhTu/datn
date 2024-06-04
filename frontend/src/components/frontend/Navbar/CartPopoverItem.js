@@ -10,6 +10,7 @@ import {
     PlusIcon,
 } from '@heroicons/react/20/solid';
 import { Listbox, Transition } from '@headlessui/react';
+import { changeQuantitySkuFromCart } from '../../../utils';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
@@ -30,17 +31,13 @@ export default function CartPopoverItem({ product, update, checkbox, selected_li
     const [selected_sku_old, setSelected_sku_old] = useState(null);
     const [selected_old, setSelected_old] = useState(null);
 
-    ////checked
-
-
     const productItemApi = async () => {
         const respon = await dispatch(
             productById({ spu_id: product.productId })
         );
         console.log('respon', respon);
-        setProductItem(respon && respon.payload.metaData);
-        setSku_default(
-            respon &&
+        respon && setProductItem(respon.payload.metaData);
+        respon && setSku_default(
             respon.payload.metaData.sku_list.find(
                 (item) => item._id.toString() === product.sku_id.toString()
             )
@@ -50,16 +47,14 @@ export default function CartPopoverItem({ product, update, checkbox, selected_li
         const fetch_spicial_offer = await dispatch(
             getSpecialOfferBySpuId({ spu_id: product.productId })
         );
-        setSpicial_offer(fetch_spicial_offer.payload.metaData);
+        fetch_spicial_offer && setSpicial_offer(fetch_spicial_offer.payload.metaData);
     };
 
     useEffect(() => {
-        // product && productItemApi();
-        !product_item && productItemApi();
-        !_quantity && setQuantity(product.quantity);
-    }, [product]);
+        productItemApi();
+        setQuantity(product.quantity);
+    }, [update]);
 
-    // console.log('sku_default',sku_default)
     useEffect(() => {
         if (!spicial_offer) {
             saleApi();
@@ -83,13 +78,18 @@ export default function CartPopoverItem({ product, update, checkbox, selected_li
     }, [selected, spicial_offer]);
 
     useEffect(() => {
-        sku_default &&
-            !selected_old &&
-            setSelected_old(sku_default.sku_tier_idx);
-        sku_default && !selected && setSelected(sku_default.sku_tier_idx);
-        console.log('sku_default', sku_default);
+        sku_default && setSelected_old(sku_default.sku_tier_idx);
+        sku_default && setSelected(sku_default.sku_tier_idx);
     }, [sku_default]);
 
+    const changeVariation = async (value, variationOrder) => {
+        setSelected((s) => {
+            setSelected_old(s);
+            const newArray = s.slice();
+            newArray[variationOrder] = value;
+            return newArray;
+        });
+    }
     useEffect(() => {
         product_item &&
             selected &&
@@ -102,18 +102,29 @@ export default function CartPopoverItem({ product, update, checkbox, selected_li
     }, [selected]);
 
     useEffect(() => {
-        console.log('selected', selected);
-        console.log('selected_sku', selected_sku);
-        selected_sku &&
+        selected_sku && (
             selected_sku_old &&
-            updateCart('updateItem', {
-                productId: product.productId,
-                quantity: _quantity,
-                old_quantity: _quantity,
-                sku_id: selected_sku._id,
-                sku_id_old: selected_sku_old._id,
-            });
+            (
+                selected_sku._id.toString() !== selected_sku_old._id.toString() && (
+                    updateCart('updateItem', {
+                        productId: product.productId,
+                        quantity: _quantity,
+                        old_quantity: _quantity,
+                        sku_id: selected_sku._id,
+                        sku_id_old: selected_sku_old._id,
+                    }) & checkbox("variation", {
+                        productId: product.productId,
+                        quantity: _quantity,
+                        old_quantity: _quantity,
+                        sku_id: selected_sku._id,
+                        sku_id_old: selected_sku_old._id,
+                    })
+                )
+            )
+        )
+
     }, [selected_sku]);
+
 
     useEffect(() => {
         product_item &&
@@ -127,21 +138,19 @@ export default function CartPopoverItem({ product, update, checkbox, selected_li
     }, [selected_old]);
 
     const handleVariationChange = async (value, variationOrder) => {
-        await setSelected((s) => {
-            // console.log(s)
-            setSelected_old(s);
-            const newArray = s.slice();
-            newArray[variationOrder] = value;
-            return newArray;
-        });
-
+        await changeVariation(value, variationOrder)
     };
     const updateCart = async (type, data) => {
-        if (type == 'updateItem') {
-            const { productId, quantity, old_quantity, sku_id, sku_id_old } =
-                data;
-            if (quantity >= 1) {
-                console.log('selected_sku_old', sku_id_old);
+        const { productId, quantity, old_quantity, sku_id, sku_id_old } = data;
+
+        if (type == 'updateItem' && ((quantity != old_quantity && sku_id == sku_id_old) || (quantity == old_quantity && sku_id != sku_id_old))) {
+            if (quantity == 0) {
+                update('deleteItem', {
+                    productId: productId,
+                    sku_id: sku_id,
+                })
+            }
+            if (old_quantity > 0 & quantity < 21) {
                 await update(type, {
                     productId: productId,
                     quantity: quantity,
@@ -149,7 +158,6 @@ export default function CartPopoverItem({ product, update, checkbox, selected_li
                     sku_id: sku_id,
                     sku_id_old: sku_id_old,
                 });
-                setQuantity(quantity);
             }
         }
     };
@@ -162,6 +170,11 @@ export default function CartPopoverItem({ product, update, checkbox, selected_li
             checkbox("cancel", sku)
         }
     }
+    console.log('sku_default', sku_default);
+    console.log('Selected', selected);
+    console.log('Selected_old', selected_old);
+    console.log('Selected_sku', selected_sku);
+    console.log('Selected_sku_old', selected_sku_old);
     return (
         <li key={product.productId} className="flex py-4">
             <div>
@@ -402,7 +415,7 @@ export default function CartPopoverItem({ product, update, checkbox, selected_li
                             role="group"
                         >
                             <button
-                                onClick={() =>
+                                onClick={() => {
                                     updateCart('updateItem', {
                                         productId: product.productId,
                                         quantity: _quantity - 1,
@@ -412,6 +425,12 @@ export default function CartPopoverItem({ product, update, checkbox, selected_li
                                             ? selected_sku_old._id
                                             : selected_sku._id,
                                     })
+                                    changeQuantitySkuFromCart({
+                                        productId: product.productId,
+                                        quantity: _quantity - 1,
+                                        sku_id: selected_sku._id
+                                    })
+                                }
                                 }
                                 className=" border-gray-900 bg-transparent px-2 text-sm font-medium text-gray-900 transition duration-300 ease-out hover:bg-magenta-500 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:border-magenta-500  dark:hover:text-white dark:focus:border-magenta-400 dark:focus:bg-magenta-400"
                             >
@@ -425,7 +444,7 @@ export default function CartPopoverItem({ product, update, checkbox, selected_li
                             </div>
                             <button
                                 className="bg- border-gray-900 bg-transparent px-2 text-sm font-medium text-gray-900 transition duration-300 ease-out hover:bg-magenta-500 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:border-magenta-500  dark:hover:text-white dark:focus:border-magenta-400 dark:focus:bg-magenta-400"
-                                onClick={() =>
+                                onClick={() => {
                                     updateCart('updateItem', {
                                         productId: product.productId,
                                         quantity: _quantity + 1,
@@ -435,6 +454,12 @@ export default function CartPopoverItem({ product, update, checkbox, selected_li
                                             ? selected_sku_old._id
                                             : selected_sku._id,
                                     })
+                                    changeQuantitySkuFromCart({
+                                        productId: product.productId,
+                                        quantity: _quantity + 1,
+                                        sku_id: selected_sku._id
+                                    })
+                                }
                                 }
                             >
                                 <PlusIcon className="h-5 w-5 text-gray-900 dark:text-white" />
@@ -444,11 +469,17 @@ export default function CartPopoverItem({ product, update, checkbox, selected_li
 
                     <div className="flex">
                         <button
-                            onClick={() =>
+                            onClick={() => {
                                 update('deleteItem', {
                                     productId: product.productId,
                                     sku_id: selected_sku._id,
                                 })
+                                changeCheckbox(false, {
+                                    productId: product.productId,
+                                    sku_id: selected_sku._id
+                                })
+                            }
+
                             }
                             className="font-medium text-magenta-600 hover:text-magenta-500"
                         >

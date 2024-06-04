@@ -10,7 +10,7 @@ import {
     DeleteToCartItem,
 } from '../../../store/actions';
 import { ShoppingBagIcon } from '@heroicons/react/20/solid';
-import { cancelAllFromCart, cancelSkuFromCart, checkSkuFromCart, getSelectedListFromCart, selectedAllFromCart } from '../../../utils';
+import { cancelAllFromCart, cancelSkuFromCart, changeSkuIdFromCart, checkSkuFromCart, getSelectedListFromCart, selectedAllFromCart } from '../../../utils';
 // import { getCartFromLocalStorage } from '../../../utils';
 
 export default function CartPopover({ Button }) {
@@ -34,6 +34,9 @@ export default function CartPopover({ Button }) {
         if (type == "cancel") {
             cancelSkuFromCart(sku)
         }
+        if (type == "variation") {
+            changeSkuIdFromCart(sku,cart.cart_products)
+        }
         setSelectedProductFromCart(getSelectedListFromCart)
     }
 
@@ -49,26 +52,19 @@ export default function CartPopover({ Button }) {
     const updateOrDeleteItemFromCart = async (type, data) => {
         if (type === 'deleteItem') {
             const { productId, sku_id } = data;
-            dispatch(
+            await dispatch(
                 DeleteToCartItem({
                     userId: userInfo._id,
                     productId: productId,
                     sku_id: sku_id,
                 })
             );
-            // removeCartItemFromLocalStorage(
-            //     {
-            //         productId: productId,
-            //         sku_id: sku_id
-            //     }
-            // )
         }
         if (type === 'updateItem') {
-            const { productId, sku_id, sku_id_old, quantity, old_quantity } =
-                data;
+            const { productId, sku_id, sku_id_old, quantity, old_quantity } = data;
 
-            console.log(productId, sku_id, sku_id_old, quantity, old_quantity);
-            dispatch(
+            console.log("data update: ", productId, sku_id, sku_id_old, quantity, old_quantity);
+            await dispatch(
                 UpdateFromCart({
                     userId: userInfo._id,
                     shop_order_ids: {
@@ -83,19 +79,18 @@ export default function CartPopover({ Button }) {
                 })
             );
         }
-        dispatch(getCart({ userId: userInfo._id }));
+        return dispatch(getCart({ userId: userInfo._id }));
     };
     const OpenCart = async () => {
-        // dispatch(getCart({ userId: userInfo._id }));
+        dispatch(getCart({ userId: userInfo._id }));
         setOpen(true);
     };
-    // console.log(cart);
 
     useEffect(() => {
         if (userInfo) {
-            !cart && dispatch(getCart({ userId: userInfo._id }));
+            dispatch(getCart({ userId: userInfo._id }));
         }
-    }, [cart, userInfo]);
+    }, [userInfo]);
     // console.log('cart', cart)
     return (
         <div className="ml-4 flow-root lg:ml-6">

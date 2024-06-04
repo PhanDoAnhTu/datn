@@ -22,7 +22,7 @@ export default function ProductList({ title, summary, products }) {
         if (
             carousel.current !== null &&
             carousel.current.offsetWidth * currentIndex <=
-                maxScrollWidth.current
+            maxScrollWidth.current
         ) {
             setCurrentIndex((prevState) => prevState + 1);
         }
@@ -57,7 +57,7 @@ export default function ProductList({ title, summary, products }) {
     }, []);
 
     return (
-        <div key={title}>
+        <div>
             <div
                 className={`mx-auto max-w-screen-2xl py-4 sm:py-8 lg:max-w-screen-2xl`}
             >
@@ -97,7 +97,7 @@ export default function ProductList({ title, summary, products }) {
                         return index !== products.length - 1 ? (
                             <ProductSingle product={product} key={index} />
                         ) : (
-                            <div className="group relative py-2">
+                            <div className="group relative py-2" key={index}>
                                 <Link
                                     to="#"
                                     className="flex h-56 w-40 flex-col items-center justify-center overflow-hidden rounded-md bg-gray-100 transition-all duration-200 ease-out lg:aspect-none group-hover:opacity-75 md:w-48 lg:h-80 lg:w-52 lg:p-9"
@@ -107,7 +107,7 @@ export default function ProductList({ title, summary, products }) {
                                     </div>
 
                                     <h3 className="my-2 text-center text-lg font-bold text-gray-500 ">
-                                        Explore more
+                                       Xem thêm
                                     </h3>
                                 </Link>
                             </div>

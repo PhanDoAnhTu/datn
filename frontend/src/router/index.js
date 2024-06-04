@@ -38,8 +38,10 @@ const LoginSuccessSocial = lazy(
 const TransactionCheck = lazy(
     () => import('../pages/frontend/Checkout/TransactionCheck.js')
 );
+const PageNotFound = lazy(() => import("../pages/frontend/PageNotFound.js"));
 
 import {
+    Navigate,
     Route,
     createBrowserRouter,
     createRoutesFromElements,
@@ -71,6 +73,10 @@ const router = createBrowserRouter(
                 <Route path="/u/:page" element={<Profile />} />
                 <Route path="/checking-order" element={<TransactionCheck />} />
             </Route>
+            <Route path="*" element={<Navigate to="/404" />} />
+            <Route path="/404" element={<PageNotFound />} />
+
+
         </Route>
     )
 );
