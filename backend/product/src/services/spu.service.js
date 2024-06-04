@@ -1,6 +1,6 @@
 'use strict'
 const { errorResponse } = require('../core')
-const { SpuModel } = require('../database/models')
+const { SpuModel, Spu_AttributeModel } = require('../database/models')
 const { addImage } = require('./gallery.service')
 const { newSku, allSkuBySpuId } = require('./sku.Service')
 const { spuRepository } = require('../database')
@@ -100,13 +100,41 @@ const checkProductByServer = async ({ products }) => {
     return await spuRepository.checkProductByServer({ products })
 }
 
+const newSpuAttribute = async ({
+    attribute_id, spu_id
+}) => {
+    try {
+        const spuAttributes = await Spu_AttributeModel.create({
+            attribute_id, spu_id
+        })
+        return spuAttributes
+
+    } catch (error) {
+        console.log(`error`)
+        return null
+    }
+}
+const findAttributeBySpuId = async ({
+    spu_id
+}) => {
+    try {
+        const spuAttributes = await Spu_AttributeModel.find({
+            spu_id
+        })
+        return spuAttributes
+
+    } catch (error) {
+        console.log(`error`)
+        return null
+    }
+}
 const serverRPCRequest = async (payload) => {
     const { type, data } = payload;
     const { products, productId } = data
     switch (type) {
-        case"CHECK_PRODUCT_BY_SERVER":
+        case "CHECK_PRODUCT_BY_SERVER":
             return checkProductByServer({ products })
-        case"CHECK_PRODUCT_BY_ID":
+        case "CHECK_PRODUCT_BY_ID":
             return checkProductById({ productId })
         default:
             break;
@@ -116,6 +144,12 @@ const serverRPCRequest = async (payload) => {
 module.exports = {
     newSpu, oneSpu,
     serverRPCRequest,
-    checkProductByServer, PublishProduct, AllProducts, UnPublishProduct, checkProductById
+    checkProductByServer,
+    PublishProduct,
+    AllProducts,
+    UnPublishProduct,
+    checkProductById,
+    newSpuAttribute,
+    findAttributeBySpuId
 
 }

@@ -31,6 +31,19 @@ class spuController {
       metaData: await SpuService.PublishProduct(req.body),
     }).send(res);
   };
+
+  newSpuAttribute = async (req, res, next) => {
+    new successResponse.SuccessResponse({
+      message: 'newSpuAttribute success',
+      metaData: await SpuService.newSpuAttribute(req.body)
+    }).send(res)
+  }
+  findAttributeBySpuId = async (req, res, next) => {
+    new successResponse.SuccessResponse({
+      message: 'findAttributeBySpuId success',
+      metaData: await SpuService.findAttributeBySpuId(req.body)
+    }).send(res)
+  }
 }
 
 module.exports = new spuController();

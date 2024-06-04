@@ -14,6 +14,7 @@ module.exports = async (app, channel) => {
     app.use('/v1/comment', require('./comment'))
     app.use('/v1/brand', require('./brand'))
     app.use('/v1/gallery', require('./gallery'))
+    app.use('/v1/attribute', require('./attribute'))
 
 
 }
