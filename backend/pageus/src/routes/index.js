@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const { apiKey, permission } = require('../auth/checkAuth');
+const { apiKey, permission } = require("../auth/checkAuth");
 // const { RPCObserver } = require('../utils');
 
 module.exports = async (app, channel) => {
