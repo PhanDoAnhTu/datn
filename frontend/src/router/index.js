@@ -38,7 +38,7 @@ const LoginSuccessSocial = lazy(
 const TransactionCheck = lazy(
     () => import('../pages/frontend/Checkout/TransactionCheck.js')
 );
-const PageNotFound = lazy(() => import("../pages/frontend/PageNotFound.js"));
+const PageNotFound = lazy(() => import('../pages/frontend/PageNotFound.js'));
 
 import {
     Navigate,
@@ -46,6 +46,7 @@ import {
     createBrowserRouter,
     createRoutesFromElements,
 } from 'react-router-dom';
+import RegisterComplete from '../pages/frontend/Auth/RegisterComplete.js';
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -75,8 +76,7 @@ const router = createBrowserRouter(
             </Route>
             <Route path="*" element={<Navigate to="/404" />} />
             <Route path="/404" element={<PageNotFound />} />
-
-
+            <Route path="/dang-ky-thanh-cong" element={<RegisterComplete />} />
         </Route>
     )
 );
