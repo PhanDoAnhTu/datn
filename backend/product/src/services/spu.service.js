@@ -86,10 +86,14 @@ const UnPublishProduct = async ({ product_id }) => {
     return await spuRepository.unPublishProduct({ product_id })
 }
 
-const AllProducts = async ({ limit = 50, sort = 'ctime', page = 1, filter = { isPublished: true } }) => {
+const AllProducts = async ({ sort = 'ctime', isPublished = true }) => {
     return await spuRepository.getAllProducts({
-        limit, sort, page, filter,
-        select: ['product_name', 'product_thumb', 'product_price', 'product_type']
+        sort, isPublished
+    })
+}
+const getAllProductsByfilter = async ({ limit = 50, sort = 'ctime', page = 1, filter = { isPublished: true } }) => {
+    return await spuRepository.getAllProductsByfilter({
+        limit, sort, page, filter
     })
 }
 const checkProductById = async ({ productId }) => {
@@ -147,6 +151,7 @@ module.exports = {
     checkProductByServer,
     PublishProduct,
     AllProducts,
+    getAllProductsByfilter,
     UnPublishProduct,
     checkProductById,
     newSpuAttribute,

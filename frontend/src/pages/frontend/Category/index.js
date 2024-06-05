@@ -84,7 +84,7 @@ export default function Category({ CategoryTitle }) {
     );
     useEffect(() => {
         if (!all_products) {
-            dispatch(allProducts({ limit: 10, page: 1 }));
+            dispatch(allProducts({ isPublished: true }));
         }
         console.log('all_products', all_products)
     }, [all_products]);

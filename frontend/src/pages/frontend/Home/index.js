@@ -15,7 +15,7 @@ export default function Home() {
     console.log(all_products);
     useEffect(() => {
         if (!all_products) (
-            dispatch(allProducts({ limit: 8, page: 1 }))
+            dispatch(allProducts({ isPublished: true }))
         )
     }, [all_products]);
     return (

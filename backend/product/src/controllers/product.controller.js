@@ -21,8 +21,14 @@ class spuController {
 
   AllProducts = async (req, res, next) => {
     return new successResponse.SuccessResponse({
-      message: "Get All spu by limit, sort, page, filter",
+      message: "Get All",
       metaData: await SpuService.AllProducts(req.body),
+    }).send(res);
+  };
+  getAllProductsByfilter = async (req, res, next) => {
+    return new successResponse.SuccessResponse({
+      message: "getAllProductsByfilter success",
+      metaData: await SpuService.getAllProductsByfilter(req.body),
     }).send(res);
   };
   PublishProduct = async (req, res, next) => {

@@ -11,7 +11,7 @@ const sliderSchema = new Schema({
     slider_description: String,
     slider_summary: String,
     slider_position: String,
-    slider_image: { String: String },
+    slider_image: { type: String },
     slider_is_active: { type: Boolean, default: false }
 },
     {

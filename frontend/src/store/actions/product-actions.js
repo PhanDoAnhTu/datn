@@ -2,11 +2,9 @@ import { GetData, PostData } from '../../utils'
 import { Action } from './index'
 
 
-export const allProducts = ({ limit, page }) => async (dispatch) => {
+export const allProducts = (data) => async (dispatch) => {
   try {
-    const response = await PostData('/product/v1/spu/allproducts', {
-      limit, page
-    });
+    const response = await PostData('/product/v1/spu/allproducts', data);
     console.log('response:', response)
     return dispatch({ type: Action.ALL_PRODUCTS, payload: response.data });
 
@@ -16,11 +14,23 @@ export const allProducts = ({ limit, page }) => async (dispatch) => {
 
   }
 };
+export const ProductsByfilter = (data) => async (dispatch) => {
+  try {
+    const response = await PostData('/product/v1/spu/getAllProductsByfilter', data);
+    console.log('response:', response)
+    return dispatch({ type: Action.PRODUCTS_FILTER, payload: response.data });
 
-export const productById = ({ spu_id }) => async (dispatch) => {
+  } catch (err) {
+    console.log(err)
+    // return err.response.data
+
+  }
+};
+
+export const productById = (data) => async (dispatch) => {
   try {
     const response = await GetData('/product/v1/spu/getSpuById', {
-      params: { spu_id: spu_id }
+      params: data
     });
     console.log('response:', response)
     return dispatch({ type: Action.CURRENT_PRODUCT, payload: response.data });

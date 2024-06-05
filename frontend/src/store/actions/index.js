@@ -17,6 +17,7 @@ export const Action = {
     ///product
     CURRENT_PRODUCT: 'CURRENT_PRODUCT',
     ALL_PRODUCTS: 'ALL_PRODUCTS',
+    PRODUCTS_FILTER: 'PRODUCTS_FILTER',
     LIST_PRODUCT_IMAGE: 'LIST_PRODUCT_IMAGE',
 
     ///cart

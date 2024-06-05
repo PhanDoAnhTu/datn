@@ -3,6 +3,7 @@ import { Action } from '../actions'
 const initialState = {
     current_product: null,
     all_products: null,
+    products_filter: null,
     list_product_image: null,
     data: null
 }
@@ -19,6 +20,11 @@ const ProductReducer = (state = initialState, action) => {
             return {
                 ...state,
                 all_products: action.payload.metaData
+            }
+        case Action.PRODUCTS_FILTER:
+            return {
+                ...state,
+                products_filter: action.payload.metaData
             }
         case Action.LIST_PRODUCT_IMAGE:
             return {

@@ -85,7 +85,6 @@ export default function CartPopover({ Button }) {
         dispatch(getCart({ userId: userInfo._id }));
         setOpen(true);
     };
-
     useEffect(() => {
         if (userInfo) {
             dispatch(getCart({ userId: userInfo._id }));

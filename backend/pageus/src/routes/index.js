@@ -7,7 +7,7 @@ module.exports = async (app, channel) => {
 
     // app.use(apiKey)
     // app.use(permission('0000'))
-    app.use('/v1', require('./contact'))
+    app.use('/v1', require('./page'))
 
 
 

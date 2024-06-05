@@ -5,7 +5,7 @@ const { SpuModel } = require('../models');
 
 
 const getProductById = async ({ productId }) => {
-    const product = await SpuModel.findOne({ _id:productId}).lean()
+    const product = await SpuModel.findOne({ _id: productId }).lean()
     return product
 }
 const checkProductByServer = async ({ products }) => {
@@ -49,20 +49,26 @@ const unPublishProduct = async ({ product_id }) => {
     return modifiedCount
 
 }
-const getAllProducts = async ({ limit, sort, page, filter, select }) => {
+const getAllProductsByfilter = async ({ limit, sort, page, filter }) => {
     const skip = (page - 1) * limit;
     const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 }
     const products = await SpuModel.find(filter)
         .sort(sortBy)
         .skip(skip)
         .limit(limit)
-        // .select(getSelectData(select))
+        .lean()
+    return products
+}
+const getAllProducts = async ({ sort, isPublished }) => {
+
+    const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 }
+    const products = await SpuModel.find({ isPublished })
+        .sort(sortBy)
         .lean()
     return products
 }
 
 
-
 module.exports = {
-checkProductByServer, publishProduct, unPublishProduct, getAllProducts,getProductById
+    checkProductByServer, publishProduct, unPublishProduct, getAllProducts, getProductById, getAllProductsByfilter
 }
