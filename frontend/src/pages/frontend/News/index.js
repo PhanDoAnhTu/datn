@@ -1,30 +1,37 @@
-import { Dialog, Menu, Transition } from '@headlessui/react';
-import {
-    ChevronDownIcon,
-    FunnelIcon,
-    Squares2X2Icon,
-    XMarkIcon,
-} from '@heroicons/react/24/solid';
-import { Fragment, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { FunnelIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import classNames from '../../../helpers/classNames';
 import Pagination from '../../../components/frontend/Pagination';
-import { posts } from '../../../test/posts';
-
-const sortOptions = [
-    { name: 'Most Popular', href: '#', current: true },
-    { name: 'Best Rating', href: '#', current: false },
-    { name: 'Newest', href: '#', current: false },
-];
-const subCategories = [
-    { name: 'Fashion', href: '#' },
-    { name: 'Upcoming stuffs', href: '#' },
-    { name: 'Celebreties', href: '#' },
-];
+import { useDispatch, useSelector } from 'react-redux';
+import { getListTopic } from '../../../store/actions/topic-actions';
+import {
+    getListPosts,
+    getListPostsByTopicId,
+} from '../../../store/actions/post-actions';
+import moment from 'moment';
+import 'moment/locale/vi';
 
 export default function News() {
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-
+    const [selectedTopic, setSelectedTopic] = useState('all');
+    const dispatch = useDispatch();
+    const { topic } = useSelector((state) => state.topicReducer);
+    const { post, all_posts } = useSelector((state) => state.postReducer);
+    useEffect(() => {
+        if (!topic) dispatch(getListTopic());
+        console.log(topic);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [topic]);
+    useEffect(() => {
+        if (selectedTopic === 'all') {
+            dispatch(getListPosts({ isPublished: true }));
+            console.log(post);
+        } else {
+            dispatch(getListPostsByTopicId({ topic_id: selectedTopic }));
+            console.log('post', post);
+        }
+    }, [selectedTopic]);
     return (
         <div>
             <div>
@@ -57,7 +64,7 @@ export default function News() {
                                 leaveFrom="translate-x-0"
                                 leaveTo="translate-x-full"
                             >
-                                <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-12 shadow-xl dark:bg-licorice-400">
+                                <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-12 shadow-xl dark:bg-neutral-900">
                                     <div className="flex items-center justify-between px-4">
                                         <h2 className="text-lg font-medium text-gray-900 dark:text-white">
                                             Filters
@@ -83,14 +90,43 @@ export default function News() {
                                     <form className="mt-4 border-t border-gray-200">
                                         <h3 className="sr-only">Categories</h3>
                                         <ul className="px-2 py-3 font-medium text-gray-900">
-                                            {subCategories.map((category) => (
-                                                <li key={category.name}>
-                                                    <Link
-                                                        href={category.href}
-                                                        className="block px-2 py-3 dark:text-white"
+                                            <li>
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedTopic('all');
+
+                                                        setMobileFiltersOpen(
+                                                            false
+                                                        );
+                                                    }}
+                                                    disabled={
+                                                        selectedTopic === 'all'
+                                                    }
+                                                    className="block px-2 py-3 disabled:text-magenta-500 dark:text-white"
+                                                >
+                                                    Tất cả bài viết
+                                                </button>
+                                            </li>
+                                            {topic?.map((item) => (
+                                                <li key={item.topic_name}>
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedTopic(
+                                                                item._id
+                                                            );
+
+                                                            setMobileFiltersOpen(
+                                                                false
+                                                            );
+                                                        }}
+                                                        disabled={
+                                                            selectedTopic ===
+                                                            item._id
+                                                        }
+                                                        className="block px-2 py-3 disabled:text-magenta-500 dark:text-white"
                                                     >
-                                                        {category.name}
-                                                    </Link>
+                                                        {item.topic_name}
+                                                    </button>
                                                 </li>
                                             ))}
                                         </ul>
@@ -108,66 +144,6 @@ export default function News() {
                         </h1>
 
                         <div className="flex items-center">
-                            <Menu
-                                as="div"
-                                className="relative inline-block text-left"
-                            >
-                                <div>
-                                    <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 transition duration-200 ease-out hover:text-gray-900 dark:text-white dark:hover:text-stone-300">
-                                        Sort
-                                        <ChevronDownIcon
-                                            className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500 dark:text-white dark:group-hover:text-stone-300"
-                                            aria-hidden="true"
-                                        />
-                                    </Menu.Button>
-                                </div>
-
-                                <Transition
-                                    as={Fragment}
-                                    enter="transition ease-out duration-100"
-                                    enterFrom="transform opacity-0 scale-95"
-                                    enterTo="transform opacity-100 scale-100"
-                                    leave="transition ease-in duration-75"
-                                    leaveFrom="transform opacity-100 scale-100"
-                                    leaveTo="transform opacity-0 scale-95"
-                                >
-                                    <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-magenta-400">
-                                        <div className="py-1">
-                                            {sortOptions.map((option) => (
-                                                <Menu.Item key={option.name}>
-                                                    {({ active }) => (
-                                                        <Link
-                                                            href={option.href}
-                                                            className={classNames(
-                                                                option.current
-                                                                    ? 'font-medium text-gray-900 dark:text-white'
-                                                                    : 'text-gray-500 dark:text-stone-200',
-                                                                active
-                                                                    ? 'bg-gray-100 dark:bg-licorice-400'
-                                                                    : '',
-                                                                'block px-4 py-2 text-sm transition duration-200 ease-out'
-                                                            )}
-                                                        >
-                                                            {option.name}
-                                                        </Link>
-                                                    )}
-                                                </Menu.Item>
-                                            ))}
-                                        </div>
-                                    </Menu.Items>
-                                </Transition>
-                            </Menu>
-
-                            <button
-                                type="button"
-                                className="-m-2 ml-5 p-2 text-gray-400 transition duration-200 ease-out hover:text-gray-500 sm:ml-7 dark:text-white dark:hover:text-stone-300"
-                            >
-                                <span className="sr-only">View grid</span>
-                                <Squares2X2Icon
-                                    className="h-5 w-5"
-                                    aria-hidden="true"
-                                />
-                            </button>
                             <button
                                 type="button"
                                 className="-m-2 ml-4 p-2 text-gray-400 transition duration-200 ease-out hover:text-gray-500 sm:ml-6 lg:hidden dark:text-white dark:hover:text-stone-300"
@@ -195,11 +171,34 @@ export default function News() {
                             <form className="hidden lg:block">
                                 <h3 className="sr-only">Categories</h3>
                                 <ul className="space-y-4 pb-6 text-sm font-medium text-gray-900 dark:text-white">
-                                    {subCategories.map((category) => (
-                                        <li key={category.name}>
-                                            <Link href={category.href}>
-                                                {category.name}
-                                            </Link>
+                                    <li>
+                                        <button
+                                            className="disabled:text-magenta-500"
+                                            disabled={selectedTopic === 'all'}
+                                            onClick={() => {
+                                                setSelectedTopic('all');
+
+                                                setMobileFiltersOpen(false);
+                                            }}
+                                        >
+                                            Tất cả bài viết
+                                        </button>
+                                    </li>
+                                    {topic?.map((item) => (
+                                        <li key={item.topic_slug}>
+                                            <button
+                                                className="disabled:text-magenta-500"
+                                                disabled={
+                                                    selectedTopic === item._id
+                                                }
+                                                onClick={() => {
+                                                    setSelectedTopic(item._id);
+
+                                                    setMobileFiltersOpen(false);
+                                                }}
+                                            >
+                                                {item.topic_name}
+                                            </button>
                                         </li>
                                     ))}
                                 </ul>
@@ -208,56 +207,75 @@ export default function News() {
                             {/* Product grid */}
                             <div className="col-span-3 grid grid-rows-1">
                                 <div className="col-span-3 grid gap-x-4 gap-y-4 md:grid-cols-2">
-                                    {posts.map((post, index) => (
-                                        <article
-                                            key={index}
-                                            className={`all-ease group relative flex w-full snap-start flex-col justify-between overflow-hidden rounded-md p-3 shadow-md transition duration-200`}
-                                        >
-                                            <img
-                                                src={post.image}
-                                                className="absolute left-0 top-0 max-h-screen max-w-full object-cover object-center transition duration-500 ease-out group-hover:brightness-50"
-                                            />
-                                            <div className="z-10 flex items-center gap-x-4 text-xs">
-                                                <time
-                                                    dateTime={post.datetime}
-                                                    className="text-gray-500 dark:text-stone-300"
-                                                >
-                                                    {post.date}
-                                                </time>
-                                            </div>
-                                            <div className="group relative transition duration-500 ease-out">
-                                                <h3 className="mt-3 text-lg font-semibold leading-6 text-white transition duration-200 ease-out">
-                                                    <Link to={'/new/d/1'}>
-                                                        <span className="absolute inset-0 " />
-                                                        {post.title}
-                                                    </Link>
-                                                </h3>
-                                                <p className="mt-5 line-clamp-3 text-justify text-sm leading-6 text-gray-600 opacity-0 group-hover:opacity-100 dark:text-gray-100">
-                                                    {post.description}
-                                                </p>
-                                            </div>
-                                            <div className="relative mt-1 flex items-center gap-x-4">
-                                                <img
-                                                    src={post.author.imageUrl}
-                                                    alt=""
-                                                    className="h-10 w-10 rounded-full bg-gray-50"
-                                                />
-                                                <div className="text-sm leading-6">
-                                                    <p className="font-semibold text-gray-900 dark:text-stone-100">
-                                                        <Link
-                                                            to={post.author.to}
-                                                        >
-                                                            <span className="absolute inset-0" />
-                                                            {post.author.name}
-                                                        </Link>
-                                                    </p>
-                                                    <p className="text-gray-600 dark:text-stone-300">
-                                                        {post.author.role}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </article>
-                                    ))}
+                                    {selectedTopic === 'all'
+                                        ? all_posts?.map((item, index) => (
+                                              <Link
+                                                  to={`/new/d/${item.post_slug}`}
+                                                  key={index}
+                                                  className={`all-ease group relative flex h-56 w-full snap-start flex-col justify-between overflow-hidden rounded-md p-3 shadow-md transition duration-200`}
+                                              >
+                                                  <img
+                                                      src={item.post_image}
+                                                      className="absolute left-0 top-0 max-h-screen max-w-full object-cover object-center brightness-75 transition duration-500 ease-out group-hover:brightness-50"
+                                                  />
+                                                  <div className="z-10 flex items-center gap-x-4 text-xs">
+                                                      <time className="text-gray-500 dark:text-stone-300">
+                                                          {moment()
+                                                              .locale('vi')
+                                                              .format(
+                                                                  'DD MMMM YYYY'
+                                                              )}
+                                                      </time>
+                                                  </div>
+                                                  <div className="group relative transition duration-500 ease-out">
+                                                      <p className="mt-5 line-clamp-3 text-justify text-sm leading-6 text-gray-600 opacity-0 group-hover:opacity-100 dark:text-gray-100">
+                                                          {
+                                                              item.post_short_description
+                                                          }
+                                                      </p>
+                                                      <h3 className="mt-3 text-xl font-semibold leading-6 text-white transition duration-200 ease-out">
+                                                          <div>
+                                                              <span className="absolute inset-0" />
+                                                              {item.post_title}
+                                                          </div>
+                                                      </h3>
+                                                  </div>
+                                              </Link>
+                                          ))
+                                        : post?.map((item, index) => (
+                                              <Link
+                                                  to={'/new/d/1'}
+                                                  key={index}
+                                                  className={`all-ease group relative flex h-56 w-full snap-start flex-col justify-between overflow-hidden rounded-md p-3 shadow-md transition duration-200`}
+                                              >
+                                                  <img
+                                                      src={item.post_image}
+                                                      className="absolute left-0 top-0 max-h-screen max-w-full object-cover object-center brightness-75 transition duration-500 ease-out group-hover:brightness-50"
+                                                  />
+                                                  <div className="z-10 flex items-center gap-x-4 text-xs">
+                                                      <time className="text-gray-500 dark:text-stone-300">
+                                                          {moment()
+                                                              .locale('vi')
+                                                              .format(
+                                                                  'DD MMMM YYYY'
+                                                              )}
+                                                      </time>
+                                                  </div>
+                                                  <div className="group relative transition duration-500 ease-out">
+                                                      <p className="mt-5 line-clamp-3 text-justify text-sm leading-6 text-gray-600 opacity-0 group-hover:opacity-100 dark:text-gray-100">
+                                                          {
+                                                              item.post_short_description
+                                                          }
+                                                      </p>
+                                                      <h3 className="mt-3 text-xl font-semibold leading-6 text-white transition duration-200 ease-out">
+                                                          <div>
+                                                              <span className="absolute inset-0" />
+                                                              {item.post_title}
+                                                          </div>
+                                                      </h3>
+                                                  </div>
+                                              </Link>
+                                          ))}
                                 </div>
                                 <div className="col-span-3 pt-5">
                                     <Pagination className="col-span-3" />
