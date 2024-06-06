@@ -21,7 +21,6 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                     amount: 4000000,
                 })
             );
-
             result && window.location.replace(result.payload.payUrl);
         }
         if (paymentMethod === 'ZALOPAY') {
@@ -31,7 +30,6 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                     amount: 4000000,
                 })
             );
-
             result && window.location.replace(result.payload.order_url);
         }
     };

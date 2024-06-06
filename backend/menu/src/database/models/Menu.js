@@ -2,7 +2,7 @@
 
 const { model, Schema } = require('mongoose')
 const DOCUMENT_NAME = "menu"
-const COLLECTION_NAME = "menu"
+const COLLECTION_NAME = "menus"
 
 const menuSchema = new Schema({
     menu_label: { type: String, required: true },

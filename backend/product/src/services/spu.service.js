@@ -6,6 +6,7 @@ const { newSku, allSkuBySpuId } = require('./sku.Service')
 const { spuRepository } = require('../database')
 const _ = require('lodash')
 const { Types } = require('mongoose')
+const { RPCRequest } = require('../utils')
 
 const newSpu = async ({
     product_name,
@@ -58,11 +59,11 @@ const newSpu = async ({
     }
 }
 
-const oneSpu = async ({ spu_id }) => {
+const oneSpu = async ({ spu_id, isPublished = true }) => {
     try {
         const spu = await SpuModel.findOne({
             _id: Types.ObjectId(spu_id),
-            isPublished: true
+            isPublished
         })
         if (!spu) throw new errorResponse.NotFoundRequestError('spu not found')
         const skus = await allSkuBySpuId({ product_id: spu._id })
@@ -96,6 +97,47 @@ const getAllProductsByfilter = async ({ limit = 50, sort = 'ctime', page = 1, fi
         limit, sort, page, filter
     })
 }
+const findAllProductsByCategory = async ({ limit = 50, sort = 'ctime', page = 1, filter = { isPublished: true } }) => {
+
+    let product_list = {
+        productsByCategory: [],
+        special_offer: []
+    }
+    product_list.productsByCategory = await spuRepository.getAllProductsByfilter({
+        limit, sort, page, filter
+    })
+    if (product_list.productsByCategory.length == 0) return null
+    const spu_id_list = product_list.productsByCategory.map((spu) => spu._id)
+
+    product_list.special_offer = await RPCRequest("SPECIAL_OFFER_RPC", {
+        type: "FIND_SPECIAL_OFFER_TODAY_BY_ID_LIST",
+        data: {
+            special_offer_is_active: true,
+            spu_id_list: spu_id_list
+        }
+    })
+
+    return product_list
+}
+const findProductDetail = async ({ spu_id, isPublished = true }) => {
+    const { spu_info, sku_list } = await oneSpu({ spu_id, isPublished })
+    let product = {
+        product_detail: {},
+        special_offer: {},
+        sku_list: []
+    }
+    product.product_detail = spu_info ? spu_info : {}
+    product.sku_list = sku_list ? sku_list : []
+    product.special_offer = await RPCRequest("SPECIAL_OFFER_RPC", {
+        type: "FIND_SPECIAL_OFFER_TODAY_BY_ID",
+        data: {
+            special_offer_is_active: true,
+            spu_id: product.product_detail._id
+        }
+    })
+    return product
+}
+
 const checkProductById = async ({ productId }) => {
     return await spuRepository.getProductById({ productId })
 }
@@ -155,6 +197,8 @@ module.exports = {
     UnPublishProduct,
     checkProductById,
     newSpuAttribute,
-    findAttributeBySpuId
+    findAttributeBySpuId,
+    findAllProductsByCategory,
+    findProductDetail
 
 }

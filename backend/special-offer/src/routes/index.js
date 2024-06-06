@@ -8,7 +8,7 @@ module.exports = async (app, channel) => {
 
     // app.use(apiKey)
     // app.use(permission('0000'))
-    // RPCObserver("SPECIAL_OFFER_RPC", new SpecialOfferService())
+    RPCObserver("SPECIAL_OFFER_RPC", new SpecialOfferService())
 
     app.use('/v1', require('./special-offer'))
 

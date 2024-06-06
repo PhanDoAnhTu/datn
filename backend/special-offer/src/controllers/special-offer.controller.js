@@ -7,17 +7,24 @@ class SpecialOfferController {
     constructor() {
         this.service = new SpecialOfferService()
     }
-    createSpecialOffer=async(req, res, next)=>{
+    createSpecialOffer = async (req, res, next) => {
         new successResponse.SuccessResponse({
             message: 'createSpecialOffer success',
             metaData: await this.service.createSpecialOffer(req.body)
         }).send(res)
 
     }
-    getSpecialOfferBySpuId=async(req, res, next)=>{
+    findSpecialOfferBySpuId = async (req, res, next) => {
         new successResponse.SuccessResponse({
             message: 'getSpecialOfferBySpuId success',
-            metaData: await this.service.getSpecialOfferBySpuId(req.body)
+            metaData: await this.service.findSpecialOfferBySpuId(req.body)
+        }).send(res)
+
+    }
+    findSpecialOfferBetweenStartDateAndEndByDate = async (req, res, next) => {
+        new successResponse.SuccessResponse({
+            message: 'getSpecialOfferToday success',
+            metaData: await this.service.findSpecialOfferBetweenStartDateAndEndByDate(req.body)
         }).send(res)
 
     }

@@ -9,7 +9,6 @@ const initialState = {
 const PaymentReducer = (state = initialState, action) => {
     switch (action.type) {
         case Action.PAYMENT_MOMO:
-            // console.log(action.payload)
             return {
                 ...state,
                 momo: action.payload,

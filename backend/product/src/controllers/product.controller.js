@@ -31,6 +31,18 @@ class spuController {
       metaData: await SpuService.getAllProductsByfilter(req.body),
     }).send(res);
   };
+  findAllProductsByCategory = async (req, res, next) => {
+    return new successResponse.SuccessResponse({
+      message: "findAllProductsByCategory success",
+      metaData: await SpuService.findAllProductsByCategory(req.body),
+    }).send(res);
+  };
+  findProductDetail = async (req, res, next) => {
+    return new successResponse.SuccessResponse({
+      message: "findProductDetail success",
+      metaData: await SpuService.findProductDetail(req.body),
+    }).send(res);
+  };
   PublishProduct = async (req, res, next) => {
     return new successResponse.SuccessResponse({
       message: "Get All spu by limit, sort, page, filter",
