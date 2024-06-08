@@ -315,7 +315,7 @@ export default function ProductDetail() {
                         <p className="mt-6 text-3xl tracking-tight text-gray-900 dark:text-gray-200">
                             <NumericFormat
                                 value={sale_sku ? sale_sku.price_sale : price}
-                                displayType={'text'}
+                                displayType='text'
                                 thousandSeparator={true}
                                 decimalScale={0}
                                 id="price"
