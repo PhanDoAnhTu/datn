@@ -22,16 +22,13 @@ export default function Blog() {
                         <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                             Khám phá thêm tin tức sau đây
                         </h2>
-                        <h3 className="text-sm text-gray-400 lg:text-lg">
-                            Here you can see the update on our products
-                        </h3>
                     </div>
 
                     <Link
                         to="/news/1"
                         className="flex items-center space-x-2 text-xl font-bold text-gray-900 transition duration-200 ease-out hover:text-gray-500 dark:text-white dark:hover:text-gray-300"
                     >
-                        <p>See more</p>
+                        <p>Xem thêm</p>
                         <ArrowRightIcon className="h-5 w-5" />
                     </Link>
                 </div>

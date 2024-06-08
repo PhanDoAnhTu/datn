@@ -67,7 +67,7 @@ export default function News() {
                                 <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-12 shadow-xl dark:bg-neutral-900">
                                     <div className="flex items-center justify-between px-4">
                                         <h2 className="text-lg font-medium text-gray-900 dark:text-white">
-                                            Filters
+                                            Lọc
                                         </h2>
                                         <button
                                             type="button"
@@ -140,9 +140,8 @@ export default function News() {
                 <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
-                            News
+                            Tin tức
                         </h1>
-
                         <div className="flex items-center">
                             <button
                                 type="button"
