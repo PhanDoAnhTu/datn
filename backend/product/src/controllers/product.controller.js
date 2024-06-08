@@ -31,10 +31,10 @@ class spuController {
       metaData: await SpuService.getAllProductsByfilter(req.body),
     }).send(res);
   };
-  findAllProductsByCategory = async (req, res, next) => {
+  findProductsByCategory = async (req, res, next) => {
     return new successResponse.SuccessResponse({
       message: "findAllProductsByCategory success",
-      metaData: await SpuService.findAllProductsByCategory(req.body),
+      metaData: await SpuService.findProductsByCategory(req.body),
     }).send(res);
   };
   findProductDetail = async (req, res, next) => {

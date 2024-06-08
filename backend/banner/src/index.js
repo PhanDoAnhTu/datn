@@ -21,9 +21,9 @@ const StartServer = async () => {
       console.log(err);
       process.exit();
     })
-    .on("close", () => {
-      channel.close();
-    });
+    // .on("close", () => {
+    //   channel.close();
+    // });
 };
 
 StartServer();

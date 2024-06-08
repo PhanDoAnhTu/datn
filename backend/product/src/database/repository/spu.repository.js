@@ -50,14 +50,39 @@ const unPublishProduct = async ({ product_id }) => {
 
 }
 const getAllProductsByfilter = async ({ limit, sort, page, filter }) => {
+    const { isPublished } = filter
+
     const skip = (page - 1) * limit;
     const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 }
-    const products = await SpuModel.find(filter)
+    const products = await SpuModel.find({ isPublished })
         .sort(sortBy)
         .skip(skip)
         .limit(limit)
         .lean()
     return products
+}
+const findProductsByCategory = async ({ limit, sort, page, filter }) => {
+    const { category_id, isPublished } = filter
+    const skip = (page - 1) * limit;
+    const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 }
+    if (!category_id) {
+        const products = await SpuModel.find({
+            isPublished
+        })
+            .sort(sortBy)
+            .lean()
+        return products
+    }
+    const products_category = await SpuModel.find({
+        isPublished,
+        product_category: {
+            $in: [category_id]
+        }
+    }).sort(sortBy)
+        .skip(skip)
+        .limit(limit)
+        .lean()
+    return products_category
 }
 const getAllProducts = async ({ sort, isPublished }) => {
 
@@ -70,5 +95,5 @@ const getAllProducts = async ({ sort, isPublished }) => {
 
 
 module.exports = {
-    checkProductByServer, publishProduct, unPublishProduct, getAllProducts, getProductById, getAllProductsByfilter
+    checkProductByServer, publishProduct, unPublishProduct, getAllProducts, getProductById, getAllProductsByfilter, findProductsByCategory
 }

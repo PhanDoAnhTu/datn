@@ -3,6 +3,7 @@ const { errorResponse } = require('../core');
 const { commentRepository } = require('../database');
 const { CommentModel } = require('../database/models');
 const spuService = require('./spu.service');
+const { RPCRequest } = require('../utils');
 
 
 class CommentService {
@@ -10,13 +11,12 @@ class CommentService {
         this.repository = new commentRepository();
     }
 
-    async createComment({ productId, userId, content, parentCommentId = null }) {
+   static async createComment({ productId, userId, content, parentCommentId = null }) {
 
         const comment = new CommentModel({
             comment_productId: productId,
             comment_userId: userId, comment_content: content, comment_parentId: parentCommentId
         })
-
         let rightValue
         if (parentCommentId) {
             // reply comment
@@ -86,12 +86,35 @@ class CommentService {
             parentCommentId: 1
         }).sort({
             comment_left: 1
-        })
+        }).limit(limit)
         return comments
     }
+    async getCommentByproductId({ productId, limit = 50, offset = 0 }) {
+        const comments = await CommentModel.find({
+            comment_productId: productId,
+        }).limit(limit).lean()
+
+        if (comments.length == 0) {
+            return comments
+        }
+        let user_list = []
+        for (let index = 0; index < comments.length; index++) {
+            const user = await RPCRequest("CUSTOMER_RPC", {
+                type: "FIND_CUSTOMER_BY_ID",
+                data: {
+                    customer_id: comments[index].comment_userId
+                }
+            })
+            user_list.push(user)
+        }
+        const comments_info = await comments.map((comment, index) => {
+            return { ...comment, user: user_list[index] }
+        })
+        return comments_info
+    }
     async deleteCommentByIdAndProductId({ commentId, productId }) {
-        const foundProduct = await spuService.checkProductById({productId})
-        if(!foundProduct)throw new errorResponse.NotFoundRequestError("not found product")
+        const foundProduct = await spuService.checkProductById({ productId })
+        if (!foundProduct) throw new errorResponse.NotFoundRequestError("not found product")
 
         const foundComment = await CommentModel.findOne({ _id: commentId }).lean()
         if (!foundComment) throw new errorResponse.NotFoundRequestError("not found comment")

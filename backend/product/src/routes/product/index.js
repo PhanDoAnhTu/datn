@@ -13,7 +13,7 @@ router.post("/spu/allproducts", asynchandler(productController.AllProducts));
 router.post("/spu/publishproduct", asynchandler(productController.PublishProduct));
 router.post("/spu/newSpuAtribute", asynchandler(productController.newSpuAttribute));
 router.post("/spu/findAttributeBySpuId", asynchandler(productController.findAttributeBySpuId));
-router.post("/spu/findAllProductsByCategory", asynchandler(productController.findAllProductsByCategory));
+router.post("/spu/findProductsByCategory", asynchandler(productController.findProductsByCategory));
 router.post("/spu/findProductDetail", asynchandler(productController.findProductDetail));
 
 

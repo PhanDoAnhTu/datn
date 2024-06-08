@@ -2,7 +2,7 @@ const express = require('express');
 const { PORT } = require('./config');
 const { databaseConnection } = require('./database');
 const expressApp = require('./express-app');
-const { CreateChannel } = require('./utils');
+// const { CreateChannel } = require('./utils');
 
 const StartServer = async () => {
     
@@ -10,7 +10,8 @@ const StartServer = async () => {
     
     await databaseConnection();
 
-    const channel = await CreateChannel()
+    // const channel = await CreateChannel()
+    const channel = 0
 
     await expressApp(app,channel);
     app.listen(PORT, () => {
@@ -20,9 +21,9 @@ const StartServer = async () => {
             console.log(err);
             process.exit();
         })
-        .on('close', () => {
-            channel.close();
-        })
+        // .on('close', () => {
+        //     channel.close();
+        // })
 
 }
 

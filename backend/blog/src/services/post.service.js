@@ -1,7 +1,7 @@
 "use strict";
 
 const { errorResponse } = require("../core");
-const { PostModel } = require("../database/models");
+const { PostModel, TopicModel } = require("../database/models");
 const { postRepository } = require("../database");
 const { Types } = require("mongoose");
 const { RPCRequest, getSelectData } = require("../utils");
@@ -61,6 +61,10 @@ class PostService {
       });
 
       if (!post) throw new errorResponse.NotFoundRequestError("post not found");
+      const topic = await TopicModel.findOne({
+        _id: post.topic_id,
+        isPublished: true,
+      });
       const related_posts = await PostModel.find({
         _id: { $ne: post._id },
         topic_id: post.topic_id,
@@ -70,8 +74,8 @@ class PostService {
       return {
         post: _.omit(post, ["__v", "updateAt"]),
         related_posts: related_posts.map((post) =>
-          _.omit(post, ["__v", "updateAt"])
-        ),
+          _.omit(post, ["__v", "updateAt"])),
+        topic
       };
     } catch (error) {
       return null;

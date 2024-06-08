@@ -143,6 +143,12 @@ class CustomerService {
         const customer = await CustomerModel.findOne({ customer_email }).lean()
         return customer
     }
+
+    async findCustomerById({ customer_id }) {
+
+        const customer = await CustomerModel.findOne({ _id: customer_id }).lean()
+        return customer
+    }
     async findcustomerByIdAndProvider({ customer_account_id, customer_provider }) {
         return await this.repository.findcustomerByIdAndProvider({ customer_account_id, customer_provider })
     }
@@ -181,7 +187,7 @@ class CustomerService {
     }
     async serverRPCRequest(payload) {
         const { type, data } = payload;
-        const { customer_account_id, customer_provider, customer_name, customer_email, customer_avatar } = data
+        const { customer_account_id, customer_provider, customer_name, customer_email, customer_avatar, customer_id } = data
         switch (type) {
             case "FIND_CUSTOMER_BY_ID_AND_PROVIDER":
                 if (customer_email) {
@@ -195,6 +201,9 @@ class CustomerService {
                 return await this.newCustomerWithSocial({ customer_account_id, customer_provider, customer_email, customer_name, customer_avatar });
             case "LOGIN_WITH_SOCIAL":
                 return await this.loginWithSocial({ customer_account_id, customer_provider });
+            case "FIND_CUSTOMER_BY_ID":
+                return await this.findCustomerById({ customer_id });
+
             default:
                 break;
         }

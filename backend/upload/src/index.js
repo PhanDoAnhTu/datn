@@ -2,7 +2,7 @@ const express = require('express');
 const { PORT } = require('./config');
 const { databaseConnection } = require('./database');
 const expressApp = require('./express-app');
-const { CreateChannel } = require('./utils');
+// const { CreateChannel } = require('./utils');
 
 const StartServer = async () => {
 

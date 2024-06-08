@@ -9,6 +9,7 @@ const { Types } = require('mongoose')
 const { RPCRequest } = require('../utils')
 const BrandService = require('./brand.service')
 const AttributeService = require('./attribute.service')
+const { getCommentByproductId } = require('./comment.service')
 const newSpu = async ({
     product_name,
     product_thumb,
@@ -98,25 +99,36 @@ const getAllProductsByfilter = async ({ limit = 50, sort = 'ctime', page = 1, fi
         limit, sort, page, filter
     })
 }
-const findAllProductsByCategory = async ({ limit = 50, sort = 'ctime', page = 1, filter = { isPublished: true } }) => {
+const findProductsByCategory = async ({ limit = 50, sort = 'ctime', page = 1, filter = { isPublished: true, category_id: null } }) => {
 
     let product_list = {
         productsByCategory: [],
-        product_brand: {},
-        special_offer: []
     }
-    product_list.productsByCategory = await spuRepository.getAllProductsByfilter({
+    const productsByCategory = await spuRepository.findProductsByCategory({
         limit, sort, page, filter
     })
-    if (product_list.productsByCategory.length == 0) return null
-    const spu_id_list = product_list.productsByCategory.map((spu) => spu._id)
+    if (productsByCategory.length == 0) return null
+    let brand_list = []
+    let special_offer = []
+    let sku_list = []
+    console.log("productsByCategory", productsByCategory)
+    for (let index = 0; index < productsByCategory.length; index++) {
+        const brand = await new BrandService().findBrandById({ brand_id: productsByCategory[index].product_brand })
+        brand_list.push(brand)
+        const skulist = await allSkuBySpuId({ product_id: productsByCategory[index]._id })
+        sku_list.push(skulist)
+        const specialoffer = await RPCRequest("SPECIAL_OFFER_RPC", {
+            type: "FIND_SPECIAL_OFFER_TODAY_BY_ID",
+            data: {
+                special_offer_is_active: true,
+                spu_id: productsByCategory[index]._id
+            }
+        })
+        special_offer.push(specialoffer)
+    }
 
-    product_list.special_offer = await RPCRequest("SPECIAL_OFFER_RPC", {
-        type: "FIND_SPECIAL_OFFER_TODAY_BY_ID_LIST",
-        data: {
-            special_offer_is_active: true,
-            spu_id_list: spu_id_list
-        }
+    product_list.productsByCategory = await productsByCategory.map((product, index) => {
+        return { ...product, brand: brand_list[index], special_offer: special_offer[index], sku_list: sku_list[index] }
     })
 
     return product_list
@@ -162,6 +174,9 @@ const findProductDetail = async ({ spu_id, isPublished = true }) => {
                 $in: spu_info.product_category
             }
         })
+
+        product.product_comment = await getCommentByproductId({ productId: spu_info._id })
+
         return product
 
     } catch (error) {
@@ -230,7 +245,7 @@ module.exports = {
     checkProductById,
     newSpuAttribute,
     findAttributeBySpuId,
-    findAllProductsByCategory,
+    findProductsByCategory,
     findProductDetail
 
 }
