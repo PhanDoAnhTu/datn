@@ -5,7 +5,7 @@ const { SpuModel } = require('../models');
 
 
 const getProductById = async ({ productId }) => {
-    const product = await SpuModel.findOne({ _id: productId }).lean()
+    const product = await SpuModel.findOne({ _id: productId, isPublished: true }).lean()
     return product
 }
 const checkProductByServer = async ({ products }) => {

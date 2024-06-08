@@ -8,10 +8,9 @@ const categorySchema = new Schema(
     parent_id: { type: String, default: null },
     category_name: { type: String, required: true },
     category_description: String,
-    category_slug: { type: String, default: "" },
-    category_icon: String,
-    category_slug: String,
-    category_image: { type: Array, default: [] },
+    category_slug: { type: String },
+    category_icon: { type: String, default: null },
+    category_image: { type: String, default: null},
     isPublished: { type: Boolean, default: true, index: true, select: false },
   },
   {

@@ -7,7 +7,8 @@ const { spuRepository } = require('../database')
 const _ = require('lodash')
 const { Types } = require('mongoose')
 const { RPCRequest } = require('../utils')
-
+const BrandService = require('./brand.service')
+const AttributeService = require('./attribute.service')
 const newSpu = async ({
     product_name,
     product_thumb,
@@ -101,6 +102,7 @@ const findAllProductsByCategory = async ({ limit = 50, sort = 'ctime', page = 1,
 
     let product_list = {
         productsByCategory: [],
+        product_brand: {},
         special_offer: []
     }
     product_list.productsByCategory = await spuRepository.getAllProductsByfilter({
@@ -120,22 +122,52 @@ const findAllProductsByCategory = async ({ limit = 50, sort = 'ctime', page = 1,
     return product_list
 }
 const findProductDetail = async ({ spu_id, isPublished = true }) => {
-    const { spu_info, sku_list } = await oneSpu({ spu_id, isPublished })
-    let product = {
-        product_detail: {},
-        special_offer: {},
-        sku_list: []
-    }
-    product.product_detail = spu_info ? spu_info : {}
-    product.sku_list = sku_list ? sku_list : []
-    product.special_offer = await RPCRequest("SPECIAL_OFFER_RPC", {
-        type: "FIND_SPECIAL_OFFER_TODAY_BY_ID",
-        data: {
-            special_offer_is_active: true,
-            spu_id: product.product_detail._id
+    try {
+        const { spu_info, sku_list } = await oneSpu({ spu_id, isPublished })
+        let product = {
+            product_detail: {},
+            special_offer: {},
+            sku_list: [],
+            product_brand: {},
+            product_categories: [],
+            product_attributes: [],
+            related_products: [],
+            product_comment: []
         }
-    })
-    return product
+        product.product_detail = spu_info ? spu_info : {}
+        product.sku_list = sku_list ? sku_list : []
+        product.product_brand = await new BrandService().findBrandById({ brand_id: spu_info.product_brand })
+        product.special_offer = await RPCRequest("SPECIAL_OFFER_RPC", {
+            type: "FIND_SPECIAL_OFFER_TODAY_BY_ID",
+            data: {
+                special_offer_is_active: true,
+                spu_id: product.product_detail._id
+            }
+        })
+        const categories = await RPCRequest("CATEGORY_RPC", {
+            type: "FIND_CATEGORY_BY_ID_LIST",
+            data: {
+                isPublished: true,
+                category_id_list: spu_info.product_category
+            }
+        })
+        product.product_categories = categories ? categories : []
+        product.product_attributes = await new AttributeService().findAttributesByProductAttributes({ product_attributes: spu_info.product_attributes })
+        product.related_products = await SpuModel.find({
+            isPublished: true,
+            _id: {
+                $ne: spu_info._id
+            },
+            product_category: {
+                $in: spu_info.product_category
+            }
+        })
+        return product
+
+    } catch (error) {
+        console.log(error)
+        return null
+    }
 }
 
 const checkProductById = async ({ productId }) => {
@@ -147,11 +179,11 @@ const checkProductByServer = async ({ products }) => {
 }
 
 const newSpuAttribute = async ({
-    attribute_id, spu_id
+    attribute_id, spu_id, attribute_value
 }) => {
     try {
         const spuAttributes = await Spu_AttributeModel.create({
-            attribute_id, spu_id
+            attribute_id, spu_id, attribute_value
         })
         return spuAttributes
 

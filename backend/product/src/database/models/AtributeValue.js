@@ -6,7 +6,7 @@ const DOCUMENT_NAME = 'attribute_value'
 const COLLECTION_NAME = 'attribute_values'
 
 const attribute_valueSchema = new Schema({
-    attribute_id: { type: String, required:true },
+    attribute_id: { type: String, required: true },
     attribute_value: { type: String, default: '...' },
 }, {
     timestamps: true,

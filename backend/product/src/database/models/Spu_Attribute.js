@@ -8,6 +8,8 @@ const COLLECTION_NAME = 'spu_attributes'
 const spu_attributeSchema = new Schema({
     spu_id: { type: String, required: true },
     attribute_id: { type: String, required: true },
+    attribute_value: { type: Array, required: true },
+
 }, {
     timestamps: true,
     collection: COLLECTION_NAME

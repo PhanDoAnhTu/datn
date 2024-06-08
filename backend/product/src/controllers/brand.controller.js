@@ -19,5 +19,11 @@ class BrandController {
             metaData: await this.service.getListBrand(req.body)
         }).send(res)
     }
+    findBrandById = async (req, res, next) => {
+        new successResponse.SuccessResponse({
+            message: 'findBrandById success',
+            metaData: await this.service.findBrandById(req.body)
+        }).send(res)
+    }
 }
 module.exports = new BrandController;
