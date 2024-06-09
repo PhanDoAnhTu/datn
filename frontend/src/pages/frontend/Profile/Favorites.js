@@ -23,18 +23,18 @@ export default function Favorites() {
         userInfo &&
             (!wish_list
                 ? dispatch(
-                      getWishListByUserId({
-                          userId: userInfo._id,
-                      })
-                  )
+                    getWishListByUserId({
+                        userId: userInfo._id,
+                    })
+                )
                 : // console.log(wish_list.wish_list_products.length,getFavoritesFromLocalStorage().length)&&
-                  wish_list.wish_list_products.length !=
-                      getFavoritesFromLocalStorage().length &&
-                  dispatch(
-                      getWishListByUserId({
-                          userId: userInfo._id,
-                      })
-                  ));
+                wish_list.wish_list_products.length !=
+                getFavoritesFromLocalStorage().length &&
+                dispatch(
+                    getWishListByUserId({
+                        userId: userInfo._id,
+                    })
+                ));
     }, [userInfo, wish_list, all_products]);
 
     const HandleDeleteWishList = async ({ userId }) => {
@@ -85,7 +85,7 @@ export default function Favorites() {
                     )}
                 </div>
 
-                {wish_list && wish_list.wish_list_products?.length !== 0 ? (
+                {wish_list && wish_list.wish_list_products?.length > 0 ? (
                     wish_list.wish_list_products.map(
                         (product_id) =>
                             all_products &&

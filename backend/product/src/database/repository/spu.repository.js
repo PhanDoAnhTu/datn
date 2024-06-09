@@ -85,7 +85,6 @@ const findProductsByCategory = async ({ limit, sort, page, filter }) => {
     return products_category
 }
 const getAllProducts = async ({ sort, isPublished }) => {
-
     const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 }
     const products = await SpuModel.find({ isPublished })
         .sort(sortBy)
