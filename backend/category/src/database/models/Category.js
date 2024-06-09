@@ -10,7 +10,7 @@ const categorySchema = new Schema(
     category_description: String,
     category_slug: { type: String },
     category_icon: { type: String, default: null },
-    category_image: { type: String, default: null},
+    category_image: { type: String, default: null },
     isPublished: { type: Boolean, default: true, index: true, select: false },
   },
   {
