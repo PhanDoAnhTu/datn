@@ -14,11 +14,14 @@ import CartPopover from './CartPopover';
 import UserPopover from './UserPopover';
 import Logo from '../../../assets/Logo';
 import { navigation } from '../../../test/categories';
+import { useSelector } from 'react-redux';
 
 export default function PCNavbar({ category, setOpen }) {
     ////////////////
     const [scrollY, setScrollY] = useState(window.scrollY);
     const [bgWhite, setBgWhite] = useState(false);
+    const { cart } = useSelector((state) => state.cartReducer)
+
     useEffect(() => {
         const handleScroll = () => {
             setScrollY(window.scrollY);
@@ -322,7 +325,7 @@ export default function PCNavbar({ category, setOpen }) {
                                         aria-hidden="true"
                                     />
                                     <span className="ml-2 text-sm font-medium text-gray-700 transition-colors duration-200 ease-out group-hover:text-gray-800 dark:text-gray-100 dark:group-hover:text-gray-500">
-                                        0
+                                        {cart?.cart_products?.length}
                                     </span>
                                     <span className="sr-only">
                                         items in cart, view bag

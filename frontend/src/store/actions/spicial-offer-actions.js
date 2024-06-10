@@ -14,3 +14,16 @@ export const getSpecialOfferBySpuId = (data) => async (dispatch) => {
 
     }
 };
+
+export const specialOfferToday= (data) => async (dispatch) => {
+    try {
+        const response = await PostData('/Special-Offer/v1/findSpecialOfferBetweenStartDateAndEndByDate', data);
+        console.log('response:', response)
+        return dispatch({ type: Action.SPICIAL_OFFER_TODAY, payload: response.data });
+
+    } catch (err) {
+        console.log(err)
+        // return err.response.data
+
+    }
+};

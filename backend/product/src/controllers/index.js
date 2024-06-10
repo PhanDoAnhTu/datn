@@ -5,6 +5,5 @@ module.exports = {
     brandController: require('./brand.controller'),
     galleryController: require('./gallery.controller'),
     attributeController: require('./attributes.controller'),
-
-
+    reviewController: require('./review.controller'),
 }

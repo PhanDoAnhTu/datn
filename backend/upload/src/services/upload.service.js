@@ -3,7 +3,7 @@
 const cloudinary = require('../config/cloudinary.config')
 
 class UploadService {
-    async uploadImageFormLocalFiles(
+    async uploadSkuImageList(
         files,
         { folderName = 'outrunner/products', sku_list = "" }) {
 
@@ -17,13 +17,13 @@ class UploadService {
                 })
                 uploaderUrls.push({
                     image_url: result.secure_url,
+                    public_id: result.public_id,
                     thumb_url: await cloudinary.url(result.public_id, {
                         // height: 300,
                         // width: 300,
                     }),
                     result: result
                 })
-
             }
             if (Array.isArray(sku_list) == true) {
                 for (let i = 0; i < uploaderUrls.length; i++) {
@@ -39,6 +39,56 @@ class UploadService {
             console.log("Err uploading image: ", error)
         }
     }
+    async uploadImageArray(
+        files,
+        { folderName = 'outrunner/products'}) {
+
+        try {
+            if (!files.length) return
+            const uploaderUrls = []
+            for (const file of files) {
+                const result = await cloudinary.v2.uploader.upload(file.path, {
+                    folder: folderName
+                })
+                uploaderUrls.push({
+                    image_url: result.secure_url,
+                    public_id: result.public_id,
+                    thumb_url: await cloudinary.url(result.public_id, {
+                        // height: 300,
+                        // width: 300,
+                    }),
+                    result: result
+                })
+            }
+           
+            console.log("uploaderUrls", uploaderUrls)
+            return uploaderUrls
+
+        } catch (error) {
+            console.log("Err uploading image: ", error)
+        }
+    }
+    async uploadSingleImage(
+        file,
+        { folderName = 'outrunner/products' }) {
+
+        try {
+            if (!file) return
+            const result = await cloudinary.v2.uploader.upload(file.path, {
+                folder: folderName
+            })
+            return {
+                image_url: result.secure_url,
+                thumb_url: await cloudinary.url(result.public_id),
+                public_id: result.public_id,
+                result: result
+            }
+
+        } catch (error) {
+            console.log("Err uploading image: ", error)
+        }
+    }
+
     // async serverRPCRequest(payload) {
     //     const { type, data } = payload;
     //     const { customer_id, customer_provider, customer_name, customer_email, customer_avatar } = data

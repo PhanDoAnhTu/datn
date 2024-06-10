@@ -171,11 +171,12 @@ class cartService {
         }
         return await CartModel.findOneAndUpdate(query, updateSet, options)
     }
-
     async getUserCart({ userId, cart_state = 'active' }) {
-        return await CartModel.findOne({
+        const cart = await CartModel.findOne({
             cart_userId: userId, cart_state: cart_state
         }).lean()
+
+        return cart
     }
     async findProductIncartBySkuId({ userId, cart_state = 'active', productId, sku_id }) {
         return await CartModel.findOne({

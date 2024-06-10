@@ -8,6 +8,7 @@ import CategoryReducer from './category-reducer';
 import SliderReducer from './slider-reducer';
 import TopicReducer from './topic-reducer';
 import PostReducer from './post-reducer';
+import Special_offerReducer from './spicial-offer-reducer';
 
 const reducers = combineReducers({
     userReducer: UserReducer,
@@ -19,5 +20,6 @@ const reducers = combineReducers({
     postReducer: PostReducer,
     wishListReducer: WishListReducer,
     paymentReducer: PaymentReducer,
+    special_offerReducer: Special_offerReducer
 });
 export default reducers;

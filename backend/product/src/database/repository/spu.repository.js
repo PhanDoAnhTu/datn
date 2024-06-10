@@ -20,6 +20,7 @@ const checkProductByServer = async ({ products }) => {
         }
     }))
 }
+
 const publishProduct = async ({ product_id }) => {
 
     const foundProduct = await SpuModel.findOne({
@@ -50,11 +51,11 @@ const unPublishProduct = async ({ product_id }) => {
 
 }
 const getAllProductsByfilter = async ({ limit, sort, page, filter }) => {
-    const { isPublished } = filter
+    // const { isPublished } = filter
 
     const skip = (page - 1) * limit;
     const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 }
-    const products = await SpuModel.find({ isPublished })
+    const products = await SpuModel.find(filter )
         .sort(sortBy)
         .skip(skip)
         .limit(limit)

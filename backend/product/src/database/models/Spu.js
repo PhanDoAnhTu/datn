@@ -5,7 +5,7 @@ const COLLECTION_NAME = 'spus'
 
 const spuSchema = new Schema({
     product_name: { type: String, required: true },
-    product_thumb: { type: String, required: true },
+    product_thumb: { type: Array, default: [] },
     product_description: String,
     product_slug: String,
     product_price: { type: Number, required: true },

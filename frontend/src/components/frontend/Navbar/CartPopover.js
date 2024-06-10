@@ -8,6 +8,7 @@ import {
     getCart,
     UpdateFromCart,
     DeleteToCartItem,
+    specialOfferToday
 } from '../../../store/actions';
 import { ShoppingBagIcon } from '@heroicons/react/20/solid';
 import { cancelAllFromCart, cancelSkuFromCart, changeSkuIdFromCart, checkSkuFromCart, getSelectedListFromCart, selectedAllFromCart } from '../../../utils';
@@ -18,12 +19,14 @@ export default function CartPopover({ Button }) {
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const { userInfo } = useSelector((state) => state.userReducer)
+    const { special_offer } = useSelector((state) => state.special_offerReducer)
+
     const { cart } = useSelector((state) => state.cartReducer)
     const [selectedProductFromCart, setSelectedProductFromCart] = useState(getSelectedListFromCart)
-
+    const [price_total, setprice_total] = useState(0)
     const changeSelectedProductFromCart = async (type, sku) => {
         if (type == "all_checked") {
-            selectedAllFromCart(sku)
+            selectedAllFromCart(sku, special_offer)
         }
         if (type == "cancel_all_checked") {
             cancelAllFromCart()
@@ -35,9 +38,10 @@ export default function CartPopover({ Button }) {
             cancelSkuFromCart(sku)
         }
         if (type == "variation") {
-            changeSkuIdFromCart(sku,cart.cart_products)
+            changeSkuIdFromCart(sku, cart?.cart_products)
         }
         setSelectedProductFromCart(getSelectedListFromCart)
+
     }
 
     const checkboxAll = async (checked, sku_list) => {
@@ -79,17 +83,30 @@ export default function CartPopover({ Button }) {
                 })
             );
         }
-        return dispatch(getCart({ userId: userInfo._id }));
+        dispatch(getCart({ userId: userInfo._id }));
     };
     const OpenCart = async () => {
         dispatch(getCart({ userId: userInfo._id }));
+        dispatch(specialOfferToday());
         setOpen(true);
+        setprice_total(selectedProductFromCart?.reduce(
+            (accumulator, currentValue) => accumulator + currentValue.price,
+            0,
+        ))
     };
     useEffect(() => {
         if (userInfo) {
             dispatch(getCart({ userId: userInfo._id }));
+            dispatch(specialOfferToday());
         }
     }, [userInfo]);
+
+    useEffect(() => {
+        setprice_total(selectedProductFromCart?.reduce(
+            (accumulator, currentValue) => accumulator + (currentValue.price * currentValue.quantity),
+            0,
+        ))
+    }, [selectedProductFromCart]);
     // console.log('cart', cart)
     return (
         <div className="ml-4 flow-root lg:ml-6">
@@ -125,16 +142,13 @@ export default function CartPopover({ Button }) {
                                     <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
                                         <div className="flex h-full flex-col overflow-y-scroll bg-stone-100  shadow-xl transition-all duration-200 ease-out dark:bg-zinc-950">
                                             {cart &&
-                                                cart.cart_products?.length !== 0 ? (
+                                                cart?.cart_products?.length !== 0 ? (
                                                 <>
                                                     <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                                                         <div className="flex items-start justify-between">
                                                             <Dialog.Title className="text-lg font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                                 Giỏ hàng (
-                                                                {cart &&
-                                                                    cart
-                                                                        .cart_products
-                                                                        .length}
+                                                                {cart?.cart_products?.length}
                                                                 )
                                                             </Dialog.Title>
 
@@ -163,18 +177,18 @@ export default function CartPopover({ Button }) {
                                                         <div className="mt-4 flex max-w-full justify-start">
                                                             <Dialog.Title className="font-small text-sm text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                                 Chọn tất cả
-                                                                {selectedProductFromCart.length == cart.cart_products.length
+                                                                {selectedProductFromCart.length == cart?.cart_products?.length
                                                                     ?
                                                                     <input
                                                                         checked={true}
-                                                                        onChange={() => checkboxAll(false, cart.cart_products)}
+                                                                        onChange={() => checkboxAll(false, cart?.cart_products)}
                                                                         type="checkbox"
                                                                         className="ml-2 border-0 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
                                                                     />
                                                                     :
                                                                     <input
                                                                         checked={false}
-                                                                        onChange={() => checkboxAll(true, cart.cart_products)}
+                                                                        onChange={() => checkboxAll(true, cart?.cart_products)}
                                                                         type="checkbox"
                                                                         className="ml-2 border-0 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
                                                                     />
@@ -186,27 +200,26 @@ export default function CartPopover({ Button }) {
                                                         <div className="mt-8">
                                                             <div className="flow-root">
                                                                 <ul className="-my-6 divide-y divide-gray-200 transition-colors duration-200 ease-out dark:divide-stone-700">
-                                                                    {cart &&
-                                                                        cart.cart_products.map(
-                                                                            (
-                                                                                product,
-                                                                                index
-                                                                            ) => (
-                                                                                <CartPopoverItem
-                                                                                    product={
-                                                                                        product
-                                                                                    }
-                                                                                    key={
-                                                                                        index
-                                                                                    }
-                                                                                    update={
-                                                                                        updateOrDeleteItemFromCart
-                                                                                    }
-                                                                                    checkbox={changeSelectedProductFromCart}
-                                                                                    selected_list={selectedProductFromCart}
-                                                                                />
-                                                                            )
-                                                                        )}
+                                                                    {cart?.cart_products?.map(
+                                                                        (
+                                                                            product,
+                                                                            index
+                                                                        ) => (
+                                                                            <CartPopoverItem
+                                                                                product={
+                                                                                    product
+                                                                                }
+                                                                                key={
+                                                                                    index
+                                                                                }
+                                                                                update={
+                                                                                    updateOrDeleteItemFromCart
+                                                                                }
+                                                                                checkbox={changeSelectedProductFromCart}
+                                                                                selected_list={selectedProductFromCart}
+                                                                            />
+                                                                        )
+                                                                    )}
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -215,27 +228,37 @@ export default function CartPopover({ Button }) {
                                                     <div className="border-t border-gray-200 px-4 py-6 sm:px-6 dark:border-stone-700">
                                                         <div className="flex justify-between text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                             <p>Tạm tính</p>
-                                                            <p>$262.00</p>
+                                                            <p>{price_total}</p>
                                                         </div>
                                                         <p className="mt-0.5 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
                                                             Phí ship sẽ được
                                                             tính lúc thanh toán.
                                                         </p>
                                                         <div className="mt-6">
-                                                            <button
-                                                                onClick={() => {
-                                                                    navigate(
-                                                                        '/checkout'
-                                                                    );
-                                                                    setOpen(
-                                                                        false
-                                                                    );
-                                                                }}
-                                                                disabled={false}
-                                                                className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-magenta-700 disabled:pointer-events-none disabled:opacity-50"
-                                                            >
-                                                                Thanh toán
-                                                            </button>
+                                                            {price_total > 0
+                                                                ? <button
+                                                                    onClick={() => {
+                                                                        navigate(
+                                                                            '/thanh-toan'
+                                                                        );
+                                                                        setOpen(
+                                                                            false
+                                                                        );
+                                                                    }}
+                                                                    disabled={false}
+                                                                    className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-magenta-700 disabled:pointer-events-none disabled:opacity-50"
+                                                                >
+                                                                    Thanh toán
+                                                                </button>
+                                                                : <button
+                                                                    disabled={true}
+                                                                    className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-magenta-700 disabled:pointer-events-none disabled:opacity-50"
+                                                                >
+                                                                    Thanh toán
+                                                                </button>
+
+                                                            }
+
                                                         </div>
                                                         <div className="mt-6 flex justify-center text-center text-sm text-gray-500 dark:text-gray-300">
                                                             <p>

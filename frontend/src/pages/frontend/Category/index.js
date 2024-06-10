@@ -16,7 +16,7 @@ import Pagination from '../../../components/frontend/Pagination';
 import ProductSingleList from '../../../components/frontend/ProductSingleList';
 import { useDispatch, useSelector } from 'react-redux';
 //
-import { allProducts } from '../../../store/actions';
+import { allProducts, ProductsByCategory } from '../../../store/actions';
 
 
 const sortOptions = [
@@ -79,16 +79,18 @@ export default function Category({ CategoryTitle }) {
 
     ///demo setProducts
     const dispatch = useDispatch();
-    const { all_products } = useSelector(
+    const { all_products, product_by_category } = useSelector(
         (state) => state.productReducer
     );
     useEffect(() => {
-        if (!all_products) {
-            dispatch(allProducts({ isPublished: true }));
-        }
-        console.log('all_products', all_products)
-    }, [all_products]);
+        dispatch(allProducts({ isPublished: true }));
+    }, []);
     ///demo setProducts
+
+    useEffect(() => {
+        dispatch(ProductsByCategory());
+    }, []);
+    console.log(product_by_category)
 
     return (
         <div>

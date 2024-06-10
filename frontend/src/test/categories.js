@@ -6,7 +6,7 @@ export const navigation = {
             featured: [
                 {
                     name: 'New Arrivals',
-                    to: '/category/women/new-arrivals',
+                    to: '/san-pham-theo-danh-muc/nu',
                     imageSrc:
                         'https://tailwindui.com/img/ecommerce-images/mega-menu-category-01.jpg',
                     imageAlt:
@@ -68,7 +68,7 @@ export const navigation = {
             featured: [
                 {
                     name: 'New Arrivals',
-                    to: '#',
+                    to: '/san-pham-theo-danh-muc/nam',
                     imageSrc:
                         'https://tailwindui.com/img/ecommerce-images/product-page-04-detail-product-shot-01.jpg',
                     imageAlt:

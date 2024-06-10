@@ -55,7 +55,7 @@ router.get('/callback', (req, res, next) => {
   })(req, res, next)
 },
   function (req, res) {
-    res.redirect(`http://localhost:3000/login-success/${req.user?.id}/${req.user?.provider}`);
+    res.redirect(`http://localhost:3000/kiem-tra-dang-nhap/${req.user?.id}/${req.user?.provider}`);
   }
 );
 

@@ -8,13 +8,35 @@ class UploadController {
         this.service = new UploadService();
     }
 
-    uploadImageFormLocalFiles = async (req, res, next) => {
+    uploadSkuImageList = async (req, res, next) => {
         const { files } = req
         console.log(req.body)
         if (!files.length) throw new errorResponse.BadRequestError("files missing")
         return new successResponse.SuccessResponse({
-            message: "uploadImageFormLocalFiles",
-            metaData: await this.service.uploadImageFormLocalFiles(
+            message: "uploadSkuImageList success",
+            metaData: await this.service.uploadSkuImageList(
+                files,req.body
+            )
+        }).send(res)
+    }
+
+    uploadSingleImage = async (req, res, next) => {
+        const { file } = req
+        console.log(req.body)
+        return new successResponse.SuccessResponse({
+            message: "uploadImageFormLocalFiles success",
+            metaData: await this.service.uploadSingleImage(
+                file,req.body
+            )
+        }).send(res)
+    }
+    uploadImageArray = async (req, res, next) => {
+        const { files } = req
+        console.log(req.body)
+        if (!files.length) throw new errorResponse.BadRequestError("files missing")
+        return new successResponse.SuccessResponse({
+            message: "uploadImageArray success",
+            metaData: await this.service.uploadImageArray(
                 files,req.body
             )
         }).send(res)

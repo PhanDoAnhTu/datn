@@ -1,38 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import StepCount from './StepCount';
 
 import Payment from './Payment';
 import ButtonWithBorder from '../../../components/frontend/ButtonWithBorder';
 import Review from './Review';
+import { getSelectedListFromCart } from '../../../utils';
+import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 
-const products = [
-    {
-        id: 1,
-        name: 'Throwback Hip Bag',
-        to: '#',
-        color: 'Salmon',
-        price: '$90.00',
-        quantity: 1,
-        imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg',
-        imageAlt:
-            'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
-    },
-    {
-        id: 2,
-        name: 'Medium Stuff Satchel',
-        to: '#',
-        color: 'Blue',
-        price: '$32.00',
-        quantity: 1,
-        imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-02.jpg',
-        imageAlt:
-            'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
-    },
-    // More products...
-];
+
 
 export default function Checkout() {
     const [step, setStep] = useState(1);
@@ -48,6 +24,13 @@ export default function Checkout() {
     const [securityCode, setSecurityCode] = useState('');
 
     const [paymentMethod, setPaymentMethod] = useState('COD');
+    const [selectedProductFromCart] = useState(getSelectedListFromCart)
+    const [price_total, setprice_total] = useState(0)
+
+
+    // const navigate = useNavigate();
+
+
 
     const handleNextStep = () => {
         if (
@@ -62,23 +45,42 @@ export default function Checkout() {
         setStep(step + 1);
     };
 
+
+    useEffect(() => {
+        setprice_total(selectedProductFromCart?.reduce(
+            (accumulator, currentValue) => accumulator + (currentValue.price * currentValue.quantity),
+            0,
+        ))
+
+    }, [selectedProductFromCart]);
+
+
+
     return (
         <div className="overflow-hidden pb-7 pt-10 md:pt-24">
             <StepCount step={step} />
+            <Link
+                to={`/`}
+                className="ml-20 mb-6 flex items-center"
+            >
+                <ChevronLeftIcon className="h-6 w-6 text-white" />
+                <span className="text-lg font-bold text-white">Quay lại</span>
+            </Link>
             <div
                 className={`flex ${step === 2 ? '-translate-x-full' : step === 3 ? '-translate-x-2full' : ''} transition duration-500 ease-out`}
             >
+
                 <div className="w-screen flex-shrink-0 px-1 md:px-32">
                     <div className="grid gap-16 sm:px-4 xl:grid-cols-2">
                         <div className="h-fit bg-zinc-900 p-10 text-white">
                             <div className="flow-root">
                                 <ul className="-my-6 divide-gray-200 transition-colors duration-200 ease-out dark:divide-stone-700">
-                                    {products.map((product, index) => (
+                                    {selectedProductFromCart && selectedProductFromCart.map((product, index) => (
                                         <li key={index} className="flex py-4">
                                             <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                                 <img
-                                                    src={product.imageSrc}
-                                                    alt={product.imageAlt}
+                                                    src={product.product_image}
+                                                    alt={product.product_image}
                                                     className="h-full w-full object-cover object-center"
                                                 />
                                             </div>
@@ -86,23 +88,25 @@ export default function Checkout() {
                                                 <div>
                                                     <div className="flex justify-between text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                         <h3 className="line-clamp-3 text-ellipsis">
-                                                            <Link
-                                                                to={product.to}
-                                                            >
-                                                                {product.name}
+                                                            <Link to={`san-pham/${product.product_slug_id}`}>
+                                                                {product.product_name}
                                                             </Link>
                                                         </h3>
                                                         <p className="ml-4 text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                             {product.price}
                                                         </p>
                                                     </div>
-                                                    <p className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
-                                                        {product.color}
-                                                    </p>
+                                                    <div className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
+                                                        {product.product_option.map((option, index) => {
+                                                            return (
+                                                                <p key={index} className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">{option.options[product.product_variation[index]]}</p>
+                                                            )
+                                                        })}
+                                                    </div>
                                                 </div>
                                                 <div className="flex flex-1 items-end justify-between text-sm">
                                                     <p className="text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
-                                                        Qty {product.quantity}
+                                                        Số lượng {product.quantity}
                                                     </p>
                                                 </div>
                                             </div>
@@ -131,7 +135,7 @@ export default function Checkout() {
                                         <div className="flex justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                             <h3>Tạm tính</h3>
                                             <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                $122.00
+                                                {price_total}
                                             </p>
                                         </div>
                                     </div>
@@ -139,7 +143,7 @@ export default function Checkout() {
                                         <div className="flex justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                             <h3>Giảm giá</h3>
                                             <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                $0.00
+                                                0
                                             </p>
                                         </div>
                                     </div>
@@ -147,7 +151,7 @@ export default function Checkout() {
                                         <div className="flex  justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                             <h3>Tổng</h3>
                                             <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                $127.00
+                                                {price_total}
                                             </p>
                                         </div>
                                     </div>
@@ -161,7 +165,7 @@ export default function Checkout() {
                                         Thông tin giao hàng
                                     </h1>
                                     <button className="bg-white px-2 py-2 text-xs font-bold text-black transition duration-500 ease-out hover:bg-magenta-500 hover:text-white">
-                                        Change
+                                        Thay đổi
                                     </button>
                                 </div>
                                 <div className="space-y-4 pt-4">

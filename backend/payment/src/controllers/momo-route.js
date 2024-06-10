@@ -10,7 +10,7 @@ router.post("/", async (req, res) => {
   //https://developers.momo.vn/#/docs/en/aiov2/?id=payment-method
   //parameters
   var partnerCode = "MOMO";
-  var redirectUrl = "http://localhost:3000/checking-order";
+  var redirectUrl = "http://localhost:3000/kiem-tra-thanh-toan";
   var ipnUrl =
     "https://abc4-112-197-100-135.ngrok-free.app/api/payment/momo/callback";
   var requestType = "payWithMethod";

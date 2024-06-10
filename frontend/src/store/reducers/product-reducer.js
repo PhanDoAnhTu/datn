@@ -3,6 +3,9 @@ import { Action } from '../actions'
 const initialState = {
     current_product: null,
     all_products: null,
+    product_detail: null,
+    product_by_category: null,
+    product_from_cart: null,
     products_filter: null,
     list_product_image: null,
     data: null
@@ -15,6 +18,21 @@ const ProductReducer = (state = initialState, action) => {
             return {
                 ...state,
                 current_product: action.payload.metaData
+            }
+        case Action.PRODUCT_DETAIL:
+            return {
+                ...state,
+                product_detail: action.payload.metaData
+            }
+        case Action.PRODUCT_BY_CATEGORY:
+            return {
+                ...state,
+                product_by_category: action.payload.metaData
+            }
+        case Action.PRODUCT_FROM_CART:
+            return {
+                ...state,
+                product_from_cart: action.payload.metaData
             }
         case Action.ALL_PRODUCTS:
             return {

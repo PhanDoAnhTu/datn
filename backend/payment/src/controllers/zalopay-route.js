@@ -10,7 +10,7 @@ dotEnv.config();
 router.post("/", async (req, res) => {
   const { orderInfo, amount } = req.body;
   const embed_data = {
-    redirecturl: "http://localhost:3000/checking-order",
+    redirecturl: "http://localhost:3000/kiem-tra-thanh-toan",
   };
 
   const items = [{}];

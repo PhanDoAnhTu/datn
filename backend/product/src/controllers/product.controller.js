@@ -45,8 +45,14 @@ class spuController {
   };
   PublishProduct = async (req, res, next) => {
     return new successResponse.SuccessResponse({
-      message: "Get All spu by limit, sort, page, filter",
+      message: "PublishProduct",
       metaData: await SpuService.PublishProduct(req.body),
+    }).send(res);
+  };
+  UnPublishProduct = async (req, res, next) => {
+    return new successResponse.SuccessResponse({
+      message: "UnPublishProduct",
+      metaData: await SpuService.UnPublishProduct(req.body),
     }).send(res);
   };
 
@@ -60,6 +66,13 @@ class spuController {
     new successResponse.SuccessResponse({
       message: 'findAttributeBySpuId success',
       metaData: await SpuService.findAttributeBySpuId(req.body)
+    }).send(res)
+  }
+
+  productFromCart = async (req, res, next) => {
+    new successResponse.SuccessResponse({
+      message: 'productFromCart success',
+      metaData: await SpuService.productFromCart(req.body)
     }).send(res)
   }
 }

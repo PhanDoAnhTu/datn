@@ -1,13 +1,19 @@
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 import { ReactComponent as MastercardCard } from '../../../assets/frontend/svg/MastercardCard.svg';
 import ButtonWithBorder from '../../../components/frontend/ButtonWithBorder';
-import { products } from '../../../test/products';
+// import { products } from '../../../test/products';
 import { Link } from 'react-router-dom';
 import { paymentByMoMo, paymentByZaloPay } from '../../../store/actions';
 import { useDispatch } from 'react-redux';
+import { getSelectedListFromCart } from '../../../utils';
+import { useEffect, useState } from 'react';
 
 export default function Review({ step, setStep, information, paymentMethod }) {
     const dispatch = useDispatch();
+
+    const [selectedProductFromCart] = useState(getSelectedListFromCart)
+    const [price_total, setprice_total] = useState(0)
+
 
     const handlePlaceOrder = async () => {
         if (paymentMethod === 'COD') {
@@ -18,7 +24,7 @@ export default function Review({ step, setStep, information, paymentMethod }) {
             const result = await dispatch(
                 paymentByMoMo({
                     orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
-                    amount: 4000000,
+                    amount: price_total,
                 })
             );
             result && window.location.replace(result.payload.payUrl);
@@ -27,12 +33,19 @@ export default function Review({ step, setStep, information, paymentMethod }) {
             const result = await dispatch(
                 paymentByZaloPay({
                     orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
-                    amount: 4000000,
+                    amount: price_total,
                 })
             );
             result && window.location.replace(result.payload.order_url);
         }
     };
+
+    useEffect(() => {
+        setprice_total(selectedProductFromCart?.reduce(
+            (accumulator, currentValue) => accumulator + (currentValue.price * currentValue.quantity),
+            0,
+        ))
+    }, [selectedProductFromCart]);
 
     return (
         <div
@@ -118,12 +131,12 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                     <div className="h-fit bg-zinc-900 p-10 text-white">
                         <div className="flow-root">
                             <ul className="checkout -my-2 h-60 divide-gray-200 overflow-y-scroll transition-colors duration-200 ease-out dark:divide-stone-700">
-                                {products.map((product, index) => (
+                                {selectedProductFromCart && selectedProductFromCart.map((product, index) => (
                                     <li key={index} className="flex py-4">
                                         <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                             <img
-                                                src={product.imageSrc}
-                                                alt={product.imageAlt}
+                                                src={product.product_image}
+                                                alt={product.product_image}
                                                 className="h-full w-full object-cover object-center"
                                             />
                                         </div>
@@ -131,21 +144,25 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                             <div>
                                                 <div className="flex justify-between text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                     <h3 className="line-clamp-3 text-ellipsis">
-                                                        <Link to={product.to}>
-                                                            {product.name}
+                                                        <Link to={`san-pham/${product.product_slug_id}`}>
+                                                            {product.product_name}
                                                         </Link>
                                                     </h3>
                                                     <p className="ml-4 text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                         {product.price}
                                                     </p>
                                                 </div>
-                                                <p className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
-                                                    {product.color}
-                                                </p>
+                                                <div className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
+                                                    {product.product_option.map((option, index) => {
+                                                        return (
+                                                            <p key={index} className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">{option.options[product.product_variation[index]]}</p>
+                                                        )
+                                                    })}
+                                                </div>
                                             </div>
                                             <div className="flex flex-1 items-end justify-between text-sm">
                                                 <p className="text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
-                                                    Qty {product.quantity}
+                                                    Số lượng {product.quantity}
                                                 </p>
                                             </div>
                                         </div>
@@ -176,7 +193,7 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                     <div className="flex justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                         <h3>Tạm tính</h3>
                                         <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                            $122.00
+                                            {price_total}
                                         </p>
                                     </div>
                                 </div>
@@ -184,13 +201,13 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                     <div className="flex justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                         <h3>Phí giao hàng</h3>
                                         <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                            $5.00
+                                            0
                                         </p>
                                     </div>
                                     <div className="flex justify-between pb-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                         <h3>Giảm giá</h3>
                                         <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                            $0.00
+                                            0
                                         </p>
                                     </div>
                                 </div>
@@ -198,7 +215,7 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                     <div className="flex  justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                         <h3>Tổng</h3>
                                         <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                            $127.00
+                                            {price_total}
                                         </p>
                                     </div>
                                 </div>

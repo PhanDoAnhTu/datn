@@ -5,14 +5,13 @@ import classNames from '../../../helpers/classNames';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import HeartSlashIcon from '../../../assets/HeartSlashIcon.js';
 import ProductList from '../../../components/frontend/ProductList';
-import { products } from '../../../test/products';
+// import { products } from '../../../test/products';
 import {
-    productById,
     listImageByProductId,
-    getSpecialOfferBySpuId,
     addToCart,
     removeFromWishList,
     addToWishList,
+    onProductDetail
 } from '../../../store/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { NumericFormat } from 'react-number-format';
@@ -26,13 +25,7 @@ import {
 } from '../../../utils';
 import HeartIcon from '../../../assets/HeartIcon.js';
 
-const product = {
-    to: '#',
-    breadcrumbs: [
-        { id: 1, name: 'Men', to: '#' },
-        { id: 2, name: 'Clothing', to: '#' },
-    ],
-};
+
 
 const reviews = { to: '#', average: 4, totalCount: 117 };
 export default function ProductDetail() {
@@ -41,62 +34,81 @@ export default function ProductDetail() {
     const dispatch = useDispatch();
 
     const product_id = product_slug_id.split('-').pop();
+
     const { userInfo } = useSelector((state) => state.userReducer);
+    // const { product_detail } = useSelector((state) => state.productReducer);
     const [favories_products, setfavoriesProduct] = useState(
         getFavoritesFromLocalStorage()
     );
 
     const [variations, setVariations] = useState([]);
-    const [selectedVariation, setSelectedVariation] = useState(
-        variations.length === 1 ? [0] : [0, 0]
-    );
+    const [selectedVariation, setSelectedVariation] = useState(null);
     const [price, setPrice] = useState('');
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [stock, setStock] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [product_detail, setProductDetail] = useState(null);
+    const [sku_list, setSkuList] = useState(null);
+    const [product_categories, setProductCategories] = useState([]);
+
     const [product_images, setProductImages] = useState(null);
     const [selected_sku, setSelectedSku] = useState(null);
-    const [spicial_offer, setSpicial_offer] = useState(null);
+    const [special_offer, setSpicial_offer] = useState(null);
     const [sale_sku, setSale_sku] = useState(null);
     const [quantity, setQuantity] = useState(1);
+    const [review, setReview] = useState([]);
+    const [rating_score_avg, setRating_score_avg] = useState(0);
 
-    const getProductDetail = async () => {
-        const response = await dispatch(productById({ spu_id: product_id }));
-        response && setProductDetail(response.payload.metaData);
-        const fetch_spicial_offer = await dispatch(
-            getSpecialOfferBySpuId({ spu_id: product_id })
-        );
-        fetch_spicial_offer &&
-            setSpicial_offer(fetch_spicial_offer.payload.metaData);
-    };
-    const getPhotosByProductDetail = async () => {
-        const response = await dispatch(listImageByProductId(product_id));
-        response && setProductImages(response.payload.metaData);
-    };
+    const [related_products, setRelated_products] = useState([]);
+    // const [comment, setComment] = useState([]);
 
+
+    const getProductDetail = async (product_id) => {
+        const responseProductDetail = await dispatch(onProductDetail({ spu_id: product_id }));
+        if (responseProductDetail) {
+            console.log("responseProductDetail.", responseProductDetail)
+            setProductDetail(responseProductDetail?.payload.metaData?.product_detail)
+            setName(responseProductDetail?.payload.metaData?.product_detail.product_name);
+            setDescription(responseProductDetail?.payload.metaData?.product_detail?.product_description);
+
+            if (responseProductDetail.payload.metaData?.product_detail?.product_variations.length > 0) {
+                setVariations(responseProductDetail.payload.metaData?.product_detail?.product_variations);
+                setSelectedVariation(responseProductDetail.payload.metaData?.sku_list[0].sku_tier_idx)
+            }
+            if (responseProductDetail.payload.metaData?.sku_list.length > 0) {
+                setSkuList(responseProductDetail.payload.metaData?.sku_list)
+                setSelectedSku(responseProductDetail.payload.metaData?.sku_list[0])
+                setPrice(responseProductDetail.payload.metaData?.sku_list[0].sku_price)
+                setStock(responseProductDetail.payload.metaData?.sku_list[0].sku_stock);
+                const product_image_list = await dispatch(listImageByProductId(responseProductDetail.payload.metaData?.product_detail._id))
+                setProductImages(product_image_list?.payload.metaData);
+            } else {
+                setProductImages(responseProductDetail.payload.metaData?.product_detail.product_thumb);
+                setPrice(responseProductDetail.payload.metaData?.product_detail.product_price)
+            }
+            setProductCategories(responseProductDetail.payload.metaData?.product_categories)
+            setReview(responseProductDetail.payload.metaData?.product_review)
+            setRelated_products(responseProductDetail.payload.metaData?.related_products)
+            setRating_score_avg(responseProductDetail.payload.metaData?.product_review.reduce((partialSum, a) => partialSum + a.rating_score, 0) / responseProductDetail.payload.metaData?.product_review.length)
+            setSpicial_offer(responseProductDetail.payload.metaData?.special_offer?.special_offer_spu_list.find((spu) => spu.product_id == product_id));
+        }
+    };
     /////////////////////////////
     useEffect(() => {
-        if (!product_detail) {
-            getProductDetail();
-        }
-    }, [product_id, product_detail]);
-    /////////////
-    useEffect(() => {
-        if (product_detail) {
-            setVariations(product_detail.spu_info.product_variations);
-            setName(product_detail.spu_info.product_name);
-            setDescription(product_detail.spu_info.product_description);
-        }
-    }, [product_id, product_detail]);
+        getProductDetail(product_id)
+    }, [product_slug_id]);
 
     useEffect(() => {
-        if (!product_images) {
-            getPhotosByProductDetail();
-        }
-    }, [product_id, product_images]);
-
+        special_offer?.sku_list.map((sku) => {
+            if (
+                sku.sku_tier_idx.toString() == selectedVariation.toString()
+            ) {
+                setSale_sku(sku);
+                return;
+            }
+        });
+    }, [special_offer]);
     /////////selected variation
     const handleVariationChange = (value, variationOrder) => {
         setSelectedVariation((s) => {
@@ -106,71 +118,42 @@ export default function ProductDetail() {
         });
     };
     useEffect(() => {
-        if (product_detail) {
-            const filteredSKU = product_detail.sku_list
-                ? product_detail.sku_list.find(
-                      (item) =>
-                          item.sku_tier_idx.toString() ===
-                          selectedVariation.toString()
-                  )
-                : null;
-            if (filteredSKU != null) {
-                setPrice(filteredSKU.sku_price);
-                setStock(filteredSKU.sku_stock);
-                setSelectedImage(
-                    product_images &&
-                        product_images.find(
-                            (item) =>
-                                item.sku_id.toString() ===
-                                filteredSKU._id.toString()
-                        )
-                );
-                spicial_offer &&
-                    spicial_offer.special_offer_spu_list.filter((product) => {
-                        if (
-                            product.product_id.toString() ===
-                            product_detail.spu_info._id.toString()
-                        ) {
-                            return product.sku_list.filter((sku) => {
-                                if (
-                                    sku.sku_id.toString() ===
-                                    filteredSKU._id.toString()
-                                ) {
-                                    setSale_sku(sku);
-                                    return;
-                                }
-                            });
-                        }
-                    });
-                console.log('filteredSKU', filteredSKU);
-                console.log('pricesale', sale_sku);
-            }
+        if (selectedVariation) {
+            setSelectedSku(sku_list.find((sku) => sku.sku_tier_idx.toString() == selectedVariation.toString()));
         }
-    }, [
-        product_id,
-        selectedVariation,
-        product_detail,
-        product_images,
-        spicial_offer,
-        sale_sku,
-    ]);
+    }, [selectedVariation]);
+    useEffect(() => {
+        if (selected_sku) {
+            setPrice(selected_sku.sku_price);
+            setStock(selected_sku.sku_stock);
+            setSelectedImage(
+                product_images &&
+                product_images.find(
+                    (item) =>
+                        item.sku_id == selected_sku._id
+                )
+            );
+            special_offer?.sku_list.map((sku) => {
+                if (
+                    sku.sku_tier_idx.toString() ==
+                    selectedVariation.toString()
+                ) {
+                    setSale_sku(sku);
+                    return;
+                }
+            });
+            console.log('filteredSKU', selected_sku);
+            console.log('pricesale', sale_sku);
+            console.log('special_offer', special_offer)
+        }
+
+    }, [selected_sku]);
 
     const HandleImageChoose = (e) => {
         setSelectedImage(e);
     };
     console.log('selectedVariation', selectedVariation);
-
-    useEffect(() => {
-        setSelectedSku(
-            product_detail
-                ? product_detail.sku_list.find(
-                      (item) =>
-                          item.sku_tier_idx.toString() ===
-                          selectedVariation.toString()
-                  )
-                : null
-        );
-    }, [product_detail, selectedVariation]);
+    console.log('selectedsku', selected_sku);
 
     ////////////quantity
     const handleDecrement = async (quantity) => {
@@ -246,14 +229,14 @@ export default function ProductDetail() {
             <div className="pt-6">
                 <nav aria-label="Breadcrumb">
                     <ol className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-                        {product.breadcrumbs.map((breadcrumb) => (
-                            <li key={breadcrumb.id}>
+                        {product_categories.length > 0 && product_categories.map((breadcrumb) => (
+                            <li key={breadcrumb._id}>
                                 <div className="flex items-center">
                                     <Link
-                                        to={breadcrumb.to}
+                                        to={breadcrumb.category_slug}
                                         className="mr-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                                     >
-                                        {breadcrumb.name}
+                                        {breadcrumb.category_name}
                                     </Link>
                                     <svg
                                         width={16}
@@ -268,15 +251,19 @@ export default function ProductDetail() {
                                 </div>
                             </li>
                         ))}
-                        <li className="text-sm">
-                            <Link
-                                to={product.to}
-                                aria-current="page"
-                                className="font-medium text-gray-500 transition duration-200 ease-out hover:text-gray-600 dark:text-white dark:hover:text-gray-300"
-                            >
-                                {product.name}
-                            </Link>
-                        </li>
+                        {
+                            product_detail && (
+                                <li className="text-sm">
+                                    <Link
+                                        to={product_detail.product_slug}
+                                        aria-current="page"
+                                        className="font-medium text-gray-500 transition duration-200 ease-out hover:text-gray-600 dark:text-white dark:hover:text-gray-300"
+                                    >
+                                        {product_detail.product_name}
+                                    </Link>
+                                </li>
+                            )
+                        }
                     </ol>
                 </nav>
                 {/* Product info */}
@@ -313,42 +300,60 @@ export default function ProductDetail() {
                             {name}
                         </h1>
                         <p className="mt-6 text-3xl tracking-tight text-gray-900 dark:text-gray-200">
-                            <NumericFormat
-                                value={sale_sku ? sale_sku.price_sale : price}
-                                displayType='text'
-                                thousandSeparator={true}
-                                decimalScale={0}
-                                id="price"
-                                suffix={'đ'}
-                            />
-                            &emsp;
-                            {sale_sku && (
-                                <span className="rounded-full bg-red-100 px-5 py-2 text-xs font-medium  text-red-800 dark:bg-red-900 dark:text-red-300">
-                                    Giảm {sale_sku.percentage}%
-                                </span>
-                            )}
-                        </p>
+                            {sale_sku &&
+                                sale_sku?.sku_id == selected_sku?._id
+                                ? <NumericFormat
+                                    value={sale_sku.price_sale}
+                                    displayType='text'
+                                    thousandSeparator={true}
+                                    decimalScale={0}
+                                    id="price"
+                                    suffix={'đ'}
+                                />
+                                : <NumericFormat
+                                    value={price}
+                                    displayType='text'
+                                    thousandSeparator={true}
+                                    decimalScale={0}
+                                    id="price"
+                                    suffix={'đ'}
+                                />}
 
-                        <p className="text-2xl tracking-tight text-gray-900 line-through decoration-rose-700 dark:text-gray-200">
-                            <NumericFormat
-                                value={sale_sku && price}
-                                displayType={'text'}
-                                thousandSeparator={true}
-                                decimalScale={0}
-                                id="price"
-                                suffix={'đ'}
-                            />
+
+                            &emsp;
+                            {sale_sku &&
+                                sale_sku?.sku_id == selected_sku?._id && (
+                                    <span className="rounded-full bg-red-100 px-5 py-2 text-xs font-medium  text-red-800 dark:bg-red-900 dark:text-red-300">
+                                        Giảm đến{sale_sku.percentage}%
+                                    </span>
+                                )
+                            }
                         </p>
+                        {
+                            sale_sku && (sale_sku?.sku_id == selected_sku?._id && (
+                                <p className="text-2xl tracking-tight text-gray-900 line-through decoration-rose-700 dark:text-gray-200">
+                                    <NumericFormat
+                                        value={price}
+                                        displayType={'text'}
+                                        thousandSeparator={true}
+                                        decimalScale={0}
+                                        id="price"
+                                        suffix={'đ'}
+                                    />
+                                </p>
+                            ))
+                        }
                         {/* Reviews */}
-                        <div className="">
-                            <h3 className="sr-only">Reviews</h3>
+                        <div className="mt-3">
+                            <h3 className="text-xanthous-500">Điểm đánh giá :   {rating_score_avg}</h3>
                             <div className="flex items-center">
-                                <div className="flex items-center">
-                                    {[0, 1, 2, 3, 4].map((rating) => (
+                                <div className="flex items-center">{
+                                    [1, 2, 3, 4, 5].map((rating) => (
                                         <StarIcon
                                             key={rating}
+
                                             className={classNames(
-                                                reviews.average > rating
+                                                rating_score_avg >= rating
                                                     ? 'text-xanthous-500'
                                                     : 'text-gray-200',
                                                 'h-5 w-5 flex-shrink-0'
@@ -357,14 +362,12 @@ export default function ProductDetail() {
                                         />
                                     ))}
                                 </div>
-                                <p className="sr-only">
-                                    {reviews.average} out of 5 stars
-                                </p>
+
                                 <Link
                                     to={reviews.to}
                                     className="ml-3 text-sm font-medium text-xanthous-500 hover:text-xanthous-600"
                                 >
-                                    {reviews.totalCount} reviews
+                                    {review.length} đánh giá
                                 </Link>
                             </div>
                         </div>
@@ -525,8 +528,7 @@ export default function ProductDetail() {
                                                 onClick={() =>
                                                     handleAddToCart(userInfo, {
                                                         productId:
-                                                            product_detail
-                                                                .spu_info._id,
+                                                            product_detail._id,
                                                         sku_id: selected_sku._id,
                                                         quantity: quantity,
                                                     })
@@ -547,18 +549,14 @@ export default function ProductDetail() {
                                         (userInfo ? (
                                             favories_products.some(
                                                 (p_id) =>
-                                                    p_id ===
-                                                    product_detail.spu_info._id
+                                                    p_id == product_detail._id
                                             ) == true ? (
                                                 <button
                                                     onClick={() =>
                                                         HandleRemoveFromWishList(
                                                             {
                                                                 userId: userInfo._id,
-                                                                productId:
-                                                                    product_detail
-                                                                        .spu_info
-                                                                        ._id,
+                                                                productId: product_detail._id
                                                             }
                                                         )
                                                     }
@@ -571,10 +569,7 @@ export default function ProductDetail() {
                                                     onClick={() =>
                                                         HandleAddToWishList({
                                                             userId: userInfo,
-                                                            productId:
-                                                                product_detail
-                                                                    .spu_info
-                                                                    ._id,
+                                                            productId: product_detail._id
                                                         })
                                                     }
                                                     className="flex w-fit items-center justify-center rounded-md border border-transparent bg-magenta-500 px-5 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
@@ -588,8 +583,7 @@ export default function ProductDetail() {
                                                     HandleAddToWishList({
                                                         userId: userInfo,
                                                         productId:
-                                                            product_detail
-                                                                .spu_info._id,
+                                                            product_detail._id,
                                                     })
                                                 }
                                                 className="flex w-fit items-center justify-center rounded-md border border-transparent bg-magenta-500 px-5 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
@@ -610,9 +604,9 @@ export default function ProductDetail() {
                         {description}
                     </p>
                     <ProductList
-                        title={'Explore more products'}
-                        products={products}
-                        summary={'These products are the same uses...'}
+                        title={'Sản phẩm liên quan'}
+                        products={related_products}
+                        summary={'Những sản phẩm cùng danh mục mà bạn có thể quan tâm'}
                     />
                 </div>
             </div>

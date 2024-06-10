@@ -61,7 +61,7 @@ class SpecialOfferService {
     async findSpecialOfferBetweenStartDateAndEndByDate({ special_offer_is_active = true, date = Date.now() }) {
         let now = new Date(date);
         console.log(now)
-        const special = await SpecialOfferModel.find({
+        const special = await SpecialOfferModel.findOne({
             special_offer_is_active,
             special_offer_start_date: { $lte: now },
             special_offer_end_date: { $gte: now }
@@ -83,7 +83,7 @@ class SpecialOfferService {
     }
     async findSpecialOfferTodayBySpuIdList({ spu_id_list = [], special_offer_is_active = true }) {
         let now = new Date();
-        const special = await SpecialOfferModel.find({
+        const special = await SpecialOfferModel.findOne({
             special_offer_is_active,
             special_offer_start_date: { $lte: now },
             special_offer_end_date: { $gte: now },

@@ -11,7 +11,7 @@ class CommentService {
         this.repository = new commentRepository();
     }
 
-   static async createComment({ productId, userId, content, parentCommentId = null }) {
+    static async createComment({ productId, userId, content, parentCommentId = null }) {
 
         const comment = new CommentModel({
             comment_productId: productId,
@@ -90,27 +90,32 @@ class CommentService {
         return comments
     }
     async getCommentByproductId({ productId, limit = 50, offset = 0 }) {
-        const comments = await CommentModel.find({
-            comment_productId: productId,
-        }).limit(limit).lean()
+        try {
+            const comments = await CommentModel.find({
+                comment_productId: productId,
+            }).limit(limit).lean()
 
-        if (comments.length == 0) {
-            return comments
-        }
-        let user_list = []
-        for (let index = 0; index < comments.length; index++) {
-            const user = await RPCRequest("CUSTOMER_RPC", {
-                type: "FIND_CUSTOMER_BY_ID",
-                data: {
-                    customer_id: comments[index].comment_userId
-                }
+            if (comments.length == 0) {
+                return comments
+            }
+            let user_list = []
+            for (let index = 0; index < comments.length; index++) {
+                const user = await RPCRequest("CUSTOMER_RPC", {
+                    type: "FIND_CUSTOMER_BY_ID",
+                    data: {
+                        customer_id: comments[index].comment_userId
+                    }
+                })
+                user_list.push(user)
+            }
+            const comments_info = await comments.map((comment, index) => {
+                return { ...comment, user: user_list[index] }
             })
-            user_list.push(user)
+            return comments_info
+        } catch (error) {
+            console.log(error)
+            return null
         }
-        const comments_info = await comments.map((comment, index) => {
-            return { ...comment, user: user_list[index] }
-        })
-        return comments_info
     }
     async deleteCommentByIdAndProductId({ commentId, productId }) {
         const foundProduct = await spuService.checkProductById({ productId })

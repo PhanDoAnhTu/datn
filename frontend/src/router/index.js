@@ -52,27 +52,26 @@ const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<App />}>
             <Route index={true} path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/category/:gender/:test" element={<Category />} />
+            <Route path="/dang-nhap" element={<Login />} />
+            <Route path="/dang-ky" element={<Register />} />
+            <Route path="/san-pham-theo-danh-muc/:category_slug?" element={<Category />} />
             <Route
-                path="/san-pham/:product_slug_id?"
+                path="/san-pham/:product_slug_id"
                 element={<ProductDetail />}
             />
-            <Route path="/news/:page" element={<News />} />
-            <Route path="/new/d/:slug" element={<NewDetail />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/search/:keyword" element={<Search />} />
+            <Route path="/bai-viet" element={<News />} />
+            <Route path="/bai-viet/:slug?" element={<NewDetail />} />
+            <Route path="/lien-he" element={<Contact />} />
+            <Route path="/tim-kiem-san-pham/:keyword" element={<Search />} />
 
             <Route
-                path="/login-success/:userId?/:provider?"
-                element={<LoginSuccessSocial />}
-            />
-            <Route path="/checkout" element={<Checkout />} />
+                path="/kiem-tra-dang-nhap/:userId/:provider"
+                element={<LoginSuccessSocial />}/>
+            <Route path="/thanh-toan/:page?" element={<Checkout />} />
 
             <Route path="/" element={<PrivateRoute />}>
-                <Route path="/u/:page" element={<Profile />} />
-                <Route path="/checking-order" element={<TransactionCheck />} />
+                <Route path="/trang-ca-nhan/:page?" element={<Profile />} />
+                <Route path="/kiem-tra-thanh-toan" element={<TransactionCheck />} />
             </Route>
             <Route path="*" element={<Navigate to="/404" />} />
             <Route path="/404" element={<PageNotFound />} />

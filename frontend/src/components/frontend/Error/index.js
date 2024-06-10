@@ -9,6 +9,9 @@ const Error = () => {
         <div className="flex flex-col items-center justify-center py-40">
             <Logo className={'h-1/2 w-1/2'} />
             <div className="flex flex-col items-center justify-center space-y-12">
+            <h1 className="text-2xl font-bold  text-gray-900 md:text-3xl dark:text-white">
+                    Lỗi 404
+                </h1>
                 <h1 className="text-2xl font-bold  text-gray-900 md:text-3xl dark:text-white">
                     Trang này không tồn tại
                 </h1>

@@ -60,7 +60,7 @@ router.get(
       next()
     })(req, res, next)
   }, (req, res) => {
-    res.redirect(`http://localhost:3000/login-success/${req.user?.id}/${req.user?.provider}`); // Successful authentication, redirect success.
+    res.redirect(`http://localhost:3000/kiem-tra-dang-nhap/${req.user?.id}/${req.user?.provider}`); // Successful authentication, redirect success.
   }
 );
 

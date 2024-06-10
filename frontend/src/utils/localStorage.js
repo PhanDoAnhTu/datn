@@ -67,7 +67,23 @@ export const cancelSkuFromCart = (sku) => {
 };
 
 // SelectedAllListFromCart
-export const selectedAllFromCart = (sku_list) => {
+export const selectedAllFromCart = (sku_list, special_offer) => {
+  console.log(special_offer)
+  // spicial_offer &&
+  //   spicial_offer.special_offer_spu_list.filter((spu) => {
+  //     if (
+  //       spu.product_id.toString() === product.productId.toString()
+  //     ) {
+  //       return spu.sku_list.filter((sku) => {
+  //         if (
+  //           sku.sku_tier_idx.toString() === selected.toString()
+  //         ) {
+  //           setSku_sale(sku);
+  //           return;
+  //         }
+  //       });
+  //     }
+  //   });
   localStorage.setItem("selected_list_from_cart", JSON.stringify(sku_list));
 
 };
@@ -93,6 +109,7 @@ export const changeQuantitySkuFromCart = (sku) => {
   }
 };
 
+
 ///change sku
 export const changeSkuIdFromCart = (sku, cart_products) => {
   const selected_list = getSelectedListFromCart();
@@ -105,7 +122,14 @@ export const changeSkuIdFromCart = (sku, cart_products) => {
     console.log("cart_products", sku_new_in_cart, sku_new_in_selected_sku)
 
     if (sku_new_in_cart && !sku_new_in_selected_sku) {
-      update_selected_list.push({ sku_id: sku.sku_id, quantity: sku.quantity + sku_new_in_cart.quantity, productId: sku.productId })
+      update_selected_list.push({
+        sku_id: sku.sku_id, quantity: sku.quantity + sku_new_in_cart.quantity, productId: sku.productId, price: sku.price,
+        product_name: sku.product_name,
+        product_slug_id: sku.product_slug_id,
+        product_variation: sku.product_variation,
+        product_image: sku.product_image,
+        product_option:sku.product_option
+      })
       localStorage.setItem("selected_list_from_cart", JSON.stringify(update_selected_list));
       return
     }
@@ -113,11 +137,26 @@ export const changeSkuIdFromCart = (sku, cart_products) => {
       let update_selected_list_v2 = update_selected_list.filter(
         ({ sku_id }) => sku_id.toString() !== sku_new_in_selected_sku.sku_id.toString()
       );
-      update_selected_list_v2.push({ sku_id: sku.sku_id, quantity: sku.quantity + sku_new_in_cart.quantity, productId: sku.productId })
+      update_selected_list_v2.push({
+        sku_id: sku.sku_id, quantity: sku.quantity + sku_new_in_cart.quantity, productId: sku.productId, price: (sku.quantity + sku_new_in_cart.quantity) * sku.price, product_name: sku.product_name,
+        product_slug_id: sku.product_slug_id,
+        product_variation: sku.product_variation,
+        product_image: sku.product_image,
+        product_option:sku.product_option
+
+
+      })
       localStorage.setItem("selected_list_from_cart", JSON.stringify(update_selected_list_v2));
       return
     }
-    update_selected_list.push({ sku_id: sku.sku_id, quantity: sku.quantity, productId: sku.productId })
+    update_selected_list.push({
+      sku_id: sku.sku_id, quantity: sku.quantity, productId: sku.productId, price: sku.price, product_name: sku.product_name,
+      product_slug_id: sku.product_slug_id,
+      product_variation: sku.product_variation,
+      product_image: sku.product_image,
+      product_option:sku.product_option
+
+    })
     localStorage.setItem("selected_list_from_cart", JSON.stringify(update_selected_list));
   }
 
