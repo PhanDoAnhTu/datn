@@ -7,6 +7,7 @@ import ButtonWithBorder from '../../../components/frontend/ButtonWithBorder';
 import Review from './Review';
 import { getSelectedListFromCart } from '../../../utils';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
+import { NumericFormat } from 'react-number-format';
 
 
 
@@ -93,7 +94,14 @@ export default function Checkout() {
                                                             </Link>
                                                         </h3>
                                                         <p className="ml-4 text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                            {product.price}
+                                                            <NumericFormat
+                                                                value={product.price}
+                                                                displayType='text'
+                                                                thousandSeparator={true}
+                                                                decimalScale={0}
+                                                                id="price"
+                                                                suffix={'đ'}
+                                                            />
                                                         </p>
                                                     </div>
                                                     <div className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
@@ -135,7 +143,14 @@ export default function Checkout() {
                                         <div className="flex justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                             <h3>Tạm tính</h3>
                                             <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                {price_total}
+                                                <NumericFormat
+                                                    value={price_total}
+                                                    displayType='text'
+                                                    thousandSeparator={true}
+                                                    decimalScale={0}
+                                                    id="price"
+                                                    suffix={'đ'}
+                                                />
                                             </p>
                                         </div>
                                     </div>
@@ -151,7 +166,14 @@ export default function Checkout() {
                                         <div className="flex  justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                             <h3>Tổng</h3>
                                             <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                {price_total}
+                                                <NumericFormat
+                                                    value={price_total}
+                                                    displayType='text'
+                                                    thousandSeparator={true}
+                                                    decimalScale={0}
+                                                    id="price"
+                                                    suffix={'đ'}
+                                                />
                                             </p>
                                         </div>
                                     </div>

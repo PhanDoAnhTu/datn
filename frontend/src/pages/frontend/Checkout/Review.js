@@ -7,6 +7,7 @@ import { paymentByMoMo, paymentByZaloPay } from '../../../store/actions';
 import { useDispatch } from 'react-redux';
 import { getSelectedListFromCart } from '../../../utils';
 import { useEffect, useState } from 'react';
+import { NumericFormat } from 'react-number-format';
 
 export default function Review({ step, setStep, information, paymentMethod }) {
     const dispatch = useDispatch();
@@ -149,7 +150,14 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                                         </Link>
                                                     </h3>
                                                     <p className="ml-4 text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                        {product.price}
+                                                        <NumericFormat
+                                                            value={product.price}
+                                                            displayType='text'
+                                                            thousandSeparator={true}
+                                                            decimalScale={0}
+                                                            id="price"
+                                                            suffix={'đ'}
+                                                        />
                                                     </p>
                                                 </div>
                                                 <div className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
@@ -193,7 +201,14 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                     <div className="flex justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                         <h3>Tạm tính</h3>
                                         <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                            {price_total}
+                                            <NumericFormat
+                                                value={price_total}
+                                                displayType='text'
+                                                thousandSeparator={true}
+                                                decimalScale={0}
+                                                id="price"
+                                                suffix={'đ'}
+                                            />
                                         </p>
                                     </div>
                                 </div>
@@ -215,7 +230,14 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                     <div className="flex  justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                         <h3>Tổng</h3>
                                         <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                            {price_total}
+                                            <NumericFormat
+                                                value={price_total}
+                                                displayType='text'
+                                                thousandSeparator={true}
+                                                decimalScale={0}
+                                                id="price"
+                                                suffix={'đ'}
+                                            />
                                         </p>
                                     </div>
                                 </div>

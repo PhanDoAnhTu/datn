@@ -127,7 +127,7 @@ export default function ProductSingle({ product, reload }) {
                         suffix={'đ'}
                     />
                 </p>
-                <p className="text-sm font-medium  text-gray-400/75 line-through decoration-red-700 ">
+                {/* <p className="text-sm font-medium  text-gray-400/75 line-through decoration-red-700 ">
                     <NumericFormat
                         value={product.product_price}
                         displayType={'text'}
@@ -136,7 +136,7 @@ export default function ProductSingle({ product, reload }) {
                         id="price"
                         suffix={'đ'}
                     />
-                </p>
+                </p> */}
             </div>
         </div>
     );

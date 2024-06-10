@@ -222,7 +222,7 @@ const findProductsByCategory = async ({ limit = 50, sort = 'ctime', page = 1, fi
         return { ...product, brand: brand_list[index], special_offer: special_offer, sku_list: sku_list[index], product_review: product_review[index] }
     })
 
-    return product_list.all_Products
+    return product_list.productsByCategory
 }
 const findProductDetail = async ({ spu_id, isPublished = true }) => {
     try {

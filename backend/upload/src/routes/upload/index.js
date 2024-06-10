@@ -10,8 +10,8 @@ const { uploadDisk } = require('../../config/multiple.config');
 
 // router.use(authentication)
 router.post('/product/uploadSkuImageList', uploadDisk.array('files', 6), asynchandler(uploadController.uploadSkuImageList))
-router.post('/product/uploadSingleImage', uploadDisk.single('file'), asynchandler(uploadController.uploadSingleImage))
-router.post('/product/uploadImageArray', uploadDisk.array('files', 6), asynchandler(uploadController.uploadImageArray))
+router.post('/uploadSingleImage', uploadDisk.single('file'), asynchandler(uploadController.uploadSingleImage))
+router.post('/uploadImageArray', uploadDisk.array('files', 6), asynchandler(uploadController.uploadImageArray))
 
 
 module.exports = router
