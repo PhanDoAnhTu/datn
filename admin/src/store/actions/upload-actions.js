@@ -1,4 +1,4 @@
-import { GetData, PostData } from '../../utils/apicall'
+import {  PostData } from '../../utils/apicall'
 import { Action } from '../actions'
 
 

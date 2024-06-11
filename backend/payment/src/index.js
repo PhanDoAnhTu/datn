@@ -26,7 +26,7 @@ const startService = async () => {
 
   app
     .listen(process.env.PORT || 3013, () => {
-      console.log(`listening to port ${process.env.PORT}`);
+      console.log(`listening to port ${process.env.PORT}, ${process.env.SERVICE}`);
     })
     .on("error", (err) => {
       console.log(err);

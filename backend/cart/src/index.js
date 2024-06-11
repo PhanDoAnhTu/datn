@@ -1,5 +1,5 @@
 const express = require('express');
-const { PORT } = require('./config');
+const { PORT, SERVICE } = require('./config');
 const { databaseConnection } = require('./database');
 const expressApp = require('./express-app');
 // const { CreateChannel } = require('./utils');
@@ -15,7 +15,7 @@ const StartServer = async () => {
 
     await expressApp(app,channel);
     app.listen(PORT, () => {
-        console.log(`listening to port ${PORT}`);
+        console.log(`listening to port ${PORT},${SERVICE}`);
     })
         .on('error', (err) => {
             console.log(err);

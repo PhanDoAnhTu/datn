@@ -2,18 +2,18 @@ import { PostData } from '../../utils/apicall'
 import { Action } from './index'
 
 
-// export const getCart = (data) => async (dispatch) => {
-//     try {
-//         const response = await PostData('/cart/v1/listByUserId', data);
-//         console.log('response:', response)
-//         return dispatch({ type: Action.GET_CART, payload: response.data });
+export const getCart = (data) => async (dispatch) => {
+    try {
+        const response = await PostData('/cart/v1/listByUserId', data);
+        console.log('response:', response)
+        return dispatch({ type: Action.GET_CART, payload: response.data });
 
-//     } catch (err) {
-//         console.log(err)
-//         return err.response.data
+    } catch (err) {
+        console.log(err)
+        return err.response.data
 
-//     }
-// };
+    }
+};
 // export const addToCart = (data) => async (dispatch) => {
 //     try {
 //         const response = await PostData('/cart/v1/addTocart',data);

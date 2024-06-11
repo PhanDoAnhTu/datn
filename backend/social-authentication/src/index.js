@@ -5,7 +5,7 @@ const authRouter = require('./controllers/google-auth');
 const facebookRouter = require('./controllers/facebook-auth');
 const protectedRouter = require('./controllers/protected-route');
 const passport = require('passport');
-const { PORT } = require('./config');
+const { PORT, SERVICE } = require('./config');
 const morgan = require('morgan');
 const compression = require('compression');
 const { default: helmet } = require('helmet');
@@ -49,7 +49,7 @@ const startService = async () => {
   app.use('/protected', protectedRouter);
 
   app.listen(PORT || 3003, () => {
-    console.log(`listening to port ${PORT}`);
+    console.log(`listening to port ${PORT}, ${SERVICE}`);
   })
     .on('error', (err) => {
       console.log(err);

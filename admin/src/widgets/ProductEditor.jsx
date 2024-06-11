@@ -344,13 +344,13 @@ const ProductEditor = () => {
                 <div className="flex flex-col text-center">
                   {item.id === 1
                     ? variations
-                        .find((item1) => item1.id === item.id)
-                        .options.find((item2) => item2.id === sku_tier_idx[0])
-                        ?.value
+                      .find((item1) => item1.id === item.id)
+                      .options.find((item2) => item2.id === sku_tier_idx[0])
+                      ?.value
                     : variations
-                        .find((item1) => item1.id === item.id)
-                        .options.find((item2) => item2.id === sku_tier_idx[1])
-                        ?.value}
+                      .find((item1) => item1.id === item.id)
+                      .options.find((item2) => item2.id === sku_tier_idx[1])
+                      ?.value}
                 </div>
               ),
             });
@@ -365,13 +365,13 @@ const ProductEditor = () => {
                 <div className="flex flex-col text-center">
                   {item.id === 1
                     ? variations
-                        .find((item1) => item1.id === item.id)
-                        .options.find((item2) => item2.id === sku_tier_idx[0])
-                        .value
+                      .find((item1) => item1.id === item.id)
+                      .options.find((item2) => item2.id === sku_tier_idx[0])
+                      .value
                     : variations
-                        .find((item1) => item1.id === item.id)
-                        .options.find((item2) => item2.id === sku_tier_idx[1])
-                        .value}
+                      .find((item1) => item1.id === item.id)
+                      .options.find((item2) => item2.id === sku_tier_idx[1])
+                      .value}
                 </div>
               ),
             };
@@ -456,7 +456,8 @@ const ProductEditor = () => {
   // do something with the data
 
   const handleSave = async (data) => {
-    let list_image = new FormData();
+    console.log('data',sKUList)
+    const list_image = new FormData();
     sKUList.forEach((item) => {
       if (item.image != null) {
         list_image.append("files", item.image[0]);
@@ -466,95 +467,94 @@ const ProductEditor = () => {
     list_image.append("folderName", "outrunner/products");
 
     const list_url_thumb = await dispact(upLoadProductImageList(list_image));
-    //sau khi upload ảnh thì lưu "thumb_url" và "public_id" vào sku_list sau đó chạy api createSpu()
-    const newSpu = await createSpu({
-      product_name: "bbb ",
-      isPublished: false,
-      product_thumb: "{ type: String, required: true }",
-      product_description: "String",
-      product_price: 10000,
-      product_quantity: 15,
-      product_brand: "663fc259d1665c7e45e8401c",
-      product_category: [
-        "663f9d30220d580c7b4cbc9e",
-        "663f9e62220d580c7b4cbca8",
-        "663f9e9c220d580c7b4cbcaa",
-      ],
-      product_attributes: [
-        {
-          attribute_id: "663f6b4a6e6cc6596ecc0161",
-          attribute_value: [
-            {
-              value_id: "663f6b4a6e6cc6596ecc0164",
-            },
-          ],
-        },
-        {
-          attribute_id: "663f53a1855e11df5b6b0696",
-          attribute_value: [
-            {
-              value_id: "663f53a1855e11df5b6b069a",
-            },
-          ],
-        },
-      ],
-      product_variations: [
-        {
-          images: [],
-          name: "color",
-          options: ["Blue", "Red"],
-        },
-        {
-          images: [],
-          name: "size",
-          options: ["S", "M", "L"],
-        },
-      ],
-      sku_list: [
-        {
-          thumb_url: "000",
-          public_id: "234",
-          sku_tier_idx: [0, 0],
-          sku_price: 100000,
-          sku_stock: 10,
-        },
-        {
-          thumb_url: "01",
-          public_id: "234",
-          sku_tier_idx: [0, 1],
-          sku_price: 110000,
-          sku_stock: 1,
-        },
-        {
-          thumb_url: "02",
-          public_id: "234",
-          sku_tier_idx: [0, 2],
-          sku_price: 120000,
-          sku_stock: 2,
-        },
-        {
-          thumb_url: "asd",
-          public_id: "234",
-          sku_tier_idx: [1, 0],
-          sku_price: 100000,
-          sku_stock: 10,
-        },
-        {
-          thumb_url: "11",
-          public_id: "11",
-          sku_tier_idx: [1, 1],
-          sku_price: 100000,
-          sku_stock: 11,
-        },
-        {
-          thumb_url: "12",
-          public_id: "12",
-          sku_tier_idx: [1, 2],
-          sku_price: 100000,
-          sku_stock: 12,
-        },
-      ],
-    });
+    // list_url_thumb && createSpu({
+    //   product_name: "bbb ",
+    //   isPublished: false,
+    //   product_thumb: "{ type: String, required: true }",
+    //   product_description: "String",
+    //   product_price: 10000,
+    //   product_quantity: 15,
+    //   product_brand: "663fc259d1665c7e45e8401c",
+    //   product_category: [
+    //     "663f9d30220d580c7b4cbc9e",
+    //     "663f9e62220d580c7b4cbca8",
+    //     "663f9e9c220d580c7b4cbcaa",
+    //   ],
+    //   product_attributes: [
+    //     {
+    //       attribute_id: "663f6b4a6e6cc6596ecc0161",
+    //       attribute_value: [
+    //         {
+    //           value_id: "663f6b4a6e6cc6596ecc0164",
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       attribute_id: "663f53a1855e11df5b6b0696",
+    //       attribute_value: [
+    //         {
+    //           value_id: "663f53a1855e11df5b6b069a",
+    //         },
+    //       ],
+    //     },
+    //   ],
+    //   product_variations: [
+    //     {
+    //       images: [],
+    //       name: "color",
+    //       options: ["Blue", "Red"],
+    //     },
+    //     {
+    //       images: [],
+    //       name: "size",
+    //       options: ["S", "M", "L"],
+    //     },
+    //   ],
+    //   sku_list: [
+    //     {
+    //       thumb_url: "000",
+    //       public_id: "234",
+    //       sku_tier_idx: [0, 0],
+    //       sku_price: 100000,
+    //       sku_stock: 10,
+    //     },
+    //     {
+    //       thumb_url: "01",
+    //       public_id: "234",
+    //       sku_tier_idx: [0, 1],
+    //       sku_price: 110000,
+    //       sku_stock: 1,
+    //     },
+    //     {
+    //       thumb_url: "02",
+    //       public_id: "234",
+    //       sku_tier_idx: [0, 2],
+    //       sku_price: 120000,
+    //       sku_stock: 2,
+    //     },
+    //     {
+    //       thumb_url: "asd",
+    //       public_id: "234",
+    //       sku_tier_idx: [1, 0],
+    //       sku_price: 100000,
+    //       sku_stock: 10,
+    //     },
+    //     {
+    //       thumb_url: "11",
+    //       public_id: "11",
+    //       sku_tier_idx: [1, 1],
+    //       sku_price: 100000,
+    //       sku_stock: 11,
+    //     },
+    //     {
+    //       thumb_url: "12",
+    //       public_id: "12",
+    //       sku_tier_idx: [1, 2],
+    //       sku_price: 100000,
+    //       sku_stock: 12,
+    //     },
+    //   ],
+    // });
     console.log(list_url_thumb);
     toast.info("Product saved successfully");
   };
@@ -730,17 +730,15 @@ const ProductEditor = () => {
             <button
               onClick={handleToggleIsVariation}
               id="variationBtn"
-              className={` ${
-                isVariation === false ? "btn--social btn block" : "hidden"
-              }`}
+              className={` ${isVariation === false ? "btn--social btn block" : "hidden"
+                }`}
             >
               <i className={`icon icon-circle-plus-regular`} />
               <span>Bật phân loại</span>
             </button>
             <div
-              className={`${
-                isVariation ? "" : "hidden"
-              } grid grid-cols-1 gap-y-4 gap-x-2`}
+              className={`${isVariation ? "" : "hidden"
+                } grid grid-cols-1 gap-y-4 gap-x-2`}
             >
               {variations.map((item, index) => {
                 return (

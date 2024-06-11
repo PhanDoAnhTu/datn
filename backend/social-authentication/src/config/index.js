@@ -8,6 +8,7 @@ if (process.env.NODE_ENV !== "prod") {
 }
 module.exports = {
   PORT: process.env.PORT,
+  SERVICE:process.env.SERVICE,
   APP_SECRET: process.env.APP_SECRET,
   EXCHANGE_NAME: process.env.EXCHANGE_NAME,
   MSG_QUEUE_URL: process.env.MSG_QUEUE_URL,

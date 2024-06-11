@@ -6,7 +6,7 @@ const { v4: uuid4 } = require("uuid");
 const {
   APP_SECRET,
   EXCHANGE_NAME,
-  UPLOAD_SERVICE,
+  SERVICE,
   MSG_QUEUE_URL,
 } = require("../config");
 const { Types } = require("mongoose");
@@ -126,7 +126,7 @@ module.exports.SubscribeMessage = async (channel, service) => {
   const q = await channel.assertQueue("", { exclusive: true });
   console.log(` Waiting for messages in queue: ${q.queue}`);
 
-  channel.bindQueue(q.queue, EXCHANGE_NAME, UPLOAD_SERVICE);
+  channel.bindQueue(q.queue, EXCHANGE_NAME, SERVICE);
 
   channel.consume(
     q.queue,
