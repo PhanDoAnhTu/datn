@@ -25,10 +25,13 @@ class cartService {
     async updateUserCartQuantity({ userId, product }) {
 
         const { productId, quantity, sku_id } = product
-        const query = {
+        const query = sku_id ? {
             cart_userId: userId,
-            // 'cart_products.productId': productId,
             'cart_products.sku_id': sku_id,
+            cart_state: 'active'
+        } : {
+            cart_userId: userId,
+            'cart_products.productId': productId,
             cart_state: 'active'
         }, updateSet = {
             $inc: {
@@ -92,9 +95,65 @@ class cartService {
         return await this.updateUserCartQuantity({ userId, product })
     }
 
-    async addToCartV2({ userId, shop_order_ids = {} }) {
-        const { productId, sku_id, quantity, old_quantity, sku_id_old } = shop_order_ids?.item_products
-        console.log(sku_id, sku_id_old, quantity, old_quantity)
+
+    async updateQuantityFromCart({ userId, shop_order_ids = {} }) {
+        const { productId, sku_id, quantity, old_quantity } = shop_order_ids?.item_products
+        return await this.updateUserCartQuantity({
+            userId,
+            product: {
+                productId,
+                quantity: quantity - old_quantity,
+                sku_id
+            }
+        })
+
+    }
+    async updateSkuFromCart({ userId, shop_order_ids = {} }) {
+        const { productId, sku_id, sku_id_old } = shop_order_ids?.item_products
+        return await this.updateUserCartSku({
+            userId,
+            product: {
+                productId,
+                sku_id,
+                sku_id_old
+            }
+        })
+
+    }
+
+    // async updateSkuFromCartV2({ userId, shop_order_ids = {} }) {
+    //     const { productId, sku_id, quantity, sku_id_old } = shop_order_ids?.item_products
+    //     // console.log(sku_id, sku_id_old, quantity, old_quantity)
+    //     // const foundProduct = await RPCRequest("SPU_RPC", {
+    //     //     type: "CHECK_PRODUCT_BY_ID",
+    //     //     data: {
+    //     //         productId: productId
+    //     //     }
+    //     // })
+    //     // console.log("foundProduct", foundProduct)
+    //     // if (!foundProduct) throw new errorResponse.NotFoundRequestError('product do not belong to the shop')
+
+    //     const userCart = await CartModel.findOne({ cart_userId: userId })
+    //     if (!userCart) {
+    //         throw new errorResponse.NotFoundRequestError('cart not found')
+    //     }
+    //     let hasSkuId = await userCart.cart_products.find((pro) => pro.sku_id == sku_id)
+    //     if (hasSkuId && (sku_id != sku_id_old)) {
+    //         this.deleteToCartItem({ userId: userId, productId: productId, sku_id: sku_id_old })
+    //         return await this.updateUserCartQuantity({
+    //             userId,
+    //             product: {
+    //                 productId,
+    //                 quantity: quantity,
+    //                 sku_id: hasSkuId.sku_id
+    //             }
+    //         })
+    //     }
+    //     return null
+    // }
+    async updateSkuFromCartV2({ userId, shop_order_ids = {} }) {
+        const { productId, sku_id, quantity, sku_id_old } = shop_order_ids?.item_products
+        // console.log(sku_id, sku_id_old, quantity, old_quantity)
         // const foundProduct = await RPCRequest("SPU_RPC", {
         //     type: "CHECK_PRODUCT_BY_ID",
         //     data: {
@@ -103,28 +162,13 @@ class cartService {
         // })
         // console.log("foundProduct", foundProduct)
         // if (!foundProduct) throw new errorResponse.NotFoundRequestError('product do not belong to the shop')
-        if (quantity === 0) {
 
-        }
-        if (quantity != old_quantity && sku_id == sku_id_old) {
-            console.log("aa", quantity - old_quantity)
-            return await this.updateUserCartQuantity({
-                userId,
-                product: {
-                    productId,
-                    quantity: quantity - old_quantity,
-                    sku_id
-                }
-            })
-        }
         const userCart = await CartModel.findOne({ cart_userId: userId })
         if (!userCart) {
-            return null
+            throw new errorResponse.NotFoundRequestError('cart not found')
         }
-        let hasSkuId = await userCart.cart_products.find((pro) => {
-            return pro.sku_id === sku_id
-        })
-        if (hasSkuId && sku_id != sku_id_old) {
+        let hasSkuId = await userCart.cart_products.find((pro) => pro.sku_id == sku_id)
+        if (hasSkuId && (sku_id != sku_id_old)) {
             this.deleteToCartItem({ userId: userId, productId: productId, sku_id: sku_id_old })
             return await this.updateUserCartQuantity({
                 userId,
@@ -134,9 +178,8 @@ class cartService {
                     sku_id: hasSkuId.sku_id
                 }
             })
-            // console.log(hasSkuId)
         }
-        if (sku_id != sku_id_old && quantity == old_quantity) {
+        if (!hasSkuId) {
             return await this.updateUserCartSku({
                 userId,
                 product: {
@@ -146,10 +189,6 @@ class cartService {
                 }
             })
         }
-        if (sku_id == sku_id_old && quantity == old_quantity) {
-            return userCart
-
-        }
         return null
     }
 
@@ -158,9 +197,9 @@ class cartService {
             cart_userId: userId,
             cart_state: 'active',
         }, updateSet = {
-            $pull: {
+            $pull: sku_id ? {
                 cart_products: { sku_id }
-            },
+            } : { cart_products: { productId } },
             $inc: {
                 cart_count_product: -1
             }
@@ -171,7 +210,7 @@ class cartService {
         }
         return await CartModel.findOneAndUpdate(query, updateSet, options)
     }
-    async getUserCart({ userId, cart_state = 'active' }) {
+    async findUserCart({ userId, cart_state = 'active' }) {
         const cart = await CartModel.findOne({
             cart_userId: userId, cart_state: cart_state
         }).lean()

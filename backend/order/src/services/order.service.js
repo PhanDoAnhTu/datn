@@ -35,7 +35,6 @@ class CheckoutService {
         //         products: item_products
         //     }
         // })
-        // const checkProductServer = await checkProductByServer(item_products)
         // console.log('checkProductServer', checkProductServer)
         // if (!checkProductServer[0]) throw new errorResponse.BadRequestError('order wrong')
         //tong don hang
@@ -49,7 +48,7 @@ class CheckoutService {
             shop_discounts,//hmmmm
             priceRaw: checkoutPrice,//tien truoc khi giam gia
             priceApplyDiscount: checkoutPrice,
-            item_products: item_products
+            item_products: item_products //checkProductServer
         }
         if (shop_discounts.length > 0) {
             const { discount = 0 } = await RPCRequest("DISCOUNT_RPC", {

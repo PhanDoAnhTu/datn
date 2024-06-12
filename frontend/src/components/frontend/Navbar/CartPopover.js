@@ -6,7 +6,9 @@ import CartPopoverItem from './CartPopoverItem';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getCart,
-    UpdateFromCart,
+    onUpdateSkuFromCart,
+    onUpdateSkuFromCartV2,
+    onUpdateQuantityFromCart,
     DeleteToCartItem,
     specialOfferToday
 } from '../../../store/actions';
@@ -20,13 +22,14 @@ export default function CartPopover({ Button }) {
     const [open, setOpen] = useState(false);
     const { userInfo } = useSelector((state) => state.userReducer)
     const { special_offer } = useSelector((state) => state.special_offerReducer)
-
     const { cart } = useSelector((state) => state.cartReducer)
     const [selectedProductFromCart, setSelectedProductFromCart] = useState(getSelectedListFromCart)
     const [price_total, setprice_total] = useState(0)
+    const [special_offer_today, setSpecial_offer_today] = useState(null)
+
     const changeSelectedProductFromCart = async (type, sku) => {
         if (type == "all_checked") {
-            selectedAllFromCart(sku, special_offer)
+            selectedAllFromCart(sku, special_offer_today)
         }
         if (type == "cancel_all_checked") {
             cancelAllFromCart()
@@ -53,9 +56,9 @@ export default function CartPopover({ Button }) {
         }
     }
 
-    const updateOrDeleteItemFromCart = async (type, data) => {
+    const updateItemFromCart = async (type, data) => {
         if (type === 'deleteItem') {
-            const { productId, sku_id } = data;
+            const { productId, sku_id = null } = data;
             await dispatch(
                 DeleteToCartItem({
                     userId: userInfo._id,
@@ -64,35 +67,66 @@ export default function CartPopover({ Button }) {
                 })
             );
         }
-        if (type === 'updateItem') {
-            const { productId, sku_id, sku_id_old, quantity, old_quantity } = data;
+        if (type === 'updateItemQuantity') {
+            const { productId, sku_id = null, quantity, old_quantity } = data;
 
-            console.log("data update: ", productId, sku_id, sku_id_old, quantity, old_quantity);
-            await dispatch(
-                UpdateFromCart({
-                    userId: userInfo._id,
-                    shop_order_ids: {
-                        item_products: {
-                            productId: productId,
-                            sku_id: sku_id,
-                            sku_id_old: sku_id_old,
-                            quantity: quantity,
-                            old_quantity: old_quantity,
-                        },
+            console.log("updateItemQuantity: ", productId, sku_id, quantity, old_quantity);
+            await dispatch(onUpdateQuantityFromCart({
+                userId: userInfo._id,
+                shop_order_ids: {
+                    item_products: {
+                        productId: productId,
+                        sku_id: sku_id,
+                        quantity: quantity,
+                        old_quantity: old_quantity,
                     },
-                })
+                },
+            })
+            );
+            setSelectedProductFromCart(getSelectedListFromCart)
+        }
+        if (type === 'updateItemSku') {
+            const { productId, sku_id, sku_id_old } = data;
+
+            console.log("updateItemSku: ", productId, sku_id, sku_id_old);
+            await dispatch(onUpdateSkuFromCart({
+                userId: userInfo._id,
+                shop_order_ids: {
+                    item_products: {
+                        productId: productId,
+                        sku_id: sku_id,
+                        sku_id_old: sku_id_old,
+                    },
+                },
+            })
             );
         }
-        dispatch(getCart({ userId: userInfo._id }));
+        if (type === 'updateItemSkuV2') {
+            const { productId, sku_id, sku_id_old, quantity } = data;
+
+            console.log("updateItemSkuV2: ", productId, sku_id, sku_id_old, quantity);
+            await dispatch(onUpdateSkuFromCartV2({
+                userId: userInfo._id,
+                shop_order_ids: {
+                    item_products: {
+                        productId: productId,
+                        sku_id: sku_id,
+                        sku_id_old: sku_id_old,
+                        quantity: quantity
+                    },
+                },
+            })
+            );
+        }
+        return dispatch(getCart({ userId: userInfo._id }));
     };
     const OpenCart = async () => {
-        dispatch(getCart({ userId: userInfo._id }));
+        await dispatch(getCart({ userId: userInfo._id }));
         dispatch(specialOfferToday());
+        cancelAllFromCart()
+        setSelectedProductFromCart(getSelectedListFromCart)
+        setprice_total(0)
         setOpen(true);
-        setprice_total(selectedProductFromCart?.reduce(
-            (accumulator, currentValue) => accumulator + currentValue.price,
-            0,
-        ))
     };
     useEffect(() => {
         if (userInfo) {
@@ -100,6 +134,9 @@ export default function CartPopover({ Button }) {
             dispatch(specialOfferToday());
         }
     }, [userInfo]);
+    useEffect(() => {
+        special_offer && setSpecial_offer_today(special_offer)
+    }, [special_offer]);
 
     useEffect(() => {
         setprice_total(selectedProductFromCart?.reduce(
@@ -209,11 +246,12 @@ export default function CartPopover({ Button }) {
                                                                                 product={
                                                                                     product
                                                                                 }
+                                                                                special_offer_today={special_offer_today}
                                                                                 key={
                                                                                     index
                                                                                 }
                                                                                 update={
-                                                                                    updateOrDeleteItemFromCart
+                                                                                    updateItemFromCart
                                                                                 }
                                                                                 checkbox={changeSelectedProductFromCart}
                                                                                 selected_list={selectedProductFromCart}

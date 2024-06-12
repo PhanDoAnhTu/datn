@@ -14,9 +14,10 @@ const CartReducer = (state = initialState, action) => {
                 cart: action.payload.metaData
             }
         case Action.ADD_TO_CART:
+            localStorage.setItem("cart_products", JSON.stringify(action.payload.metaData.cart_products));
             return {
                 ...state,
-                cart: null
+                cart: action.payload.metaData
             }
         case Action.UPDATE_FROM_CART:
             return {

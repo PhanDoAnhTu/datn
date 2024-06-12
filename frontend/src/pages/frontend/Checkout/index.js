@@ -89,7 +89,7 @@ export default function Checkout() {
                                                 <div>
                                                     <div className="flex justify-between text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                         <h3 className="line-clamp-3 text-ellipsis">
-                                                            <Link to={`san-pham/${product.product_slug_id}`}>
+                                                            <Link to={`/san-pham/${product.product_slug_id}`}>
                                                                 {product.product_name}
                                                             </Link>
                                                         </h3>

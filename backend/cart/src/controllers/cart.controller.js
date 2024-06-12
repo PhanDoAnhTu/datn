@@ -14,32 +14,45 @@ class CartController {
             metaData: await this.service.addToCart(req.body)
         }).send(res)
     }
-    updateToCart = async (req, res, next) => {
 
+    updateSkuFromCart = async (req, res, next) => {
         return new successResponse.SuccessResponse({
-            message: "Updated cart success",
-            metaData: await this.service.addToCartV2(req.body)
+            message: "updateSkuFromCart cart success",
+            metaData: await this.service.updateSkuFromCart(req.body)
         }).send(res)
     }
-    deleteToCartItem = async (req, res, next) => {
 
+    updateQuantityFromCart = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: "updateQuantityFromCart cart success",
+            metaData: await this.service.updateQuantityFromCart(req.body)
+        }).send(res)
+    }
+    updateSkuFromCartV2 = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: "updateSkuFromCartV2 cart success",
+            metaData: await this.service.updateSkuFromCartV2(req.body)
+        }).send(res)
+    }
+
+    deleteToCartItem = async (req, res, next) => {
         return new successResponse.SuccessResponse({
             message: "deleted cart item success",
             metaData: await this.service.deleteToCartItem(req.body)
         }).send(res)
     }
-    deleteToCartByCartIdAndUserId = async (req, res, next) => {
 
+    deleteToCartByCartIdAndUserId = async (req, res, next) => {
         return new successResponse.SuccessResponse({
             message: "deleted cart success",
             metaData: await this.service.deleteToCartByCartIdAndUserId(req.body)
         }).send(res)
     }
-    listToCart = async (req, res, next) => {
 
+    findUserCart = async (req, res, next) => {
         return new successResponse.SuccessResponse({
             message: "get list cart success",
-            metaData: await this.service.getUserCart(req.body)
+            metaData: await this.service.findUserCart(req.body)
         }).send(res)
     }
 

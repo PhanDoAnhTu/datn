@@ -134,8 +134,8 @@ export default function ProductDetail() {
                     (partialSum, a) => partialSum + a.rating_score,
                     0
                 ) /
-                    responseProductDetail.payload.metaData?.product_review
-                        .length
+                responseProductDetail.payload.metaData?.product_review
+                    .length
             );
             setSpicial_offer(
                 responseProductDetail.payload.metaData?.special_offer?.special_offer_spu_list.find(
@@ -182,9 +182,9 @@ export default function ProductDetail() {
             setStock(selected_sku.sku_stock);
             setSelectedImage(
                 product_images &&
-                    product_images.find(
-                        (item) => item.sku_id == selected_sku._id
-                    )
+                product_images.find(
+                    (item) => item.sku_id == selected_sku._id
+                )
             );
             special_offer?.sku_list.map((sku) => {
                 if (
@@ -351,7 +351,7 @@ export default function ProductDetail() {
                         </h1>
                         <p className="mt-6 text-3xl tracking-tight text-gray-900 dark:text-gray-200">
                             {sale_sku &&
-                            sale_sku?.sku_id == selected_sku?._id ? (
+                                sale_sku?.sku_id == selected_sku?._id ? (
                                 <NumericFormat
                                     value={sale_sku.price_sale}
                                     displayType="text"
@@ -570,14 +570,14 @@ export default function ProductDetail() {
                                 </div>
 
                                 <div className="flex space-x-2">
-                                    {product_detail &&
-                                        (selected_sku ? (
+                                    {product_detail
+                                        ? (
                                             <button
                                                 onClick={() =>
                                                     handleAddToCart(userInfo, {
                                                         productId:
                                                             product_detail._id,
-                                                        sku_id: selected_sku._id,
+                                                        sku_id: selected_sku ? selected_sku._id : null,
                                                         quantity: quantity,
                                                     })
                                                 }
@@ -592,7 +592,7 @@ export default function ProductDetail() {
                                             >
                                                 Thêm vào giỏ hàng
                                             </button>
-                                        ))}
+                                        )}
                                     {product_detail &&
                                         (userInfo ? (
                                             favories_products.some(

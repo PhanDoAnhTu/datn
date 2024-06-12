@@ -1,4 +1,4 @@
-import { GetData, PostData } from '../../utils';
+import { PostData } from '../../utils';
 import { Action } from './index';
 
 export const getCategoryByParentID = (data) => async (dispatch) => {
@@ -18,9 +18,9 @@ export const getCategoryByParentID = (data) => async (dispatch) => {
     }
 };
 
-export const getAllCategory = () => async (dispatch) => {
+export const getAllCategory = (data) => async (dispatch) => {
     try {
-        const response = await GetData('/category/v1/getAllCategory');
+        const response = await PostData('/category/v1/getAllCategory', data);
         console.log('response:', response);
         return dispatch({
             type: Action.GET_ALL_CATEGORY,

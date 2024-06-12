@@ -7,7 +7,7 @@ const { brandController } = require('../../controllers');
 
 
 router.post('/create', asynchandler(brandController.createBrand))
-router.get('/getListBrand', asynchandler(brandController.getListBrand))
+router.post('/findListBrand', asynchandler(brandController.getListBrand))
 router.get('/findBrandById', asynchandler(brandController.findBrandById))
 
 

@@ -18,18 +18,46 @@ import { Divider, Empty } from "antd";
 import StyledTable from "./productEditorStyle";
 import { capitalize } from "@mui/material";
 import { useDispatch } from "react-redux";
-import categories_management from "@db/categories_management";
+// import categories_management from "@db/categories_management";
 import MultipleSelect from "@ui/MultipleSelect";
 
 const ProductEditor = () => {
+  const dispact = useDispatch();
+  const [attributes_management, setAttributes_management] = useState([])
+  const [categories_management, seCategories_management] = useState([])
+  const [brand_management, setBrand_management] = useState([])
+  const [brand_options, setBrand_options] = useState([])
 
-  const [attributes, setAtributes] = useState([
-    {
-      attribute_description: "Phong cách thời trang",
-      _id: "6663435004a9f209540e00e1",
-      attribute_name: "Phong cách"
-    }
-  ]);
+  const fetchCategoriesOnloadPage = async () => {
+    const repoCat = await dispact(findAllCategory({ isPublished: true }))
+    console.log("repoCat", repoCat)
+    seCategories_management(repoCat?.payload?.metaData)
+  }
+  const fetchBrandOnloadPage = async () => {
+    const repoBrand = await dispact(findAllBrand({ isPublished: true }))
+    console.log("repoBrand", repoBrand)
+    setBrand_management(repoBrand?.payload?.metaData)
+  }
+  const fetchAttributeOnloadPage = async () => {
+    const repoAttribute = await dispact(findAllAttribute({ isPublished: true }))
+    console.log("repoAttribute", repoAttribute)
+    setAttributes_management(repoAttribute?.payload?.metaData)
+  }
+
+  useEffect(() => {
+    setBrand_options(brand_management.map((brand) => {
+      return { label: brand.brand_name, value: brand._id }
+    }))
+  }, [brand_management])
+
+
+  console.log("brand_options", brand_management)
+
+  useEffect(() => {
+    fetchCategoriesOnloadPage()
+    fetchBrandOnloadPage()
+    fetchAttributeOnloadPage()
+  }, [])
 
 
   //-----DECLARE DEFAULT VALUES
@@ -43,6 +71,8 @@ const ProductEditor = () => {
     product_quantity: 1,
     unit: "",
     product_attributes: [],
+
+
   };
   console.log("defaultValues", defaultValues)
   const defaultVariationTables = [
@@ -131,7 +161,7 @@ const ProductEditor = () => {
 
   //-----/DECLARE DEFAULT VALUES
 
-  const dispact = useDispatch();
+
   //------------DECLARE USESTATE FOR INPUTS
   const [categories, setCategories] = useState([]);
   const [isVariation, setIsVariation] = useState(false);
@@ -146,14 +176,14 @@ const ProductEditor = () => {
   //------GET AND SET CATEGORIES IN FIRST LOAD
   useEffect(() => {
     const topLevelCategories = categories_management
-      .filter((item) => item.category_parent_id === null)
+      .filter((item) => item.parent_id === null)
       .map((item) => ({
         value: item._id,
         label: item.category_name,
       }));
 
     setCategories(topLevelCategories);
-  }, []);
+  }, [categories_management]);
 
   const handleToggleIsVariation = () => {
     setIsVariation(true);
@@ -179,7 +209,7 @@ const ProductEditor = () => {
   useEffect(() => {
     if (categoriesWatch.length === 0) {
       const updatedCategories = categories_management
-        .filter((item) => item.category_parent_id === null)
+        .filter((item) => item.parent_id === null)
         .map((item) => ({
           value: item._id,
           label: item.category_name,
@@ -193,7 +223,7 @@ const ProductEditor = () => {
     const selectedValue = selectedOption[selectedOption.length - 1]?.value;
 
     const filteredOptions = categories_management.filter(
-      (category) => category.category_parent_id === selectedValue
+      (category) => category.parent_id === selectedValue
     );
 
     const updatedCategories = filteredOptions.map((item) => ({
@@ -649,7 +679,7 @@ const ProductEditor = () => {
                     isInvalid={errors.brandName}
                     id="brandName"
                     placeholder="Chọn thương hiệu"
-                    options={UNITS_OPTIONS}
+                    options={brand_options}
                     value={field.value}
                     onChange={(value) => field.onChange(value)}
                   />
@@ -682,6 +712,7 @@ const ProductEditor = () => {
               />
             </div>
           </div>
+
 
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
             <div className="field-wrapper">
@@ -756,6 +787,39 @@ const ProductEditor = () => {
                 })}
               />
             </div>
+          </div>
+          <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
+            {attributes_management.length > 0 && attributes_management.map((attribute, index) => {
+              const value_attribute_options = attribute.attribute_value.map((value_attribute) => {
+                return { label: value_attribute.attribute_value, value: value_attribute._id }
+              })
+              return (
+                <div className="field-wrapper" key={index}>
+                  <label className="field-label" htmlFor="brandName">
+                    {attribute.attribute_name}
+                  </label>
+                  <Controller
+                    name="product_attributes"
+                    control={control}
+                    defaultValue={defaultValues.product_attributes}
+                    rules={{ required: true }}
+                    render={({ field }) => (
+                      <Select
+                        isInvalid={errors.brandName}
+                        id='product_attributes'
+                        placeholder={`Chọn ${attribute.attribute_name}`}
+                        options={value_attribute_options}
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
+                      />
+                    )}
+                  />
+                </div>
+              )
+            })}
+
+
+
           </div>
           <Divider />
           <h4 className="text-center">Phân loại sản phẩm</h4>
