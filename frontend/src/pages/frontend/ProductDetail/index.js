@@ -11,7 +11,7 @@ import {
     addToCart,
     removeFromWishList,
     addToWishList,
-    onProductDetail
+    onProductDetail,
 } from '../../../store/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { NumericFormat } from 'react-number-format';
@@ -24,8 +24,6 @@ import {
     removeFavoriteFromLocalStorage,
 } from '../../../utils';
 import HeartIcon from '../../../assets/HeartIcon.js';
-
-
 
 const reviews = { to: '#', average: 4, totalCount: 117 };
 export default function ProductDetail() {
@@ -63,47 +61,97 @@ export default function ProductDetail() {
     const [related_products, setRelated_products] = useState([]);
     // const [comment, setComment] = useState([]);
 
-
     const getProductDetail = async (product_id) => {
-        const responseProductDetail = await dispatch(onProductDetail({ spu_id: product_id }));
+        const responseProductDetail = await dispatch(
+            onProductDetail({ spu_id: product_id })
+        );
         if (responseProductDetail) {
-            console.log("responseProductDetail.", responseProductDetail)
-            setProductDetail(responseProductDetail?.payload.metaData?.product_detail)
-            setName(responseProductDetail?.payload.metaData?.product_detail.product_name);
-            setDescription(responseProductDetail?.payload.metaData?.product_detail?.product_description);
+            console.log('responseProductDetail.', responseProductDetail);
+            setProductDetail(
+                responseProductDetail?.payload.metaData?.product_detail
+            );
+            setName(
+                responseProductDetail?.payload.metaData?.product_detail
+                    .product_name
+            );
+            setDescription(
+                responseProductDetail?.payload.metaData?.product_detail
+                    ?.product_description
+            );
 
-            if (responseProductDetail.payload.metaData?.product_detail?.product_variations.length > 0) {
-                setVariations(responseProductDetail.payload.metaData?.product_detail?.product_variations);
-                setSelectedVariation(responseProductDetail.payload.metaData?.sku_list[0].sku_tier_idx)
+            if (
+                responseProductDetail.payload.metaData?.product_detail
+                    ?.product_variations.length > 0
+            ) {
+                setVariations(
+                    responseProductDetail.payload.metaData?.product_detail
+                        ?.product_variations
+                );
+                setSelectedVariation(
+                    responseProductDetail.payload.metaData?.sku_list[0]
+                        .sku_tier_idx
+                );
             }
             if (responseProductDetail.payload.metaData?.sku_list.length > 0) {
-                setSkuList(responseProductDetail.payload.metaData?.sku_list)
-                setSelectedSku(responseProductDetail.payload.metaData?.sku_list[0])
-                setPrice(responseProductDetail.payload.metaData?.sku_list[0].sku_price)
-                setStock(responseProductDetail.payload.metaData?.sku_list[0].sku_stock);
-                const product_image_list = await dispatch(listImageByProductId(responseProductDetail.payload.metaData?.product_detail._id))
+                setSkuList(responseProductDetail.payload.metaData?.sku_list);
+                setSelectedSku(
+                    responseProductDetail.payload.metaData?.sku_list[0]
+                );
+                setPrice(
+                    responseProductDetail.payload.metaData?.sku_list[0]
+                        .sku_price
+                );
+                setStock(
+                    responseProductDetail.payload.metaData?.sku_list[0]
+                        .sku_stock
+                );
+                const product_image_list = await dispatch(
+                    listImageByProductId(
+                        responseProductDetail.payload.metaData?.product_detail
+                            ._id
+                    )
+                );
                 setProductImages(product_image_list?.payload.metaData);
             } else {
-                setProductImages(responseProductDetail.payload.metaData?.product_detail.product_thumb);
-                setPrice(responseProductDetail.payload.metaData?.product_detail.product_price)
+                setProductImages(
+                    responseProductDetail.payload.metaData?.product_detail
+                        .product_thumb
+                );
+                setPrice(
+                    responseProductDetail.payload.metaData?.product_detail
+                        .product_price
+                );
             }
-            setProductCategories(responseProductDetail.payload.metaData?.product_categories)
-            setReview(responseProductDetail.payload.metaData?.product_review)
-            setRelated_products(responseProductDetail.payload.metaData?.related_products)
-            setRating_score_avg(responseProductDetail.payload.metaData?.product_review.reduce((partialSum, a) => partialSum + a.rating_score, 0) / responseProductDetail.payload.metaData?.product_review.length)
-            setSpicial_offer(responseProductDetail.payload.metaData?.special_offer?.special_offer_spu_list.find((spu) => spu.product_id == product_id));
+            setProductCategories(
+                responseProductDetail.payload.metaData?.product_categories
+            );
+            setReview(responseProductDetail.payload.metaData?.product_review);
+            setRelated_products(
+                responseProductDetail.payload.metaData?.related_products
+            );
+            setRating_score_avg(
+                responseProductDetail.payload.metaData?.product_review.reduce(
+                    (partialSum, a) => partialSum + a.rating_score,
+                    0
+                ) /
+                    responseProductDetail.payload.metaData?.product_review
+                        .length
+            );
+            setSpicial_offer(
+                responseProductDetail.payload.metaData?.special_offer?.special_offer_spu_list.find(
+                    (spu) => spu.product_id == product_id
+                )
+            );
         }
     };
     /////////////////////////////
     useEffect(() => {
-        getProductDetail(product_id)
+        getProductDetail(product_id);
     }, [product_slug_id]);
 
     useEffect(() => {
         special_offer?.sku_list.map((sku) => {
-            if (
-                sku.sku_tier_idx.toString() == selectedVariation.toString()
-            ) {
+            if (sku.sku_tier_idx.toString() == selectedVariation.toString()) {
                 setSale_sku(sku);
                 return;
             }
@@ -119,7 +167,13 @@ export default function ProductDetail() {
     };
     useEffect(() => {
         if (selectedVariation) {
-            setSelectedSku(sku_list.find((sku) => sku.sku_tier_idx.toString() == selectedVariation.toString()));
+            setSelectedSku(
+                sku_list.find(
+                    (sku) =>
+                        sku.sku_tier_idx.toString() ==
+                        selectedVariation.toString()
+                )
+            );
         }
     }, [selectedVariation]);
     useEffect(() => {
@@ -128,15 +182,13 @@ export default function ProductDetail() {
             setStock(selected_sku.sku_stock);
             setSelectedImage(
                 product_images &&
-                product_images.find(
-                    (item) =>
-                        item.sku_id == selected_sku._id
-                )
+                    product_images.find(
+                        (item) => item.sku_id == selected_sku._id
+                    )
             );
             special_offer?.sku_list.map((sku) => {
                 if (
-                    sku.sku_tier_idx.toString() ==
-                    selectedVariation.toString()
+                    sku.sku_tier_idx.toString() == selectedVariation.toString()
                 ) {
                     setSale_sku(sku);
                     return;
@@ -144,9 +196,8 @@ export default function ProductDetail() {
             });
             console.log('filteredSKU', selected_sku);
             console.log('pricesale', sale_sku);
-            console.log('special_offer', special_offer)
+            console.log('special_offer', special_offer);
         }
-
     }, [selected_sku]);
 
     const HandleImageChoose = (e) => {
@@ -229,41 +280,40 @@ export default function ProductDetail() {
             <div className="pt-6">
                 <nav aria-label="Breadcrumb">
                     <ol className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-                        {product_categories.length > 0 && product_categories.map((breadcrumb) => (
-                            <li key={breadcrumb._id}>
-                                <div className="flex items-center">
-                                    <Link
-                                        to={breadcrumb.category_slug}
-                                        className="mr-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                                    >
-                                        {breadcrumb.category_name}
-                                    </Link>
-                                    <svg
-                                        width={16}
-                                        height={20}
-                                        viewBox="0 0 16 20"
-                                        fill="currentColor"
-                                        aria-hidden="true"
-                                        className="h-5 w-4 text-gray-300"
-                                    >
-                                        <path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" />
-                                    </svg>
-                                </div>
-                            </li>
-                        ))}
-                        {
-                            product_detail && (
-                                <li className="text-sm">
-                                    <Link
-                                        to={product_detail.product_slug}
-                                        aria-current="page"
-                                        className="font-medium text-gray-500 transition duration-200 ease-out hover:text-gray-600 dark:text-white dark:hover:text-gray-300"
-                                    >
-                                        {product_detail.product_name}
-                                    </Link>
+                        {product_categories.length > 0 &&
+                            product_categories.map((breadcrumb) => (
+                                <li key={breadcrumb._id}>
+                                    <div className="flex items-center">
+                                        <Link
+                                            to={breadcrumb.category_slug}
+                                            className="mr-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        >
+                                            {breadcrumb.category_name}
+                                        </Link>
+                                        <svg
+                                            width={16}
+                                            height={20}
+                                            viewBox="0 0 16 20"
+                                            fill="currentColor"
+                                            aria-hidden="true"
+                                            className="h-5 w-4 text-gray-300"
+                                        >
+                                            <path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" />
+                                        </svg>
+                                    </div>
                                 </li>
-                            )
-                        }
+                            ))}
+                        {product_detail && (
+                            <li className="text-sm">
+                                <Link
+                                    to={product_detail.product_slug}
+                                    aria-current="page"
+                                    className="font-medium text-gray-500 transition duration-200 ease-out hover:text-gray-600 dark:text-white dark:hover:text-gray-300"
+                                >
+                                    {product_detail.product_name}
+                                </Link>
+                            </li>
+                        )}
                     </ol>
                 </nav>
                 {/* Product info */}
@@ -301,57 +351,55 @@ export default function ProductDetail() {
                         </h1>
                         <p className="mt-6 text-3xl tracking-tight text-gray-900 dark:text-gray-200">
                             {sale_sku &&
-                                sale_sku?.sku_id == selected_sku?._id
-                                ? <NumericFormat
+                            sale_sku?.sku_id == selected_sku?._id ? (
+                                <NumericFormat
                                     value={sale_sku.price_sale}
-                                    displayType='text'
+                                    displayType="text"
                                     thousandSeparator={true}
                                     decimalScale={0}
                                     id="price"
                                     suffix={'đ'}
                                 />
-                                : <NumericFormat
+                            ) : (
+                                <NumericFormat
                                     value={price}
-                                    displayType='text'
+                                    displayType="text"
                                     thousandSeparator={true}
                                     decimalScale={0}
                                     id="price"
                                     suffix={'đ'}
-                                />}
-
-
+                                />
+                            )}
                             &emsp;
                             {sale_sku &&
                                 sale_sku?.sku_id == selected_sku?._id && (
                                     <span className="rounded-full bg-red-100 px-5 py-2 text-xs font-medium  text-red-800 dark:bg-red-900 dark:text-red-300">
                                         Giảm đến{sale_sku.percentage}%
                                     </span>
-                                )
-                            }
+                                )}
                         </p>
-                        {
-                            sale_sku && (sale_sku?.sku_id == selected_sku?._id && (
-                                <p className="text-2xl tracking-tight text-gray-900 line-through decoration-rose-700 dark:text-gray-200">
-                                    <NumericFormat
-                                        value={price}
-                                        displayType={'text'}
-                                        thousandSeparator={true}
-                                        decimalScale={0}
-                                        id="price"
-                                        suffix={'đ'}
-                                    />
-                                </p>
-                            ))
-                        }
+                        {sale_sku && sale_sku?.sku_id == selected_sku?._id && (
+                            <p className="text-2xl tracking-tight text-gray-900 line-through decoration-rose-700 dark:text-gray-200">
+                                <NumericFormat
+                                    value={price}
+                                    displayType={'text'}
+                                    thousandSeparator={true}
+                                    decimalScale={0}
+                                    id="price"
+                                    suffix={'đ'}
+                                />
+                            </p>
+                        )}
                         {/* Reviews */}
                         <div className="mt-3">
-                            <h3 className="text-xanthous-500">Điểm đánh giá :   {rating_score_avg}</h3>
+                            <h3 className="text-xanthous-500">
+                                Điểm đánh giá : {rating_score_avg}
+                            </h3>
                             <div className="flex items-center">
-                                <div className="flex items-center">{
-                                    [1, 2, 3, 4, 5].map((rating) => (
+                                <div className="flex items-center">
+                                    {[1, 2, 3, 4, 5].map((rating) => (
                                         <StarIcon
                                             key={rating}
-
                                             className={classNames(
                                                 rating_score_avg >= rating
                                                     ? 'text-xanthous-500'
@@ -556,7 +604,8 @@ export default function ProductDetail() {
                                                         HandleRemoveFromWishList(
                                                             {
                                                                 userId: userInfo._id,
-                                                                productId: product_detail._id
+                                                                productId:
+                                                                    product_detail._id,
                                                             }
                                                         )
                                                     }
@@ -569,7 +618,8 @@ export default function ProductDetail() {
                                                     onClick={() =>
                                                         HandleAddToWishList({
                                                             userId: userInfo,
-                                                            productId: product_detail._id
+                                                            productId:
+                                                                product_detail._id,
                                                         })
                                                     }
                                                     className="flex w-fit items-center justify-center rounded-md border border-transparent bg-magenta-500 px-5 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
@@ -606,8 +656,72 @@ export default function ProductDetail() {
                     <ProductList
                         title={'Sản phẩm liên quan'}
                         products={related_products}
-                        summary={'Những sản phẩm cùng danh mục mà bạn có thể quan tâm'}
+                        summary={
+                            'Những sản phẩm cùng danh mục mà bạn có thể quan tâm'
+                        }
                     />
+                    <h1 className="border-b border-stone-500 pb-5 text-4xl font-bold dark:text-white">
+                        Bình luận về sản phẩm
+                    </h1>
+                    <div className="space-y-5">
+                        <div className="flex flex-col space-y-3 pb-3">
+                            <div className="flex flex-col space-y-1 text-white">
+                                <span className="text-sm">Tiêu đề</span>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="Tiêu đề bình luận"
+                                    className="border-2 border-white bg-transparent transition duration-500 ease-out placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0"
+                                />
+                            </div>
+                            <div className="flex flex-col space-y-1 text-white">
+                                <span className="text-sm">Nội dung</span>
+                                <textarea className="h-40 resize-none border-2 border-white bg-transparent text-justify text-sm transition duration-500 ease-out focus:border-magenta-500 focus:ring-0"></textarea>
+                            </div>
+                            <div className="flex justify-end">
+                                <button className="border-2 px-4 py-2 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500">
+                                    Đăng
+                                </button>
+                            </div>
+                        </div>
+                        <div className="flex flex-col space-y-1 divide-y-2 border-t border-stone-500 pt-5">
+                            <div>
+                                <div>
+                                    <div className="text-lg font-bold text-gray-900 dark:text-white">
+                                        Title goes here
+                                    </div>
+                                    <div className="leading-5 text-gray-900 dark:text-white">
+                                        Lorem ipsum dolor sit amet consectetur,
+                                        adipisicing elit. Nam debitis sed amet
+                                        nesciunt aliquid itaque numquam facilis
+                                        assumenda voluptatum expedita! Alias
+                                        sapiente dicta aliquam quam error?
+                                        Commodi neque sapiente officia? Iure
+                                        neque fugit est illo quaerat minima
+                                        tenetur aut porro odio, quo iusto
+                                        possimus id totam fuga magni.
+                                        Repudiandae, at quia! Obcaecati vitae
+                                        quo accusamus ipsa illum architecto. Sit
+                                        hic ab obcaecati repellendus
+                                        consequuntur. Exercitationem enim,
+                                        dignissimos voluptatum asperiores optio
+                                        vitae voluptatibus corporis facere nobis
+                                        similique voluptatem temporibus laborum
+                                        nemo sapiente labore magni corrupti
+                                        iusto quam! Nam ducimus doloremque
+                                        obcaecati rerum. Dignissimos omnis dicta
+                                        aperiam et fugit quidem ullam.
+                                        Voluptates.
+                                    </div>
+                                    <div className="flex justify-end">
+                                        <button className="border-2 px-4 py-2 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500">
+                                            Phản hồi
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

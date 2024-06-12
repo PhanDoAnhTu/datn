@@ -26,7 +26,7 @@ export default function UserPopover() {
                 bodyClassName: 'grow-font-size',
                 progressClassName: 'fancy-progress-bar',
             });
-            navigate('/login');
+            navigate('/dang-nhap');
             close();
         } catch (error) {
             console.error(error);
@@ -80,7 +80,7 @@ export default function UserPopover() {
                                                 <button
                                                     onClick={() => {
                                                         close();
-                                                        navigate('/login');
+                                                        navigate('/dang-nhap');
                                                     }}
                                                     className="group flex h-12 w-full items-center justify-center overflow-hidden rounded-md"
                                                 >
@@ -97,7 +97,7 @@ export default function UserPopover() {
                                                 <button
                                                     onClick={() => {
                                                         close();
-                                                        navigate('/register');
+                                                        navigate('/dang-ky');
                                                     }}
                                                     className="group flex h-12 w-full items-center  justify-center overflow-hidden rounded-md "
                                                 >
@@ -116,7 +116,9 @@ export default function UserPopover() {
                                                 <button
                                                     onClick={() => {
                                                         close();
-                                                        navigate('/u/profile');
+                                                        navigate(
+                                                            '/trang-ca-nhan/profile'
+                                                        );
                                                     }}
                                                     className="group flex h-12 w-full items-center justify-center overflow-hidden rounded-md"
                                                 >

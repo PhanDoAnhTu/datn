@@ -123,7 +123,7 @@ export const navigation = {
         },
     ],
     pages: [
-        { name: 'News', to: '/news/1' },
-        { name: 'Contact', to: '/contact' },
+        { name: 'News', to: '/bai-viet' },
+        { name: 'Contact', to: '/lien-he' },
     ],
 };

@@ -11,7 +11,7 @@ export default function SearchBar({ Button }) {
         e.preventDefault();
         if (input) {
             searchInput.current.blur();
-            navigate(`/search/${input}`);
+            navigate(`/tim-kiem-san-pham/${input}`);
             setInput('');
             setOpen(false);
         } else {

@@ -1,8 +1,0 @@
-{
-  "scripts": {
-    "dev": "concurrently \"cd gateway && npm run backend\" \"cd product && npm run dev\" \"cd user && npm run dev\" \"cd wish-list && npm run dev\" \"cd upload && npm run dev\" \"cd special-offer && npm run dev\" \"cd social-authentication && npm run dev\" \"cd payment && npm run dev\" \"cd order && npm run dev\" \"cd cart && npm run dev\" \"cd blog && npm run dev\" \"cd banner && npm run dev\" \"cd category && npm run dev\""
-  },
-  "devDependencies": {
-    "concurrently": "^8.2.2"
-  }
-}
