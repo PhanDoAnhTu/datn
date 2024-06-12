@@ -209,7 +209,7 @@ export default function News() {
                                     {selectedTopic === 'all'
                                         ? all_posts?.map((item, index) => (
                                               <Link
-                                                  to={`/new/d/${item.post_slug}`}
+                                                  to={`/bai-viet/${item.post_slug}`}
                                                   key={index}
                                                   className={`all-ease group relative flex h-56 w-full snap-start flex-col justify-between overflow-hidden rounded-md p-3 shadow-md transition duration-200`}
                                               >

@@ -25,4 +25,5 @@ categorySchema.pre("save", function (next) {
   this.category_slug = slugify(this.category_name, { lower: true });
   next();
 });
+
 module.exports = model(DOCUMENT_NAME, categorySchema);

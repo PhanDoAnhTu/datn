@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { products } from '../../test/products';
 import ProductSingle from '../../components/frontend/ProductSingle';
-import Pagination from '../../components/frontend/Pagination';
 
 export default function Search() {
     const navigate = useNavigate();
@@ -18,7 +17,7 @@ export default function Search() {
             alert('please give us some infos to find');
             return;
         }
-        navigate(`/search/${keyword}`);
+        navigate(`/tim-kiem-san-pham/${keyword}`);
     };
     return (
         <div className=" pb-7 pt-10 sm:px-10 md:pt-24">
@@ -46,9 +45,6 @@ export default function Search() {
                 {products.map((product, index) => (
                     <ProductSingle key={index} product={product} />
                 ))}
-            </div>
-            <div className="mt-4 px-5">
-                <Pagination />
             </div>
         </div>
     );

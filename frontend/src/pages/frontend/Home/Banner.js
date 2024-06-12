@@ -12,7 +12,6 @@ export default function Banner() {
     const { slider } = useSelector((state) => state.sliderReducer);
     useEffect(() => {
         if (!slider) dispatch(getSliderByActive({ slider_is_active: true }));
-        console.log(slider);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [slider]);
     return (
@@ -24,17 +23,21 @@ export default function Banner() {
                 interval={5000}
                 showArrows={false}
                 showStatus={false}
+                showThumbs={false}
             >
                 {slider?.map((item, index) => {
                     const image = item.slider_image;
                     return (
                         <div
                             key={index}
-                            style={{ backgroundImage: `url(${image})` }}
-                            className={`w-full bg-cover bg-center bg-no-repeat pb-52 pt-16 sm:pb-40 sm:pt-24 lg:pb-48 lg:pt-40`}
+                            className={`group relative w-full pb-52 pt-16 hover:bg-opacity-50 sm:pb-40 sm:pt-24 lg:pb-48 lg:pt-40`}
                         >
-                            <div className="relative mx-auto max-w-7xl px-4 sm:static sm:px-6 lg:px-8">
-                                <div className="sm:max-w-lg">
+                            <img
+                                src={image}
+                                className="absolute left-0 top-0 h-full w-full object-cover object-center transition duration-300 ease-out group-hover:brightness-75"
+                            />
+                            <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                                <div className="p-1 sm:max-w-lg">
                                     <h1 className="text-left text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl dark:text-white">
                                         {item.slider_summary}
                                     </h1>
@@ -43,7 +46,7 @@ export default function Banner() {
                                     </p>
                                 </div>
 
-                                <div>
+                                <div className="relative">
                                     <div className="mt-10 text-left">
                                         {/* Decorative image grid */}
 
