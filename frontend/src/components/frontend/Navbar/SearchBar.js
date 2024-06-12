@@ -43,7 +43,7 @@ export default function SearchBar({ Button }) {
                 <input
                     type="text"
                     ref={searchInput}
-                    placeholder="Type here..."
+                    placeholder="Nhập thông tin..."
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     className={`h-8 bg-transparent outline-none transition-all duration-200 ease-out placeholder:italic placeholder:text-gray-500 focus:border-xanthous-500 focus:ring-xanthous-500 max-lg:hidden dark:text-white dark:placeholder:text-gray-200 ${open ? 'pointer-events-auto w-44 border-b border-gray-900 delay-200 dark:border-white' : 'pointer-events-none w-0 border-none'} delay-200 duration-700 ease-in-out`}

@@ -1,10 +1,8 @@
 import {
     ArrowLongLeftIcon,
     ArrowLongRightIcon,
-    PlusCircleIcon,
 } from '@heroicons/react/24/outline';
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import ProductSingle from './ProductSingle';
 
 export default function ProductList({ title, summary, products }) {
@@ -22,7 +20,7 @@ export default function ProductList({ title, summary, products }) {
         if (
             carousel.current !== null &&
             carousel.current.offsetWidth * currentIndex <=
-            maxScrollWidth.current
+                maxScrollWidth.current
         ) {
             setCurrentIndex((prevState) => prevState + 1);
         }
@@ -94,24 +92,7 @@ export default function ProductList({ title, summary, products }) {
                     className="mt-6 flex w-full touch-pan-x snap-x snap-mandatory flex-row flex-nowrap space-x-2 overflow-hidden scroll-smooth lg:space-x-6"
                 >
                     {products.map((product, index) => {
-                        return index !== products.length - 1 ? (
-                            <ProductSingle product={product} key={index} />
-                        ) : (
-                            <div className="group relative py-2" key={index}>
-                                <Link
-                                    to="#"
-                                    className="flex h-56 w-40 flex-col items-center justify-center overflow-hidden rounded-md bg-gray-100 transition-all duration-200 ease-out lg:aspect-none group-hover:opacity-75 md:w-48 lg:h-80 lg:w-52 lg:p-9"
-                                >
-                                    <div className="flex justify-center">
-                                        <PlusCircleIcon className="w-16 text-gray-500 " />
-                                    </div>
-
-                                    <h3 className="my-2 text-center text-lg font-bold text-gray-500 ">
-                                       Xem thêm
-                                    </h3>
-                                </Link>
-                            </div>
-                        );
+                        return <ProductSingle product={product} key={index} />;
                     })}
                 </div>
             </div>

@@ -32,6 +32,9 @@ const ProductDetail = lazy(
 const Contact = lazy(() => import('../pages/frontend/Contact/index.js'));
 const Checkout = lazy(() => import('../pages/frontend/Checkout/index.js'));
 const Search = lazy(() => import('../pages/frontend/Search.js'));
+const OrderDetail = lazy(
+    () => import('../pages/frontend/Profile/OrderDetail.js')
+);
 const LoginSuccessSocial = lazy(
     () => import('../pages/frontend/Auth/LoginSuccessSocial.js')
 );
@@ -54,7 +57,10 @@ const router = createBrowserRouter(
             <Route index={true} path="/" element={<Home />} />
             <Route path="/dang-nhap" element={<Login />} />
             <Route path="/dang-ky" element={<Register />} />
-            <Route path="/san-pham-theo-danh-muc/:category_slug?" element={<Category />} />
+            <Route
+                path="/san-pham-theo-danh-muc/:category_slug?"
+                element={<Category />}
+            />
             <Route
                 path="/san-pham/:product_slug_id"
                 element={<ProductDetail />}
@@ -66,12 +72,21 @@ const router = createBrowserRouter(
 
             <Route
                 path="/kiem-tra-dang-nhap/:userId/:provider"
-                element={<LoginSuccessSocial />}/>
+                element={<LoginSuccessSocial />}
+            />
             <Route path="/thanh-toan/:page?" element={<Checkout />} />
 
             <Route path="/" element={<PrivateRoute />}>
                 <Route path="/trang-ca-nhan/:page?" element={<Profile />} />
-                <Route path="/kiem-tra-thanh-toan" element={<TransactionCheck />} />
+
+                <Route
+                    path="/chi-tiet-don-hang/:orderId"
+                    element={<OrderDetail />}
+                />
+                <Route
+                    path="/kiem-tra-thanh-toan"
+                    element={<TransactionCheck />}
+                />
             </Route>
             <Route path="*" element={<Navigate to="/404" />} />
             <Route path="/404" element={<PageNotFound />} />
