@@ -71,7 +71,7 @@ export default function UserPopover() {
                                                     <UserIcon className="h-10 w-10 drop-shadow-md" />
                                                 </div>
                                                 <p className="text-md font-bold text-gray-500 dark:text-white">
-                                                    ANONYMOUS
+                                                    Ẩn danh
                                                 </p>
                                             </div>
                                         )}
@@ -86,7 +86,7 @@ export default function UserPopover() {
                                                 >
                                                     <div className="flex h-full flex-1 items-center justify-center bg-stone-300 transition duration-200 ease-out group-hover:bg-stone-300/50 dark:bg-stone-800 dark:group-hover:bg-magenta-600/80">
                                                         <p className="text-xs font-semibold text-gray-900 group-hover:text-gray-900/50 sm:text-sm dark:text-white dark:group-hover:text-gray-900">
-                                                            Sign in
+                                                            Đăng nhập
                                                         </p>
                                                     </div>
 
@@ -103,7 +103,7 @@ export default function UserPopover() {
                                                 >
                                                     <div className="flex h-full flex-1 items-center justify-center bg-stone-300 transition duration-200 ease-out group-hover:bg-stone-300/50 dark:bg-stone-800 dark:group-hover:bg-magenta-600/80">
                                                         <p className="text-xs font-semibold text-gray-900 group-hover:text-gray-900/50 sm:text-sm dark:text-white dark:group-hover:text-gray-900">
-                                                            Create an account
+                                                            Tạo tài khoản
                                                         </p>
                                                     </div>
                                                     <div className="flex h-full basis-1/5 items-center justify-center overflow-hidden bg-stone-400 transition duration-200 ease-out group-hover:bg-stone-400/50 dark:bg-stone-900/70 dark:text-white dark:group-hover:bg-magenta-500/100 dark:group-hover:text-gray-900">
@@ -124,7 +124,7 @@ export default function UserPopover() {
                                                 >
                                                     <div className="flex h-full flex-1 items-center justify-center bg-stone-300 transition duration-200 ease-out group-hover:bg-stone-300/50 dark:bg-stone-800 dark:group-hover:bg-magenta-600/80">
                                                         <p className="text-xs font-semibold text-gray-900 group-hover:text-gray-900/50 sm:text-sm dark:text-white dark:group-hover:text-gray-900">
-                                                            Profile
+                                                            Hồ sơ
                                                         </p>
                                                     </div>
 
@@ -140,7 +140,7 @@ export default function UserPopover() {
                                                 >
                                                     <div className="flex h-full flex-1 items-center justify-center bg-stone-300 transition duration-200 ease-out group-hover:bg-stone-300/50 dark:bg-stone-800 dark:group-hover:bg-magenta-600/80">
                                                         <p className="text-xs font-semibold text-gray-900 group-hover:text-gray-900/50 sm:text-sm dark:text-white dark:group-hover:text-gray-900">
-                                                            Sign out
+                                                            Đăng xuất
                                                         </p>
                                                     </div>
                                                     <div className="flex h-full basis-1/5 items-center justify-center overflow-hidden bg-stone-400 transition duration-200 ease-out group-hover:bg-stone-400/50 dark:bg-stone-900/70 dark:text-white dark:group-hover:bg-magenta-500/100 dark:group-hover:text-gray-900">

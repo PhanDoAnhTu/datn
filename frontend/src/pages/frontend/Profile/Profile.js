@@ -1,5 +1,4 @@
 import {
-    BellIcon,
     HeartIcon,
     HomeIcon,
     ShoppingBagIcon,
@@ -9,7 +8,6 @@ import { Tab } from '@headlessui/react';
 import ProfileTabItem from '../../../components/frontend/Profile/ProfileTabItem';
 import Information from './Information';
 import Address from './Address';
-import Notification from './Notification';
 // import { useEffect } from 'react';
 import Order from './Order';
 import Favorites from './Favorites';
@@ -30,23 +28,19 @@ export default function Profile() {
                     <Tab.List className="no-scrollbar flex h-fit divide-stone-600 bg-stone-900/50 max-sm:flex-row max-sm:overflow-x-scroll sm:w-1/4 sm:flex-col sm:overflow-hidden">
                         <ProfileTabItem
                             Icon={<UserIcon className="h-6 w-6" />}
-                            Title={'Information'}
+                            Title={'Thông tin'}
                         />
                         <ProfileTabItem
                             Icon={<ShoppingBagIcon className="h-6 w-6" />}
-                            Title={'Orders'}
+                            Title={'Đơn hàng'}
                         />
                         <ProfileTabItem
                             Icon={<HeartIcon className="h-6 w-6" />}
-                            Title={'Favorites'}
+                            Title={'Yêu thích'}
                         />
                         <ProfileTabItem
                             Icon={<HomeIcon className="h-6 w-6" />}
-                            Title={'Addresses'}
-                        />
-                        <ProfileTabItem
-                            Icon={<BellIcon className="h-6 w-6" />}
-                            Title={'Notification'}
+                            Title={'Địa chỉ'}
                         />
                     </Tab.List>
                     <Tab.Panels className="h-fit flex-1 bg-stone-900/30 dark:bg-stone-900/50">
@@ -54,7 +48,6 @@ export default function Profile() {
                         <Order />
                         <Favorites />
                         <Address />
-                        <Notification />
                     </Tab.Panels>
                 </Tab.Group>
             </section>

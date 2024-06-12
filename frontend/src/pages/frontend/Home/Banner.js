@@ -34,7 +34,7 @@ export default function Banner() {
                         >
                             <img
                                 src={image}
-                                className="absolute left-0 top-0 h-full w-full object-cover object-center transition duration-300 ease-out group-hover:brightness-75"
+                                className="absolute left-0 top-0 h-full w-full object-cover object-center brightness-75 transition duration-300 ease-out"
                             />
                             <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                                 <div className="p-1 sm:max-w-lg">

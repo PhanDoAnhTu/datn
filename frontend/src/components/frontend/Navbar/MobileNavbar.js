@@ -53,6 +53,7 @@ export default function MobileNavbar({ category, open, setOpen }) {
 
                             {/* Links */}
                             <Tab.Group as="div" className="mt-2">
+                                <input type="text" className="w-full" />
                                 <div className="border-b border-gray-200 transition-colors duration-200 ease-out dark:border-stone-700">
                                     <Tab.List className="-mb-px flex space-x-8 px-4">
                                         {category
@@ -87,42 +88,42 @@ export default function MobileNavbar({ category, open, setOpen }) {
                                                 className="space-y-10 px-4 pb-8 pt-10"
                                             >
                                                 <div className="grid grid-cols-2 gap-x-4">
-                                                    {/* {category.featured.map(
-                                                    (item) => (
-                                                        <div
-                                                            key={item.name}
-                                                            className="group relative text-sm"
-                                                        >
-                                                            <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-                                                                <img
-                                                                    src={
-                                                                        item.imageSrc
-                                                                    }
-                                                                    alt={
-                                                                        item.imageAlt
-                                                                    }
-                                                                    className="object-cover object-center"
-                                                                />
-                                                            </div>
-                                                            <Link
-                                                                to={item.to}
-                                                                className="mt-6 block font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white"
+                                                    {navigation.categories[0].featured.map(
+                                                        (item) => (
+                                                            <div
+                                                                key={item.name}
+                                                                className="group relative text-sm"
                                                             >
-                                                                <span
-                                                                    className="absolute inset-0 z-10"
+                                                                <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+                                                                    <img
+                                                                        src={
+                                                                            item.imageSrc
+                                                                        }
+                                                                        alt={
+                                                                            item.imageAlt
+                                                                        }
+                                                                        className="object-cover object-center"
+                                                                    />
+                                                                </div>
+                                                                <Link
+                                                                    to={item.to}
+                                                                    className="mt-6 block font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white"
+                                                                >
+                                                                    <span
+                                                                        className="absolute inset-0 z-10"
+                                                                        aria-hidden="true"
+                                                                    />
+                                                                    {item.name}
+                                                                </Link>
+                                                                <p
                                                                     aria-hidden="true"
-                                                                />
-                                                                {item.name}
-                                                            </Link>
-                                                            <p
-                                                                aria-hidden="true"
-                                                                className="mt-1 transition-colors duration-200 ease-out dark:text-gray-400"
-                                                            >
-                                                                Shop now
-                                                            </p>
-                                                        </div>
-                                                    )
-                                                )} */}
+                                                                    className="mt-1 transition-colors duration-200 ease-out dark:text-gray-400"
+                                                                >
+                                                                    Shop now
+                                                                </p>
+                                                            </div>
+                                                        )
+                                                    )}
                                                 </div>
                                                 {category
                                                     ?.slice()
