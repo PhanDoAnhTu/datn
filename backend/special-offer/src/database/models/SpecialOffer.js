@@ -9,7 +9,8 @@ const specialOfferSchema = new Schema({
     special_offer_end_date: { type: Date, required: true }, 
     special_offer_image: { type: Array, default: [] }, 
     special_offer_is_active: { type: Boolean, default: false },
-    special_offer_spu_list: { type: Schema.Types.Mixed, required: true }
+    special_offer_spu_list: { type: Schema.Types.Mixed, required: true },
+    
 },
     {
         collection: COLLECTION_NAME,

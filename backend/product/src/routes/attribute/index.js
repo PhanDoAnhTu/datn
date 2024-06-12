@@ -8,6 +8,7 @@ const { attributeController } = require('../../controllers');
 
 router.post('/newAttribute', asynchandler(attributeController.newAttribute))
 router.post('/findAttributeById', asynchandler(attributeController.findAttributeById))
+router.get('/findAllAttribute', asynchandler(attributeController.findAllAttribute))
 
 
 

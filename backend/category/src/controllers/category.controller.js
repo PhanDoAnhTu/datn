@@ -22,7 +22,7 @@ class CategoryController {
   getAllCategory = async (req, res, next) => {
     new successResponse.SuccessResponse({
       message: "getAllCategory success",
-      metaData: await this.service.getAllCategory(),
+      metaData: await this.service.getAllCategory(req.body),
     }).send(res);
   };
 }

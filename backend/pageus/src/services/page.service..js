@@ -11,8 +11,9 @@ class pageService {
         page_us_name,
         page_us_detail,
         page_us_title,
-        page_us_icon = "",
+        page_us_icon = null,
         isPublished = false,
+        page_us_image = null
     }) {
         try {
             const pageUs = await PageModel.create({
@@ -20,6 +21,7 @@ class pageService {
                 page_us_detail,
                 page_us_title,
                 page_us_icon,
+                page_us_image,
                 isPublished,
             })
             return pageUs

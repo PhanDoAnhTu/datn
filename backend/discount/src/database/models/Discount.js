@@ -6,7 +6,6 @@ const DOCUMENT_NAME = "discount"
 const COLLECTION_NAME = "discounts"
 
 const discountSchema = new Schema({
-
     discount_name: { type: String, required: true },
     discount_description: { type: String, default: "" },
     discount_type: { type: String, default: 'fixed_amount' },
@@ -25,7 +24,7 @@ const discountSchema = new Schema({
     discount_is_active: { type: Boolean, default: true },
     discount_applies_to: { type: String, required: true, enum: ['all', 'specific'] },
     discount_product_ids: { type: Array, default: [] },
-
+    isDeleted: { type: Boolean, default: false, index: true, select: false }
 
 },
     {

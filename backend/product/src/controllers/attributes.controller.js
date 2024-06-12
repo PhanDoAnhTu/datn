@@ -13,6 +13,13 @@ class AtributeController {
             metaData: await this.service.newAttribute(req.body)
         }).send(res)
     }
+    findAllAttribute = async (req, res, next) => {
+        new successResponse.SuccessResponse({
+            message: 'findAllAttribute success',
+            metaData: await this.service.findAllAttribute(req.body)
+
+        }).send(res)
+    }
 
     findAttributeById = async (req, res, next) => {
         new successResponse.SuccessResponse({

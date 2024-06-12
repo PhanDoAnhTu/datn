@@ -29,11 +29,24 @@ class AttributeService {
             return null
         }
     }
+    async findAllAttribute() {
+        try {
+            let attributes = await AttributeModel.find().lean()
+            for (let i = 0; i < attributes.length; i++) {
+                const attribute_value = await allAttributeValue({ attribute_id: attributes[i]._id })
+                attributes[i] = { ...attributes[i], attribute_value }
+            }
+
+            return attributes
+        } catch (error) {
+            return null
+        }
+    }
     async findAttributeById({
         attribute_id
     }) {
         try {
-            const attribute = await AttributeModel.findOne({ _id: attribute_id })
+            const attribute = await AttributeModel.findOne({ _id: attribute_id }).lean()
 
             if (!attribute) throw new errorResponse.NotFoundRequestError('attribute not found')
 

@@ -13,7 +13,9 @@ const sliderSchema = new Schema(
     slider_summary: { type: String, default: null },
     slider_position: { type: String, enum: ["banner", "..."], default: "banner" },
     slider_image: { type: String },
-    slider_is_active: { type: Boolean, default: false }
+    slider_is_active: { type: Boolean, default: false, index: true, select: false },
+    isDeleted: { type: Boolean, default: false, index: true, select: false }
+
   },
   {
     timestamps: true,

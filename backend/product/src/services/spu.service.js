@@ -1,7 +1,7 @@
 'use strict'
 const { errorResponse } = require('../core')
 const { SpuModel, Spu_AttributeModel } = require('../database/models')
-const { addImage } = require('./gallery.service')
+const { addImageBySkuList, addImageBySpuId } = require('./gallery.service')
 const { newSku, allSkuBySpuId } = require('./sku.Service')
 const { spuRepository } = require('../database')
 const _ = require('lodash')
@@ -19,12 +19,14 @@ const newSpu = async ({
     product_price,
     product_category,
     product_brand,
+    product_weight,
     product_quantity,
     product_attributes = [],
     product_variations = [],
     sku_list = [],
     product_unit = null,
-    isPublished = false
+    isPublished = false,
+    isDraft = true
 
 }) => {
     try {
@@ -33,32 +35,33 @@ const newSpu = async ({
         })
         if (spuFound) throw new errorResponse.InternalRequestError("Tên sản phẩm đã tồn tại")
 
-        let list_product_thumb = []
-        if (sku_list.length > 0 && product_thumb.length == 0) {
-            sku_list.forEach((sku) => {
-                list_product_thumb.push(sku.thumb_url)
-            })
-        }
         const spu = await SpuModel.create({
             product_name,
-            product_thumb: product_thumb.length == 0 ? list_product_thumb : product_thumb,
+            product_thumb: product_thumb?.length > 0 ? product_thumb[0]?.thumb_url : sku_list[0]?.thumb_url,
             product_description,
             product_slug,
             product_price,
+            product_weight,
             product_category,
             product_quantity,
             product_brand,
             product_attributes,
             product_variations,
             product_unit,
-            isPublished
+            isPublished,
+            isDraft
         })
-        if (spu && sku_list.length) {
+        if (spu && product_thumb.length > 0) {
+            product_thumb.forEach(image => {
+                addImageBySpuId({ spu_id: spu._id, thumb_url: image.thumb_url, public_id: image.public_id })
+            })
+        }
+        if (spu && sku_list.length > 0) {
             const skus = await newSku({ spu_id: spu._id, sku_list })
             sku_list.map(sku => {
                 skus.map(skuModel => {
                     if (skuModel.sku_tier_idx.toString() === sku.sku_tier_idx.toString()) {
-                        addImage({ spu_id: spu._id, sku_id: skuModel._id, thumb_url: sku.thumb_url, public_id: sku.public_id })
+                        addImageBySkuList({ spu_id: spu._id, sku_id: skuModel._id, thumb_url: sku.thumb_url, public_id: sku.public_id })
                     }
                 })
             })

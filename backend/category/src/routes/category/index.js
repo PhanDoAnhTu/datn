@@ -11,6 +11,6 @@ router.post(
   "/getListCategoryByParentId",
   asynchandler(categoryController.getListCategoryByParentId)
 );
-router.get("/getAllCategory", asynchandler(categoryController.getAllCategory));
+router.post("/getAllCategory", asynchandler(categoryController.getAllCategory));
 
 module.exports = router;

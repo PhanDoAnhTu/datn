@@ -716,10 +716,10 @@ const ProductEditing = ({ id }) => {
                 id="product_price"
                 defaultValue={defaultValues.product_price}
                 value={productPrice}
-                placeholder="$99.99"
+                placeholder="99.99"
                 {...register("product_price", {
                   required: true,
-                  pattern: /^[0-9]*$/,
+                  pattern: /^[0-9]*/,
                 })}
               />
             </div>

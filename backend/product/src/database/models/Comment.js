@@ -12,7 +12,7 @@ const commentSchema = new Schema({
     comment_left: { type: Number, default: 0 },
     comment_right: { type: Number, default: 0 },
     comment_parentId: { type: Schema.Types.ObjectId, ref: DOCUMENT_NAME, default: null },
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: { type: Boolean, default: false, index: true, select: false }
 }, {
     timestamps: true,
     collection: COLLECTION_NAME

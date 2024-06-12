@@ -14,7 +14,6 @@ const skuSchema = new Schema({
     product_id: { type: Types.ObjectId, required: true },
     isDraft: { type: Boolean, default: true, index: true, select: false },
     isPublished: { type: Boolean, default: false, index: true, select: false },
-    isDeleted: { type: Boolean, default: false }
 },
     {
         collection: COLLECTION_NAME,

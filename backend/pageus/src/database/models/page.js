@@ -9,9 +9,11 @@ const pageUsSchema = new Schema({
     page_us_title: { type: String, required: true },
     page_us_name: String,
     page_us_detail: { type: String },
-    page_us_icon: { type: String, default: "" },
+    page_us_icon: { type: String, default: null },
+    page_us_image: { type: String, default: null },
     page_us_slug: String,
-    isPublished: { type: Boolean, default: false },
+    isPublished: { type: Boolean, default: false, index: true, select: false },
+    isDeleted: { type: Boolean, default: false, index: true, select: false }
 
 },
     {

@@ -9,7 +9,9 @@ const menuSchema = new Schema({
     menu_description: String,
     menu_position: { type: String, enum: ["navbar", "footer"], default: "navbar" },
     menu_icon: { type: String, default: "" },
-    isPublished: { type: Boolean, default: false },
+    isPublished: { type: Boolean, default: false, index: true, select: false },
+    isDeleted: { type: Boolean, default: false, index: true, select: false }
+
 },
     {
         timestamps: {

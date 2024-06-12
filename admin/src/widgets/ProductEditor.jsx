@@ -4,7 +4,7 @@ import Select from "@ui/Select";
 import DropFiles from "@components/DropFiles";
 import { toast } from "react-toastify";
 import MediaDropPlaceholder from "@ui/MediaDropPlaceholder";
-import { createSpu, upLoadProductImageList } from "../store/actions";
+import { createSpu, upLoadImageArray, upLoadProductImageList, findAllCategory, findAllAttribute, findAllBrand } from "../store/actions";
 // hooks
 import { useForm, Controller } from "react-hook-form";
 
@@ -22,18 +22,29 @@ import categories_management from "@db/categories_management";
 import MultipleSelect from "@ui/MultipleSelect";
 
 const ProductEditor = () => {
+
+  const [attributes, setAtributes] = useState([
+    {
+      attribute_description: "Phong cách thời trang",
+      _id: "6663435004a9f209540e00e1",
+      attribute_name: "Phong cách"
+    }
+  ]);
+
+
   //-----DECLARE DEFAULT VALUES
   const defaultValues = {
     weight: 0.1,
     description: "",
     productName: "",
-    brandName: { value: null, label: "Không rõ" },
+    brandName: "",
     product_category: [],
     regularPrice: 0,
-    product_quantity: 0,
-    unit: UNITS_OPTIONS[0],
+    product_quantity: 1,
+    unit: "",
+    product_attributes: [],
   };
-
+  console.log("defaultValues", defaultValues)
   const defaultVariationTables = [
     {
       id: -1,
@@ -225,7 +236,6 @@ const ProductEditor = () => {
 
   const handleVariationChange = (e, variationName, variationID) => {
     e.preventDefault();
-
     setVariations((s) => {
       return s.map((item) => {
         if (item.id === variationID) {
@@ -304,7 +314,6 @@ const ProductEditor = () => {
         (accumulator, currentValue) => accumulator * currentValue,
         1
       ); // Calculate the total number of combinations
-
       const newSKUList = [];
       for (let i = 0; i < totalLength; i++) {
         let temp = i;
@@ -312,21 +321,19 @@ const ProductEditor = () => {
           const options = variation.options;
           const optionIndex = temp % options.length; // Get the index of the option for the current variation
           temp = Math.floor(temp / options.length); // Update temp for the next iteration
-          return options[optionIndex].id; // Get the ID of the selected option
+          return optionIndex; // Get the ID of the selected option
         });
 
         newSKUList.push({
           sku_tier_idx,
           sku_price: "",
           sku_stock: "",
-          public_id: "",
           image: null, // Increment product_quantity for demonstration
         });
-        newSKUList.sort((a, b) =>
-          a.sku_tier_idx[0] > b.sku_tier_idx[0] ? 1 : -1
-        );
+        newSKUList.sort((a, b) => (a.sku_tier_idx > b.sku_tier_idx ? 1 : -1));
       }
       setSKUList(newSKUList);
+      console.log(newSKUList);
     };
 
     const updatedVariationTables = () => {
@@ -343,14 +350,12 @@ const ProductEditor = () => {
               render: (sku_tier_idx) => (
                 <div className="flex flex-col text-center">
                   {item.id === 1
-                    ? variations
-                      .find((item1) => item1.id === item.id)
-                      .options.find((item2) => item2.id === sku_tier_idx[0])
-                      ?.value
-                    : variations
-                      .find((item1) => item1.id === item.id)
-                      .options.find((item2) => item2.id === sku_tier_idx[1])
-                      ?.value}
+                    ? variations.find((item1) => item1.id === item.id).options[
+                      sku_tier_idx[0]
+                    ]?.value
+                    : variations.find((item1) => item1.id === item.id).options[
+                      sku_tier_idx[1]
+                    ]?.value}
                 </div>
               ),
             });
@@ -364,14 +369,12 @@ const ProductEditor = () => {
               render: (sku_tier_idx) => (
                 <div className="flex flex-col text-center">
                   {item.id === 1
-                    ? variations
-                      .find((item1) => item1.id === item.id)
-                      .options.find((item2) => item2.id === sku_tier_idx[0])
-                      .value
-                    : variations
-                      .find((item1) => item1.id === item.id)
-                      .options.find((item2) => item2.id === sku_tier_idx[1])
-                      .value}
+                    ? variations.find((item1) => item1.id === item.id).options[
+                      sku_tier_idx[0]
+                    ].value
+                    : variations.find((item1) => item1.id === item.id).options[
+                      sku_tier_idx[1]
+                    ].value}
                 </div>
               ),
             };
@@ -383,9 +386,7 @@ const ProductEditor = () => {
 
     updateSKUList();
     updatedVariationTables();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [variations]);
-
   //SKU_stock, SKU_price, image handle if a user put something in input
   const handleSKUPriceChange = (sku_tier_idx, value) => {
     setSKUList((s) => {
@@ -454,26 +455,62 @@ const ProductEditor = () => {
   };
 
   // do something with the data
+  console.log(sKUList, "variations")
 
   const handleSave = async (data) => {
-    console.log('data',sKUList)
-    const list_image = new FormData();
-    sKUList.forEach((item) => {
-      if (item.image != null) {
-        list_image.append("files", item.image[0]);
-        list_image.append("sku_list", item.sku_tier_idx);
-      }
-    });
-    list_image.append("folderName", "outrunner/products");
+    console.log('data', data)
 
-    const list_url_thumb = await dispact(upLoadProductImageList(list_image));
+    // let list_images_product = {
+    //   url_thumb: [],
+    //   convert_sku_list: []
+
+    // }
+
+    // if (sKUList.length > 0) {
+    //   const list_image = new FormData();
+    //   sKUList.forEach((item) => {
+    //     if (item.image != null) {
+    //       list_image.append("files", item.image[0]);
+    //       list_image.append("sku_list", item.sku_tier_idx);
+    //     }
+    //   });
+    //   list_image.append("folderName", "outrunner/products");
+    //   const list_url_thumb = await dispact(upLoadProductImageList(list_image));
+    //   list_images_product.convert_sku_list = list_url_thumb &&
+    //     await sKUList?.map((sku) => {
+    //       const skuImageFound = list_url_thumb?.payload?.metaData?.find((url_thumb) => sku.sku_tier_idx.toString() === url_thumb.sku_tier_idx)
+    //       if (skuImageFound) {
+    //         const { image, ...skuNoImage } = sku
+    //         return { ...skuNoImage, thumb_url: skuImageFound?.thumb_url, public_id: skuImageFound?.public_id }
+    //       } else {
+    //         const { image, ...skuNoImage } = sku
+    //         return { ...skuNoImage, thumb_url: null, public_id: null }
+    //       }
+    //     })
+
+    // }
+
+    // if (product_images.length > 0) {
+    //   const image_array = new FormData();
+    //   product_images.sort((a, b) => a.indexNumber - b.indexNumber).forEach((item) => {
+    //     if (item.file) {
+    //       image_array.append("files", item.file[0]);
+    //     }
+    //   });
+    //   image_array.append("folderName", "outrunner/products");
+
+    //   list_images_product.url_thumb = await dispact(upLoadImageArray(image_array));
+
+    // }
+
     // list_url_thumb && createSpu({
-    //   product_name: "bbb ",
+    //   product_name: data.productName,
     //   isPublished: false,
-    //   product_thumb: "{ type: String, required: true }",
-    //   product_description: "String",
-    //   product_price: 10000,
-    //   product_quantity: 15,
+    //   isDraft: true,
+    //   product_thumb:list_images_product.url_thumb,
+    //   product_description: data.description, 
+    //   product_price: data.regularPrice,
+    //   product_quantity: data.product_quantity,
     //   product_brand: "663fc259d1665c7e45e8401c",
     //   product_category: [
     //     "663f9d30220d580c7b4cbc9e",
@@ -510,61 +547,66 @@ const ProductEditor = () => {
     //       options: ["S", "M", "L"],
     //     },
     //   ],
-    //   sku_list: [
-    //     {
-    //       thumb_url: "000",
-    //       public_id: "234",
-    //       sku_tier_idx: [0, 0],
-    //       sku_price: 100000,
-    //       sku_stock: 10,
-    //     },
-    //     {
-    //       thumb_url: "01",
-    //       public_id: "234",
-    //       sku_tier_idx: [0, 1],
-    //       sku_price: 110000,
-    //       sku_stock: 1,
-    //     },
-    //     {
-    //       thumb_url: "02",
-    //       public_id: "234",
-    //       sku_tier_idx: [0, 2],
-    //       sku_price: 120000,
-    //       sku_stock: 2,
-    //     },
-    //     {
-    //       thumb_url: "asd",
-    //       public_id: "234",
-    //       sku_tier_idx: [1, 0],
-    //       sku_price: 100000,
-    //       sku_stock: 10,
-    //     },
-    //     {
-    //       thumb_url: "11",
-    //       public_id: "11",
-    //       sku_tier_idx: [1, 1],
-    //       sku_price: 100000,
-    //       sku_stock: 11,
-    //     },
-    //     {
-    //       thumb_url: "12",
-    //       public_id: "12",
-    //       sku_tier_idx: [1, 2],
-    //       sku_price: 100000,
-    //       sku_stock: 12,
-    //     },
-    //   ],
+    //   sku_list:list_images_product.convert_sku_list
     // });
-    console.log(list_url_thumb);
     toast.info("Product saved successfully");
   };
+  const [product_images, set_product_images] = useState([])
+  const addProductImage = (value, indexNumber) => {
 
+    if (product_images.length === 0) {
+      set_product_images([{ file: value, indexNumber: indexNumber }])
+    } else {
+      set_product_images((s) => {
+        if (s.some((item) => item.indexNumber === indexNumber) === true) {
+          return s.map((image) => {
+            if (image.indexNumber === indexNumber) {
+              image.file = value
+              return image
+            }
+            return image
+          })
+        }
+        return [...s, { file: value, indexNumber: indexNumber }]
+      })
+    }
+
+  }
+  console.log("product_images", product_images.sort((a, b) => a.indexNumber - b.indexNumber))
   return (
     <Spring className="card flex-1 xl:py-10">
       <div className="grid grid-cols-1 items-start gap-5 xl:gap-10">
         <div className="grid grid-cols-1 gap-y-4 gap-x-2">
+          <div className="md:w-full xl:h-[140px] md:h-[80px] h-[50px] w-[50px] flex items-center justify-center pr-2">
+            <DropFiles
+              wrapperClass="media-dropzone w-full h-full text-center"
+              onChange={(e) => addProductImage(e, 1)}
+            >
+              <MediaDropPlaceholder />
+            </DropFiles>
+            <DropFiles
+              wrapperClass="media-dropzone w-full h-full text-center"
+              onChange={(e) => addProductImage(e, 2)}
+            >
+              <MediaDropPlaceholder />
+            </DropFiles>
+            <DropFiles
+              wrapperClass="media-dropzone w-full h-full text-center"
+              onChange={(e) => addProductImage(e, 3)}
+
+            >
+              <MediaDropPlaceholder />
+            </DropFiles>
+            <DropFiles
+              wrapperClass="media-dropzone w-full h-full text-center"
+              onChange={(e) => addProductImage(e, 4)}
+
+            >
+              <MediaDropPlaceholder />
+            </DropFiles>
+          </div>
           <div className="field-wrapper">
-            <label className="field-label" htmlFor="productName">
+            <label className="field-label " htmlFor="productName">
               Tên sản phẩm
             </label>
             <input
@@ -595,7 +637,7 @@ const ProductEditor = () => {
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
             <div className="field-wrapper">
               <label className="field-label" htmlFor="brandName">
-                Hãng
+                Thương hiệu
               </label>
               <Controller
                 name="brandName"
@@ -606,11 +648,8 @@ const ProductEditor = () => {
                   <Select
                     isInvalid={errors.brandName}
                     id="brandName"
-                    placeholder="Chọn hãng"
-                    options={[
-                      { value: null, label: "Không rõ" },
-                      ...categories,
-                    ]}
+                    placeholder="Chọn thương hiệu"
+                    options={UNITS_OPTIONS}
                     value={field.value}
                     onChange={(value) => field.onChange(value)}
                   />
@@ -647,7 +686,7 @@ const ProductEditor = () => {
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
             <div className="field-wrapper">
               <label className="field-label" htmlFor="weight">
-                Cân nặng
+                Cân nặng (kg)
               </label>
               <input
                 className={classNames("field-input", {
@@ -655,7 +694,7 @@ const ProductEditor = () => {
                 })}
                 id="weight"
                 defaultValue={defaultValues.weight}
-                placeholder="Product weight"
+                placeholder="Cân nặng sản phẩm (kg)"
                 {...register("weight", {
                   required: true,
                   pattern: /^\d+(\.\d{1,2})?$/,
@@ -663,28 +702,22 @@ const ProductEditor = () => {
               />
             </div>
             <div className="field-wrapper">
-              <label className="field-label" htmlFor="unit">
+              <label className="field-label" htmlFor="weight">
                 Đơn vị
               </label>
-              <Controller
-                name="unit"
-                control={control}
+              <input
+                className={classNames("field-input", {
+                  "field-input--error": errors.unit,
+                })}
+                id="unit"
                 defaultValue={defaultValues.unit}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <Select
-                    isInvalid={errors.unit}
-                    id="unit"
-                    placeholder="Pieces"
-                    options={UNITS_OPTIONS}
-                    onChange={(value) => {
-                      field.onChange(value);
-                    }}
-                    value={field.value}
-                  />
-                )}
+                placeholder="Đơn vị sản phẩm"
+                {...register("unit", {
+                  required: true,
+                })}
               />
             </div>
+
           </div>
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
             <div className="field-wrapper">
@@ -697,7 +730,7 @@ const ProductEditor = () => {
                 })}
                 id="regularPrice"
                 defaultValue={defaultValues.regularPrice}
-                placeholder="$99.99"
+                placeholder="100000, 200000,..."
                 {...register("regularPrice", {
                   required: true,
                   pattern: /^[0-9]*$/,
@@ -706,7 +739,7 @@ const ProductEditor = () => {
             </div>
             <div className="field-wrapper">
               <label className="field-label" htmlFor="product_quantity">
-                Số lượng kho
+                Số lượng nhập
               </label>
               <input
                 className={classNames("field-input", {
@@ -716,8 +749,8 @@ const ProductEditor = () => {
                 defaultValue={defaultValues.product_quantity}
                 disabled={isVariation}
                 value={quantity}
-                placeholder="0"
-                {...register("salePrice", {
+                placeholder="nhập số lượng sản phẩm"
+                {...register("product_quantity", {
                   required: true,
                   pattern: /^[0-9]*$/,
                 })}

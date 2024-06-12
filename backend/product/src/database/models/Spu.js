@@ -5,9 +5,10 @@ const COLLECTION_NAME = 'spus'
 
 const spuSchema = new Schema({
     product_name: { type: String, required: true },
-    product_thumb: { type: Array, default: [] },
+    product_thumb: { type: String, default: null},
     product_description: String,
     product_slug: String,
+    product_weight: String,
     product_price: { type: Number, required: true },
     product_quantity: { type: Number, required: true },
     product_brand: { type: String, default: null },
@@ -40,7 +41,7 @@ const spuSchema = new Schema({
     */
     isDraft: { type: Boolean, default: true, index: true, select: false },
     isPublished: { type: Boolean, default: false, index: true, select: false },
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: { type: Boolean, default: false, index: true, select: false }
 },
     {
         collection: COLLECTION_NAME,

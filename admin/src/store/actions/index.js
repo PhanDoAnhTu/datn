@@ -3,6 +3,10 @@ export * from './product-actions';
 export * from './cart-actions';
 export * from './spicial-offer-actions';
 export * from './upload-actions';
+export * from './category-action';
+export * from './brand-actions';
+export * from './attribute-actions';
+
 
 export const Action = {
   //auth
@@ -27,13 +31,16 @@ export const Action = {
   //getdata
   CALL_DATA: "CALL_DATA",
 
-
-
+  //category
+  CATEGORY_ALL: "CATEGORY_ALL",
   //spicial-offer
   SPICIAL_OFFER_BY_PRODUCT: "SPICIAL_OFFER_BY_PRODUCT",
 
+  //attribute
+  ALL_ATTRIBUTE: "ALL_ATTRIBUTE",
+//brand
 
-
+ALL_BRAND:"ALL_BRAND",
 
 
   // PROFILE: "PROFILE",

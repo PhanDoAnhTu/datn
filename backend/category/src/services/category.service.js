@@ -31,8 +31,8 @@ class CategoryService {
     });
     return listcategory;
   }
-  async getAllCategory() {
-    const listcategory = await CategoryModel.find({});
+  async getAllCategory({ isPublished = true }) {
+    const listcategory = await CategoryModel.find({ isPublished });
     return listcategory;
   }
   async findCategoryById({ isPublished = true, category_id }) {
