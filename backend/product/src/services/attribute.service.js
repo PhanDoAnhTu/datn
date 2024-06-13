@@ -2,19 +2,20 @@
 const { AttributeModel } = require('../database/models')
 const { errorResponse } = require("../core")
 const _ = require('lodash')
-const { newAttributeValue, allAttributeValue, findAttributeValueById } = require('./attribute_value.service')
+const { newAttributeValue, allAttributeValue, findAttributeValueById, updateAttributeValue, removeAttributeValueByAttributeValue } = require('./attribute_value.service')
 class AttributeService {
 
     async newAttribute({
         attribute_name, attribute_value_list = [], attribute_description = ""
     }) {
         try {
-            const foundAttribute = await AttributeModel.findOne({ attribute_name })
+            const foundAttribute = await AttributeModel.findOne({ attribute_name }).lean()
             if (foundAttribute) throw new errorResponse.NotFoundRequestError("Attribute has exists")
 
             const attributes = await AttributeModel.create({
                 attribute_name,
-                attribute_description
+                attribute_description,
+
             })
             console.log(attributes)
             let AttributeValue = []
@@ -33,8 +34,8 @@ class AttributeService {
         try {
             let attributes = await AttributeModel.find().lean()
             for (let i = 0; i < attributes.length; i++) {
-                const attribute_value = await allAttributeValue({ attribute_id: attributes[i]._id })
-                attributes[i] = { ...attributes[i], attribute_value }
+                const attribute_value_list = await allAttributeValue({ attribute_id: attributes[i]._id })
+                attributes[i] = { ...attributes[i], attribute_value_list }
             }
             return attributes
         } catch (error) {
@@ -42,7 +43,7 @@ class AttributeService {
         }
     }
     async findAttributeById({
-        attribute_id
+        attribute_id,
     }) {
         try {
             const attribute = await AttributeModel.findOne({ _id: attribute_id }).lean()
@@ -58,7 +59,49 @@ class AttributeService {
             return null
         }
     }
+    async updateAttributeById({
+        _id, attribute_name, attribute_description, attribute_value_list
+    }) {
+        try {
+            const attribute = await AttributeModel.findOne({ _id }).lean()
 
+            if (!attribute) throw new errorResponse.NotFoundRequestError('attribute not found')
+
+            await updateAttributeValue({ attribute_id: _id, attribute_value_list })
+
+            const query = {
+                _id
+            }, updateSet = {
+                $set: {
+                    attribute_name: attribute_name,
+                    attribute_description: attribute_description
+                }
+            }, options = {
+                upsert: true,
+                new: true
+            }
+
+            return await AttributeModel.findOneAndUpdate(query, updateSet, options)
+        } catch (error) {
+            return null
+        }
+    }
+
+    async removeAttributeById({
+        _id
+    }) {
+        try {
+            const attribute = await AttributeModel.findOne({ _id }).lean()
+
+            if (!attribute) throw new errorResponse.NotFoundRequestError('attribute not found')
+
+            const attribute_value = await removeAttributeValueByAttributeValue({ attribute_id: _id })
+
+            return attribute_value && AttributeModel.deleteOne({ _id })
+        } catch (error) {
+            return null
+        }
+    }
 
     async findAttributeByIdList({
         attribute_id_list, attribute_value_id_list

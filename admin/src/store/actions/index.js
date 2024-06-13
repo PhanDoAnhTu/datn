@@ -38,6 +38,7 @@ export const Action = {
 
   //attribute
   ALL_ATTRIBUTE: "ALL_ATTRIBUTE",
+  NEW_ATTRIBUTE: "NEW_ATTRIBUTE",
 //brand
 
 ALL_BRAND:"ALL_BRAND",

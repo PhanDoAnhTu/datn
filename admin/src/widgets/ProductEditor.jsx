@@ -488,8 +488,6 @@ const ProductEditor = () => {
   const handleSave = async (data) => {
     console.log('data', data)
 
-
-
     let product_variations = []
     variations.forEach((variation) => {
       product_variations.push({ images: [], name: variation.variationName, options: variation.options.map((option) => option.value) })
@@ -506,10 +504,9 @@ const ProductEditor = () => {
     let list_images_product = {
       url_thumb: [],
       convert_sku_list: []
-
     }
 
-    if (sKUList.length > 0 & (sKUList.length === 1 & sKUList[0].image != null)) {
+    if (sKUList.length > 1) {
       const list_image = new FormData();
       sKUList.forEach((item) => {
         if (item.image != null) {

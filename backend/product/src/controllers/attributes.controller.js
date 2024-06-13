@@ -28,6 +28,20 @@ class AtributeController {
 
         }).send(res)
     }
+    updateAttributeById = async (req, res, next) => {
+        new successResponse.SuccessResponse({
+            message: 'updateAttributeById success',
+            metaData: await this.service.updateAttributeById(req.body)
+
+        }).send(res)
+    }
+    removeAttributeById = async (req, res, next) => {
+        new successResponse.SuccessResponse({
+            message: 'removeAttributeById success',
+            metaData: await this.service.removeAttributeById(req.body)
+
+        }).send(res)
+    }
 
 }
 module.exports = new AtributeController;

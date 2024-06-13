@@ -60,13 +60,15 @@ const newSpu = async ({
             const skus = await newSku({ spu_id: spu._id, sku_list })
             sku_list.map(sku => {
                 skus.map(skuModel => {
-                    if (skuModel.sku_tier_idx.toString() === sku.sku_tier_idx.toString()) {
+                    if (skuModel.sku_tier_idx.toString() === sku.sku_tier_idx.toString() & sku.thumb_url != null) {
                         addImageBySkuList({ spu_id: spu._id, sku_id: skuModel._id, thumb_url: sku.thumb_url, public_id: sku.public_id })
                     }
                 })
             })
 
         }
+
+        ////xulyproduct_attributes
         return spu
     }
     catch (error) {

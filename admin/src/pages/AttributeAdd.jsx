@@ -4,27 +4,42 @@ import Spring from "@components/Spring";
 import { toast } from "react-toastify";
 // hooks
 import { useForm } from "react-hook-form";
-
+import { createAttribute, findAllAttribute, updateAttributeById, removeAttributeById } from "../store/actions";
 // utils
 import classNames from "classnames";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Empty } from "antd";
 import { useDispatch } from "react-redux";
-import attributes_managements from "@db/attributes_managements";
+// import attributes_managements from "@db/attributes_managements";
 import StyledTable from "@widgets/CategoriesManagementTable/styles";
+
 
 const AttributeAdd = () => {
   const dispact = useDispatch();
+  const [attributes_managements, setAttributes_managements] = useState([])
+
+
+  const fetchAttributes_managements = async () => {
+    const respo = await dispact(findAllAttribute())
+    if (respo) {
+      setAttributes_managements(respo?.payload.metaData)
+    }
+  }
+
+
   //-----DECLARE DEFAULT VALUES
   const defaultValues = {
     attribute_name: "",
+    attribute_description: "",
     attribute_value_list: [{ attribute_value: "" }],
   };
   const [updateSignal, setUpdateSignal] = useState({
     isUpdate: false,
     id: null,
   });
-
+  useEffect(() => {
+    fetchAttributes_managements()
+  }, [updateSignal])
   const ATTRIBUTE_COLUMN_DEFS = [
     {
       title: "Tên nhóm",
@@ -41,18 +56,18 @@ const AttributeAdd = () => {
     },
     {
       title: "Đặc tính",
-      dataIndex: "attribute_list_value",
-      render: (attribute_list_value) => (
+      dataIndex: "attribute_value_list",
+      render: (attribute_value_list) => (
         <div className="flex flex-wrap gap-x-0.5">
-          {attribute_list_value && attribute_list_value.length
-            ? attribute_list_value.map((attribute, index) => {
-                return (
-                  <span className="tag text-accent capitalize" key={index}>
-                    {attribute.attribute_value}
-                    {index !== attribute_list_value.length - 1 && ","}
-                  </span>
-                );
-              })
+          {attribute_value_list && attribute_value_list.length
+            ? attribute_value_list.map((attribute, index) => {
+              return (
+                <span className="tag text-accent capitalize" key={index}>
+                  {attribute.attribute_value}
+                  {index !== attribute_value_list.length - 1 && ","}
+                </span>
+              );
+            })
             : "-"}
         </div>
       ),
@@ -67,15 +82,13 @@ const AttributeAdd = () => {
             className="info-btn px-4"
             onClick={() => {
               handleUpdateBtn(record);
-              setUpdateSignal({
-                isUpdate: true,
-                id: record._id,
-              });
             }}
           >
             <i className="icon icon-pen-solid text-lg" />
           </button>
-          <button className="group info-btn px-4" to={"/test"}>
+          <button onClick={() => {
+            handleRemoveAttribute(record)
+          }} className="group info-btn px-4" to={"/test"}>
             <i className="icon icon-trash-regular text-lg group-hover:text-red" />
           </button>
         </div>
@@ -95,12 +108,25 @@ const AttributeAdd = () => {
   });
 
   const handleUpdateBtn = (value) => {
+    console.log(value)
+    setValue("attribute_value_list", value.attribute_value_list);
     setValue("attribute_name", value.attribute_name);
-    setValue("attribute_value_list", value.attribute_list_value);
+    setValue("attribute_description", value.attribute_description);
+    setUpdateSignal({ isUpdate: true, id: value._id });
   };
+  const handleRemoveAttribute = (value) => {
+    console.log(value)
+    dispact(removeAttributeById({ _id: value._id }))
+    setUpdateSignal({
+      isUpdate: false,
+      id: null,
+    });
+  }
 
   const attributeList = watch("attribute_value_list");
   const attributeName = watch("attribute_name");
+  const attribute_description = watch("attribute_description");
+
 
   //---------------------------ATTRIBUTES----------------------------//
 
@@ -130,12 +156,14 @@ const AttributeAdd = () => {
   // do something with the data
   const handlePublish = (data) => {
     console.log(data);
+    dispact(createAttribute(data))
     reset();
     setUpdateSignal({ isUpdate: false, id: null });
     toast.success("Product published successfully");
   };
   const handleUpdate = (data) => {
     console.log(data);
+    dispact(updateAttributeById({ _id: updateSignal.id, attribute_name: data.attribute_name, attribute_description: data.attribute_description, attribute_value_list: data.attribute_value_list }))
     reset();
     setUpdateSignal({ isUpdate: false, id: null });
     toast.success("Product updated successfully");
@@ -161,8 +189,21 @@ const AttributeAdd = () => {
                     id="attribute_name"
                     value={attributeName}
                     defaultValue={defaultValues.attribute_name}
-                    placeholder="VD: Chất liệu, độ bền,..."
+                    placeholder="VD: Phong cách, chất liệu,..."
                     {...register("attribute_name", { required: true })}
+                  />
+                  <label className="field-label" htmlFor="attribute_description">
+                    Mô tả
+                  </label>
+                  <input
+                    className={classNames("field-input", {
+                      "field-input--error": errors.attribute_description,
+                    })}
+                    id="attribute_description"
+                    value={attribute_description}
+                    defaultValue={defaultValues.attribute_description}
+                    placeholder="VD: Phong cách trang phục,..."
+                    {...register("attribute_description", { required: true })}
                   />
                 </div>
                 <div className={`relative flex-1`}>
@@ -170,7 +211,7 @@ const AttributeAdd = () => {
                     <div className="grid grid-cols-1 gap-y-4 gap-x-2">
                       <div className="field-wrapper">
                         <span className="field-label">Đặc tính</span>
-                        {attributeList.map((item, index) => {
+                        {attributeList.length > 0 && attributeList.map((item, index) => {
                           return (
                             <div
                               className="flex space-x-3 items-center"
@@ -213,9 +254,8 @@ const AttributeAdd = () => {
             </div>
 
             <div
-              className={`grid gap-2 mt-5 ${
-                updateSignal.isUpdate ? "sm:grid-cols-2" : ""
-              } sm:mt-10 md:mt-11`}
+              className={`grid gap-2 mt-5 ${updateSignal.isUpdate ? "sm:grid-cols-2" : ""
+                } sm:mt-10 md:mt-11`}
             >
               {updateSignal.isUpdate ? (
                 <>
