@@ -125,7 +125,7 @@ class DiscountService {
         const uniqueSet = new Set(discount_users_used);
         const discount_users_used_unique = [...uniqueSet];
         if (discount_users_used_unique.length >= discount_max_user_uses) throw new errorResponse.NotFoundRequestError("discount are out")
-        if (Date.now() > new Date(discount_start_date) || Date.now() > new Date(discount_end_date) || new Date(discount_start_date) > new Date(discount_end_date)) {
+        if (Date.now() < new Date(discount_start_date) || Date.now() > new Date(discount_end_date) || new Date(discount_start_date) > new Date(discount_end_date)) {
             throw new errorResponse.NotFoundRequestError('discount ecode has expried!')
         }
         if (discount_max_person_uses > 0) {
@@ -155,7 +155,6 @@ class DiscountService {
                 throw new errorResponse.NotFoundRequestError(`discount requires a minium order value of ${discount_min_order_value}`)
             }
         }
-
         let amount = discount_type === 'fixed_amount' ? discount_value : totalOrderDiscount * (discount_value / 100)
         if (amount > discount_max_value) {
             amount = discount_max_value

@@ -10,7 +10,7 @@ class AttributeService {
     }) {
         try {
             const foundAttribute = await AttributeModel.findOne({ attribute_name })
-            if (!foundAttribute) throw new errorResponse.NotFoundRequestError("Attribute not found")
+            if (foundAttribute) throw new errorResponse.NotFoundRequestError("Attribute has exists")
 
             const attributes = await AttributeModel.create({
                 attribute_name,
@@ -36,7 +36,6 @@ class AttributeService {
                 const attribute_value = await allAttributeValue({ attribute_id: attributes[i]._id })
                 attributes[i] = { ...attributes[i], attribute_value }
             }
-
             return attributes
         } catch (error) {
             return null
@@ -87,7 +86,6 @@ class AttributeService {
         try {
             const attribute_id_list = await product_attributes.flatMap((attribute) => attribute.attribute_id)
             const attribute_value_id_list = await product_attributes.flatMap((attribute) => attribute.attribute_value)
-
             console.log('attribute_id_list', attribute_id_list)
             console.log('attribute_value_id_list', attribute_value_id_list)
             const product_attribute = await this.findAttributeByIdList({ attribute_id_list, attribute_value_id_list })

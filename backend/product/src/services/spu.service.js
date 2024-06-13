@@ -51,12 +51,12 @@ const newSpu = async ({
             isPublished,
             isDraft
         })
-        if (spu && product_thumb.length > 0) {
+        if (spu && product_thumb?.length > 0) {
             product_thumb.forEach(image => {
                 addImageBySpuId({ spu_id: spu._id, thumb_url: image.thumb_url, public_id: image.public_id })
             })
         }
-        if (spu && sku_list.length > 0) {
+        if (spu && sku_list?.length > 0) {
             const skus = await newSku({ spu_id: spu._id, sku_list })
             sku_list.map(sku => {
                 skus.map(skuModel => {

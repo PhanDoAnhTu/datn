@@ -130,7 +130,7 @@ class CheckoutService {
     }) {
 
         if (['pending', 'confirmed', 'shipped', 'cancelled'].includes(order_status) == false) throw new errorResponse.BadRequestError('status not exitsts')
-            
+
         const query = { _id: order_id }
         const updateOrInsert = {
             $set: {
@@ -141,6 +141,15 @@ class CheckoutService {
             new: true
         }
         return await OrderModel.findOneAndUpdate(query, updateOrInsert, options)
+    }
+    async findOrderByTrackingNumber({
+        order_trackingNumber
+    }) {
+
+        const foundOrder = await OrderModel.findOne({ order_trackingNumber })
+        if (!foundOrder) throw new errorResponse.BadRequestError('order not exitsts')
+            
+        return foundOrder
     }
 
 

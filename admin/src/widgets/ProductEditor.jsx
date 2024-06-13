@@ -9,7 +9,7 @@ import { createSpu, upLoadImageArray, upLoadProductImageList, findAllCategory, f
 import { useForm, Controller } from "react-hook-form";
 
 // constants
-import { UNITS_OPTIONS } from "@constants/options";
+// import { UNITS_OPTIONS } from "@constants/options";
 
 // utils
 import classNames from "classnames";
@@ -50,7 +50,6 @@ const ProductEditor = () => {
     }))
   }, [brand_management])
 
-
   console.log("brand_options", brand_management)
 
   useEffect(() => {
@@ -71,7 +70,6 @@ const ProductEditor = () => {
     product_quantity: 1,
     unit: "",
     product_attributes: [],
-
 
   };
   console.log("defaultValues", defaultValues)
@@ -473,8 +471,8 @@ const ProductEditor = () => {
       }
       return totalStock;
     };
-    const test = setStock();
-    setValue("product_quantity", test);
+    const changeQty = setStock();
+    setValue("product_quantity", changeQty);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sKUList]);
 
@@ -490,95 +488,81 @@ const ProductEditor = () => {
   const handleSave = async (data) => {
     console.log('data', data)
 
-    // let list_images_product = {
-    //   url_thumb: [],
-    //   convert_sku_list: []
 
-    // }
 
-    // if (sKUList.length > 0) {
-    //   const list_image = new FormData();
-    //   sKUList.forEach((item) => {
-    //     if (item.image != null) {
-    //       list_image.append("files", item.image[0]);
-    //       list_image.append("sku_list", item.sku_tier_idx);
-    //     }
-    //   });
-    //   list_image.append("folderName", "outrunner/products");
-    //   const list_url_thumb = await dispact(upLoadProductImageList(list_image));
-    //   list_images_product.convert_sku_list = list_url_thumb &&
-    //     await sKUList?.map((sku) => {
-    //       const skuImageFound = list_url_thumb?.payload?.metaData?.find((url_thumb) => sku.sku_tier_idx.toString() === url_thumb.sku_tier_idx)
-    //       if (skuImageFound) {
-    //         const { image, ...skuNoImage } = sku
-    //         return { ...skuNoImage, thumb_url: skuImageFound?.thumb_url, public_id: skuImageFound?.public_id }
-    //       } else {
-    //         const { image, ...skuNoImage } = sku
-    //         return { ...skuNoImage, thumb_url: null, public_id: null }
-    //       }
-    //     })
+    let product_variations = []
+    variations.forEach((variation) => {
+      product_variations.push({ images: [], name: variation.variationName, options: variation.options.map((option) => option.value) })
+    })
 
-    // }
+    console.log("product_variations", product_variations)
+    const attributes_input = attributes_management.map((item) => {
+      if (Object.hasOwn(data, item.attribute_slug) === true) {
+        return { attribute_id: data[item.attribute_slug].attribute_id, attribute_value: { value: data[item.attribute_slug].value } }
+      }
+    })
 
-    // if (product_images.length > 0) {
-    //   const image_array = new FormData();
-    //   product_images.sort((a, b) => a.indexNumber - b.indexNumber).forEach((item) => {
-    //     if (item.file) {
-    //       image_array.append("files", item.file[0]);
-    //     }
-    //   });
-    //   image_array.append("folderName", "outrunner/products");
 
-    //   list_images_product.url_thumb = await dispact(upLoadImageArray(image_array));
+    let list_images_product = {
+      url_thumb: [],
+      convert_sku_list: []
 
-    // }
+    }
 
-    // list_url_thumb && createSpu({
-    //   product_name: data.productName,
-    //   isPublished: false,
-    //   isDraft: true,
-    //   product_thumb:list_images_product.url_thumb,
-    //   product_description: data.description, 
-    //   product_price: data.regularPrice,
-    //   product_quantity: data.product_quantity,
-    //   product_brand: "663fc259d1665c7e45e8401c",
-    //   product_category: [
-    //     "663f9d30220d580c7b4cbc9e",
-    //     "663f9e62220d580c7b4cbca8",
-    //     "663f9e9c220d580c7b4cbcaa",
-    //   ],
-    //   product_attributes: [
-    //     {
-    //       attribute_id: "663f6b4a6e6cc6596ecc0161",
-    //       attribute_value: [
-    //         {
-    //           value_id: "663f6b4a6e6cc6596ecc0164",
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       attribute_id: "663f53a1855e11df5b6b0696",
-    //       attribute_value: [
-    //         {
-    //           value_id: "663f53a1855e11df5b6b069a",
-    //         },
-    //       ],
-    //     },
-    //   ],
-    //   product_variations: [
-    //     {
-    //       images: [],
-    //       name: "color",
-    //       options: ["Blue", "Red"],
-    //     },
-    //     {
-    //       images: [],
-    //       name: "size",
-    //       options: ["S", "M", "L"],
-    //     },
-    //   ],
-    //   sku_list:list_images_product.convert_sku_list
-    // });
+    if (sKUList.length > 0 & (sKUList.length === 1 & sKUList[0].image != null)) {
+      const list_image = new FormData();
+      sKUList.forEach((item) => {
+        if (item.image != null) {
+          list_image.append("files", item.image[0]);
+          list_image.append("sku_list", item.sku_tier_idx);
+        }
+      });
+      list_image.append("folderName", "outrunner/products");
+      const list_url_thumb = await dispact(upLoadProductImageList(list_image));
+      list_images_product.convert_sku_list = list_url_thumb &&
+        await sKUList?.map((sku) => {
+          const skuImageFound = list_url_thumb?.payload?.metaData?.find((url_thumb) => sku.sku_tier_idx.toString() === url_thumb.sku_tier_idx)
+          if (skuImageFound) {
+            const { image, ...skuNoImage } = sku
+            return { ...skuNoImage, thumb_url: skuImageFound?.thumb_url, public_id: skuImageFound?.public_id }
+          } else {
+            const { image, ...skuNoImage } = sku
+            return { ...skuNoImage, thumb_url: null, public_id: null }
+          }
+        })
+
+    }
+
+    if (product_images.length > 0) {
+      const image_array = new FormData();
+      product_images.sort((a, b) => a.indexNumber - b.indexNumber).forEach((item) => {
+        if (item.file) {
+          image_array.append("files", item.file[0]);
+        }
+      });
+      image_array.append("folderName", "outrunner/products");
+
+      const uploadImage = await dispact(upLoadImageArray(image_array));
+      list_images_product.url_thumb = uploadImage && uploadImage?.payload.metaData
+    }
+    console.log("crateSpuuuuuuuuuuuuuuuuuuu", attributes_input, list_images_product, product_variations)
+
+    dispact(createSpu({
+      product_name: data.productName,
+      isPublished: false,
+      isDraft: true,
+      product_thumb: list_images_product?.url_thumb?.length > 0 ? list_images_product.url_thumb : [],
+      product_description: data.description,
+      product_price: data.regularPrice,
+      product_quantity: data.product_quantity,
+      product_unit: data.unit,
+      product_weight: data.weight,
+      product_brand: data.brandName.value,
+      product_category: data.product_category.flatMap((category) => category.value),
+      product_attributes: attributes_input,
+      product_variations: product_variations,
+      sku_list: list_images_product?.convert_sku_list ? list_images_product?.convert_sku_list : []
+    }));
     toast.info("Product saved successfully");
   };
   const [product_images, set_product_images] = useState([])
@@ -600,7 +584,6 @@ const ProductEditor = () => {
         return [...s, { file: value, indexNumber: indexNumber }]
       })
     }
-
   }
   console.log("product_images", product_images.sort((a, b) => a.indexNumber - b.indexNumber))
   return (
@@ -791,22 +774,22 @@ const ProductEditor = () => {
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
             {attributes_management.length > 0 && attributes_management.map((attribute, index) => {
               const value_attribute_options = attribute.attribute_value.map((value_attribute) => {
-                return { label: value_attribute.attribute_value, value: value_attribute._id }
+                return { label: value_attribute.attribute_value, value: value_attribute._id, attribute_id: value_attribute.attribute_id }
               })
               return (
                 <div className="field-wrapper" key={index}>
-                  <label className="field-label" htmlFor="brandName">
+                  <label className="field-label" htmlFor={attribute.attribute_slug}>
                     {attribute.attribute_name}
                   </label>
                   <Controller
-                    name="product_attributes"
+                    name={attribute.attribute_slug}
                     control={control}
                     defaultValue={defaultValues.product_attributes}
                     rules={{ required: true }}
                     render={({ field }) => (
                       <Select
                         isInvalid={errors.brandName}
-                        id='product_attributes'
+                        id={attribute.attribute_slug}
                         placeholder={`Chọn ${attribute.attribute_name}`}
                         options={value_attribute_options}
                         value={field.value}
