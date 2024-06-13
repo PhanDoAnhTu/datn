@@ -8,16 +8,86 @@ import {
     StarIcon,
     XCircleIcon,
 } from '@heroicons/react/24/solid';
-import { Fragment, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import { NumericFormat } from 'react-number-format';
 import { useNavigate } from 'react-router';
 
 export default function OrderDetail() {
+    //Kiem tra neu userId cua currentOrder co bang voi user dang dang nhap hien tai khong
+    //neu co thi cho xem, khong thi cho ve lai trang profile.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const currentOrder = {
+        cartId: '661f5aa782159dc99b8fb626',
+        userId: '664088b2a63b863a605da30e',
+        order_shipping: {
+            ship_to: {
+                phone: '00000000',
+                gmail: 'gmail',
+                name: 'anhtu',
+                address: 'ssssss',
+            },
+        },
+        user_payment: {},
+        order_ids: {
+            shop_discounts: [
+                {
+                    discountId: '665c9d0400a63805d8c252fb',
+                    codeId: 'tutu',
+                },
+            ],
+            item_products: [
+                {
+                    price: 200000,
+                    quantity: 2,
+                    sku_id: '66562ef484ce383484f8f076',
+                    productId: '66562ef484ce383484f8f074',
+                },
+                {
+                    price: 300000,
+                    quantity: 2,
+                    sku_id: '665637da84ce383484f8f13a',
+                    productId: '665637da84ce383484f8f138',
+                },
+            ],
+        },
+    };
     const navigate = useNavigate();
+    const [generatedReview, setGeneratedReview] = useState([]);
+    useEffect(() => {
+        setGeneratedReview(
+            currentOrder.order_ids.item_products.map((item) => {
+                return {
+                    productId: item.productId,
+                    orderId: '_ID CUA ORDER',
+                    customerId: currentOrder.userId,
+                    sKUId: item.sku_id,
+                    price: item.price,
+                    quantity: item.quantity,
+                    ratingScore: 0,
+                    ratingContent: '',
+                };
+            })
+        );
+    }, []);
+    console.log(generatedReview);
+    const handleReviewChange = (index, type, value) => {
+        const slicedArray = generatedReview.slice();
+        if (type === 'rating') {
+            if (slicedArray[index].ratingScore === value) {
+                slicedArray[index].ratingScore = 0;
+            } else {
+                slicedArray[index].ratingScore = value;
+            }
+        }
+        if (type === 'content') {
+            slicedArray[index].ratingContent = value;
+        }
+        setGeneratedReview(slicedArray);
+    };
     const status = 'delivered';
     let [open, setOpen] = useState('');
-    const [rating, setRating] = useState(0);
-    const [ratingContent, setRatingContent] = useState('');
     const [cancelContent, setCancelContent] = useState('');
+
     const cancelButtonRef = useRef(null);
     // eslint-disable-next-line no-unused-vars
     const handleReview = () => {};
@@ -201,12 +271,11 @@ export default function OrderDetail() {
                                                                 ) : open ===
                                                                   'review' ? (
                                                                     <div className="no-scrollbar grid h-96 gap-2 overflow-y-scroll">
-                                                                        {[
-                                                                            0,
-                                                                            1,
-                                                                            2,
-                                                                        ].map(
-                                                                            () => (
+                                                                        {generatedReview.map(
+                                                                            (
+                                                                                item,
+                                                                                index
+                                                                            ) => (
                                                                                 <>
                                                                                     <div className="mt-2 grid rounded-md bg-zinc-500 p-4 shadow-inner shadow-zinc-800 dark:bg-zinc-800 dark:shadow-zinc-500">
                                                                                         <div className="flex w-full overflow-hidden border-b-2 border-zinc-600 p-4 sm:space-x-2">
@@ -243,14 +312,31 @@ export default function OrderDetail() {
                                                                                                         </div>
                                                                                                     </div>
                                                                                                     <div className="text-md pt-2 ">
-                                                                                                        Giá:
-                                                                                                        200.000vnd
+                                                                                                        Giá:{' '}
+                                                                                                        <NumericFormat
+                                                                                                            value={
+                                                                                                                item.price
+                                                                                                            }
+                                                                                                            displayType="text"
+                                                                                                            thousandSeparator={
+                                                                                                                true
+                                                                                                            }
+                                                                                                            decimalScale={
+                                                                                                                0
+                                                                                                            }
+                                                                                                            id="price"
+                                                                                                            suffix={
+                                                                                                                'đ'
+                                                                                                            }
+                                                                                                        />
                                                                                                     </div>
                                                                                                     <div className="flex h-full flex-col justify-end">
                                                                                                         <span className="md:text-md font-bold">
                                                                                                             Số
-                                                                                                            lượng:
-                                                                                                            1
+                                                                                                            lượng:{' '}
+                                                                                                            {
+                                                                                                                item.quantity
+                                                                                                            }
                                                                                                         </span>
                                                                                                     </div>
                                                                                                 </div>
@@ -259,51 +345,61 @@ export default function OrderDetail() {
                                                                                         <div className="flex flex-row-reverse justify-center p-5">
                                                                                             <i
                                                                                                 onClick={() =>
-                                                                                                    setRating(
+                                                                                                    handleReviewChange(
+                                                                                                        index,
+                                                                                                        'rating',
                                                                                                         5
                                                                                                     )
                                                                                                 }
-                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${rating >= 5 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
+                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${item.ratingScore >= 5 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
                                                                                             >
                                                                                                 <StarIcon />
                                                                                             </i>
                                                                                             <i
                                                                                                 onClick={() =>
-                                                                                                    setRating(
+                                                                                                    handleReviewChange(
+                                                                                                        index,
+                                                                                                        'rating',
                                                                                                         4
                                                                                                     )
                                                                                                 }
-                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${rating >= 4 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
+                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${item.ratingScore >= 4 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
                                                                                             >
                                                                                                 <StarIcon />
                                                                                             </i>
                                                                                             <i
                                                                                                 onClick={() =>
-                                                                                                    setRating(
+                                                                                                    handleReviewChange(
+                                                                                                        index,
+                                                                                                        'rating',
                                                                                                         3
                                                                                                     )
                                                                                                 }
-                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${rating >= 3 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
+                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${item.ratingScore >= 3 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
                                                                                             >
                                                                                                 <StarIcon />
                                                                                             </i>
                                                                                             <i
                                                                                                 onClick={() =>
-                                                                                                    setRating(
+                                                                                                    handleReviewChange(
+                                                                                                        index,
+                                                                                                        'rating',
                                                                                                         2
                                                                                                     )
                                                                                                 }
-                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${rating >= 2 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
+                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${item.ratingScore >= 2 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
                                                                                             >
                                                                                                 <StarIcon />
                                                                                             </i>
                                                                                             <i
                                                                                                 onClick={() =>
-                                                                                                    setRating(
+                                                                                                    handleReviewChange(
+                                                                                                        index,
+                                                                                                        'rating',
                                                                                                         1
                                                                                                     )
                                                                                                 }
-                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${rating >= 1 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
+                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${item.ratingScore >= 1 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
                                                                                             >
                                                                                                 <StarIcon />
                                                                                             </i>
@@ -312,12 +408,14 @@ export default function OrderDetail() {
                                                                                             type="text"
                                                                                             placeholder="Nội dung đánh giá"
                                                                                             value={
-                                                                                                ratingContent
+                                                                                                item.ratingContent
                                                                                             }
                                                                                             onChange={(
                                                                                                 e
                                                                                             ) =>
-                                                                                                setRatingContent(
+                                                                                                handleReviewChange(
+                                                                                                    index,
+                                                                                                    'content',
                                                                                                     e
                                                                                                         .target
                                                                                                         .value
@@ -379,14 +477,8 @@ export default function OrderDetail() {
                                                                 type="button"
                                                                 className="mt-3 inline-flex w-full justify-center px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm outline-none ring-2 ring-inset ring-white transition  duration-500 ease-out hover:bg-rose-500 hover:text-zinc-900 hover:ring-rose-500 sm:mt-0 sm:w-auto dark:text-white"
                                                                 onClick={() => {
-                                                                    setRating(
-                                                                        0
-                                                                    );
                                                                     setOpen('');
                                                                     setCancelContent(
-                                                                        ''
-                                                                    );
-                                                                    setRatingContent(
                                                                         ''
                                                                     );
                                                                 }}
@@ -410,135 +502,52 @@ export default function OrderDetail() {
                     </div>
 
                     <div className="mt-2 grid rounded-md bg-zinc-500 p-4 shadow-inner shadow-zinc-800 md:grid-cols-2 dark:bg-zinc-800 dark:shadow-zinc-500">
-                        <div className="flex w-full overflow-hidden border-b-2 border-zinc-600 p-4 sm:space-x-2">
-                            <div className="h-fit w-32 overflow-hidden rounded-md">
-                                <img
-                                    src={
-                                        'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg'
-                                    }
-                                    className="object-contain object-center"
-                                />
-                            </div>
-                            <div className="flex flex-1 text-white">
-                                <div className="flex flex-1 flex-col space-y-1 overflow-hidden px-2">
-                                    <div className="flex">
-                                        <div className="flex-1">
-                                            <h1 className="line-clamp-2 truncate text-wrap text-sm font-bold max-sm:w-36 md:text-xl">
-                                                anh long sieu dep trai, ngay mai
-                                                an banh mi cong bun thiu
-                                            </h1>
-                                            <div className="text-md text-gray-300">
-                                                Brand
+                        {currentOrder.order_ids.item_products.map((item) => (
+                            <div key={item.productId}>
+                                <div className="flex w-full overflow-hidden border-b-2 border-zinc-600 p-4 sm:space-x-2">
+                                    <div className="h-fit w-32 overflow-hidden rounded-md">
+                                        <img
+                                            src={
+                                                'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg'
+                                            }
+                                            className="object-contain object-center"
+                                        />
+                                    </div>
+                                    <div className="flex flex-1 text-white">
+                                        <div className="flex flex-1 flex-col space-y-1 overflow-hidden px-2">
+                                            <div className="flex">
+                                                <div className="flex-1">
+                                                    <h1 className="line-clamp-2 truncate text-wrap text-sm font-bold max-sm:w-36 md:text-xl">
+                                                        anh long sieu dep trai,
+                                                        ngay mai an banh mi cong
+                                                        bun thiu
+                                                    </h1>
+                                                    <div className="text-md text-gray-300">
+                                                        Brand
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="text-md pt-2 ">
+                                                Giá:{' '}
+                                                <NumericFormat
+                                                    value={item.price}
+                                                    displayType="text"
+                                                    thousandSeparator={true}
+                                                    decimalScale={0}
+                                                    id="price"
+                                                    suffix={'đ'}
+                                                />
+                                            </div>
+                                            <div className="flex h-full flex-col justify-end">
+                                                <span className="md:text-md font-bold">
+                                                    Số lượng: {item.quantity}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="text-md pt-2 ">
-                                        Giá: 200.000vnd
-                                    </div>
-                                    <div className="flex h-full flex-col justify-end">
-                                        <span className="md:text-md font-bold">
-                                            Số lượng: 1
-                                        </span>
-                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="flex w-full overflow-hidden border-b-2 border-zinc-600 p-4 sm:space-x-2">
-                            <div className="h-fit w-32 overflow-hidden rounded-md">
-                                <img
-                                    src={
-                                        'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg'
-                                    }
-                                    className="object-contain object-center"
-                                />
-                            </div>
-                            <div className="flex flex-1 text-white">
-                                <div className="flex flex-1 flex-col space-y-1 overflow-hidden px-2">
-                                    <div className="flex">
-                                        <div className="flex-1">
-                                            <h1 className="truncate text-wrap text-sm font-bold max-sm:w-36 md:text-xl">
-                                                Tên sản phẩm
-                                            </h1>
-                                            <div className="text-md text-gray-300">
-                                                Brand
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="text-md pt-2 ">
-                                        Giá: 200.000vnd
-                                    </div>
-                                    <div className="flex h-full flex-col justify-end">
-                                        <span className="md:text-md font-bold">
-                                            Số lượng: 1
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex w-full overflow-hidden border-b-2 border-zinc-600 p-4 sm:space-x-2">
-                            <div className="h-fit w-32 overflow-hidden rounded-md">
-                                <img
-                                    src={
-                                        'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg'
-                                    }
-                                    className="object-contain object-center"
-                                />
-                            </div>
-                            <div className="flex flex-1 text-white">
-                                <div className="flex flex-1 flex-col space-y-1 overflow-hidden px-2">
-                                    <div className="flex">
-                                        <div className="flex-1">
-                                            <h1 className="truncate text-wrap text-sm font-bold max-sm:w-36 md:text-xl">
-                                                Tên sản phẩm
-                                            </h1>
-                                            <div className="text-md text-gray-300">
-                                                Brand
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="text-md pt-2 ">
-                                        Giá: 200.000vnd
-                                    </div>
-                                    <div className="flex h-full flex-col justify-end">
-                                        <span className="md:text-md font-bold">
-                                            Số lượng: 1
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex w-full overflow-hidden border-b-2 border-zinc-600 p-4 sm:space-x-2">
-                            <div className="h-fit w-32 overflow-hidden rounded-md">
-                                <img
-                                    src={
-                                        'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg'
-                                    }
-                                    className="object-contain object-center"
-                                />
-                            </div>
-                            <div className="flex flex-1 text-white">
-                                <div className="flex flex-1 flex-col space-y-1 overflow-hidden px-2">
-                                    <div className="flex">
-                                        <div className="flex-1">
-                                            <h1 className="truncate text-wrap text-sm font-bold max-sm:w-36 md:text-xl">
-                                                Tên sản phẩm
-                                            </h1>
-                                            <div className="text-md text-gray-300">
-                                                Brand
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="text-md pt-2 ">
-                                        Giá: 200.000vnd
-                                    </div>
-                                    <div className="flex h-full flex-col justify-end">
-                                        <span className="md:text-md font-bold">
-                                            Số lượng: 1
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        ))}
                         <div className="grid justify-center gap-5 py-3 md:col-span-2 md:grid-cols-2">
                             <div className="grid justify-end font-bold"></div>
                             <div className="grid grid-cols-2 font-bold">
