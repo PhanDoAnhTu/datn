@@ -4,6 +4,7 @@ import Select from "@ui/Select";
 import StyledTable from "./styles";
 import Empty from "@components/Empty";
 import Pagination from "@ui/Pagination";
+import ProductManagementCollapseItem from "@components/ProductManagementCollapseItem";
 
 // hooks
 import { useState, useEffect } from "react";
@@ -16,13 +17,12 @@ import {
   ADDITIONAL_OPTIONS,
   SELECT_OPTIONS,
 } from "@constants/options";
-import { PAGES_MANAGEMENT_COLUMN_DEFS } from "@constants/columnDefs";
+import { MENUS_MANAGEMENT_COLUMN_DEFS } from "@constants/columnDefs";
 import pages_management from "@db/pages_management";
-import PageManagementCollapseItem from "@components/PageManagementCollapseItem";
 
 // data placeholder
 
-const PageManagementTable = () => {
+const MenuManagementTable = ({ searchQuery }) => {
   const { width } = useWindowSize();
   const defaultSort = {
     sortBy: ADDITIONAL_OPTIONS[0],
@@ -94,6 +94,19 @@ const PageManagementTable = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sorts.sortBy.value, sorts.sortOrder.value]);
 
+  useEffect(() => {
+    if (searchQuery !== "") {
+      setData(
+        data.filter((item) =>
+          item.label.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+    } else {
+      setData(pages_management);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
+
   const dataByStatus = () => {
     if (category === "all") return data;
     return data.filter((item) => item.status === category);
@@ -117,7 +130,7 @@ const PageManagementTable = () => {
   return (
     <div className="flex flex-col flex-1">
       <div className="flex flex-wrap gap-2 mb-4">
-        <span className="text-header">Trang đơn:</span>
+        <span className="text-header">Categories:</span>
         <div>
           {MANAGEMENT_OPTIONS.map((option, index) => (
             <FilterItem
@@ -133,7 +146,7 @@ const PageManagementTable = () => {
       </div>
 
       <div className="flex flex-col-reverse gap-4 mt-4 mb-5 md:flex-row md:justify-between md:items-end md:mt-5 md:mb-6">
-        <p>Dữ liệu đang xem: {pagination.showingOf()}</p>
+        <p>View categories: {pagination.showingOf()}</p>
 
         <div className="md:min-w-[560px] grid md:grid-cols-2 gap-4">
           <Select
@@ -153,7 +166,7 @@ const PageManagementTable = () => {
       <div className="flex flex-1 flex-col gap-[22px]">
         {width >= 768 ? (
           <StyledTable
-            columns={PAGES_MANAGEMENT_COLUMN_DEFS}
+            columns={MENUS_MANAGEMENT_COLUMN_DEFS}
             dataSource={pagination.currentItems()}
             rowKey={(record) => record.id}
             locale={{
@@ -166,10 +179,10 @@ const PageManagementTable = () => {
           />
         ) : (
           <div className="flex flex-col gap-5">
-            {pagination.currentItems().map((page, index) => (
-              <PageManagementCollapseItem
-                key={`page-${index}`}
-                page={page}
+            {pagination.currentItems().map((product, index) => (
+              <ProductManagementCollapseItem
+                key={`product-${index}`}
+                product={product}
                 handleCollapse={handleCollapse}
                 activeCollapse={activeCollapse}
               />
@@ -182,4 +195,4 @@ const PageManagementTable = () => {
   );
 };
 
-export default PageManagementTable;
+export default MenuManagementTable;

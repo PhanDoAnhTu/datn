@@ -5,9 +5,10 @@ import { useLocation } from "react-router-dom";
 
 const CategoryDetail = () => {
   const location = useLocation();
+  //lay du lieu o day
   return (
     <>
-      <PageHeader title="Page Detail" />
+      <PageHeader title="Chi tiết trang đơn" />
       <PageInfo item={location.state ? location.state.record : ""} />
     </>
   );

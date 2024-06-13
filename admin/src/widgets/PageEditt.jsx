@@ -1,18 +1,17 @@
 // components
 import Spring from "@components/Spring";
+import { toast } from "react-toastify";
 
 // hooks
 import { Controller, useForm } from "react-hook-form";
 
 // utils
 import classNames from "classnames";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import DropFiles from "@components/DropFiles";
 import MediaDropPlaceholder from "@ui/MediaDropPlaceholder";
+import { useEffect } from "react";
 
-const PageInfo = ({ item }) => {
-  const navigate = useNavigate();
+const PageEditt = ({ item }) => {
   const defaultValues = {
     description: "",
     title: "",
@@ -29,12 +28,19 @@ const PageInfo = ({ item }) => {
   }, []);
   const {
     register,
+    handleSubmit,
     control,
     setValue,
     formState: { errors },
   } = useForm({
     defaultValues: defaultValues,
   });
+
+  // do something with the data
+  const handlePublish = (data) => {
+    console.log(data);
+    toast.success("Product published successfully");
+  };
 
   return (
     <Spring className="card flex-1 xl:py-10">
@@ -49,7 +55,7 @@ const PageInfo = ({ item }) => {
                 defaultValue={defaultValues.image}
                 render={({ field }) => (
                   <DropFiles
-                    wrapperClass="media-dropzone pointer-events-none 2xl:col-span-2 aspect-w-4 aspect-h-1"
+                    wrapperClass="media-dropzone 2xl:col-span-2 aspect-w-4 aspect-h-1"
                     onChange={(files) => field.onChange(files)}
                     defaultValue={defaultValues.image}
                   >
@@ -68,7 +74,6 @@ const PageInfo = ({ item }) => {
                 "field-input--error": errors.name,
               })}
               id="name"
-              disabled
               defaultValue={defaultValues.name}
               {...register("name", { required: true })}
             />
@@ -82,7 +87,6 @@ const PageInfo = ({ item }) => {
                 "field-input--error": errors.pageName,
               })}
               id="pageName"
-              disabled
               defaultValue={defaultValues.pageName}
               {...register("pageName", { required: true })}
             />
@@ -97,7 +101,6 @@ const PageInfo = ({ item }) => {
                 { "field-input--error": errors.description }
               )}
               id="description"
-              disabled
               defaultValue={defaultValues.description}
               {...register("description", { required: true })}
             />
@@ -105,9 +108,9 @@ const PageInfo = ({ item }) => {
           <div className="grid gap-2 mt-5 sm:mt-10 md:mt-11">
             <button
               className="btn btn--primary"
-              onClick={() => navigate("/page-editor/" + item._id)}
+              onClick={handleSubmit(handlePublish)}
             >
-              Chỉnh sửa
+              Xuất bản
             </button>
           </div>
         </div>
@@ -116,4 +119,4 @@ const PageInfo = ({ item }) => {
   );
 };
 
-export default PageInfo;
+export default PageEditt;

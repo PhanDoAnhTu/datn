@@ -42,6 +42,7 @@ const TopProducts = lazy(() => import("@pages/TopProducts"));
 const ProductsGrid = lazy(() => import("@pages/ProductsGrid"));
 const ProductsManagement = lazy(() => import("@pages/ProductsManagement"));
 const ProductEditor = lazy(() => import("@pages/EditProduct"));
+const ProductDetail = lazy(() => import("@pages/ProductDetail"));
 const NewAttribute = lazy(() => import("@pages/NewAttribute"));
 const ProductEdit = lazy(() => import("@pages/EditingProduct"));
 const Banners = lazy(() => import("@pages/Banners"));
@@ -60,6 +61,7 @@ const CategoryDetail = lazy(() => import("@pages/CategoryDetail"));
 const PagesManagement = lazy(() => import("@pages/PagesManagement"));
 const PageEditor = lazy(() => import("@pages/EditPage"));
 const PageDetail = lazy(() => import("@pages/PageDetail"));
+const PageEdit = lazy(() => import("@pages/PageEdit"));
 const TopicsManagement = lazy(() => import("@pages/TopicsManagement"));
 const TopicEditor = lazy(() => import("@pages/EditTopic"));
 const TopicDetail = lazy(() => import("@pages/TopicDetail"));
@@ -80,6 +82,11 @@ const SliderNew = lazy(() => import("@pages/NewSlider"));
 const SliderEdit = lazy(() => import("@pages/EditSlider"));
 const SliderDetail = lazy(() => import("@pages/DetailSlider"));
 const OrderDetail = lazy(() => import("@pages/OrderDetail"));
+
+const MenusManagement = lazy(() => import("@pages/MenusManagement"));
+const NewMenu = lazy(() => import("@pages/NewMenu"));
+const MenuDetail = lazy(() => import("@pages/MenuDetail"));
+const MenuEdit = lazy(() => import("@pages/MenuEdit"));
 
 const App = () => {
   const { width } = useWindowSize();
@@ -144,6 +151,7 @@ const App = () => {
                   />
                   <Route path="page-editor" element={<PageEditor />} />
                   <Route path="page-detail/:id" element={<PageDetail />} />
+                  <Route path="page-editor/:id" element={<PageEdit />} />
                   {/* Topic */}
                   <Route
                     path="topics-management"
@@ -191,6 +199,14 @@ const App = () => {
                   <Route path="slider-editor/:id" element={<SliderEdit />} />
                   <Route path="slider-detail/:id" element={<SliderDetail />} />
 
+                  <Route path="menu-editor" element={<NewMenu />} />
+                  <Route path="menu-detail/:id" element={<MenuDetail />} />
+                  <Route path="menu-editor/:id" element={<MenuEdit />} />
+                  <Route
+                    path="menus-management"
+                    element={<MenusManagement />}
+                  />
+
                   <Route
                     path="revenue-by-period"
                     element={<RevenueByPeriod />}
@@ -204,6 +220,10 @@ const App = () => {
                   <Route path="product-editor" element={<ProductEditor />} />
                   <Route path="attribute-editor" element={<NewAttribute />} />
                   <Route path="product-editor/:id" element={<ProductEdit />} />
+                  <Route
+                    path="product-detail/:id"
+                    element={<ProductDetail />}
+                  />
 
                   <Route path="banners" element={<Banners />} />
                   <Route path="orders" element={<Orders />} />

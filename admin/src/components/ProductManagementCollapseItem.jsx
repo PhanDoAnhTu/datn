@@ -14,16 +14,16 @@ const ProductManagementCollapseItem = ({
   activeCollapse,
   handleCollapse,
 }) => {
-  const { stock } = product;
   const navigate = useNavigate();
 
   return (
     <div className="card">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Checkbox />
           <div className="flex items-center gap-2.5">
-            <h6 className="text-sm max-w-[150px] truncate">{product.label}</h6>
+            <h6 className="text-sm max-w-[150px] truncate">
+              {product.product_name}
+            </h6>
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -37,16 +37,12 @@ const ProductManagementCollapseItem = ({
             <i className="icon icon-caret-down-solid" />
           </button>
           <button
-            onClick={() =>
-              navigate(`/page-editor`, {
-                state: { record: product, title: `Page Edit` },
-              })
-            }
+            onClick={() => navigate(`/product-editor/${product._id}`)}
             aria-label="Edit"
           >
             <i className="icon icon-pen-to-square-regular" />
           </button>
-          <Actions record={product} table={"page"} />
+          <Actions record={product} table={"product"} />
         </div>
       </div>
       <Collapse in={activeCollapse === product.id}>
@@ -55,51 +51,53 @@ const ProductManagementCollapseItem = ({
             <tr>
               <td colSpan={2}>
                 <div className="flex gap-2.5">
-                  <h6 className="text-sm max-w-[155px]">{product.label}</h6>
+                  <h6 className="text-sm max-w-[155px]">
+                    {product.product_name}
+                  </h6>
                 </div>
               </td>
             </tr>
             <tr>
-              <td colSpan={2}>ID: {product.id}</td>
+              <td colSpan={2}>ID: {product._id}</td>
             </tr>
             <tr>
-              <td colSpan={2}>Path to: {product.path}</td>
+              <td colSpan={2}>Số lượng kho: {product.product_quantity}</td>
             </tr>
             <tr>
               <td colSpan={2}>
-                Date added:{" "}
-                {product.dateAdded &&
-                dayjs(product.dateAdded).format("hh:mm DD/MM/YYYY")
-                  ? dayjs().diff(dayjs(product.dateAdded), "minute") < 60
+                Ngày tạo:{" "}
+                {product.createdAt &&
+                dayjs(product.createdAt).format("hh:mm DD/MM/YYYY")
+                  ? dayjs().diff(dayjs(product.createdAt), "minute") < 60
                     ? `${dayjs().diff(
-                        dayjs(product.dateAdded),
+                        dayjs(product.createdAt),
                         "minute"
                       )} Minutes ago`
-                    : dayjs().diff(dayjs(product.dateAdded), "hour") < 24
+                    : dayjs().diff(dayjs(product.createdAt), "hour") < 24
                     ? `${dayjs().diff(
-                        dayjs(product.dateAdded),
+                        dayjs(product.createdAt),
                         "hour"
                       )} Hours ago`
-                    : dayjs(product.dateAdded).format("hh:mmA DD/MM/YYYY")
+                    : dayjs(product.createdAt).format("hh:mmA DD/MM/YYYY")
                   : ""}
               </td>
             </tr>
             <tr>
               <td colSpan={2}>
-                Date modified:{" "}
-                {product.dateModified &&
-                dayjs(product.dateModified).format("hh:mm DD/MM/YYYY")
-                  ? dayjs().diff(dayjs(product.dateModified), "minute") < 60
+                Ngày chỉnh sửa:{" "}
+                {product.updatedAt &&
+                dayjs(product.updatedAt).format("hh:mm DD/MM/YYYY")
+                  ? dayjs().diff(dayjs(product.updatedAt), "minute") < 60
                     ? `${dayjs().diff(
-                        dayjs(product.dateModified),
+                        dayjs(product.updatedAt),
                         "minute"
-                      )} Minutes ago`
-                    : dayjs().diff(dayjs(product.dateModified), "hour") < 24
+                      )} phút trước`
+                    : dayjs().diff(dayjs(product.updatedAt), "hour") < 24
                     ? `${dayjs().diff(
-                        dayjs(product.dateModified),
+                        dayjs(product.updatedAt),
                         "hour"
-                      )} Hours ago`
-                    : dayjs(product.dateModified).format("hh:mmA DD/MM/YYYY")
+                      )} giờ trước`
+                    : dayjs(product.updatedAt).format("hh:mmA DD/MM/YYYY")
                   : ""}
               </td>
             </tr>

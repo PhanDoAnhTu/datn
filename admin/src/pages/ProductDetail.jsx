@@ -5,7 +5,7 @@ import DetailProduct from "@widgets/DetailProduct";
 const ProductDetail = () => {
   return (
     <>
-      <PageHeader title="Product Detail" />
+      <PageHeader title="Chỉnh sửa sản phẩm" />
       <DetailProduct />
     </>
   );

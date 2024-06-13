@@ -1,14 +1,14 @@
 // components
 import PageHeader from "@layout/PageHeader";
-import PageEditor from "@widgets/PageEditor";
+import PageEditt from "@widgets/PageEditt";
 import { useLocation } from "react-router-dom";
 
-const EditPage = () => {
+const PageEdit = () => {
   const location = useLocation();
   return (
     <>
-      <PageHeader title="Tạo trang đơn" />
-      <PageEditor
+      <PageHeader title="Chỉnh sửa trang đơn" />
+      <PageEditt
         item={location.state ? location.state.record : ""}
         title={location.state ? location.state.title : ""}
       />
@@ -16,4 +16,4 @@ const EditPage = () => {
   );
 };
 
-export default EditPage;
+export default PageEdit;

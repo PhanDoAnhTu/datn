@@ -38,6 +38,12 @@ export default function NewDetail() {
                     <div className="flex h-full w-full justify-start text-wrap text-lg font-extrabold tracking-wide text-white  md:text-3xl lg:text-4xl">
                         {current_post?.post.post_name}
                     </div>
+                    <div className="md:text-md flex h-full w-full justify-start text-wrap text-sm font-extrabold tracking-wide text-white">
+                        Ngày đăng:{' '}
+                        {moment(current_post?.post.createdAt)
+                            .locale('vi')
+                            .format('DD MMMM YYYY')}
+                    </div>
                 </div>
 
                 <div className="p-2 text-justify leading-7 tracking-wide text-zinc-200 md:p-5">

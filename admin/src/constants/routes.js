@@ -16,8 +16,13 @@ const ROUTES = [
     icon: "bars-solid",
     links: [
       { name: "Quản lý danh mục", path: "/categories-management" },
-      { name: "Quản lý trang", path: "/pages-management" },
+      { name: "Quản lý menu", path: "/menus-management" },
     ],
+  },
+  {
+    name: "Trang đơn",
+    icon: "list-check-solid",
+    path: "/pages-management",
   },
   {
     name: "Marketing",
@@ -47,10 +52,7 @@ const ROUTES = [
   {
     name: "Sản phẩm",
     icon: "boxes-stacked-regular",
-    links: [
-      { name: "Products Grid", path: "/products-grid" },
-      { name: "Quản lý sản phẩm", path: "/products-management" },
-    ],
+    path: "/products-management",
   },
   {
     name: "Đơn hàng",
@@ -62,18 +64,11 @@ const ROUTES = [
     icon: "envelope-solid",
     path: "/support",
   },
-
-  {
-    name: "Reviews",
-    icon: "star-half-stroke-solid",
-    path: "/reviews",
-  },
   {
     name: "Customers",
     icon: "chart-user-regular",
     path: "/customers",
   },
-
   {
     name: "Pages",
     icon: "layer-group-regular",

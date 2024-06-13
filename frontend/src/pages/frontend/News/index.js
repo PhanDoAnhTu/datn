@@ -219,7 +219,9 @@ export default function News() {
                                                   />
                                                   <div className="z-10 flex items-center gap-x-4 text-xs">
                                                       <time className="text-gray-500 dark:text-stone-300">
-                                                          {moment()
+                                                          {moment(
+                                                              item.createdAt
+                                                          )
                                                               .locale('vi')
                                                               .format(
                                                                   'DD MMMM YYYY'

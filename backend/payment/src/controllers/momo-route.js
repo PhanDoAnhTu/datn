@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
   var partnerCode = "MOMO";
   var redirectUrl = "http://localhost:3000/kiem-tra-thanh-toan";
   var ipnUrl =
-    "https://abc4-112-197-100-135.ngrok-free.app/api/payment/momo/callback";
+    "https://7bd6-112-197-100-135.ngrok-free.app/api/payment/momo/callback";
   var requestType = "payWithMethod";
   var orderExpireTime = 5;
   var orderId = partnerCode + new Date().getTime();

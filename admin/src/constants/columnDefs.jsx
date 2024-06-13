@@ -871,6 +871,60 @@ export const CONTACTS_MANAGEMENT_COLUMN_DEFS = [
 
 export const PAGES_MANAGEMENT_COLUMN_DEFS = [
   {
+    title: "Tiêu đề",
+    dataIndex: "label",
+    render: (label) => (
+      <span className="inline-block h6 !text-sm max-w-[150px]">{label}</span>
+    ),
+  },
+  {
+    title: "Ngày tạo",
+    dataIndex: "dateAdded",
+    render: (date) => (
+      <div>
+        <span className="font-bold text-header">
+          {date && dayjs(date).format("DD/MM/YYYY")}
+        </span>
+      </div>
+    ),
+    responsive: ["lg"],
+  },
+  {
+    title: "Ngày chỉnh sửa",
+    dataIndex: "dateModified",
+    render: (date) => (
+      <div>
+        <span className="font-bold text-header">
+          {date && dayjs(date).format("hh:mm DD/MM/YYYY")
+            ? dayjs().diff(dayjs(date), "minute") < 60
+              ? `${dayjs().diff(dayjs(date), "minute")} Minutes ago`
+              : dayjs().diff(dayjs(date), "hour") < 24
+              ? `${dayjs().diff(dayjs(date), "hour")} Hours ago`
+              : dayjs(date).format("hh:mmA DD/MM/YYYY")
+            : ""}
+        </span>
+      </div>
+    ),
+    responsive: ["lg"],
+  },
+  {
+    title: "Chức năng",
+    dataIndex: "page",
+    render: (text, record) => (
+      <div className="flex items-center justify-end gap-11">
+        <EditBtn
+          link={`/page-editor/${record._id}`}
+          record={record}
+          title={"Page Edit"}
+        />
+        <Actions record={record} table={"page"} />
+      </div>
+    ),
+  },
+];
+
+export const MENUS_MANAGEMENT_COLUMN_DEFS = [
+  {
     title: "Tên",
     dataIndex: "label",
     render: (label) => (
@@ -916,11 +970,15 @@ export const PAGES_MANAGEMENT_COLUMN_DEFS = [
   },
   {
     title: "Chức năng",
-    dataIndex: "page",
+    dataIndex: "menu",
     render: (text, record) => (
       <div className="flex items-center justify-end gap-11">
-        <EditBtn link={"/page-editor"} record={record} title={"Page Edit"} />
-        <Actions record={record} table={"page"} />
+        <EditBtn
+          link={"/menu-editor/" + record._id}
+          record={record}
+          title={"Page Edit"}
+        />
+        <Actions record={record} table={"menu"} />
       </div>
     ),
   },

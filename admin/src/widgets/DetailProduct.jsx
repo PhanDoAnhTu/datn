@@ -9,7 +9,6 @@ import MediaDropPlaceholder from "@ui/MediaDropPlaceholder";
 import { useForm, Controller } from "react-hook-form";
 
 // constants
-import { PRODUCT_CATEGORIES, UNITS_OPTIONS } from "@constants/options";
 
 // utils
 import classNames from "classnames";
@@ -17,28 +16,68 @@ import { useEffect, useState } from "react";
 import { Divider, Empty } from "antd";
 import StyledTable from "./productEditorStyle";
 import { capitalize } from "@mui/material";
+import MultipleSelect from "@ui/MultipleSelect";
+import { useDispatch } from "react-redux";
+import {
+  findAllAttribute,
+  findAllBrand,
+  findAllCategory,
+} from "../store/actions";
 
 const DetailProduct = ({ item }) => {
-  const categories = PRODUCT_CATEGORIES.filter(
-    (category) => category.value !== "all"
-  );
+  const dispact = useDispatch();
+  const [attributes_management, setAttributes_management] = useState([]);
+  const [categories_management, seCategories_management] = useState([]);
+  const [brand_management, setBrand_management] = useState([]);
+  const [brand_options, setBrand_options] = useState([]);
 
-  const [isVariation, setIsVariation] = useState(false);
-  const [defaultValues, setDefaultValues] = useState({
-    image1: "",
-    image2: "",
-    image3: "",
-    image4: "",
+  const fetchCategoriesOnloadPage = async () => {
+    const repoCat = await dispact(findAllCategory({ isPublished: true }));
+    console.log("repoCat", repoCat);
+    seCategories_management(repoCat?.payload?.metaData);
+  };
+  const fetchBrandOnloadPage = async () => {
+    const repoBrand = await dispact(findAllBrand({ isPublished: true }));
+    console.log("repoBrand", repoBrand);
+    setBrand_management(repoBrand?.payload?.metaData);
+  };
+  const fetchAttributeOnloadPage = async () => {
+    const repoAttribute = await dispact(
+      findAllAttribute({ isPublished: true })
+    );
+    console.log("repoAttribute", repoAttribute);
+    setAttributes_management(repoAttribute?.payload?.metaData);
+  };
+
+  useEffect(() => {
+    setBrand_options(
+      brand_management.map((brand) => {
+        return { label: brand.brand_name, value: brand._id };
+      })
+    );
+  }, [brand_management]);
+
+  console.log("brand_options", brand_management);
+
+  useEffect(() => {
+    fetchCategoriesOnloadPage();
+    fetchBrandOnloadPage();
+    fetchAttributeOnloadPage();
+  }, []);
+
+  //-----DECLARE DEFAULT VALUES
+  const defaultValues = {
     weight: 0.1,
     description: "",
     productName: "",
-    brandName: "Pineapple",
-    category: categories[0],
+    brandName: "",
+    product_category: [],
     regularPrice: 0,
-    stock: 0,
-    unit: UNITS_OPTIONS[0],
-  });
-
+    product_quantity: 1,
+    unit: "",
+    product_attributes: [],
+  };
+  console.log("defaultValues", defaultValues);
   const defaultVariationTables = [
     {
       id: -1,
@@ -62,7 +101,7 @@ const DetailProduct = ({ item }) => {
     },
     {
       id: 20,
-      title: "Price",
+      title: "Giá",
       dataIndex: "sku_price",
       width: 150,
       render: (sku_price, record) => {
@@ -87,14 +126,14 @@ const DetailProduct = ({ item }) => {
     },
     {
       id: 30,
-      title: "Stock",
+      title: "Số lượng",
       dataIndex: "sku_stock",
       width: 150,
       render: (sku_stock, record) => (
         <div className="flex flex-col">
           <div className="field-wrapper">
             <input
-              className={classNames("field-input focus:text-left text-center")}
+              className={"field-input focus:text-left text-center"}
               type="text"
               value={sku_stock}
               onChange={(e) =>
@@ -107,6 +146,7 @@ const DetailProduct = ({ item }) => {
       ),
     },
   ];
+
   const defaultVariation = [
     {
       id: 1,
@@ -122,15 +162,85 @@ const DetailProduct = ({ item }) => {
     },
   ];
 
+  //-----/DECLARE DEFAULT VALUES
+
+  //------------DECLARE USESTATE FOR INPUTS
+  const [categories, setCategories] = useState([]);
+  const [isVariation, setIsVariation] = useState(false);
+
   const [variationTables, setVariationTables] = useState(
     defaultVariationTables
   );
-
-  const [variations, setVariations] = useState(defaultVariation);
+  const [variations, setVariations] = useState([]);
   const [sKUList, setSKUList] = useState([]);
-  //Handle Remove/Add variation
+  //-----------/DECLARE USESTATE FOR INPUTS
 
-  const addInput = () => {
+  //------GET AND SET CATEGORIES IN FIRST LOAD
+  useEffect(() => {
+    const topLevelCategories = categories_management
+      .filter((item) => item.parent_id === null)
+      .map((item) => ({
+        value: item._id,
+        label: item.category_name,
+      }));
+
+    setCategories(topLevelCategories);
+  }, [categories_management]);
+
+  const handleToggleIsVariation = () => {
+    setIsVariation(true);
+    setVariations(defaultVariation);
+  };
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    defaultValues: defaultValues,
+  });
+
+  const categoriesWatch = watch("product_category");
+  const quantity = watch("product_quantity");
+
+  //---------------------------CATEGORIES----------------------------//
+
+  useEffect(() => {
+    if (categoriesWatch.length === 0) {
+      const updatedCategories = categories_management
+        .filter((item) => item.parent_id === null)
+        .map((item) => ({
+          value: item._id,
+          label: item.category_name,
+        }));
+
+      setCategories(updatedCategories);
+    }
+  }, [categoriesWatch]);
+
+  const handleCategoriesSelected = (selectedOption) => {
+    const selectedValue = selectedOption[selectedOption.length - 1]?.value;
+
+    const filteredOptions = categories_management.filter(
+      (category) => category.parent_id === selectedValue
+    );
+
+    const updatedCategories = filteredOptions.map((item) => ({
+      value: item._id,
+      label: item.category_name,
+    }));
+
+    setCategories(updatedCategories);
+  };
+
+  //---------------------------/CATEGORIES----------------------------//
+
+  //---------------------------VARIATION----------------------------//
+  //Handle Remove/Add variation
+  const addNewVariation = () => {
     setVariations((prevState) => [
       ...prevState,
       {
@@ -148,87 +258,86 @@ const DetailProduct = ({ item }) => {
     ]);
   };
 
-  const removeInput = (variantID) => {
+  const removeVariation = (variantID) => {
     setVariations((s) => {
-      const newArr = s.slice().filter((item) => item.id !== variantID);
-
-      const renumberedArr = newArr.map((item, index) => ({
-        ...item,
-        id: index + 1,
-      }));
-      return renumberedArr;
+      return s
+        .filter((item) => item.id !== variantID)
+        .map((item, index) => ({ ...item, id: index + 1 }));
     });
-    setVariationTables((s) => {
-      const newArr = s.slice().filter((item) => item.id !== variantID);
-      return newArr;
-    });
-
-    console.log(variations);
   };
 
-  const handleChange = (e, variationName, variationID) => {
+  const handleVariationChange = (e, variationName, variationID) => {
     e.preventDefault();
-
     setVariations((s) => {
-      const index = s.slice().findIndex((item) => item.id === variationID);
-      const newArr = s.slice();
-
-      newArr[index].variationName = variationName;
-
-      return newArr;
+      return s.map((item) => {
+        if (item.id === variationID) {
+          return { ...item, variationName };
+        }
+        return item;
+      });
     });
   };
 
   //Handle remove/add Option
-  const addOptionInput = (variantID) => {
+  const addVariationOption = (variantID) => {
     setVariations((s) => {
-      const index = s.slice().findIndex((item) => item.id === variantID);
-      const newArr = s.slice();
-
-      newArr[index].options.push({
-        id: newArr[index].options.length + 1,
-        type: "text",
-        value: "",
+      return s.map((item) => {
+        if (item.id === variantID) {
+          return {
+            ...item,
+            options: [
+              ...item.options,
+              {
+                id: item.options.length + 1,
+                type: "text",
+                value: "",
+              },
+            ],
+          };
+        }
+        return item;
       });
-
-      return newArr;
     });
   };
 
-  const handleRemoveOption = (optionID, variantID) => {
+  const removeVariationOption = (optionID, variantID) => {
     setVariations((s) => {
-      const index = s.slice().findIndex((item) => item.id === variantID);
-      const newArr = s.slice();
-      const filteredOptions = newArr[index].options
-        .slice()
-        .filter((item) => item.id !== optionID);
-      const renumberedArr = filteredOptions.map((item, index) => ({
-        ...item,
-        id: index + 1,
-      }));
-
-      newArr[index].options = renumberedArr;
-
-      return newArr;
+      return s.map((item) => {
+        if (item.id === variantID) {
+          return {
+            ...item,
+            options: item.options
+              .filter((opt) => opt.id !== optionID)
+              .map((opt, index) => ({ ...opt, id: index + 1 })),
+          };
+        }
+        return item;
+      });
     });
   };
 
   const handleOptionChange = (e, optionID, optionValue, variantID) => {
     e.preventDefault();
     setVariations((s) => {
-      const index = s.slice().findIndex((item) => item.id === variantID);
-      const newArr = s.slice();
-      const optionIndex = newArr[index].options
-        .slice()
-        .findIndex((item) => item.id === optionID);
-
-      newArr[index].options[optionIndex].value = optionValue;
-
-      return newArr;
+      return s.map((item) => {
+        if (item.id === variantID) {
+          return {
+            ...item,
+            options: item.options.map((optionItem) => {
+              if (optionItem.id === optionID) {
+                return { ...optionItem, value: optionValue };
+              }
+              return optionItem;
+            }),
+          };
+        }
+        return item;
+      });
     });
-    console.log(variations);
   };
+  //---------------------------/VARIATION----------------------------//
 
+  //---------------------------SKULIST----------------------------//
   //Update SKUList base on variation
   useEffect(() => {
     const updateSKUList = () => {
@@ -237,73 +346,28 @@ const DetailProduct = ({ item }) => {
         (accumulator, currentValue) => accumulator * currentValue,
         1
       ); // Calculate the total number of combinations
-
       const newSKUList = [];
       for (let i = 0; i < totalLength; i++) {
         let temp = i;
-        const sku_tier_idx = variations.map((variation, index) => {
+        const sku_tier_idx = variations.map((variation) => {
           const options = variation.options;
           const optionIndex = temp % options.length; // Get the index of the option for the current variation
           temp = Math.floor(temp / options.length); // Update temp for the next iteration
-          return options[optionIndex].id; // Get the ID of the selected option
+          return optionIndex; // Get the ID of the selected option
         });
 
         newSKUList.push({
           sku_tier_idx,
           sku_price: "",
           sku_stock: "",
-          public_id: "",
-          image: null, // Increment stock for demonstration
+          image: null, // Increment product_quantity for demonstration
         });
-        newSKUList.sort((a, b) =>
-          a.sku_tier_idx[0] > b.sku_tier_idx[0] ? 1 : -1
-        );
+        newSKUList.sort((a, b) => (a.sku_tier_idx > b.sku_tier_idx ? 1 : -1));
       }
       setSKUList(newSKUList);
+      console.log(newSKUList);
     };
 
-    updateSKUList();
-  }, [variations]);
-
-  //SKU_stock, SKU_price, image handle if a user put something in input
-  const handleSKUPriceChange = (sku_tier_idx, value) => {
-    setSKUList((s) => {
-      const index = s.findIndex(
-        (item) =>
-          JSON.stringify(item.sku_tier_idx) === JSON.stringify(sku_tier_idx)
-      );
-      const newSKU = s.slice();
-      newSKU[index].sku_price = value;
-
-      return newSKU;
-    });
-  };
-  const handleSKUStockChange = (sku_tier_idx, value) => {
-    setSKUList((s) => {
-      const index = s.findIndex(
-        (item) =>
-          JSON.stringify(item.sku_tier_idx) === JSON.stringify(sku_tier_idx)
-      );
-      const newSKU = s.slice();
-      newSKU[index].sku_stock = value;
-      return newSKU;
-    });
-  };
-  const handleImageChange = (sku_tier_idx, value) => {
-    setSKUList((s) => {
-      const index = s.findIndex(
-        (item) =>
-          JSON.stringify(item.sku_tier_idx) === JSON.stringify(sku_tier_idx)
-      );
-      const newSKU = s.slice();
-      newSKU[index].image = value;
-      console.log(newSKU);
-      return newSKU;
-    });
-  };
-
-  //This will update table header when variation (variations) change
-  useEffect(() => {
     const updatedVariationTables = () => {
       setVariationTables(() => {
         const s = defaultVariationTables?.slice();
@@ -318,14 +382,12 @@ const DetailProduct = ({ item }) => {
               render: (sku_tier_idx) => (
                 <div className="flex flex-col text-center">
                   {item.id === 1
-                    ? variations
-                        .find((item1) => item1.id === item.id)
-                        .options.find((item2) => item2.id === sku_tier_idx[0])
-                        ?.value
-                    : variations
-                        .find((item1) => item1.id === item.id)
-                        .options.find((item2) => item2.id === sku_tier_idx[1])
-                        ?.value}
+                    ? variations.find((item1) => item1.id === item.id).options[
+                        sku_tier_idx[0]
+                      ]?.value
+                    : variations.find((item1) => item1.id === item.id).options[
+                        sku_tier_idx[1]
+                      ]?.value}
                 </div>
               ),
             });
@@ -339,14 +401,12 @@ const DetailProduct = ({ item }) => {
               render: (sku_tier_idx) => (
                 <div className="flex flex-col text-center">
                   {item.id === 1
-                    ? variations
-                        .find((item1) => item1.id === item.id)
-                        .options.find((item2) => item2.id === sku_tier_idx[0])
-                        .value
-                    : variations
-                        .find((item1) => item1.id === item.id)
-                        .options.find((item2) => item2.id === sku_tier_idx[1])
-                        .value}
+                    ? variations.find((item1) => item1.id === item.id).options[
+                        sku_tier_idx[0]
+                      ].value
+                    : variations.find((item1) => item1.id === item.id).options[
+                        sku_tier_idx[1]
+                      ].value}
                 </div>
               ),
             };
@@ -355,18 +415,70 @@ const DetailProduct = ({ item }) => {
         return s;
       });
     };
-    updatedVariationTables();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variations]);
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm({
-    defaultValues: defaultValues,
-  });
+    updateSKUList();
+    updatedVariationTables();
+  }, [variations]);
+  //SKU_stock, SKU_price, image handle if a user put something in input
+  const handleSKUPriceChange = (sku_tier_idx, value) => {
+    setSKUList((s) => {
+      return s.map((item) => {
+        if (
+          item.sku_tier_idx[0] === sku_tier_idx[0] &&
+          item.sku_tier_idx[1] === sku_tier_idx[1]
+        ) {
+          return { ...item, sku_price: value };
+        }
+        return item;
+      });
+    });
+  };
+
+  const handleSKUStockChange = (sku_tier_idx, value) => {
+    setSKUList((s) => {
+      return s.map((item) => {
+        if (
+          item.sku_tier_idx[0] === sku_tier_idx[0] &&
+          item.sku_tier_idx[1] === sku_tier_idx[1]
+        ) {
+          return { ...item, sku_stock: value };
+        }
+        return item;
+      });
+    });
+  };
+
+  const handleImageChange = (sku_tier_idx, value) => {
+    setSKUList((s) => {
+      return s.map((item) => {
+        if (
+          item.sku_tier_idx[0] === sku_tier_idx[0] &&
+          item.sku_tier_idx[1] === sku_tier_idx[1]
+        ) {
+          return { ...item, image: value };
+        }
+        return item;
+      });
+    });
+  };
+  //---------------------------/SKULIST----------------------------//
+
+  //This will update table header when variation (variations) change
+
+  useEffect(() => {
+    const setStock = () => {
+      let totalStock = 0;
+      for (const sku of sKUList) {
+        if (sku.sku_stock) {
+          totalStock += parseInt(sku.sku_stock);
+        }
+      }
+      return totalStock;
+    };
+    const test = setStock();
+    setValue("product_quantity", test);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sKUList]);
 
   // do something with the data
   const handlePublish = (data) => {
@@ -375,78 +487,158 @@ const DetailProduct = ({ item }) => {
   };
 
   // do something with the data
-  const handleSave = (data) => {
-    console.log(data);
+  console.log(sKUList, "variations");
+
+  const handleSave = async (data) => {
+    console.log("data", data);
+
+    // let list_images_product = {
+    //   url_thumb: [],
+    //   convert_sku_list: []
+
+    // }
+
+    // if (sKUList.length > 0) {
+    //   const list_image = new FormData();
+    //   sKUList.forEach((item) => {
+    //     if (item.image != null) {
+    //       list_image.append("files", item.image[0]);
+    //       list_image.append("sku_list", item.sku_tier_idx);
+    //     }
+    //   });
+    //   list_image.append("folderName", "outrunner/products");
+    //   const list_url_thumb = await dispact(upLoadProductImageList(list_image));
+    //   list_images_product.convert_sku_list = list_url_thumb &&
+    //     await sKUList?.map((sku) => {
+    //       const skuImageFound = list_url_thumb?.payload?.metaData?.find((url_thumb) => sku.sku_tier_idx.toString() === url_thumb.sku_tier_idx)
+    //       if (skuImageFound) {
+    //         const { image, ...skuNoImage } = sku
+    //         return { ...skuNoImage, thumb_url: skuImageFound?.thumb_url, public_id: skuImageFound?.public_id }
+    //       } else {
+    //         const { image, ...skuNoImage } = sku
+    //         return { ...skuNoImage, thumb_url: null, public_id: null }
+    //       }
+    //     })
+
+    // }
+
+    // if (product_images.length > 0) {
+    //   const image_array = new FormData();
+    //   product_images.sort((a, b) => a.indexNumber - b.indexNumber).forEach((item) => {
+    //     if (item.file) {
+    //       image_array.append("files", item.file[0]);
+    //     }
+    //   });
+    //   image_array.append("folderName", "outrunner/products");
+
+    //   list_images_product.url_thumb = await dispact(upLoadImageArray(image_array));
+
+    // }
+
+    // list_url_thumb && createSpu({
+    //   product_name: data.productName,
+    //   isPublished: false,
+    //   isDraft: true,
+    //   product_thumb:list_images_product.url_thumb,
+    //   product_description: data.description,
+    //   product_price: data.regularPrice,
+    //   product_quantity: data.product_quantity,
+    //   product_brand: "663fc259d1665c7e45e8401c",
+    //   product_category: [
+    //     "663f9d30220d580c7b4cbc9e",
+    //     "663f9e62220d580c7b4cbca8",
+    //     "663f9e9c220d580c7b4cbcaa",
+    //   ],
+    //   product_attributes: [
+    //     {
+    //       attribute_id: "663f6b4a6e6cc6596ecc0161",
+    //       attribute_value: [
+    //         {
+    //           value_id: "663f6b4a6e6cc6596ecc0164",
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       attribute_id: "663f53a1855e11df5b6b0696",
+    //       attribute_value: [
+    //         {
+    //           value_id: "663f53a1855e11df5b6b069a",
+    //         },
+    //       ],
+    //     },
+    //   ],
+    //   product_variations: [
+    //     {
+    //       images: [],
+    //       name: "color",
+    //       options: ["Blue", "Red"],
+    //     },
+    //     {
+    //       images: [],
+    //       name: "size",
+    //       options: ["S", "M", "L"],
+    //     },
+    //   ],
+    //   sku_list:list_images_product.convert_sku_list
+    // });
     toast.info("Product saved successfully");
   };
-
+  const [product_images, set_product_images] = useState([]);
+  const addProductImage = (value, indexNumber) => {
+    if (product_images.length === 0) {
+      set_product_images([{ file: value, indexNumber: indexNumber }]);
+    } else {
+      set_product_images((s) => {
+        if (s.some((item) => item.indexNumber === indexNumber) === true) {
+          return s.map((image) => {
+            if (image.indexNumber === indexNumber) {
+              image.file = value;
+              return image;
+            }
+            return image;
+          });
+        }
+        return [...s, { file: value, indexNumber: indexNumber }];
+      });
+    }
+  };
+  console.log(
+    "product_images",
+    product_images.sort((a, b) => a.indexNumber - b.indexNumber)
+  );
   return (
     <Spring className="card flex-1 xl:py-10">
-      <h5 className="mb-[15px]">Edit a product</h5>
       <div className="grid grid-cols-1 items-start gap-5 xl:gap-10">
-        <div>
-          <div>
-            <span className="block field-label mb-2.5">Product Images</span>
-            <div className="grid grid-cols-2 gap-5 md:grid-cols-4 2xl:grid-cols-8">
-              <Controller
-                name="image1"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <DropFiles
-                    wrapperClass="media-dropzone 2xl:col-span-2 aspect-w-1 aspect-h-1"
-                    onChange={(files) => field.onChange(files)}
-                  >
-                    <MediaDropPlaceholder />
-                  </DropFiles>
-                )}
-              />
-              <Controller
-                name="image2"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <DropFiles
-                    wrapperClass="media-dropzone 2xl:col-span-2 aspect-w-1 aspect-h-1"
-                    onChange={(files) => field.onChange(files)}
-                  >
-                    <MediaDropPlaceholder />
-                  </DropFiles>
-                )}
-              />
-              <Controller
-                name="image3"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <DropFiles
-                    wrapperClass="media-dropzone 2xl:col-span-2 aspect-w-1 aspect-h-1"
-                    onChange={(files) => field.onChange(files)}
-                  >
-                    <MediaDropPlaceholder />
-                  </DropFiles>
-                )}
-              />
-              <Controller
-                name="image4"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <DropFiles
-                    wrapperClass="media-dropzone 2xl:col-span-2 aspect-w-1 aspect-h-1"
-                    onChange={(files) => field.onChange(files)}
-                  >
-                    <MediaDropPlaceholder />
-                  </DropFiles>
-                )}
-              />
-            </div>
-          </div>
-        </div>
         <div className="grid grid-cols-1 gap-y-4 gap-x-2">
+          <div className="md:w-full xl:h-[140px] md:h-[80px] h-[50px] w-[50px] flex items-center justify-center pr-2">
+            <DropFiles
+              wrapperClass="media-dropzone w-full h-full text-center"
+              onChange={(e) => addProductImage(e, 1)}
+            >
+              <MediaDropPlaceholder />
+            </DropFiles>
+            <DropFiles
+              wrapperClass="media-dropzone w-full h-full text-center"
+              onChange={(e) => addProductImage(e, 2)}
+            >
+              <MediaDropPlaceholder />
+            </DropFiles>
+            <DropFiles
+              wrapperClass="media-dropzone w-full h-full text-center"
+              onChange={(e) => addProductImage(e, 3)}
+            >
+              <MediaDropPlaceholder />
+            </DropFiles>
+            <DropFiles
+              wrapperClass="media-dropzone w-full h-full text-center"
+              onChange={(e) => addProductImage(e, 4)}
+            >
+              <MediaDropPlaceholder />
+            </DropFiles>
+          </div>
           <div className="field-wrapper">
-            <label className="field-label" htmlFor="productName">
-              Product Name
+            <label className="field-label " htmlFor="productName">
+              Tên sản phẩm
             </label>
             <input
               className={classNames("field-input", {
@@ -454,13 +646,13 @@ const DetailProduct = ({ item }) => {
               })}
               id="productName"
               defaultValue={defaultValues.productName}
-              placeholder="Enter product name"
+              placeholder="VD: Iphone 14 pro max, Kanken bag 15',..."
               {...register("productName", { required: true })}
             />
           </div>
           <div className="field-wrapper">
             <label className="field-label" htmlFor="description">
-              Description
+              Mô tả sản phẩm
             </label>
             <textarea
               className={classNames(
@@ -468,6 +660,7 @@ const DetailProduct = ({ item }) => {
                 { "field-input--error": errors.description }
               )}
               id="description"
+              placeholder="Nhập mô tả sản phẩm"
               defaultValue={defaultValues.description}
               {...register("description", { required: true })}
             />
@@ -475,7 +668,7 @@ const DetailProduct = ({ item }) => {
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
             <div className="field-wrapper">
               <label className="field-label" htmlFor="brandName">
-                Brand
+                Thương hiệu
               </label>
               <Controller
                 name="brandName"
@@ -486,8 +679,8 @@ const DetailProduct = ({ item }) => {
                   <Select
                     isInvalid={errors.brandName}
                     id="brandName"
-                    placeholder="Select brand"
-                    options={categories}
+                    placeholder="Chọn thương hiệu"
+                    options={brand_options}
                     value={field.value}
                     onChange={(value) => field.onChange(value)}
                   />
@@ -495,22 +688,26 @@ const DetailProduct = ({ item }) => {
               />
             </div>
             <div className="field-wrapper">
-              <label className="field-label" htmlFor="category">
-                Category
+              <label className="field-label" htmlFor="product_category">
+                Danh mục
               </label>
               <Controller
-                name="category"
+                name="product_category"
                 control={control}
-                defaultValue={defaultValues.category}
+                defaultValue={defaultValues.product_category}
                 rules={{ required: true }}
                 render={({ field }) => (
-                  <Select
-                    isInvalid={errors.category}
-                    id="category"
-                    placeholder="Select category"
+                  <MultipleSelect
+                    isInvalid={errors.product_category}
+                    id="product_category"
+                    isSearchable={true}
+                    placeholder="Chọn danh mục"
                     options={categories}
                     value={field.value}
-                    onChange={(value) => field.onChange(value)}
+                    onChange={(value) => {
+                      field.onChange(value);
+                      handleCategoriesSelected(value);
+                    }}
                   />
                 )}
               />
@@ -520,7 +717,7 @@ const DetailProduct = ({ item }) => {
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
             <div className="field-wrapper">
               <label className="field-label" htmlFor="weight">
-                Weight, kg
+                Cân nặng (kg)
               </label>
               <input
                 className={classNames("field-input", {
@@ -528,7 +725,7 @@ const DetailProduct = ({ item }) => {
                 })}
                 id="weight"
                 defaultValue={defaultValues.weight}
-                placeholder="Product weight"
+                placeholder="Cân nặng sản phẩm (kg)"
                 {...register("weight", {
                   required: true,
                   pattern: /^\d+(\.\d{1,2})?$/,
@@ -536,33 +733,26 @@ const DetailProduct = ({ item }) => {
               />
             </div>
             <div className="field-wrapper">
-              <label className="field-label" htmlFor="unit">
-                Unit
+              <label className="field-label" htmlFor="weight">
+                Đơn vị
               </label>
-              <Controller
-                name="unit"
-                control={control}
+              <input
+                className={classNames("field-input", {
+                  "field-input--error": errors.unit,
+                })}
+                id="unit"
                 defaultValue={defaultValues.unit}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <Select
-                    isInvalid={errors.unit}
-                    id="unit"
-                    placeholder="Pieces"
-                    options={UNITS_OPTIONS}
-                    onChange={(value) => {
-                      field.onChange(value);
-                    }}
-                    value={field.value}
-                  />
-                )}
+                placeholder="Đơn vị sản phẩm"
+                {...register("unit", {
+                  required: true,
+                })}
               />
             </div>
           </div>
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
             <div className="field-wrapper">
               <label className="field-label" htmlFor="regularPrice">
-                Regular Price
+                Giá thông thường
               </label>
               <input
                 className={classNames("field-input", {
@@ -570,7 +760,7 @@ const DetailProduct = ({ item }) => {
                 })}
                 id="regularPrice"
                 defaultValue={defaultValues.regularPrice}
-                placeholder="$99.99"
+                placeholder="100000, 200000,..."
                 {...register("regularPrice", {
                   required: true,
                   pattern: /^[0-9]*$/,
@@ -578,37 +768,73 @@ const DetailProduct = ({ item }) => {
               />
             </div>
             <div className="field-wrapper">
-              <label className="field-label" htmlFor="stock">
-                Stock
+              <label className="field-label" htmlFor="product_quantity">
+                Số lượng nhập
               </label>
               <input
                 className={classNames("field-input", {
-                  "field-input--error": errors.stock,
+                  "field-input--error": errors.product_quantity,
                 })}
-                id="stock"
-                defaultValue={defaultValues.stock}
+                id="product_quantity"
+                defaultValue={defaultValues.product_quantity}
                 disabled={isVariation}
-                placeholder="0"
-                {...register("salePrice", {
+                value={quantity}
+                placeholder="nhập số lượng sản phẩm"
+                {...register("product_quantity", {
                   required: true,
                   pattern: /^[0-9]*$/,
                 })}
               />
             </div>
           </div>
+          <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
+            {attributes_management.length > 0 &&
+              attributes_management.map((attribute, index) => {
+                const value_attribute_options = attribute.attribute_value.map(
+                  (value_attribute) => {
+                    return {
+                      label: value_attribute.attribute_value,
+                      value: value_attribute._id,
+                    };
+                  }
+                );
+                return (
+                  <div className="field-wrapper" key={index}>
+                    <label className="field-label" htmlFor="brandName">
+                      {attribute.attribute_name}
+                    </label>
+                    <Controller
+                      name="product_attributes"
+                      control={control}
+                      defaultValue={defaultValues.product_attributes}
+                      rules={{ required: true }}
+                      render={({ field }) => (
+                        <Select
+                          isInvalid={errors.brandName}
+                          id="product_attributes"
+                          placeholder={`Chọn ${attribute.attribute_name}`}
+                          options={value_attribute_options}
+                          value={field.value}
+                          onChange={(value) => field.onChange(value)}
+                        />
+                      )}
+                    />
+                  </div>
+                );
+              })}
+          </div>
+          <Divider />
+          <h4 className="text-center">Phân loại sản phẩm</h4>
           <div className="grid grid-cols-1 gap-y-4 gap-x-2">
-            <label className="field-label" htmlFor="variationBtn">
-              Variations
-            </label>
             <button
-              onClick={() => setIsVariation(true)}
+              onClick={handleToggleIsVariation}
               id="variationBtn"
               className={` ${
                 isVariation === false ? "btn--social btn block" : "hidden"
               }`}
             >
               <i className={`icon icon-circle-plus-regular`} />
-              <span>Enable Variations</span>
+              <span>Bật phân loại</span>
             </button>
             <div
               className={`${
@@ -622,10 +848,10 @@ const DetailProduct = ({ item }) => {
                     className={`card relative flex-1 xl:py-5`}
                   >
                     <div className="flex py-5">
-                      <h5>Variation {item.id}</h5>
+                      <h5>Nhóm phân loại {item.id}</h5>
                       {index !== 0 ? (
                         <button
-                          onClick={() => removeInput(item.id)}
+                          onClick={() => removeVariation(item.id)}
                           className="absolute right-4 top-3 text-red font-extrabold"
                         >
                           X
@@ -638,13 +864,13 @@ const DetailProduct = ({ item }) => {
                     <div className="grid grid-cols-1 gap-y-4 gap-x-2">
                       <div className="grid grid-cols-1 gap-y-4 gap-x-2">
                         <div className="field-wrapper">
-                          <span className="field-label">Variation Name</span>
+                          <span className="field-label">
+                            Tên nhóm phân loại
+                          </span>
                           <input
-                            className={classNames("field-input", {
-                              "field-input--error": errors.regularPrice,
-                            })}
+                            className={"field-input"}
                             onChange={(e) =>
-                              handleChange(e, e.target.value, item.id)
+                              handleVariationChange(e, e.target.value, item.id)
                             }
                             type={item.type}
                             value={item.variationName}
@@ -652,10 +878,13 @@ const DetailProduct = ({ item }) => {
                           />
                         </div>
                         <div className="field-wrapper">
-                          <span className="field-label">Options</span>
+                          <span className="field-label">Phân loại</span>
                           {item.options.map((subitem, index) => {
                             return (
-                              <div className="flex space-x-3 items-center">
+                              <div
+                                className="flex space-x-3 items-center"
+                                key={index}
+                              >
                                 <input
                                   className={classNames("field-input", {
                                     "field-input--error": errors.salePrice,
@@ -675,7 +904,7 @@ const DetailProduct = ({ item }) => {
                                 {index !== 0 ? (
                                   <button
                                     onClick={() =>
-                                      handleRemoveOption(subitem.id, item.id)
+                                      removeVariationOption(subitem.id, item.id)
                                     }
                                     className="btn btn--outline red"
                                   >
@@ -690,20 +919,20 @@ const DetailProduct = ({ item }) => {
                         </div>
                       </div>
                       <button
-                        onClick={() => addOptionInput(item.id)}
+                        onClick={() => addVariationOption(item.id)}
                         className={`btn--social btn`}
                       >
                         <i className={`icon icon-circle-plus-regular`} />
-                        <span>Add Option</span>
+                        <span>Thêm phân loại</span>
                       </button>
                     </div>
                   </Spring>
                 );
               })}
               {variations.length < 2 ? (
-                <button onClick={addInput} className={`btn--social btn`}>
+                <button onClick={addNewVariation} className={`btn--social btn`}>
                   <i className={`icon icon-circle-plus-regular`} />
-                  <span>Add Variation {variations.length + 1}</span>
+                  <span>Thêm nhóm phân loại {variations.length + 1}</span>
                 </button>
               ) : (
                 ""
@@ -717,6 +946,7 @@ const DetailProduct = ({ item }) => {
                 <StyledTable
                   columns={variationTables}
                   dataSource={sKUList}
+                  rowKey={(record) => record.sku_tier_idx}
                   locale={{
                     emptyText: <Empty text="No variations found" />,
                   }}
@@ -733,13 +963,13 @@ const DetailProduct = ({ item }) => {
               className="btn btn--secondary"
               onClick={handleSubmit(handleSave)}
             >
-              Save to Drafts
+              Lưu thành bản nháp
             </button>
             <button
               className="btn btn--primary"
               onClick={handleSubmit(handlePublish)}
             >
-              Publish Product
+              Xuất bản
             </button>
           </div>
         </div>
