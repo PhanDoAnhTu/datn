@@ -25,7 +25,7 @@ export default function Blog() {
                     </div>
 
                     <Link
-                        to="/news/1"
+                        to="/bai-viet"
                         className="flex items-center space-x-2 text-xl font-bold text-gray-900 transition duration-200 ease-out hover:text-gray-500 dark:text-white dark:hover:text-gray-300"
                     >
                         <p>Xem thêm</p>

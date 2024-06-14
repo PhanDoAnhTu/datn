@@ -45,10 +45,6 @@ export default function Footer() {
                             </div>
                         </Link>
 
-                        <p className="mt-4 max-w-xs text-gray-500 dark:text-gray-400">
-                            Test test test test test test
-                        </p>
-
                         <ul className="mt-8 flex gap-6">
                             <li>
                                 <Link
@@ -339,7 +335,7 @@ export default function Footer() {
                 </div>
 
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                    &copy; 2022. Company Name. All rights reserved.
+                    &copy; 2024. Outrunner. All rights reserved.
                 </p>
             </div>
         </footer>

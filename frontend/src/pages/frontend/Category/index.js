@@ -43,6 +43,8 @@ export default function Category() {
     const { category } = useSelector((state) => state.categoryReducer);
     const { brand } = useSelector((state) => state.brandReducer);
     const { attribute } = useSelector((state) => state.attributeReducer);
+    // eslint-disable-next-line no-unused-vars
+    const [page, setPage] = useState(1);
 
     useEffect(() => {
         if (!brand) {
@@ -144,7 +146,7 @@ export default function Category() {
     useEffect(() => {
         setProducts(
             product_by_category
-                .slice()
+                ?.slice()
                 .sort((a, b) =>
                     selectedSort === 'priceLowToHigh'
                         ? a.product_price > b.product_price
@@ -891,7 +893,7 @@ export default function Category() {
                                     )}
                                 </div>
                                 <div className="col-span-3 pt-5">
-                                    {products && products?.length > 12 ? (
+                                    {products && products?.length > 1 ? (
                                         <Pagination className="col-span-3" />
                                     ) : (
                                         ''
