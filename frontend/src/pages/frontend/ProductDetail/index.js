@@ -89,7 +89,7 @@ export default function ProductDetail() {
                 );
                 setSelectedVariation(
                     responseProductDetail.payload.metaData?.sku_list[0]
-                        .sku_tier_idx
+                        ?.sku_tier_idx
                 );
             }
             if (responseProductDetail.payload.metaData?.sku_list.length > 0) {
@@ -99,7 +99,7 @@ export default function ProductDetail() {
                 );
                 setPrice(
                     responseProductDetail.payload.metaData?.sku_list[0]
-                        .sku_price
+                        ?.sku_price
                 );
                 setStock(
                     responseProductDetail.payload.metaData?.sku_list[0]
@@ -134,8 +134,8 @@ export default function ProductDetail() {
                     (partialSum, a) => partialSum + a.rating_score,
                     0
                 ) /
-                responseProductDetail.payload.metaData?.product_review
-                    .length
+                    responseProductDetail.payload.metaData?.product_review
+                        .length
             );
             setSpicial_offer(
                 responseProductDetail.payload.metaData?.special_offer?.special_offer_spu_list.find(
@@ -182,9 +182,9 @@ export default function ProductDetail() {
             setStock(selected_sku.sku_stock);
             setSelectedImage(
                 product_images &&
-                product_images.find(
-                    (item) => item.sku_id == selected_sku._id
-                )
+                    product_images.find(
+                        (item) => item.sku_id == selected_sku._id
+                    )
             );
             special_offer?.sku_list.map((sku) => {
                 if (
@@ -275,15 +275,16 @@ export default function ProductDetail() {
         setfavoriesProduct(getFavoritesFromLocalStorage());
         toast.info('Đã xóa sản phẩm ra khỏi mục yêu thích!');
     };
+
     return (
         <div className="bg-transparent pt-10 md:pt-20">
             <div className="pt-6">
                 <nav aria-label="Breadcrumb">
                     <ol className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-                        <li >
+                        <li>
                             <div className="flex items-center">
                                 <Link
-                                    to='/'
+                                    to="/"
                                     className="mr-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                                 >
                                     Trang chủ
@@ -341,7 +342,7 @@ export default function ProductDetail() {
                     <div className="flex flex-col-reverse lg:col-span-2 lg:h-square lg:flex-row lg:space-x-5 lg:border-r lg:border-gray-200 lg:pr-8 dark:lg:border-stone-700">
                         <div className="no-scrollbar flex w-full flex-row overflow-hidden max-lg:mt-3 max-lg:space-x-3 max-lg:overflow-x-scroll max-lg:pb-1 lg:w-44 lg:flex-col lg:space-y-3 lg:overflow-y-scroll">
                             {product_images &&
-                                product_images.map((item, index) => (
+                                product_images?.map((item, index) => (
                                     <button
                                         onClick={() => HandleImageChoose(item)}
                                         key={index}
@@ -371,7 +372,7 @@ export default function ProductDetail() {
                         </h1>
                         <p className="mt-6 text-3xl tracking-tight text-gray-900 dark:text-gray-200">
                             {sale_sku &&
-                                sale_sku?.sku_id == selected_sku?._id ? (
+                            sale_sku?.sku_id == selected_sku?._id ? (
                                 <NumericFormat
                                     value={sale_sku.price_sale}
                                     displayType="text"
@@ -590,29 +591,30 @@ export default function ProductDetail() {
                                 </div>
 
                                 <div className="flex space-x-2">
-                                    {product_detail
-                                        ? (
-                                            <button
-                                                onClick={() =>
-                                                    handleAddToCart(userInfo, {
-                                                        productId:
-                                                            product_detail._id,
-                                                        sku_id: selected_sku ? selected_sku._id : null,
-                                                        quantity: quantity,
-                                                    })
-                                                }
-                                                className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
-                                            >
-                                                Thêm vào giỏ hàng
-                                            </button>
-                                        ) : (
-                                            <button
-                                                disabled
-                                                className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400 focus:ring-offset-2 disabled:opacity-50"
-                                            >
-                                                Thêm vào giỏ hàng
-                                            </button>
-                                        )}
+                                    {product_detail ? (
+                                        <button
+                                            onClick={() =>
+                                                handleAddToCart(userInfo, {
+                                                    productId:
+                                                        product_detail._id,
+                                                    sku_id: selected_sku
+                                                        ? selected_sku._id
+                                                        : null,
+                                                    quantity: quantity,
+                                                })
+                                            }
+                                            className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
+                                        >
+                                            Thêm vào giỏ hàng
+                                        </button>
+                                    ) : (
+                                        <button
+                                            disabled
+                                            className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400 focus:ring-offset-2 disabled:opacity-50"
+                                        >
+                                            Thêm vào giỏ hàng
+                                        </button>
+                                    )}
                                     {product_detail &&
                                         (userInfo ? (
                                             favories_products.some(

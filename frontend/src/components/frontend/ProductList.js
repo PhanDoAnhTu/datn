@@ -89,7 +89,7 @@ export default function ProductList({ title, summary, products }) {
 
                 <div
                     ref={carousel}
-                    className="mt-6 flex w-full touch-pan-x snap-x snap-mandatory flex-row flex-nowrap space-x-2 overflow-hidden scroll-smooth lg:space-x-6"
+                    className="mt-6 flex w-full touch-pan-x snap-x snap-mandatory flex-row flex-nowrap space-x-2 overflow-hidden scroll-smooth lg:space-x-3"
                 >
                     {products.map((product, index) => {
                         return <ProductSingle product={product} key={index} />;

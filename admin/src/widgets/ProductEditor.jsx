@@ -4,7 +4,14 @@ import Select from "@ui/Select";
 import DropFiles from "@components/DropFiles";
 import { toast } from "react-toastify";
 import MediaDropPlaceholder from "@ui/MediaDropPlaceholder";
-import { createSpu, upLoadImageArray, upLoadProductImageList, findAllCategory, findAllAttribute, findAllBrand } from "../store/actions";
+import {
+  createSpu,
+  upLoadImageArray,
+  upLoadProductImageList,
+  findAllCategory,
+  findAllAttribute,
+  findAllBrand,
+} from "../store/actions";
 // hooks
 import { useForm, Controller } from "react-hook-form";
 
@@ -23,41 +30,44 @@ import MultipleSelect from "@ui/MultipleSelect";
 
 const ProductEditor = () => {
   const dispact = useDispatch();
-  const [attributes_management, setAttributes_management] = useState([])
-  const [categories_management, seCategories_management] = useState([])
-  const [brand_management, setBrand_management] = useState([])
-  const [brand_options, setBrand_options] = useState([])
+  const [attributes_management, setAttributes_management] = useState([]);
+  const [categories_management, seCategories_management] = useState([]);
+  const [brand_management, setBrand_management] = useState([]);
+  const [brand_options, setBrand_options] = useState([]);
 
   const fetchCategoriesOnloadPage = async () => {
-    const repoCat = await dispact(findAllCategory({ isPublished: true }))
-    console.log("repoCat", repoCat)
-    seCategories_management(repoCat?.payload?.metaData)
-  }
+    const repoCat = await dispact(findAllCategory({ isPublished: true }));
+    console.log("repoCat", repoCat);
+    seCategories_management(repoCat?.payload?.metaData);
+  };
   const fetchBrandOnloadPage = async () => {
-    const repoBrand = await dispact(findAllBrand({ isPublished: true }))
-    console.log("repoBrand", repoBrand)
-    setBrand_management(repoBrand?.payload?.metaData)
-  }
+    const repoBrand = await dispact(findAllBrand({ isPublished: true }));
+    console.log("repoBrand", repoBrand);
+    setBrand_management(repoBrand?.payload?.metaData);
+  };
   const fetchAttributeOnloadPage = async () => {
-    const repoAttribute = await dispact(findAllAttribute({ isPublished: true }))
-    console.log("repoAttribute", repoAttribute)
-    setAttributes_management(repoAttribute?.payload?.metaData)
-  }
+    const repoAttribute = await dispact(
+      findAllAttribute({ isPublished: true })
+    );
+    console.log("repoAttribute", repoAttribute);
+    setAttributes_management(repoAttribute?.payload?.metaData);
+  };
 
   useEffect(() => {
-    setBrand_options(brand_management.map((brand) => {
-      return { label: brand.brand_name, value: brand._id }
-    }))
-  }, [brand_management])
+    setBrand_options(
+      brand_management.map((brand) => {
+        return { label: brand.brand_name, value: brand._id };
+      })
+    );
+  }, [brand_management]);
 
-  console.log("brand_options", brand_management)
+  console.log("brand_options", brand_management);
 
   useEffect(() => {
-    fetchCategoriesOnloadPage()
-    fetchBrandOnloadPage()
-    fetchAttributeOnloadPage()
-  }, [])
-
+    fetchCategoriesOnloadPage();
+    fetchBrandOnloadPage();
+    fetchAttributeOnloadPage();
+  }, []);
 
   //-----DECLARE DEFAULT VALUES
   const defaultValues = {
@@ -70,9 +80,8 @@ const ProductEditor = () => {
     product_quantity: 1,
     unit: "",
     product_attributes: [],
-
   };
-  console.log("defaultValues", defaultValues)
+  console.log("defaultValues", defaultValues);
   const defaultVariationTables = [
     {
       id: -1,
@@ -159,7 +168,6 @@ const ProductEditor = () => {
 
   //-----/DECLARE DEFAULT VALUES
 
-
   //------------DECLARE USESTATE FOR INPUTS
   const [categories, setCategories] = useState([]);
   const [isVariation, setIsVariation] = useState(false);
@@ -174,7 +182,7 @@ const ProductEditor = () => {
   //------GET AND SET CATEGORIES IN FIRST LOAD
   useEffect(() => {
     const topLevelCategories = categories_management
-      .filter((item) => item.parent_id === null)
+      ?.filter((item) => item.parent_id === null)
       .map((item) => ({
         value: item._id,
         label: item.category_name,
@@ -207,7 +215,7 @@ const ProductEditor = () => {
   useEffect(() => {
     if (categoriesWatch.length === 0) {
       const updatedCategories = categories_management
-        .filter((item) => item.parent_id === null)
+        ?.filter((item) => item.parent_id === null)
         .map((item) => ({
           value: item._id,
           label: item.category_name,
@@ -379,11 +387,11 @@ const ProductEditor = () => {
                 <div className="flex flex-col text-center">
                   {item.id === 1
                     ? variations.find((item1) => item1.id === item.id).options[
-                      sku_tier_idx[0]
-                    ]?.value
+                        sku_tier_idx[0]
+                      ]?.value
                     : variations.find((item1) => item1.id === item.id).options[
-                      sku_tier_idx[1]
-                    ]?.value}
+                        sku_tier_idx[1]
+                      ]?.value}
                 </div>
               ),
             });
@@ -398,11 +406,11 @@ const ProductEditor = () => {
                 <div className="flex flex-col text-center">
                   {item.id === 1
                     ? variations.find((item1) => item1.id === item.id).options[
-                      sku_tier_idx[0]
-                    ].value
+                        sku_tier_idx[0]
+                      ].value
                     : variations.find((item1) => item1.id === item.id).options[
-                      sku_tier_idx[1]
-                    ].value}
+                        sku_tier_idx[1]
+                      ].value}
                 </div>
               ),
             };
@@ -483,110 +491,149 @@ const ProductEditor = () => {
   };
 
   // do something with the data
-  console.log(sKUList, "variations")
+  console.log(sKUList, "variations");
+
   const handleSave = async (data) => {
-    console.log('data', data)
+    try {
+      console.log("data", data);
 
-    let product_variations = []
-    variations.forEach((variation) => {
-      product_variations.push({ images: [], name: variation.variationName, options: variation.options.map((option) => option.value) })
-    })
+      let product_variations = [];
+      variations.forEach((variation) => {
+        product_variations.push({
+          images: [],
+          name: variation.variationName,
+          options: variation.options.map((option) => option.value),
+        });
+      });
 
-    console.log("product_variations", product_variations)
-    const attributes_input = attributes_management.map((item) => {
-      if (Object.hasOwn(data, item.attribute_slug) === true) {
-        return { attribute_id: data[item.attribute_slug].attribute_id, attribute_value: { value: data[item.attribute_slug].value } }
-      }
-    })
-
-
-    let list_images_product = {
-      url_thumb: [],
-      convert_sku_list: []
-    }
-
-    if (sKUList.length > 1) {
-      const list_image = new FormData();
-      sKUList.forEach((item) => {
-        if (item.image != null) {
-          list_image.append("files", item.image[0]);
-          list_image.append("sku_list", item.sku_tier_idx);
+      console.log("product_variations", product_variations);
+      const attributes_input = attributes_management.map((item) => {
+        if (Object.hasOwn(data, item.attribute_slug) === true) {
+          return {
+            attribute_id: data[item.attribute_slug].attribute_id,
+            attribute_value: { value: data[item.attribute_slug].value },
+          };
         }
       });
-      list_image.append("folderName", "outrunner/products");
-      const list_url_thumb = await dispact(upLoadProductImageList(list_image));
-      list_images_product.convert_sku_list = list_url_thumb &&
-        await sKUList?.map((sku) => {
-          const skuImageFound = list_url_thumb?.payload?.metaData?.find((url_thumb) => sku.sku_tier_idx.toString() === url_thumb.sku_tier_idx)
-          if (skuImageFound) {
-            const { image, ...skuNoImage } = sku
-            return { ...skuNoImage, thumb_url: skuImageFound?.thumb_url, public_id: skuImageFound?.public_id }
-          } else {
-            const { image, ...skuNoImage } = sku
-            return { ...skuNoImage, thumb_url: null, public_id: null }
+
+      let list_images_product = {
+        url_thumb: [],
+        convert_sku_list: [],
+      };
+
+      if (sKUList.length > 1) {
+        const list_image = new FormData();
+        sKUList.forEach((item) => {
+          if (item.image != null) {
+            list_image.append("files", item.image[0]);
+            list_image.append("sku_list", item.sku_tier_idx);
           }
+        });
+        list_image.append("folderName", "outrunner/products");
+        const list_url_thumb = await dispact(
+          upLoadProductImageList(list_image)
+        );
+        list_images_product.convert_sku_list =
+          list_url_thumb &&
+          (await sKUList?.map((sku) => {
+            const skuImageFound = list_url_thumb?.payload?.metaData?.find(
+              (url_thumb) =>
+                sku.sku_tier_idx.toString() === url_thumb.sku_tier_idx
+            );
+            if (skuImageFound) {
+              const { image, ...skuNoImage } = sku;
+              return {
+                ...skuNoImage,
+                thumb_url: skuImageFound?.thumb_url,
+                public_id: skuImageFound?.public_id,
+              };
+            } else {
+              const { image, ...skuNoImage } = sku;
+              return { ...skuNoImage, thumb_url: null, public_id: null };
+            }
+          }));
+      }
+
+      if (product_images.length > 0) {
+        const image_array = new FormData();
+        product_images
+          .sort((a, b) => a.indexNumber - b.indexNumber)
+          .forEach((item) => {
+            if (item.file) {
+              image_array.append("files", item.file[0]);
+            }
+          });
+        image_array.append("folderName", "outrunner/products");
+
+        const uploadImage = await dispact(upLoadImageArray(image_array));
+        list_images_product.url_thumb =
+          uploadImage && uploadImage?.payload.metaData;
+      }
+      console.log(
+        "crateSpuuuuuuuuuuuuuuuuuuu",
+        attributes_input,
+        list_images_product,
+        product_variations
+      );
+
+      dispact(
+        createSpu({
+          product_name: data.productName,
+          isPublished: false,
+          isDraft: true,
+          product_thumb:
+            list_images_product?.url_thumb?.length > 0
+              ? list_images_product.url_thumb
+              : [],
+          product_description: data.description,
+          product_price: data.regularPrice,
+          product_quantity: data.product_quantity,
+          product_unit: data.unit,
+          product_weight: data.weight,
+          product_brand: data.brandName.value,
+          product_category: data.product_category.flatMap(
+            (category) => category.value
+          ),
+          product_attributes: attributes_input,
+          product_variations: product_variations,
+          sku_list: list_images_product?.convert_sku_list
+            ? list_images_product?.convert_sku_list
+            : [],
         })
-
+      );
+      toast.info("Product saved successfully");
+    } catch (error) {
+      toast.error(error);
     }
-
-    if (product_images.length > 0) {
-      const image_array = new FormData();
-      product_images.sort((a, b) => a.indexNumber - b.indexNumber).forEach((item) => {
-        if (item.file) {
-          image_array.append("files", item.file[0]);
-        }
-      });
-      image_array.append("folderName", "outrunner/products");
-
-      const uploadImage = await dispact(upLoadImageArray(image_array));
-      list_images_product.url_thumb = uploadImage && uploadImage?.payload.metaData
-    }
-    console.log("crateSpuuuuuuuuuuuuuuuuuuu", attributes_input, list_images_product, product_variations)
-
-    dispact(createSpu({
-      product_name: data.productName,
-      isPublished: false,
-      isDraft: true,
-      product_thumb: list_images_product?.url_thumb?.length > 0 ? list_images_product.url_thumb : [],
-      product_description: data.description,
-      product_price: data.regularPrice,
-      product_quantity: data.product_quantity,
-      product_unit: data.unit,
-      product_weight: data.weight,
-      product_brand: data.brandName.value,
-      product_category: data.product_category.flatMap((category) => category.value),
-      product_attributes: attributes_input,
-      product_variations: product_variations,
-      sku_list: list_images_product?.convert_sku_list ? list_images_product?.convert_sku_list : []
-    }));
-    toast.info("Product saved successfully");
   };
-  const [product_images, set_product_images] = useState([])
+  const [product_images, set_product_images] = useState([]);
   const addProductImage = (value, indexNumber) => {
-
     if (product_images.length === 0) {
-      set_product_images([{ file: value, indexNumber: indexNumber }])
+      set_product_images([{ file: value, indexNumber: indexNumber }]);
     } else {
       set_product_images((s) => {
         if (s.some((item) => item.indexNumber === indexNumber) === true) {
           return s.map((image) => {
             if (image.indexNumber === indexNumber) {
-              image.file = value
-              return image
+              image.file = value;
+              return image;
             }
-            return image
-          })
+            return image;
+          });
         }
-        return [...s, { file: value, indexNumber: indexNumber }]
-      })
+        return [...s, { file: value, indexNumber: indexNumber }];
+      });
     }
-  }
-  console.log("product_images", product_images.sort((a, b) => a.indexNumber - b.indexNumber))
+  };
+  console.log(
+    "product_images",
+    product_images.sort((a, b) => a.indexNumber - b.indexNumber)
+  );
   return (
     <Spring className="card flex-1 xl:py-10">
       <div className="grid grid-cols-1 items-start gap-5 xl:gap-10">
         <div className="grid grid-cols-1 gap-y-4 gap-x-2">
-          <div className="md:w-full xl:h-[140px] md:h-[80px] h-[50px] w-[50px] flex items-center justify-center pr-2">
+          <div className="grid md:grid-cols-4 grid-cols-2 gap-5 h-80">
             <DropFiles
               wrapperClass="media-dropzone w-full h-full text-center"
               onChange={(e) => addProductImage(e, 1)}
@@ -602,14 +649,12 @@ const ProductEditor = () => {
             <DropFiles
               wrapperClass="media-dropzone w-full h-full text-center"
               onChange={(e) => addProductImage(e, 3)}
-
             >
               <MediaDropPlaceholder />
             </DropFiles>
             <DropFiles
               wrapperClass="media-dropzone w-full h-full text-center"
               onChange={(e) => addProductImage(e, 4)}
-
             >
               <MediaDropPlaceholder />
             </DropFiles>
@@ -692,7 +737,6 @@ const ProductEditor = () => {
             </div>
           </div>
 
-
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
             <div className="field-wrapper">
               <label className="field-label" htmlFor="weight">
@@ -727,7 +771,6 @@ const ProductEditor = () => {
                 })}
               />
             </div>
-
           </div>
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
             <div className="field-wrapper">
@@ -768,37 +811,44 @@ const ProductEditor = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
-            {attributes_management.length > 0 && attributes_management.map((attribute, index) => {
-              const value_attribute_options = attribute.attribute_value_list?.map((value_attribute) => {
-                return { label: value_attribute.attribute_value, value: value_attribute._id, attribute_id: value_attribute.attribute_id }
-              })
-              return (
-                <div className="field-wrapper" key={index}>
-                  <label className="field-label" htmlFor={attribute.attribute_slug}>
-                    {attribute.attribute_name}
-                  </label>
-                  <Controller
-                    name={attribute.attribute_slug}
-                    control={control}
-                    defaultValue={defaultValues.product_attributes}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <Select
-                        isInvalid={errors.brandName}
-                        id={attribute.attribute_slug}
-                        placeholder={`Chọn ${attribute.attribute_name}`}
-                        options={value_attribute_options}
-                        value={field.value}
-                        onChange={(value) => field.onChange(value)}
-                      />
-                    )}
-                  />
-                </div>
-              )
-            })}
-
-
-
+            {attributes_management.length > 0 &&
+              attributes_management.map((attribute, index) => {
+                const value_attribute_options = attribute.attribute_value.map(
+                  (value_attribute) => {
+                    return {
+                      label: value_attribute.attribute_value,
+                      value: value_attribute._id,
+                      attribute_id: value_attribute.attribute_id,
+                    };
+                  }
+                );
+                return (
+                  <div className="field-wrapper" key={index}>
+                    <label
+                      className="field-label"
+                      htmlFor={attribute.attribute_slug}
+                    >
+                      {attribute.attribute_name}
+                    </label>
+                    <Controller
+                      name={attribute.attribute_slug}
+                      control={control}
+                      defaultValue={defaultValues.product_attributes}
+                      rules={{ required: true }}
+                      render={({ field }) => (
+                        <Select
+                          isInvalid={errors.brandName}
+                          id={attribute.attribute_slug}
+                          placeholder={`Chọn ${attribute.attribute_name}`}
+                          options={value_attribute_options}
+                          value={field.value}
+                          onChange={(value) => field.onChange(value)}
+                        />
+                      )}
+                    />
+                  </div>
+                );
+              })}
           </div>
           <Divider />
           <h4 className="text-center">Phân loại sản phẩm</h4>
@@ -806,15 +856,17 @@ const ProductEditor = () => {
             <button
               onClick={handleToggleIsVariation}
               id="variationBtn"
-              className={` ${isVariation === false ? "btn--social btn block" : "hidden"
-                }`}
+              className={` ${
+                isVariation === false ? "btn--social btn block" : "hidden"
+              }`}
             >
               <i className={`icon icon-circle-plus-regular`} />
               <span>Bật phân loại</span>
             </button>
             <div
-              className={`${isVariation ? "" : "hidden"
-                } grid grid-cols-1 gap-y-4 gap-x-2`}
+              className={`${
+                isVariation ? "" : "hidden"
+              } grid grid-cols-1 gap-y-4 gap-x-2`}
             >
               {variations.map((item, index) => {
                 return (
