@@ -5,16 +5,16 @@ const COLLECTION_NAME = 'spus'
 
 const spuSchema = new Schema({
     product_name: { type: String, required: true },
-    product_thumb: { type: String, default: null},
+    product_thumb: { type: String, default: null },
     product_description: String,
     product_slug: String,
     product_weight: String,
     product_price: { type: Number, required: true },
-    product_quantity: { type: Number, required: true },
+    product_quantity: { type: Number, default: 1 },
     product_brand: { type: String, default: null },
     product_category: { type: Array, default: [] },
     product_unit: { type: String, default: null },
-    product_attributes: { type: Schema.Types.Mixed, required: true },
+    product_attributes: { type: Schema.Types.Mixed, default: [] },
     /*{ttribute
         a_id: 12345,
         attribute_value:[

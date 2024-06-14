@@ -10,7 +10,7 @@ const UploadReducer = (state = initialState, action) => {
         case Action.UPLOAD_PRODUCT_IMAGE_LIST:
             return {
                 ...state,
-                data: action.payload.metaData
+                data: action?.payload?.metaData
             }
         default:
             return state;

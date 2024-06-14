@@ -11,11 +11,12 @@ const BrandService = require('./brand.service')
 const AttributeService = require('./attribute.service')
 const { getCommentByproductId } = require('./comment.service')
 const { findReviewByProductId } = require('./review.service')
+
+
 const newSpu = async ({
     product_name,
     product_thumb = [],
     product_description,
-    product_slug,
     product_price,
     product_category,
     product_brand,
@@ -39,11 +40,10 @@ const newSpu = async ({
             product_name,
             product_thumb: product_thumb?.length > 0 ? product_thumb[0]?.thumb_url : sku_list[0]?.thumb_url,
             product_description,
-            product_slug,
-            product_price,
+            product_price: product_price,
             product_weight,
             product_category,
-            product_quantity,
+            product_quantity: product_quantity,
             product_brand,
             product_attributes,
             product_variations,
@@ -51,6 +51,7 @@ const newSpu = async ({
             isPublished,
             isDraft
         })
+
         if (spu && product_thumb?.length > 0) {
             product_thumb.forEach(image => {
                 addImageBySpuId({ spu_id: spu._id, thumb_url: image.thumb_url, public_id: image.public_id })
