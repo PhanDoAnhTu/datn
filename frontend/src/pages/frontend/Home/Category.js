@@ -1,7 +1,7 @@
 export default function CategorySection() {
     return (
         <div className="">
-            <div className="mx-auto grid max-w-screen-2xl gap-4 px-4 py-16 max-sm:grid-rows-2 sm:px-6 sm:py-16 md:grid-cols-2 lg:gap-8 lg:px-8 ">
+            <div className="mx-auto grid max-w-screen-2xl gap-4 px-4 py-8 max-sm:grid-rows-2 sm:px-6 sm:py-8 md:grid-cols-2 lg:gap-8 lg:px-8 ">
                 <div className="overflow-hidden rounded-xl bg-gray-500 text-white shadow-md">
                     <div className="relative">
                         <img

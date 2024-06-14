@@ -13,14 +13,14 @@ import SearchBar from './SearchBar';
 import CartPopover from './CartPopover';
 import UserPopover from './UserPopover';
 import Logo from '../../../assets/Logo';
-import { navigation } from '../../../test/categories';
 import { useSelector } from 'react-redux';
 
-export default function PCNavbar({ category, setOpen }) {
+export default function PCNavbar({ category, navbar, setOpen }) {
     ////////////////
     const [scrollY, setScrollY] = useState(window.scrollY);
     const [bgWhite, setBgWhite] = useState(false);
-    const { cart } = useSelector((state) => state.cartReducer)
+    const { cart } = useSelector((state) => state.cartReducer);
+    const { all_products } = useSelector((state) => state.productReducer);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -99,7 +99,7 @@ export default function PCNavbar({ category, setOpen }) {
 
                     {/* Flyout menus */}
                     <Popover.Group className="hidden lg:block lg:self-stretch">
-                        <div className="flex h-full  space-x-8">
+                        <div className="flex h-full space-x-8">
                             {category?.map((item) => {
                                 if (item?.parent_id == null) {
                                     return (
@@ -146,56 +146,70 @@ export default function PCNavbar({ category, setOpen }) {
                                                                 <div className="mx-auto max-w-7xl px-8">
                                                                     <div className="grid grid-cols-2 gap-x-8 gap-y-10 py-16">
                                                                         <div className="col-start-2 grid grid-cols-2 gap-x-8">
-                                                                            {navigation.categories[0].featured.map(
-                                                                                (
-                                                                                    item
-                                                                                ) => (
-                                                                                    <div
-                                                                                        key={
-                                                                                            item.name
+                                                                            {all_products &&
+                                                                                all_products
+                                                                                    .slice()
+                                                                                    .sort(
+                                                                                        () =>
+                                                                                            Math.random() -
+                                                                                            Math.random()
+                                                                                    )
+                                                                                    .map(
+                                                                                        (
+                                                                                            item,
+                                                                                            index
+                                                                                        ) => {
+                                                                                            if (
+                                                                                                index !=
+                                                                                                2
+                                                                                            ) {
+                                                                                                return (
+                                                                                                    <div
+                                                                                                        key={
+                                                                                                            item.product_name
+                                                                                                        }
+                                                                                                        className="group relative text-base sm:text-sm"
+                                                                                                    >
+                                                                                                        <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 transition-opacity duration-300 ease-out group-hover:opacity-75">
+                                                                                                            <img
+                                                                                                                src={
+                                                                                                                    item.product_thumb
+                                                                                                                }
+                                                                                                                alt={
+                                                                                                                    item.product_name
+                                                                                                                }
+                                                                                                                className="object-cover object-center"
+                                                                                                            />
+                                                                                                        </div>
+
+                                                                                                        <Link
+                                                                                                            to={`/san-pham/${item.product_slug}-${item._id}`}
+                                                                                                            className="mt-6 block font-medium text-gray-900 dark:text-white"
+                                                                                                            onClick={async () => {
+                                                                                                                close();
+                                                                                                            }}
+                                                                                                        >
+                                                                                                            <span
+                                                                                                                className="absolute inset-0 z-10"
+                                                                                                                aria-hidden="true"
+                                                                                                            />
+                                                                                                            {
+                                                                                                                item.product_name
+                                                                                                            }
+                                                                                                        </Link>
+
+                                                                                                        <p
+                                                                                                            aria-hidden="true"
+                                                                                                            className="mt-1"
+                                                                                                        >
+                                                                                                            Mua
+                                                                                                            ngay
+                                                                                                        </p>
+                                                                                                    </div>
+                                                                                                );
+                                                                                            }
                                                                                         }
-                                                                                        className="group relative text-base sm:text-sm"
-                                                                                    >
-                                                                                        <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 transition-opacity duration-300 ease-out group-hover:opacity-75">
-                                                                                            <img
-                                                                                                src={
-                                                                                                    item.imageSrc
-                                                                                                }
-                                                                                                alt={
-                                                                                                    item.imageAlt
-                                                                                                }
-                                                                                                className="object-cover object-center"
-                                                                                            />
-                                                                                        </div>
-
-                                                                                        <Link
-                                                                                            to={
-                                                                                                item.to
-                                                                                            }
-                                                                                            className="mt-6 block font-medium text-gray-900 dark:text-white"
-                                                                                            onClick={async () => {
-                                                                                                close();
-                                                                                            }}
-                                                                                        >
-                                                                                            <span
-                                                                                                className="absolute inset-0 z-10"
-                                                                                                aria-hidden="true"
-                                                                                            />
-                                                                                            {
-                                                                                                item.name
-                                                                                            }
-                                                                                        </Link>
-
-                                                                                        <p
-                                                                                            aria-hidden="true"
-                                                                                            className="mt-1"
-                                                                                        >
-                                                                                            Shop
-                                                                                            now
-                                                                                        </p>
-                                                                                    </div>
-                                                                                )
-                                                                            )}
+                                                                                    )}
                                                                         </div>
                                                                         <div className="row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm">
                                                                             {category
@@ -285,14 +299,13 @@ export default function PCNavbar({ category, setOpen }) {
                                     );
                                 }
                             })}
-
-                            {navigation.pages.map((page) => (
+                            {navbar?.map((item) => (
                                 <Link
-                                    key={page.name}
-                                    to={page.to}
-                                    className="flex items-center text-sm font-medium text-gray-700 transition-colors duration-200 ease-out hover:text-gray-800 dark:text-gray-100 dark:hover:text-magenta-500"
+                                    key={item._id}
+                                    to={item.menu_path}
+                                    className="flex w-12 items-center text-sm font-medium text-gray-700 transition-colors duration-200 ease-out hover:text-gray-800 dark:text-gray-100 dark:hover:text-magenta-500"
                                 >
-                                    {page.name}
+                                    {item.menu_label}
                                 </Link>
                             ))}
                         </div>

@@ -10,6 +10,7 @@ export default function ProductList({ title, summary, products }) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const carousel = useRef(null);
 
+    console.log('products here', products);
     const movePrev = () => {
         if (currentIndex > 0) {
             setCurrentIndex((prevState) => prevState - 1);
@@ -69,7 +70,7 @@ export default function ProductList({ title, summary, products }) {
                         </h3>
                     </div>
 
-                    <div className="space-x-2">
+                    <div className="space-x-2 max-md:hidden">
                         <button
                             onClick={movePrev}
                             disabled={isDisabled('prev')}
@@ -89,10 +90,15 @@ export default function ProductList({ title, summary, products }) {
 
                 <div
                     ref={carousel}
-                    className="mt-6 flex w-full touch-pan-x snap-x snap-mandatory flex-row flex-nowrap space-x-2 overflow-hidden scroll-smooth lg:space-x-6"
+                    className="no-scrollbar mt-6 flex w-full touch-auto snap-x snap-mandatory flex-row flex-nowrap space-x-2 overflow-auto scroll-smooth lg:space-x-3"
                 >
-                    {products.map((product, index) => {
-                        return <ProductSingle product={product} key={index} />;
+                    {products?.map((product) => {
+                        return (
+                            <ProductSingle
+                                product={product}
+                                key={product?._id}
+                            />
+                        );
                     })}
                 </div>
             </div>

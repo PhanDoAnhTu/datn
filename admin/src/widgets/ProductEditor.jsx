@@ -4,7 +4,14 @@ import Select from "@ui/Select";
 import DropFiles from "@components/DropFiles";
 import { toast } from "react-toastify";
 import MediaDropPlaceholder from "@ui/MediaDropPlaceholder";
-import { createSpu, upLoadImageArray, upLoadProductImageList, findAllCategory, findAllAttribute, findAllBrand } from "../store/actions";
+import {
+  createSpu,
+  upLoadImageArray,
+  upLoadProductImageList,
+  findAllCategory,
+  findAllAttribute,
+  findAllBrand,
+} from "../store/actions";
 // hooks
 import { useForm, Controller } from "react-hook-form";
 
@@ -50,11 +57,10 @@ const ProductEditor = () => {
   }, [brand_management])
 
   useEffect(() => {
-    fetchCategoriesOnloadPage()
-    fetchBrandOnloadPage()
-    fetchAttributeOnloadPage()
-  }, [])
-
+    fetchCategoriesOnloadPage();
+    fetchBrandOnloadPage();
+    fetchAttributeOnloadPage();
+  }, []);
 
   //-----DECLARE DEFAULT VALUES
   const defaultValues = {
@@ -67,7 +73,6 @@ const ProductEditor = () => {
     product_quantity: 1,
     unit: "",
     product_attributes: [],
-
   };
   const defaultVariationTables = [
     {
@@ -155,7 +160,6 @@ const ProductEditor = () => {
 
   //-----/DECLARE DEFAULT VALUES
 
-
   //------------DECLARE USESTATE FOR INPUTS
   const [categories, setCategories] = useState([]);
   const [isVariation, setIsVariation] = useState(false);
@@ -203,7 +207,7 @@ const ProductEditor = () => {
   useEffect(() => {
     if (categoriesWatch.length === 0) {
       const updatedCategories = categories_management
-        .filter((item) => item.parent_id === null)
+        ?.filter((item) => item.parent_id === null)
         .map((item) => ({
           value: item._id,
           label: item.category_name,
@@ -374,11 +378,11 @@ const ProductEditor = () => {
                 <div className="flex flex-col text-center">
                   {item.id === 1
                     ? variations.find((item1) => item1.id === item.id).options[
-                      sku_tier_idx[0]
-                    ]?.value
+                        sku_tier_idx[0]
+                      ]?.value
                     : variations.find((item1) => item1.id === item.id).options[
-                      sku_tier_idx[1]
-                    ]?.value}
+                        sku_tier_idx[1]
+                      ]?.value}
                 </div>
               ),
             });
@@ -393,11 +397,11 @@ const ProductEditor = () => {
                 <div className="flex flex-col text-center">
                   {item.id === 1
                     ? variations.find((item1) => item1.id === item.id).options[
-                      sku_tier_idx[0]
-                    ].value
+                        sku_tier_idx[0]
+                      ].value
                     : variations.find((item1) => item1.id === item.id).options[
-                      sku_tier_idx[1]
-                    ].value}
+                        sku_tier_idx[1]
+                      ].value}
                 </div>
               ),
             };
@@ -567,31 +571,30 @@ const ProductEditor = () => {
       return toast.success("Thêm sản phẩm thành công");
     }
   };
-  const [product_images, set_product_images] = useState([])
+  const [product_images, set_product_images] = useState([]);
   const addProductImage = (value, indexNumber) => {
-
     if (product_images.length === 0) {
-      set_product_images([{ file: value, indexNumber: indexNumber }])
+      set_product_images([{ file: value, indexNumber: indexNumber }]);
     } else {
       set_product_images((s) => {
         if (s.some((item) => item.indexNumber === indexNumber) === true) {
           return s.map((image) => {
             if (image.indexNumber === indexNumber) {
-              image.file = value
-              return image
+              image.file = value;
+              return image;
             }
-            return image
-          })
+            return image;
+          });
         }
-        return [...s, { file: value, indexNumber: indexNumber }]
-      })
+        return [...s, { file: value, indexNumber: indexNumber }];
+      });
     }
   }
   return (
     <Spring className="card flex-1 xl:py-10">
       <div className="grid grid-cols-1 items-start gap-5 xl:gap-10">
         <div className="grid grid-cols-1 gap-y-4 gap-x-2">
-          <div className="md:w-full xl:h-[140px] md:h-[80px] h-[50px] w-[50px] flex items-center justify-center pr-2">
+          <div className="grid md:grid-cols-4 grid-cols-2 gap-5 h-80">
             <DropFiles
               wrapperClass="media-dropzone w-full h-full text-center"
               onChange={(e) => addProductImage(e, 1)}
@@ -607,14 +610,12 @@ const ProductEditor = () => {
             <DropFiles
               wrapperClass="media-dropzone w-full h-full text-center"
               onChange={(e) => addProductImage(e, 3)}
-
             >
               <MediaDropPlaceholder />
             </DropFiles>
             <DropFiles
               wrapperClass="media-dropzone w-full h-full text-center"
               onChange={(e) => addProductImage(e, 4)}
-
             >
               <MediaDropPlaceholder />
             </DropFiles>
@@ -697,7 +698,6 @@ const ProductEditor = () => {
             </div>
           </div>
 
-
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
             <div className="field-wrapper">
               <label className="field-label" htmlFor="weight">
@@ -732,7 +732,6 @@ const ProductEditor = () => {
                 })}
               />
             </div>
-
           </div>
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
             <div className="field-wrapper">
@@ -840,15 +839,17 @@ const ProductEditor = () => {
             <button
               onClick={handleToggleIsVariation}
               id="variationBtn"
-              className={` ${isVariation === false ? "btn--social btn block" : "hidden"
-                }`}
+              className={` ${
+                isVariation === false ? "btn--social btn block" : "hidden"
+              }`}
             >
               <i className={`icon icon-circle-plus-regular`} />
               <span>Bật phân loại</span>
             </button>
             <div
-              className={`${isVariation ? "" : "hidden"
-                } grid grid-cols-1 gap-y-4 gap-x-2`}
+              className={`${
+                isVariation ? "" : "hidden"
+              } grid grid-cols-1 gap-y-4 gap-x-2`}
             >
               {variations.map((item, index) => {
                 return (

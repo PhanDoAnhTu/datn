@@ -89,7 +89,7 @@ export default function ProductDetail() {
                 );
                 setSelectedVariation(
                     responseProductDetail.payload.metaData?.sku_list[0]
-                        .sku_tier_idx
+                        ?.sku_tier_idx
                 );
             }
             if (responseProductDetail.payload.metaData?.sku_list.length > 0) {
@@ -99,7 +99,7 @@ export default function ProductDetail() {
                 );
                 setPrice(
                     responseProductDetail.payload.metaData?.sku_list[0]
-                        .sku_price
+                        ?.sku_price
                 );
                 setStock(
                     responseProductDetail.payload.metaData?.sku_list[0]
@@ -134,8 +134,8 @@ export default function ProductDetail() {
                     (partialSum, a) => partialSum + a.rating_score,
                     0
                 ) /
-                responseProductDetail.payload.metaData?.product_review
-                    .length
+                    responseProductDetail.payload.metaData?.product_review
+                        .length
             );
             setSpicial_offer(
                 responseProductDetail.payload.metaData?.special_offer?.special_offer_spu_list.find(
@@ -182,9 +182,9 @@ export default function ProductDetail() {
             setStock(selected_sku.sku_stock);
             setSelectedImage(
                 product_images &&
-                product_images.find(
-                    (item) => item.sku_id == selected_sku._id
-                )
+                    product_images.find(
+                        (item) => item.sku_id == selected_sku._id
+                    )
             );
             special_offer?.sku_list.map((sku) => {
                 if (
@@ -275,15 +275,16 @@ export default function ProductDetail() {
         setfavoriesProduct(getFavoritesFromLocalStorage());
         toast.info('Đã xóa sản phẩm ra khỏi mục yêu thích!');
     };
+
     return (
         <div className="bg-transparent pt-10 md:pt-20">
             <div className="pt-6">
                 <nav aria-label="Breadcrumb">
                     <ol className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-                        <li >
+                        <li>
                             <div className="flex items-center">
                                 <Link
-                                    to='/'
+                                    to="/"
                                     className="mr-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                                 >
                                     Trang chủ
@@ -341,7 +342,7 @@ export default function ProductDetail() {
                     <div className="flex flex-col-reverse lg:col-span-2 lg:h-square lg:flex-row lg:space-x-5 lg:border-r lg:border-gray-200 lg:pr-8 dark:lg:border-stone-700">
                         <div className="no-scrollbar flex w-full flex-row overflow-hidden max-lg:mt-3 max-lg:space-x-3 max-lg:overflow-x-scroll max-lg:pb-1 lg:w-44 lg:flex-col lg:space-y-3 lg:overflow-y-scroll">
                             {product_images &&
-                                product_images.map((item, index) => (
+                                product_images?.map((item, index) => (
                                     <button
                                         onClick={() => HandleImageChoose(item)}
                                         key={index}
@@ -371,7 +372,7 @@ export default function ProductDetail() {
                         </h1>
                         <p className="mt-6 text-3xl tracking-tight text-gray-900 dark:text-gray-200">
                             {sale_sku &&
-                                sale_sku?.sku_id == selected_sku?._id ? (
+                            sale_sku?.sku_id == selected_sku?._id ? (
                                 <NumericFormat
                                     value={sale_sku.price_sale}
                                     displayType="text"
@@ -487,7 +488,7 @@ export default function ProductDetail() {
                                                                     active
                                                                         ? 'ring-2 ring-xanthous-400'
                                                                         : '',
-                                                                    'group relative flex items-center justify-center rounded-md border px-4 py-3 text-sm font-medium uppercase transition duration-200 ease-out hover:bg-gray-400 focus:outline-none sm:flex-1 sm:py-6 dark:hover:bg-stone-500'
+                                                                    'group relative flex items-center justify-center rounded-md border px-4 py-3 text-center text-sm font-medium uppercase transition duration-200 ease-out hover:bg-gray-400 focus:outline-none sm:flex-1 sm:py-5 dark:hover:bg-stone-500'
                                                                 )
                                                             }
                                                         >
@@ -590,29 +591,30 @@ export default function ProductDetail() {
                                 </div>
 
                                 <div className="flex space-x-2">
-                                    {product_detail
-                                        ? (
-                                            <button
-                                                onClick={() =>
-                                                    handleAddToCart(userInfo, {
-                                                        productId:
-                                                            product_detail._id,
-                                                        sku_id: selected_sku ? selected_sku._id : null,
-                                                        quantity: quantity,
-                                                    })
-                                                }
-                                                className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
-                                            >
-                                                Thêm vào giỏ hàng
-                                            </button>
-                                        ) : (
-                                            <button
-                                                disabled
-                                                className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400 focus:ring-offset-2 disabled:opacity-50"
-                                            >
-                                                Thêm vào giỏ hàng
-                                            </button>
-                                        )}
+                                    {product_detail ? (
+                                        <button
+                                            onClick={() =>
+                                                handleAddToCart(userInfo, {
+                                                    productId:
+                                                        product_detail._id,
+                                                    sku_id: selected_sku
+                                                        ? selected_sku._id
+                                                        : null,
+                                                    quantity: quantity,
+                                                })
+                                            }
+                                            className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
+                                        >
+                                            Thêm vào giỏ hàng
+                                        </button>
+                                    ) : (
+                                        <button
+                                            disabled
+                                            className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400 focus:ring-offset-2 disabled:opacity-50"
+                                        >
+                                            Thêm vào giỏ hàng
+                                        </button>
+                                    )}
                                     {product_detail &&
                                         (userInfo ? (
                                             favories_products.some(
@@ -681,34 +683,31 @@ export default function ProductDetail() {
                         }
                     />
                     <h1 className="border-b border-stone-500 pb-5 text-4xl font-bold dark:text-white">
-                        Bình luận về sản phẩm
+                        Đánh giá về sản phẩm
                     </h1>
                     <div className="space-y-5">
-                        <div className="flex flex-col space-y-3 pb-3">
-                            <div className="flex flex-col space-y-1 text-white">
-                                <span className="text-sm">Tiêu đề</span>
-                                <input
-                                    type="text"
-                                    required
-                                    placeholder="Tiêu đề bình luận"
-                                    className="border-2 border-white bg-transparent transition duration-500 ease-out placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0"
-                                />
-                            </div>
-                            <div className="flex flex-col space-y-1 text-white">
-                                <span className="text-sm">Nội dung</span>
-                                <textarea className="h-40 resize-none border-2 border-white bg-transparent text-justify text-sm transition duration-500 ease-out focus:border-magenta-500 focus:ring-0"></textarea>
-                            </div>
-                            <div className="flex justify-end">
-                                <button className="border-2 px-4 py-2 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500">
-                                    Đăng
-                                </button>
-                            </div>
-                        </div>
-                        <div className="flex flex-col space-y-1 divide-y-2 border-t border-stone-500 pt-5">
-                            <div>
-                                <div>
+                        <div className="grid gap-5">
+                            {[0, 1, 2].map((index) => (
+                                <div
+                                    key={`review-${index}`}
+                                    className="grid gap-2 overflow-hidden rounded-md bg-zinc-500 p-4 shadow-inner shadow-gray-400 dark:bg-zinc-800"
+                                >
                                     <div className="text-lg font-bold text-gray-900 dark:text-white">
                                         Title goes here
+                                    </div>
+                                    <div className="flex">
+                                        {[1, 2, 3, 4, 5].map((rating) => (
+                                            <StarIcon
+                                                key={rating}
+                                                className={classNames(
+                                                    rating_score_avg >= rating
+                                                        ? 'text-xanthous-500'
+                                                        : 'text-gray-200',
+                                                    'h-5 w-5 flex-shrink-0'
+                                                )}
+                                                aria-hidden="true"
+                                            />
+                                        ))}
                                     </div>
                                     <div className="leading-5 text-gray-900 dark:text-white">
                                         Lorem ipsum dolor sit amet consectetur,
@@ -723,23 +722,10 @@ export default function ProductDetail() {
                                         Repudiandae, at quia! Obcaecati vitae
                                         quo accusamus ipsa illum architecto. Sit
                                         hic ab obcaecati repellendus
-                                        consequuntur. Exercitationem enim,
-                                        dignissimos voluptatum asperiores optio
-                                        vitae voluptatibus corporis facere nobis
-                                        similique voluptatem temporibus laborum
-                                        nemo sapiente labore magni corrupti
-                                        iusto quam! Nam ducimus doloremque
-                                        obcaecati rerum. Dignissimos omnis dicta
-                                        aperiam et fugit quidem ullam.
-                                        Voluptates.
-                                    </div>
-                                    <div className="flex justify-end">
-                                        <button className="border-2 px-4 py-2 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500">
-                                            Phản hồi
-                                        </button>
+                                        consequuntur.
                                     </div>
                                 </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </div>
