@@ -4,15 +4,18 @@ import MobileNavbar from '../../components/frontend/Navbar/MobileNavbar';
 import PCNavbar from '../../components/frontend/Navbar/PCNavbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategory } from '../../store/actions';
+import { findMenuByPosition } from '../../store/actions/menu-actions';
 
 export default function Header() {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
     const { category } = useSelector((state) => state.categoryReducer);
+    const { navbar } = useSelector((state) => state.menuReducer);
     useEffect(() => {
         if (!category) dispatch(getAllCategory());
-        console.log(category);
-    }, [category]);
+        if (!navbar) dispatch(findMenuByPosition({ menu_position: 'navbar' }));
+        console.log(navbar);
+    }, [category, navbar]);
 
     return (
         <div className="bg-white">
@@ -20,7 +23,11 @@ export default function Header() {
             <MobileNavbar category={category} open={open} setOpen={setOpen} />
 
             <header className="relative bg-white">
-                <PCNavbar setOpen={setOpen} category={category} />
+                <PCNavbar
+                    setOpen={setOpen}
+                    category={category}
+                    navbar={navbar}
+                />
             </header>
         </div>
     );

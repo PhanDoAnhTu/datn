@@ -20,9 +20,8 @@ export const upLoadProductImageList = (data) => async (dispatch) => {
 export const upLoadImageArray = (data) => async (dispatch) => {
   try {
     const response = await PostData("/upload/v1/upload/uploadImageArray", data);
-    if (response.response.data.code === 500) {
-      toast.error(response.response.data.message);
-    }
+
+    console.log("response:", response);
     return dispatch({
       type: Action.UPLOAD_PRODUCT_IMAGE_LIST,
       payload: response.data,

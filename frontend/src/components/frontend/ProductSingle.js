@@ -1,7 +1,6 @@
 import {
     HeartIcon,
     MagnifyingGlassIcon,
-    ShoppingBagIcon,
     StarIcon,
 } from '@heroicons/react/20/solid';
 
@@ -55,7 +54,7 @@ export default function ProductSingle({ product, reload }) {
     };
     return (
         <div key={product._id} className="group relative py-2">
-            <div className="h-56 w-40 snap-start overflow-hidden rounded-md bg-gray-200 transition-all duration-200 ease-out lg:aspect-none group-hover:opacity-75 lg:h-56 lg:w-56">
+            <div className="h-56 w-56 snap-start overflow-hidden rounded-md bg-gray-200 transition-all duration-200 ease-out lg:aspect-none group-hover:opacity-75 lg:h-56 lg:w-56">
                 <img
                     src={product.product_thumb}
                     alt={product.product_slug}
@@ -64,9 +63,6 @@ export default function ProductSingle({ product, reload }) {
             </div>
 
             <div className="absolute inset-y-0 z-10 hidden w-full items-center justify-center space-x-3 pt-32 xl:flex">
-                <button className="group-hover:delay-50 z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-xanthous-500 group-hover:-translate-y-10 group-hover:opacity-100">
-                    <ShoppingBagIcon className="h-6 w-6" />
-                </button>
                 {product &&
                     (userInfo ? (
                         favories_products.some(
@@ -116,7 +112,7 @@ export default function ProductSingle({ product, reload }) {
             <div className="relative mt-2 flex w-full flex-col overflow-hidden">
                 <h3 className="text-md text-ellipsis font-bold leading-5 tracking-tight text-gray-700 dark:text-white">
                     <Link
-                        to={`/:category_slug/${product.product_slug}/${product._id}`}
+                        to={`/san-pham/${product.product_slug}-${product._id}`}
                         className="line-clamp-2"
                     >
                         <span aria-hidden="true" className="absolute inset-0" />

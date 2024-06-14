@@ -488,7 +488,7 @@ export default function ProductDetail() {
                                                                     active
                                                                         ? 'ring-2 ring-xanthous-400'
                                                                         : '',
-                                                                    'group relative flex items-center justify-center rounded-md border px-4 py-3 text-sm font-medium uppercase transition duration-200 ease-out hover:bg-gray-400 focus:outline-none sm:flex-1 sm:py-6 dark:hover:bg-stone-500'
+                                                                    'group relative flex items-center justify-center rounded-md border px-4 py-3 text-center text-sm font-medium uppercase transition duration-200 ease-out hover:bg-gray-400 focus:outline-none sm:flex-1 sm:py-5 dark:hover:bg-stone-500'
                                                                 )
                                                             }
                                                         >
@@ -683,34 +683,31 @@ export default function ProductDetail() {
                         }
                     />
                     <h1 className="border-b border-stone-500 pb-5 text-4xl font-bold dark:text-white">
-                        Bình luận về sản phẩm
+                        Đánh giá về sản phẩm
                     </h1>
                     <div className="space-y-5">
-                        <div className="flex flex-col space-y-3 pb-3">
-                            <div className="flex flex-col space-y-1 text-white">
-                                <span className="text-sm">Tiêu đề</span>
-                                <input
-                                    type="text"
-                                    required
-                                    placeholder="Tiêu đề bình luận"
-                                    className="border-2 border-white bg-transparent transition duration-500 ease-out placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0"
-                                />
-                            </div>
-                            <div className="flex flex-col space-y-1 text-white">
-                                <span className="text-sm">Nội dung</span>
-                                <textarea className="h-40 resize-none border-2 border-white bg-transparent text-justify text-sm transition duration-500 ease-out focus:border-magenta-500 focus:ring-0"></textarea>
-                            </div>
-                            <div className="flex justify-end">
-                                <button className="border-2 px-4 py-2 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500">
-                                    Đăng
-                                </button>
-                            </div>
-                        </div>
-                        <div className="flex flex-col space-y-1 divide-y-2 border-t border-stone-500 pt-5">
-                            <div>
-                                <div>
+                        <div className="grid gap-5">
+                            {[0, 1, 2].map((index) => (
+                                <div
+                                    key={`review-${index}`}
+                                    className="grid gap-2 overflow-hidden rounded-md bg-zinc-500 p-4 shadow-inner shadow-gray-400 dark:bg-zinc-800"
+                                >
                                     <div className="text-lg font-bold text-gray-900 dark:text-white">
                                         Title goes here
+                                    </div>
+                                    <div className="flex">
+                                        {[1, 2, 3, 4, 5].map((rating) => (
+                                            <StarIcon
+                                                key={rating}
+                                                className={classNames(
+                                                    rating_score_avg >= rating
+                                                        ? 'text-xanthous-500'
+                                                        : 'text-gray-200',
+                                                    'h-5 w-5 flex-shrink-0'
+                                                )}
+                                                aria-hidden="true"
+                                            />
+                                        ))}
                                     </div>
                                     <div className="leading-5 text-gray-900 dark:text-white">
                                         Lorem ipsum dolor sit amet consectetur,
@@ -725,23 +722,10 @@ export default function ProductDetail() {
                                         Repudiandae, at quia! Obcaecati vitae
                                         quo accusamus ipsa illum architecto. Sit
                                         hic ab obcaecati repellendus
-                                        consequuntur. Exercitationem enim,
-                                        dignissimos voluptatum asperiores optio
-                                        vitae voluptatibus corporis facere nobis
-                                        similique voluptatem temporibus laborum
-                                        nemo sapiente labore magni corrupti
-                                        iusto quam! Nam ducimus doloremque
-                                        obcaecati rerum. Dignissimos omnis dicta
-                                        aperiam et fugit quidem ullam.
-                                        Voluptates.
-                                    </div>
-                                    <div className="flex justify-end">
-                                        <button className="border-2 px-4 py-2 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500">
-                                            Phản hồi
-                                        </button>
+                                        consequuntur.
                                     </div>
                                 </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </div>

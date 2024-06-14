@@ -576,7 +576,7 @@ const ProductEditor = () => {
         product_variations
       );
 
-      dispact(
+      await dispact(
         createSpu({
           product_name: data.productName,
           isPublished: false,

@@ -81,6 +81,8 @@ const newSpu = async ({
         });
       });
     }
+
+    ////xulyproduct_attributes
     return spu;
   } catch (error) {
     console.log(`error`, error);

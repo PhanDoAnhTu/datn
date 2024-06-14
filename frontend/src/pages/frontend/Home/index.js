@@ -21,12 +21,30 @@ export default function Home() {
         <div>
             <DocumentTitle title="Trang chủ" />
             <Banner />
+            <div className="px-4 sm:px-6 lg:px-8">
+                {all_products ? (
+                    () => {
+                        const newProducts = all_products
+                            .slice()
+                            .filter((item) => item.special_offer != null);
+                        return (
+                            <ProductList
+                                title={'Sản phẩm khuyến mại'}
+                                summary={'Dựt deal ngay kẻo lỡ'}
+                                products={newProducts}
+                            />
+                        );
+                    }
+                ) : (
+                    <></>
+                )}
+            </div>
             <CategorySection />
             <div className="px-4 sm:px-6 lg:px-8">
                 {all_products ? (
                     <ProductList
-                        title={'Best selling'}
-                        summary={'Our most favorite products are here'}
+                        title={'Sản phẩm mới'}
+                        summary={'Sản phẩm mới nhất đã ở đây'}
                         products={all_products}
                     />
                 ) : (

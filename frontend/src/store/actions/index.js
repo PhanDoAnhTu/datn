@@ -23,7 +23,6 @@ export const Action = {
     PRODUCT_BY_CATEGORY: 'PRODUCT_BY_CATEGORY',
     PRODUCT_FROM_CART: 'PRODUCT_FROM_CART',
 
-
     ///cart
     GET_CART: 'GET_CART',
     ADD_TO_CART: 'ADD_TO_CART',
@@ -35,6 +34,8 @@ export const Action = {
     //category
     GET_CATEGORY_BY_PARENT_ID: 'GET_CATEGORY_BY_PARENT_ID',
     GET_ALL_CATEGORY: 'GET_ALL_CATEGORY',
+    //menu
+    GET_MENU_BY_POSITION: 'GET_MENU_BY_POSITION',
 
     //slider
     GET_ALL_SLIDER_BY_ACTIVE: 'GET_ALL_SLIDER_BY_ACTIVE',
