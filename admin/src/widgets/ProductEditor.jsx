@@ -484,7 +484,6 @@ const ProductEditor = () => {
 
   // do something with the data
   console.log(sKUList, "variations")
-
   const handleSave = async (data) => {
     console.log('data', data)
 
@@ -770,7 +769,7 @@ const ProductEditor = () => {
           </div>
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
             {attributes_management.length > 0 && attributes_management.map((attribute, index) => {
-              const value_attribute_options = attribute.attribute_value.map((value_attribute) => {
+              const value_attribute_options = attribute.attribute_value_list?.map((value_attribute) => {
                 return { label: value_attribute.attribute_value, value: value_attribute._id, attribute_id: value_attribute.attribute_id }
               })
               return (
