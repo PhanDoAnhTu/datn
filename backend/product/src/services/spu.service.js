@@ -1,18 +1,16 @@
-
-'use strict'
-const { errorResponse } = require('../core')
-const { SpuModel, Spu_AttributeModel } = require('../database/models')
-const { addImageBySkuList, addImageBySpuId } = require('./gallery.service')
-const { newSku, allSkuBySpuId } = require('./sku.Service')
-const { spuRepository } = require('../database')
-const _ = require('lodash')
-const { Types } = require('mongoose')
-const { RPCRequest } = require('../utils')
-const BrandService = require('./brand.service')
-const AttributeService = require('./attribute.service')
-const { getCommentByproductId } = require('./comment.service')
-const { findReviewByProductId } = require('./review.service')
-
+"use strict";
+const { errorResponse } = require("../core");
+const { SpuModel, Spu_AttributeModel } = require("../database/models");
+const { addImageBySkuList, addImageBySpuId } = require("./gallery.service");
+const { newSku, allSkuBySpuId } = require("./sku.Service");
+const { spuRepository } = require("../database");
+const _ = require("lodash");
+const { Types } = require("mongoose");
+const { RPCRequest } = require("../utils");
+const BrandService = require("./brand.service");
+const AttributeService = require("./attribute.service");
+const { getCommentByproductId } = require("./comment.service");
+const { findReviewByProductId } = require("./review.service");
 
 const newSpu = async ({
   product_name,
@@ -28,8 +26,7 @@ const newSpu = async ({
   sku_list = [],
   product_unit = null,
   isPublished = false,
-  isDraft = true
-
+  isDraft = true,
 }) => {
   try {
     const spuFound = await SpuModel.findOne({
@@ -40,7 +37,10 @@ const newSpu = async ({
 
     const spu = await SpuModel.create({
       product_name,
-      product_thumb: product_thumb?.length > 0 ? product_thumb[0]?.thumb_url : sku_list[0]?.thumb_url,
+      product_thumb:
+        product_thumb?.length > 0
+          ? product_thumb[0]?.thumb_url
+          : sku_list[0]?.thumb_url,
       product_description,
       product_price: product_price,
       product_weight,
@@ -51,28 +51,38 @@ const newSpu = async ({
       product_variations,
       product_unit,
       isPublished,
-      isDraft
-    })
+      isDraft,
+    });
 
     if (spu && product_thumb?.length > 0) {
-      product_thumb.forEach(image => {
-        addImageBySpuId({ spu_id: spu._id, thumb_url: image.thumb_url, public_id: image.public_id })
-      })
+      product_thumb.forEach((image) => {
+        addImageBySpuId({
+          spu_id: spu._id,
+          thumb_url: image.thumb_url,
+          public_id: image.public_id,
+        });
+      });
     }
     if (spu && sku_list?.length > 0) {
-      const skus = await newSku({ spu_id: spu._id, sku_list })
-      sku_list.map(sku => {
-        skus.map(skuModel => {
-          if (skuModel.sku_tier_idx.toString() === sku.sku_tier_idx.toString() & sku.thumb_url != null) {
-            addImageBySkuList({ spu_id: spu._id, sku_id: skuModel._id, thumb_url: sku.thumb_url, public_id: sku.public_id })
+      const skus = await newSku({ spu_id: spu._id, sku_list });
+      sku_list.map((sku) => {
+        skus.map((skuModel) => {
+          if (
+            (skuModel.sku_tier_idx.toString() === sku.sku_tier_idx.toString()) &
+            (sku.thumb_url != null)
+          ) {
+            addImageBySkuList({
+              spu_id: spu._id,
+              sku_id: skuModel._id,
+              thumb_url: sku.thumb_url,
+              public_id: sku.public_id,
+            });
           }
-        })
-      })
-
+        });
+      });
     }
     ////xulyproduct_attributes
-    return spu
-
+    return spu;
   } catch (error) {
     console.log(`error`, error);
 

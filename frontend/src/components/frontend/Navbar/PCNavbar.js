@@ -149,11 +149,6 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                                                                             {all_products &&
                                                                                 all_products
                                                                                     .slice()
-                                                                                    .sort(
-                                                                                        () =>
-                                                                                            Math.random() -
-                                                                                            Math.random()
-                                                                                    )
                                                                                     .map(
                                                                                         (
                                                                                             item,
@@ -266,9 +261,7 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                                                                                                                         className="flex"
                                                                                                                     >
                                                                                                                         <Link
-                                                                                                                            to={
-                                                                                                                                '#'
-                                                                                                                            }
+                                                                                                                            to={`/san-pham-theo-danh-muc/${item.category_slug}/${subitem._id}/${subsubitem.category_slug}`}
                                                                                                                             onClick={async () => {
                                                                                                                                 close();
                                                                                                                             }}

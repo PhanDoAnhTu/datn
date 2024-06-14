@@ -10,87 +10,156 @@ import {
     ListBulletIcon,
 } from '@heroicons/react/20/solid';
 import classNames from '../../../helpers/classNames';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import ProductSingle from '../../../components/frontend/ProductSingle';
 import Pagination from '../../../components/frontend/Pagination';
 import ProductSingleList from '../../../components/frontend/ProductSingleList';
 import { useDispatch, useSelector } from 'react-redux';
 //
 import { allProducts, ProductsByCategory } from '../../../store/actions';
-
+import { findListBrand } from '../../../store/actions/brand-actions';
+import { findAllAttribute } from '../../../store/actions/attribute-actions';
 
 const sortOptions = [
-    { name: 'Most Popular', href: '#', current: true },
-    { name: 'Best Rating', href: '#', current: false },
-    { name: 'Newest', href: '#', current: false },
-    { name: 'Price: Low to High', href: '#', current: false },
-    { name: 'Price: High to Low', href: '#', current: false },
-];
-const subCategories = [
-    { name: 'Totes', href: '#' },
-    { name: 'Backpacks', href: '#' },
-    { name: 'Travel Bags', href: '#' },
-    { name: 'Hip Bags', href: '#' },
-    { name: 'Laptop Sleeves', href: '#' },
-];
-const filters = [
-    {
-        id: 'color',
-        name: 'Color',
-        options: [
-            { value: 'white', label: 'White', checked: false },
-            { value: 'beige', label: 'Beige', checked: false },
-            { value: 'blue', label: 'Blue', checked: true },
-            { value: 'brown', label: 'Brown', checked: false },
-            { value: 'green', label: 'Green', checked: false },
-            { value: 'purple', label: 'Purple', checked: false },
-        ],
-    },
-    {
-        id: 'category',
-        name: 'Category',
-        options: [
-            { value: 'new-arrivals', label: 'New Arrivals', checked: false },
-            { value: 'sale', label: 'Sale', checked: false },
-            { value: 'travel', label: 'Travel', checked: true },
-            { value: 'organization', label: 'Organization', checked: false },
-            { value: 'accessories', label: 'Accessories', checked: false },
-        ],
-    },
-    {
-        id: 'size',
-        name: 'Size',
-        options: [
-            { value: '2l', label: '2L', checked: false },
-            { value: '6l', label: '6L', checked: false },
-            { value: '12l', label: '12L', checked: false },
-            { value: '18l', label: '18L', checked: false },
-            { value: '20l', label: '20L', checked: false },
-            { value: '40l', label: '40L', checked: true },
-        ],
-    },
+    { name: 'Ngày ra mắt', value: 'createdAt' },
+    { name: 'Đánh giá cao nhất', value: 'bestRating' },
+    { name: 'Giá: Thấp đến cao', value: 'priceLowToHigh' },
+    { name: 'Giá: Cao đến thấp', value: 'priceHighToLow' },
 ];
 
-// eslint-disable-next-line no-unused-vars
-export default function Category({ CategoryTitle }) {
-
+export default function Category() {
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
     const [isListView, setIsListView] = useState(false);
-
+    // eslint-disable-next-line no-unused-vars
+    const { gender, sub_category, category_slug } = useParams();
+    const [products, setProducts] = useState(null);
     ///demo setProducts
     const dispatch = useDispatch();
+    // eslint-disable-next-line no-unused-vars
     const { all_products, product_by_category } = useSelector(
         (state) => state.productReducer
     );
+    // eslint-disable-next-line no-unused-vars
+    const { category } = useSelector((state) => state.categoryReducer);
+    const { brand } = useSelector((state) => state.brandReducer);
+    const { attribute } = useSelector((state) => state.attributeReducer);
+
+    useEffect(() => {
+        if (!brand) {
+            dispatch(findListBrand());
+        }
+        if (!attribute) {
+            dispatch(findAllAttribute());
+        }
+    }, [brand, attribute]);
     useEffect(() => {
         dispatch(allProducts({ isPublished: true }));
     }, []);
     ///demo setProducts
+    const [selectedBrands, setSelectedBrands] = useState([]);
+    const [selectedAttributes, setSelectedAttributes] = useState([]);
+    const [selectedSort, setSelectedSort] = useState('createdAt');
 
     useEffect(() => {
-        dispatch(ProductsByCategory());
-    }, []);
-    console.log(product_by_category)
+        dispatch(
+            ProductsByCategory({
+                filter: {
+                    isPublished: true,
+                    category_id: category
+                        ?.slice()
+                        .find(
+                            (item) =>
+                                item.category_slug === category_slug &&
+                                item.parent_id === sub_category
+                        )._id,
+                },
+            })
+        );
+    }, [gender, sub_category, category_slug]);
+
+    useEffect(() => {
+        setProducts(product_by_category);
+    }, [product_by_category]);
+
+    useEffect(() => {
+        if (selectedBrands?.length === 0) {
+            if (selectedAttributes?.length === 0) {
+                setProducts(product_by_category);
+            } else {
+                setProducts(
+                    product_by_category
+                        ?.slice()
+                        .filter((item) =>
+                            item.product_attributes.every((subitem) =>
+                                selectedAttributes.every((checkValue) =>
+                                    subitem.attribute_value.some(
+                                        (subsubitem) =>
+                                            subsubitem.value === checkValue
+                                    )
+                                )
+                            )
+                        )
+                );
+            }
+        } else {
+            setProducts(
+                product_by_category
+                    ?.slice()
+                    .filter((item) =>
+                        selectedBrands.includes(item.product_brand)
+                    )
+            );
+        }
+    }, [selectedBrands, product_by_category]);
+    useEffect(() => {
+        if (selectedAttributes?.length === 0) {
+            if (selectedBrands?.length === 0) {
+                setProducts(product_by_category);
+            } else {
+                setProducts(
+                    product_by_category
+                        ?.slice()
+                        .filter((item) =>
+                            selectedBrands.includes(item.product_brand)
+                        )
+                );
+            }
+        } else {
+            setProducts(
+                product_by_category
+                    ?.slice()
+                    .filter((item) =>
+                        selectedAttributes.some((UUID) =>
+                            item.product_attributes.some((attribute) =>
+                                attribute.attribute_value.some(
+                                    (subitem) => subitem.value === UUID
+                                )
+                            )
+                        )
+                    )
+            );
+        }
+    }, [selectedAttributes, product_by_category]);
+
+    useEffect(() => {
+        setProducts(
+            product_by_category
+                .slice()
+                .sort((a, b) =>
+                    selectedSort === 'priceLowToHigh'
+                        ? a.product_price > b.product_price
+                            ? -1
+                            : 1
+                        : selectedSort === 'priceHighToLow'
+                          ? a.product_price < b.product_price
+                              ? -1
+                              : 1
+                          : selectedSort === 'createdAt'
+                            ? 1
+                            : -1
+                )
+        );
+    }, [selectedSort, product_by_category]);
 
     return (
         <div>
@@ -124,10 +193,10 @@ export default function Category({ CategoryTitle }) {
                                 leaveFrom="translate-x-0"
                                 leaveTo="translate-x-full"
                             >
-                                <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-12 shadow-xl dark:bg-licorice-400">
+                                <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-12 shadow-xl dark:bg-zinc-900">
                                     <div className="flex items-center justify-between px-4">
                                         <h2 className="text-lg font-medium text-gray-900 dark:text-white">
-                                            Filters
+                                            Lọc sản phẩm
                                         </h2>
                                         <button
                                             type="button"
@@ -150,22 +219,27 @@ export default function Category({ CategoryTitle }) {
                                     <form className="mt-4 border-t border-gray-200">
                                         <h3 className="sr-only">Categories</h3>
                                         <ul className="px-2 py-3 font-medium text-gray-900">
-                                            {subCategories.map((category) => (
-                                                <li key={category.name}>
-                                                    <Link
-                                                        href={category.href}
-                                                        className="block px-2 py-3 dark:text-white"
-                                                    >
-                                                        {category.name}
-                                                    </Link>
-                                                </li>
-                                            ))}
+                                            {category
+                                                ?.slice()
+                                                .filter(
+                                                    (item) =>
+                                                        item.parent_id ===
+                                                        sub_category
+                                                )
+                                                .map((item) => (
+                                                    <li key={item._id}>
+                                                        <Link
+                                                            to={`/san-pham-theo-danh-muc/${gender}/${sub_category}/${item.category_slug}`}
+                                                            className={`block px-2 py-3 ${category_slug === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                                        >
+                                                            {item.category_name}
+                                                        </Link>
+                                                    </li>
+                                                ))}
                                         </ul>
-
-                                        {filters.map((section) => (
+                                        {brand && (
                                             <Disclosure
                                                 as="div"
-                                                key={section.id}
                                                 className="border-t border-gray-200 px-4 py-6"
                                             >
                                                 {({ open }) => (
@@ -173,9 +247,7 @@ export default function Category({ CategoryTitle }) {
                                                         <h3 className="-mx-2 -my-3 flow-root">
                                                             <Disclosure.Button className="flex w-full items-center justify-between bg-transparent px-2 py-3 text-gray-400 hover:text-gray-500">
                                                                 <span className="font-medium text-gray-900 dark:text-white">
-                                                                    {
-                                                                        section.name
-                                                                    }
+                                                                    Nhãn hàng
                                                                 </span>
                                                                 <span className="ml-6 flex items-center dark:text-gray-200">
                                                                     {open ? (
@@ -194,35 +266,85 @@ export default function Category({ CategoryTitle }) {
                                                         </h3>
                                                         <Disclosure.Panel className="pt-6">
                                                             <div className="space-y-6">
-                                                                {section.options.map(
+                                                                {brand?.map(
                                                                     (
-                                                                        option,
-                                                                        optionIdx
+                                                                        item,
+                                                                        index
                                                                     ) => (
                                                                         <div
                                                                             key={
-                                                                                option.value
+                                                                                item.value
                                                                             }
                                                                             className="flex items-center"
                                                                         >
                                                                             <input
-                                                                                id={`filter-mobile-${section.id}-${optionIdx}`}
-                                                                                name={`${section.id}[]`}
-                                                                                defaultValue={
-                                                                                    option.value
+                                                                                id={`filter-mobile-${item._id}-${index}`}
+                                                                                value={
+                                                                                    item._id
+                                                                                }
+                                                                                onChange={() =>
+                                                                                    null
+                                                                                }
+                                                                                onClick={(
+                                                                                    e
+                                                                                ) => {
+                                                                                    if (
+                                                                                        selectedBrands?.findIndex(
+                                                                                            (
+                                                                                                og
+                                                                                            ) =>
+                                                                                                og ===
+                                                                                                item._id
+                                                                                        ) ===
+                                                                                        -1
+                                                                                    ) {
+                                                                                        setSelectedBrands(
+                                                                                            (
+                                                                                                prevState
+                                                                                            ) => [
+                                                                                                ...prevState,
+                                                                                                e
+                                                                                                    .target
+                                                                                                    .value,
+                                                                                            ]
+                                                                                        );
+                                                                                    } else {
+                                                                                        setSelectedBrands(
+                                                                                            selectedBrands
+                                                                                                .slice()
+                                                                                                .filter(
+                                                                                                    (
+                                                                                                        item
+                                                                                                    ) =>
+                                                                                                        item !==
+                                                                                                        e
+                                                                                                            .target
+                                                                                                            .value
+                                                                                                )
+                                                                                        );
+                                                                                    }
+                                                                                }}
+                                                                                checked={
+                                                                                    selectedBrands?.findIndex(
+                                                                                        (
+                                                                                            og
+                                                                                        ) =>
+                                                                                            og ===
+                                                                                            item._id
+                                                                                    ) !==
+                                                                                    -1
+                                                                                        ? true
+                                                                                        : false
                                                                                 }
                                                                                 type="checkbox"
-                                                                                defaultChecked={
-                                                                                    option.checked
-                                                                                }
-                                                                                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                                                className="h-4 w-4 rounded border-gray-300 text-xanthous-600 focus:ring-xanthous-500"
                                                                             />
                                                                             <label
-                                                                                htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
-                                                                                className="ml-3 min-w-0 flex-1 text-gray-500"
+                                                                                htmlFor={`filter-mobile-${item._id}-${index}`}
+                                                                                className="ml-3 min-w-0 flex-1 text-gray-900 dark:text-white"
                                                                             >
                                                                                 {
-                                                                                    option.label
+                                                                                    item.brand_name
                                                                                 }
                                                                             </label>
                                                                         </div>
@@ -233,7 +355,130 @@ export default function Category({ CategoryTitle }) {
                                                     </>
                                                 )}
                                             </Disclosure>
-                                        ))}
+                                        )}
+                                        {attribute &&
+                                            attribute?.map((item, index) => (
+                                                <Disclosure
+                                                    as="div"
+                                                    className="border-t border-gray-200 px-4 py-6"
+                                                    key={item._id + '-' + index}
+                                                >
+                                                    {({ open }) => (
+                                                        <>
+                                                            <h3 className="-mx-2 -my-3 flow-root">
+                                                                <Disclosure.Button className="flex w-full items-center justify-between bg-transparent px-2 py-3 text-gray-400 hover:text-gray-500">
+                                                                    <span className="font-medium text-gray-900 dark:text-white">
+                                                                        {
+                                                                            item.attribute_name
+                                                                        }
+                                                                    </span>
+                                                                    <span className="ml-6 flex items-center dark:text-gray-200">
+                                                                        {open ? (
+                                                                            <MinusIcon
+                                                                                className="h-5 w-5"
+                                                                                aria-hidden="true"
+                                                                            />
+                                                                        ) : (
+                                                                            <PlusIcon
+                                                                                className="h-5 w-5"
+                                                                                aria-hidden="true"
+                                                                            />
+                                                                        )}
+                                                                    </span>
+                                                                </Disclosure.Button>
+                                                            </h3>
+                                                            <Disclosure.Panel className="pt-6">
+                                                                <div className="space-y-6">
+                                                                    {item.attribute_value_list?.map(
+                                                                        (
+                                                                            subitem,
+                                                                            subindex
+                                                                        ) => (
+                                                                            <div
+                                                                                key={
+                                                                                    subitem.value
+                                                                                }
+                                                                                className="flex items-center"
+                                                                            >
+                                                                                <input
+                                                                                    id={`filter-mobile-${subitem._id}-${subindex}`}
+                                                                                    value={
+                                                                                        subitem._id
+                                                                                    }
+                                                                                    onChange={() =>
+                                                                                        null
+                                                                                    }
+                                                                                    onClick={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        if (
+                                                                                            selectedAttributes?.findIndex(
+                                                                                                (
+                                                                                                    og
+                                                                                                ) =>
+                                                                                                    og ===
+                                                                                                    subitem._id
+                                                                                            ) ===
+                                                                                            -1
+                                                                                        ) {
+                                                                                            setSelectedAttributes(
+                                                                                                (
+                                                                                                    prevState
+                                                                                                ) => [
+                                                                                                    ...prevState,
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .value,
+                                                                                                ]
+                                                                                            );
+                                                                                        } else {
+                                                                                            setSelectedAttributes(
+                                                                                                selectedAttributes
+                                                                                                    .slice()
+                                                                                                    .filter(
+                                                                                                        (
+                                                                                                            og
+                                                                                                        ) =>
+                                                                                                            og !==
+                                                                                                            e
+                                                                                                                .target
+                                                                                                                .value
+                                                                                                    )
+                                                                                            );
+                                                                                        }
+                                                                                    }}
+                                                                                    checked={
+                                                                                        selectedAttributes?.findIndex(
+                                                                                            (
+                                                                                                og
+                                                                                            ) =>
+                                                                                                og ===
+                                                                                                subitem._id
+                                                                                        ) !==
+                                                                                        -1
+                                                                                            ? true
+                                                                                            : false
+                                                                                    }
+                                                                                    type="checkbox"
+                                                                                    className="h-4 w-4 rounded border-gray-300 text-xanthous-600 focus:ring-xanthous-500"
+                                                                                />
+                                                                                <label
+                                                                                    htmlFor={`filter-mobile-${subitem._id}-${subindex}`}
+                                                                                    className="ml-3 min-w-0 flex-1 text-gray-900 dark:text-white"
+                                                                                >
+                                                                                    {
+                                                                                        subitem.attribute_value
+                                                                                    }
+                                                                                </label>
+                                                                            </div>
+                                                                        )
+                                                                    )}
+                                                                </div>
+                                                            </Disclosure.Panel>
+                                                        </>
+                                                    )}
+                                                </Disclosure>
+                                            ))}
                                     </form>
                                 </Dialog.Panel>
                             </Transition.Child>
@@ -244,7 +489,12 @@ export default function Category({ CategoryTitle }) {
                 <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
-                            New Arrivals
+                            {
+                                category
+                                    ?.slice()
+                                    .find((item) => item._id === sub_category)
+                                    .category_name
+                            }
                         </h1>
 
                         <div className="flex items-center">
@@ -277,16 +527,22 @@ export default function Category({ CategoryTitle }) {
                                                 <Menu.Item key={option.name}>
                                                     {({ active }) => (
                                                         <Link
-                                                            href={option.href}
+                                                            to={'#'}
                                                             className={classNames(
-                                                                option.current
-                                                                    ? 'font-medium text-gray-900 dark:text-white'
+                                                                selectedSort ===
+                                                                    option.value
+                                                                    ? 'pointer-events-none font-medium text-gray-900 dark:text-white'
                                                                     : 'text-gray-500 dark:text-stone-200',
                                                                 active
-                                                                    ? 'bg-gray-100 dark:bg-licorice-400'
+                                                                    ? 'bg-gray-100 dark:bg-zinc-950'
                                                                     : '',
                                                                 'block px-4 py-2 text-sm transition duration-200 ease-out'
                                                             )}
+                                                            onClick={() =>
+                                                                setSelectedSort(
+                                                                    option.value
+                                                                )
+                                                            }
                                                         >
                                                             {option.name}
                                                         </Link>
@@ -344,19 +600,26 @@ export default function Category({ CategoryTitle }) {
                             <form className="hidden lg:block">
                                 <h3 className="sr-only">Categories</h3>
                                 <ul className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900 dark:text-white">
-                                    {subCategories.map((category) => (
-                                        <li key={category.name}>
-                                            <Link href={category.href}>
-                                                {category.name}
-                                            </Link>
-                                        </li>
-                                    ))}
+                                    {category
+                                        ?.slice()
+                                        .filter(
+                                            (item) =>
+                                                item.parent_id === sub_category
+                                        )
+                                        .map((item) => (
+                                            <li key={item._id}>
+                                                <Link
+                                                    to={`/san-pham-theo-danh-muc/${gender}/${sub_category}/${item.category_slug}`}
+                                                    className={`${category_slug === item.category_slug ? 'pointer-events-none text-magenta-500' : ''}`}
+                                                >
+                                                    {item.category_name}
+                                                </Link>
+                                            </li>
+                                        ))}
                                 </ul>
-
-                                {filters.map((section) => (
+                                {brand && (
                                     <Disclosure
                                         as="div"
-                                        key={section.id}
                                         className="border-b border-gray-200 py-6"
                                     >
                                         {({ open }) => (
@@ -364,7 +627,7 @@ export default function Category({ CategoryTitle }) {
                                                 <h3 className="-my-3 flow-root">
                                                     <Disclosure.Button className="flex w-full items-center justify-between bg-transparent py-3 text-sm text-gray-400 transition duration-200 ease-out hover:text-gray-500  dark:text-stone-200 dark:hover:text-stone-400">
                                                         <span className="font-medium text-gray-900 dark:text-stone-300">
-                                                            {section.name}
+                                                            Nhãn hàng
                                                         </span>
                                                         <span className="ml-6 flex items-center">
                                                             {open ? (
@@ -383,35 +646,82 @@ export default function Category({ CategoryTitle }) {
                                                 </h3>
                                                 <Disclosure.Panel className="pt-6">
                                                     <div className="space-y-4">
-                                                        {section.options.map(
-                                                            (
-                                                                option,
-                                                                optionIdx
-                                                            ) => (
+                                                        {brand?.map(
+                                                            (item, index) => (
                                                                 <div
                                                                     key={
-                                                                        option.value
+                                                                        item._id
                                                                     }
                                                                     className="flex items-center"
                                                                 >
                                                                     <input
-                                                                        id={`filter-${section.id}-${optionIdx}`}
-                                                                        name={`${section.id}[]`}
-                                                                        defaultValue={
-                                                                            option.value
+                                                                        id={`filter-${item._id}-${index}`}
+                                                                        value={
+                                                                            item._id
+                                                                        }
+                                                                        onClick={(
+                                                                            e
+                                                                        ) => {
+                                                                            if (
+                                                                                selectedBrands?.findIndex(
+                                                                                    (
+                                                                                        og
+                                                                                    ) =>
+                                                                                        og ===
+                                                                                        item._id
+                                                                                ) ===
+                                                                                -1
+                                                                            ) {
+                                                                                setSelectedBrands(
+                                                                                    (
+                                                                                        prevState
+                                                                                    ) => [
+                                                                                        ...prevState,
+                                                                                        e
+                                                                                            .target
+                                                                                            .value,
+                                                                                    ]
+                                                                                );
+                                                                            } else {
+                                                                                setSelectedBrands(
+                                                                                    selectedBrands
+                                                                                        .slice()
+                                                                                        .filter(
+                                                                                            (
+                                                                                                item
+                                                                                            ) =>
+                                                                                                item !==
+                                                                                                e
+                                                                                                    .target
+                                                                                                    .value
+                                                                                        )
+                                                                                );
+                                                                            }
+                                                                        }}
+                                                                        onChange={() =>
+                                                                            null
+                                                                        }
+                                                                        checked={
+                                                                            selectedBrands?.findIndex(
+                                                                                (
+                                                                                    og
+                                                                                ) =>
+                                                                                    og ===
+                                                                                    item._id
+                                                                            ) !==
+                                                                            -1
+                                                                                ? true
+                                                                                : false
                                                                         }
                                                                         type="checkbox"
-                                                                        defaultChecked={
-                                                                            option.checked
-                                                                        }
                                                                         className="h-4 w-4 rounded border-gray-300 text-xanthous-600 focus:ring-xanthous-500"
                                                                     />
                                                                     <label
-                                                                        htmlFor={`filter-${section.id}-${optionIdx}`}
+                                                                        htmlFor={`filter-${item.id}-${index}`}
                                                                         className="ml-3 text-sm text-gray-600 dark:text-stone-200"
                                                                     >
                                                                         {
-                                                                            option.label
+                                                                            item.brand_name
                                                                         }
                                                                     </label>
                                                                 </div>
@@ -422,31 +732,170 @@ export default function Category({ CategoryTitle }) {
                                             </>
                                         )}
                                     </Disclosure>
-                                ))}
+                                )}
+
+                                {attribute &&
+                                    attribute.map((item, index) => (
+                                        <Disclosure
+                                            as="div"
+                                            className="border-b border-gray-200 py-6"
+                                            key={item._id + '-' + index}
+                                        >
+                                            {({ open }) => (
+                                                <>
+                                                    <h3 className="-my-3 flow-root">
+                                                        <Disclosure.Button className="flex w-full items-center justify-between bg-transparent py-3 text-sm text-gray-400 transition duration-200 ease-out hover:text-gray-500  dark:text-stone-200 dark:hover:text-stone-400">
+                                                            <span className="font-medium text-gray-900 dark:text-stone-300">
+                                                                {
+                                                                    item.attribute_name
+                                                                }
+                                                            </span>
+                                                            <span className="ml-6 flex items-center">
+                                                                {open ? (
+                                                                    <MinusIcon
+                                                                        className="h-5 w-5"
+                                                                        aria-hidden="true"
+                                                                    />
+                                                                ) : (
+                                                                    <PlusIcon
+                                                                        className="h-5 w-5"
+                                                                        aria-hidden="true"
+                                                                    />
+                                                                )}
+                                                            </span>
+                                                        </Disclosure.Button>
+                                                    </h3>
+                                                    <Disclosure.Panel className="pt-6">
+                                                        <div className="space-y-4">
+                                                            {item.attribute_value_list?.map(
+                                                                (
+                                                                    subitem,
+                                                                    subindex
+                                                                ) => (
+                                                                    <div
+                                                                        key={
+                                                                            subitem._id
+                                                                        }
+                                                                        className="flex items-center"
+                                                                    >
+                                                                        <input
+                                                                            id={`filter-${subitem._id}-${subindex}`}
+                                                                            value={
+                                                                                subitem._id
+                                                                            }
+                                                                            onClick={(
+                                                                                e
+                                                                            ) => {
+                                                                                if (
+                                                                                    selectedAttributes?.findIndex(
+                                                                                        (
+                                                                                            og
+                                                                                        ) =>
+                                                                                            og ===
+                                                                                            subitem._id
+                                                                                    ) ===
+                                                                                    -1
+                                                                                ) {
+                                                                                    setSelectedAttributes(
+                                                                                        (
+                                                                                            prevState
+                                                                                        ) => [
+                                                                                            ...prevState,
+                                                                                            e
+                                                                                                .target
+                                                                                                .value,
+                                                                                        ]
+                                                                                    );
+                                                                                } else {
+                                                                                    setSelectedAttributes(
+                                                                                        selectedAttributes
+                                                                                            ?.slice()
+                                                                                            .filter(
+                                                                                                (
+                                                                                                    og
+                                                                                                ) =>
+                                                                                                    og !==
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .value
+                                                                                            )
+                                                                                    );
+                                                                                }
+                                                                            }}
+                                                                            onChange={() =>
+                                                                                null
+                                                                            }
+                                                                            checked={
+                                                                                selectedAttributes?.findIndex(
+                                                                                    (
+                                                                                        og
+                                                                                    ) =>
+                                                                                        og ===
+                                                                                        subitem._id
+                                                                                ) !==
+                                                                                -1
+                                                                                    ? true
+                                                                                    : false
+                                                                            }
+                                                                            type="checkbox"
+                                                                            className="h-4 w-4 rounded border-gray-300 text-xanthous-600 focus:ring-xanthous-500"
+                                                                        />
+                                                                        <label
+                                                                            htmlFor={`filter-${subitem._id}-${subindex}`}
+                                                                            className="ml-3 text-sm text-gray-600 dark:text-stone-200"
+                                                                        >
+                                                                            {
+                                                                                subitem.attribute_value
+                                                                            }
+                                                                        </label>
+                                                                    </div>
+                                                                )
+                                                            )}
+                                                        </div>
+                                                    </Disclosure.Panel>
+                                                </>
+                                            )}
+                                        </Disclosure>
+                                    ))}
                             </form>
 
                             {/* Product grid */}
                             <div className="col-span-3 grid grid-rows-1">
                                 <div
-                                    className={`col-span-3 grid gap-x-6 ${isListView ? '' : 'grid-cols-2 gap-y-10 sm:grid-cols-4 lg:grid-cols-4 xl:gap-x-3'}`}
+                                    className={`relative col-span-3 grid h-fit gap-x-6 ${isListView ? '' : 'grid-cols-2 gap-y-10 sm:grid-cols-4 lg:grid-cols-4 xl:gap-x-3'}`}
                                 >
-                                    {!isListView
-                                        ? (all_products ? all_products.map((product, index) => (
-                                            <ProductSingle
-                                                product={product}
-                                                key={index}
-
-                                            />)) : <></>)
-                                        : (all_products ? all_products.map((product, index) => (
+                                    {!isListView ? (
+                                        products && products.length !== 0 ? (
+                                            products?.map((product, index) => (
+                                                <ProductSingle
+                                                    product={product}
+                                                    key={index}
+                                                />
+                                            ))
+                                        ) : (
+                                            <div className="col-span-full text-center text-lg font-bold text-gray-900 dark:text-white">
+                                                Hiện không có sản phẩm
+                                            </div>
+                                        )
+                                    ) : products && products.length !== 0 ? (
+                                        products?.map((product, index) => (
                                             <ProductSingleList
                                                 product={product}
                                                 key={index}
                                             />
-                                        )) : <></>)
-                                    }
+                                        ))
+                                    ) : (
+                                        <div className="col-span-full text-center text-lg font-bold text-gray-900 dark:text-white">
+                                            Hiện không có sản phẩm
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="col-span-3 pt-5">
-                                    <Pagination className="col-span-3" />
+                                    {products && products?.length > 12 ? (
+                                        <Pagination className="col-span-3" />
+                                    ) : (
+                                        ''
+                                    )}
                                 </div>
                             </div>
                         </div>

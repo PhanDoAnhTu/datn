@@ -34,6 +34,10 @@ export const Action = {
     //category
     GET_CATEGORY_BY_PARENT_ID: 'GET_CATEGORY_BY_PARENT_ID',
     GET_ALL_CATEGORY: 'GET_ALL_CATEGORY',
+    //Brand
+    GET_ALL_BRAND: 'GET_ALL_BRAND',
+    //Attribute
+    GET_ALL_ATTRIBUTE: 'GET_ALL_ATTRIBUTE',
     //menu
     GET_MENU_BY_POSITION: 'GET_MENU_BY_POSITION',
 

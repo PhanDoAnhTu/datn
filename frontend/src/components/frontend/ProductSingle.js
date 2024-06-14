@@ -53,16 +53,16 @@ export default function ProductSingle({ product, reload }) {
         toast.success('Đã xóa sản phẩm ra khỏi mục yêu thích!');
     };
     return (
-        <div key={product._id} className="group relative py-2">
-            <div className="h-56 w-56 snap-start overflow-hidden rounded-md bg-gray-200 transition-all duration-200 ease-out lg:aspect-none group-hover:opacity-75 lg:h-56 lg:w-56">
+        <div key={product._id} className="group relative h-fit w-fit py-2">
+            <div className="h-56 w-full snap-start overflow-hidden rounded-md bg-gray-200 transition-all duration-200 ease-out group-hover:opacity-75 lg:h-56 lg:w-full">
                 <img
                     src={product.product_thumb}
                     alt={product.product_slug}
-                    className="h-auto w-auto object-cover object-center lg:h-full lg:w-full"
+                    className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                 />
             </div>
 
-            <div className="absolute inset-y-0 z-10 hidden w-full items-center justify-center space-x-3 pt-32 xl:flex">
+            <div className="absolute top-0 z-10 hidden w-full items-center justify-center space-x-3 pt-32 xl:flex">
                 {product &&
                     (userInfo ? (
                         favories_products.some(
