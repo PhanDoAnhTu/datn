@@ -313,7 +313,7 @@ export default function ProductDetail() {
                                 <li key={breadcrumb._id}>
                                     <div className="flex items-center">
                                         <Link
-                                            to={`san-pham-theo-danh-muc/${breadcrumb.category_slug}`}
+                                            to={`/san-pham-theo-danh-muc/${breadcrumb.category_slug}`}
                                             className="mr-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                                         >
                                             {breadcrumb.category_name}
@@ -334,7 +334,7 @@ export default function ProductDetail() {
                         {product_detail && (
                             <li className="text-sm">
                                 <Link
-                                    to={`san-pham/${product_detail.product_slug}-${product_detail._id}`}
+                                    to={`/san-pham/${product_detail.product_slug}-${product_detail._id}`}
                                     aria-current="page"
                                     className="font-medium text-gray-500 transition duration-200 ease-out hover:text-gray-600 dark:text-white dark:hover:text-gray-300"
                                 >

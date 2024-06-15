@@ -23,18 +23,18 @@ export default function Favorites() {
         userInfo &&
             (!wish_list
                 ? dispatch(
-                    getWishListByUserId({
-                        userId: userInfo._id,
-                    })
-                )
+                      getWishListByUserId({
+                          userId: userInfo._id,
+                      })
+                  )
                 : // console.log(wish_list.wish_list_products.length,getFavoritesFromLocalStorage().length)&&
-                wish_list.wish_list_products.length !=
-                getFavoritesFromLocalStorage().length &&
-                dispatch(
-                    getWishListByUserId({
-                        userId: userInfo._id,
-                    })
-                ));
+                  wish_list.wish_list_products.length !=
+                      getFavoritesFromLocalStorage().length &&
+                  dispatch(
+                      getWishListByUserId({
+                          userId: userInfo._id,
+                      })
+                  ));
     }, [userInfo, wish_list, all_products]);
 
     const HandleDeleteWishList = async ({ userId }) => {
@@ -106,7 +106,7 @@ export default function Favorites() {
                     )
                 ) : (
                     <div className="text-lg font-bold text-gray-900 dark:text-white">
-                        Không có gì ở đây cả!
+                        Hiện không có thông tin để hiển thị!
                     </div>
                 )}
             </div>

@@ -9,8 +9,6 @@ import { getSelectedListFromCart } from '../../../utils';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { NumericFormat } from 'react-number-format';
 
-
-
 export default function Checkout() {
     const [step, setStep] = useState(1);
     const [email, setEmail] = useState('');
@@ -25,13 +23,10 @@ export default function Checkout() {
     const [securityCode, setSecurityCode] = useState('');
 
     const [paymentMethod, setPaymentMethod] = useState('COD');
-    const [selectedProductFromCart] = useState(getSelectedListFromCart)
-    const [price_total, setprice_total] = useState(0)
-
+    const [selectedProductFromCart] = useState(getSelectedListFromCart);
+    const [price_total, setprice_total] = useState(0);
 
     // const navigate = useNavigate();
-
-
 
     const handleNextStep = () => {
         if (
@@ -46,80 +41,120 @@ export default function Checkout() {
         setStep(step + 1);
     };
 
-
     useEffect(() => {
-        setprice_total(selectedProductFromCart?.reduce(
-            (accumulator, currentValue) => accumulator + (currentValue.price * currentValue.quantity),
-            0,
-        ))
-
+        setprice_total(
+            selectedProductFromCart?.reduce(
+                (accumulator, currentValue) =>
+                    accumulator + currentValue.price * currentValue.quantity,
+                0
+            )
+        );
     }, [selectedProductFromCart]);
-
-
 
     return (
         <div className="overflow-hidden pb-7 pt-10 md:pt-24">
             <StepCount step={step} />
-            <Link
-                to={`/`}
-                className="ml-20 mb-6 flex items-center"
-            >
+            <Link to={`/`} className="mb-6 ml-20 flex items-center">
                 <ChevronLeftIcon className="h-6 w-6 text-white" />
                 <span className="text-lg font-bold text-white">Quay lại</span>
             </Link>
             <div
                 className={`flex ${step === 2 ? '-translate-x-full' : step === 3 ? '-translate-x-2full' : ''} transition duration-500 ease-out`}
             >
-
                 <div className="w-screen flex-shrink-0 px-1 md:px-32">
                     <div className="grid gap-16 sm:px-4 xl:grid-cols-2">
                         <div className="h-fit bg-zinc-900 p-10 text-white">
                             <div className="flow-root">
                                 <ul className="-my-6 divide-gray-200 transition-colors duration-200 ease-out dark:divide-stone-700">
-                                    {selectedProductFromCart && selectedProductFromCart.map((product, index) => (
-                                        <li key={index} className="flex py-4">
-                                            <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                                <img
-                                                    src={product.product_image}
-                                                    alt={product.product_image}
-                                                    className="h-full w-full object-cover object-center"
-                                                />
-                                            </div>
-                                            <div className="ml-4 flex flex-1 flex-col">
-                                                <div>
-                                                    <div className="flex justify-between text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                        <h3 className="line-clamp-3 text-ellipsis">
-                                                            <Link to={`/san-pham/${product.product_slug_id}`}>
-                                                                {product.product_name}
-                                                            </Link>
-                                                        </h3>
-                                                        <p className="ml-4 text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                            <NumericFormat
-                                                                value={product.price}
-                                                                displayType='text'
-                                                                thousandSeparator={true}
-                                                                decimalScale={0}
-                                                                id="price"
-                                                                suffix={'đ'}
-                                                            />
-                                                        </p>
+                                    {selectedProductFromCart &&
+                                        selectedProductFromCart.map(
+                                            (product, index) => (
+                                                <li
+                                                    key={index}
+                                                    className="flex py-4"
+                                                >
+                                                    <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                                        <img
+                                                            src={
+                                                                product.product_image
+                                                            }
+                                                            alt={
+                                                                product.product_image
+                                                            }
+                                                            className="h-full w-full object-cover object-center"
+                                                        />
                                                     </div>
-                                                    <div className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
-                                                        {product.product_option.map((option, index) => {
-                                                            return (
-                                                                <p key={index} className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">{option.options[product.product_variation[index]]}</p>
-                                                            )
-                                                        })}
+                                                    <div className="ml-4 flex flex-1 flex-col">
+                                                        <div>
+                                                            <div className="flex justify-between text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
+                                                                <h3 className="line-clamp-3 text-ellipsis">
+                                                                    <Link
+                                                                        to={`/san-pham/${product.product_slug_id}`}
+                                                                    >
+                                                                        {
+                                                                            product.product_name
+                                                                        }
+                                                                    </Link>
+                                                                </h3>
+                                                                <p className="ml-4 text-gray-900 transition-colors duration-200 ease-out dark:text-white">
+                                                                    <NumericFormat
+                                                                        value={
+                                                                            product.price
+                                                                        }
+                                                                        displayType="text"
+                                                                        thousandSeparator={
+                                                                            true
+                                                                        }
+                                                                        decimalScale={
+                                                                            0
+                                                                        }
+                                                                        id="price"
+                                                                        suffix={
+                                                                            'đ'
+                                                                        }
+                                                                    />
+                                                                </p>
+                                                            </div>
+                                                            <div className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
+                                                                {product.product_option.map(
+                                                                    (
+                                                                        option,
+                                                                        index
+                                                                    ) => {
+                                                                        return (
+                                                                            <p
+                                                                                key={
+                                                                                    index
+                                                                                }
+                                                                                className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300"
+                                                                            >
+                                                                                {
+                                                                                    option
+                                                                                        .options[
+                                                                                        product
+                                                                                            .product_variation[
+                                                                                            index
+                                                                                        ]
+                                                                                    ]
+                                                                                }
+                                                                            </p>
+                                                                        );
+                                                                    }
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex flex-1 items-end justify-between text-sm">
+                                                            <p className="text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
+                                                                Số lượng{' '}
+                                                                {
+                                                                    product.quantity
+                                                                }
+                                                            </p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div className="flex flex-1 items-end justify-between text-sm">
-                                                    <p className="text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
-                                                        Số lượng {product.quantity}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    ))}
+                                                </li>
+                                            )
+                                        )}
                                 </ul>
                             </div>
                             <div className="mt-6 flex py-4">
@@ -145,7 +180,7 @@ export default function Checkout() {
                                             <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                 <NumericFormat
                                                     value={price_total}
-                                                    displayType='text'
+                                                    displayType="text"
                                                     thousandSeparator={true}
                                                     decimalScale={0}
                                                     id="price"
@@ -168,7 +203,7 @@ export default function Checkout() {
                                             <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                 <NumericFormat
                                                     value={price_total}
-                                                    displayType='text'
+                                                    displayType="text"
                                                     thousandSeparator={true}
                                                     decimalScale={0}
                                                     id="price"

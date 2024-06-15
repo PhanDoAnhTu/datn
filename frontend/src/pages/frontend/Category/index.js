@@ -11,14 +11,17 @@ import {
 } from '@heroicons/react/20/solid';
 import classNames from '../../../helpers/classNames';
 import { Link, useParams } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import ProductSingle from '../../../components/frontend/ProductSingle';
 import Pagination from '../../../components/frontend/Pagination';
+// eslint-disable-next-line no-unused-vars
 import ProductSingleList from '../../../components/frontend/ProductSingleList';
 import { useDispatch, useSelector } from 'react-redux';
 //
-import { allProducts, ProductsByCategory } from '../../../store/actions';
+// eslint-disable-next-line no-unused-vars
 import { findListBrand } from '../../../store/actions/brand-actions';
 import { findAllAttribute } from '../../../store/actions/attribute-actions';
+import { allProducts } from '../../../store/actions';
 
 const sortOptions = [
     { name: 'Ngày ra mắt', value: 'createdAt' },
@@ -33,21 +36,24 @@ export default function Category() {
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
     const [isListView, setIsListView] = useState(false);
     // eslint-disable-next-line no-unused-vars
-    const { gender, sub_category, category_slug } = useParams();
+    const { category1, category2, category3 } = useParams();
+    // eslint-disable-next-line no-unused-vars
     const [products, setProducts] = useState(null);
     ///demo setProducts
     const dispatch = useDispatch();
     // eslint-disable-next-line no-unused-vars
-    const { all_products, product_by_category } = useSelector(
-        (state) => state.productReducer
-    );
+    const { all_products } = useSelector((state) => state.productReducer);
     // eslint-disable-next-line no-unused-vars
     const { category } = useSelector((state) => state.categoryReducer);
     const { brand } = useSelector((state) => state.brandReducer);
     const { attribute } = useSelector((state) => state.attributeReducer);
     // eslint-disable-next-line no-unused-vars
     const [page, setPage] = useState(1);
-
+    useEffect(() => {
+        if (!all_products) {
+            dispatch(allProducts());
+        }
+    }, [all_products]);
     useEffect(() => {
         if (!brand) {
             dispatch(findListBrand());
@@ -56,120 +62,190 @@ export default function Category() {
             dispatch(findAllAttribute());
         }
     }, [brand, attribute]);
-    useEffect(() => {
-        dispatch(allProducts({ isPublished: true }));
-    }, []);
+
     ///demo setProducts
     const [selectedBrands, setSelectedBrands] = useState([]);
     const [selectedAttributes, setSelectedAttributes] = useState([]);
     const [selectedSort, setSelectedSort] = useState('createdAt');
 
-    useEffect(() => {
-        dispatch(
-            ProductsByCategory({
-                filter: {
-                    isPublished: true,
-                    category_id: category
-                        ?.slice()
-                        .find(
-                            (item) =>
-                                item.category_slug === category_slug &&
-                                item.parent_id === sub_category
-                        )._id,
-                },
-            })
-        );
-    }, [gender, sub_category, category_slug]);
+    // useEffect(() => {
+    //     const startIndex = (page - 1) * limit;
+    //     const endIndex = startIndex + limit;
+    //     setProducts(all_products?.slice(startIndex, endIndex));
+    // }, [page, limit]);
 
     useEffect(() => {
-        const startIndex = (page - 1) * limit;
-        const endIndex = startIndex + limit;
-        setProducts(product_by_category?.slice(startIndex, endIndex));
-    }, [product_by_category, page, limit]);
-
-    useEffect(() => {
-        if (selectedBrands?.length === 0) {
-            if (selectedAttributes?.length === 0) {
-                const startIndex = (page - 1) * limit;
-                const endIndex = startIndex + limit;
-                setProducts(product_by_category?.slice(startIndex, endIndex));
-            } else {
-                setProducts(
-                    product_by_category
-                        ?.slice()
-                        .filter((item) =>
-                            item.product_attributes.every((subitem) =>
-                                selectedAttributes.every((checkValue) =>
-                                    subitem.attribute_value.some(
-                                        (subsubitem) =>
-                                            subsubitem.value === checkValue
-                                    )
-                                )
-                            )
-                        )
-                );
-            }
-        } else {
-            setProducts(
-                product_by_category
-                    ?.slice()
-                    .filter((item) =>
-                        selectedBrands.includes(item.product_brand)
-                    )
-            );
+        if (
+            category1 === undefined &&
+            category2 === undefined &&
+            category3 === undefined
+        ) {
+            setProducts(all_products);
         }
-    }, [selectedBrands, product_by_category]);
-    useEffect(() => {
-        if (selectedAttributes?.length === 0) {
-            if (selectedBrands?.length === 0) {
-                const startIndex = (page - 1) * limit;
-                const endIndex = startIndex + limit;
-                setProducts(product_by_category?.slice(startIndex, endIndex));
-            } else {
-                setProducts(
-                    product_by_category
-                        ?.slice()
-                        .filter((item) =>
-                            selectedBrands.includes(item.product_brand)
-                        )
-                );
-            }
-        } else {
+        if (
+            category1 !== undefined &&
+            category2 === undefined &&
+            category3 === undefined
+        ) {
             setProducts(
-                product_by_category
+                all_products
                     ?.slice()
                     .filter((item) =>
-                        selectedAttributes.some((UUID) =>
-                            item.product_attributes.some((attribute) =>
-                                attribute.attribute_value.some(
-                                    (subitem) => subitem.value === UUID
-                                )
-                            )
+                        item.product_category.includes(
+                            category?.find(
+                                (item) => item.category_slug === category1
+                            )?._id
                         )
                     )
             );
         }
-    }, [selectedAttributes, product_by_category]);
+        if (
+            category1 !== undefined &&
+            category2 !== undefined &&
+            category3 === undefined
+        ) {
+            setProducts(
+                all_products
+                    ?.slice()
+                    .filter((item) =>
+                        item.product_category.includes(
+                            category?.find(
+                                (item) =>
+                                    item.parent_id ===
+                                        category?.find(
+                                            (subitem) =>
+                                                subitem.category_slug ===
+                                                category1
+                                        )?._id &&
+                                    item.category_slug === category2
+                            )?._id
+                        )
+                    )
+            );
+        }
+        if (
+            category1 !== undefined &&
+            category2 !== undefined &&
+            category3 !== undefined
+        ) {
+            setProducts(
+                all_products
+                    ?.slice()
+                    .filter((item) =>
+                        item.product_category.includes(
+                            category
+                                ?.slice()
+                                .find(
+                                    (item) =>
+                                        item.parent_id ===
+                                            category
+                                                ?.slice()
+                                                .find(
+                                                    (subitem) =>
+                                                        subitem.parent_id ===
+                                                            category
+                                                                ?.slice()
+                                                                .find(
+                                                                    (
+                                                                        subsubitem
+                                                                    ) =>
+                                                                        subsubitem.category_slug ===
+                                                                        category1
+                                                                )?._id &&
+                                                        subitem.category_slug ===
+                                                            category2
+                                                )?._id &&
+                                        item.category_slug === category3
+                                )?._id
+                        )
+                    )
+            );
+        }
+    }, [all_products, category1, category2, category3]);
 
-    useEffect(() => {
-        setProducts(
-            product_by_category
-                ?.slice()
-                .sort((a, b) =>
-                    selectedSort === 'priceLowToHigh'
-                        ? a.product_price > b.product_price
-                            ? -1
-                            : 1
-                        : selectedSort === 'priceHighToLow'
-                          ? a.product_price < b.product_price
-                              ? -1
-                              : 1
-                          : selectedSort === 'createdAt'
-                            ? 1
-                            : -1
-                )
-        );
-    }, [selectedSort, product_by_category]);
+    // useEffect(() => {
+    //     if (selectedAttributes?.length === 0) {
+    //         if (selectedBrands?.length === 0) {
+    //             const startIndex = (page - 1) * limit;
+    //             const endIndex = startIndex + limit;
+    //             setProducts(all_products?.slice(startIndex, endIndex));
+    //         } else {
+    //             setProducts(
+    //                 products
+    //                     ?.slice()
+    //                     .filter((item) =>
+    //                         selectedBrands.includes(item.product_brand)
+    //                     )
+    //             );
+    //         }
+    //     } else {
+    //         setProducts(
+    //             products
+    //                 ?.slice()
+    //                 .filter((item) =>
+    //                     selectedAttributes.some((UUID) =>
+    //                         item.product_attributes.some((attribute) =>
+    //                             attribute.attribute_value.some(
+    //                                 (subitem) => subitem.value === UUID
+    //                             )
+    //                         )
+    //                     )
+    //                 )
+    //         );
+    //     }
+    // }, [selectedAttributes]);
+    // useEffect(() => {
+    //     if (selectedBrands?.length === 0) {
+    //         if (selectedAttributes?.length === 0) {
+    //             const startIndex = (page - 1) * limit;
+    //             const endIndex = startIndex + limit;
+    //             setProducts(all_products?.slice(startIndex, endIndex));
+    //         } else {
+    //             setProducts(
+    //                 products
+    //                     ?.slice()
+    //                     .filter((item) =>
+    //                         item.product_attributes.every((subitem) =>
+    //                             selectedAttributes.every((checkValue) =>
+    //                                 subitem.attribute_value.some(
+    //                                     (subsubitem) =>
+    //                                         subsubitem.value === checkValue
+    //                                 )
+    //                             )
+    //                         )
+    //                     )
+    //             );
+    //         }
+    //     } else {
+    //         setProducts(
+    //             products
+    //                 ?.slice()
+    //                 .filter((item) =>
+    //                     selectedBrands.includes(item.product_brand)
+    //                 )
+    //         );
+    //     }
+    // }, [selectedBrands]);
+
+    // useEffect(() => {
+    //     setProducts(
+    //         all_products
+    //             ?.slice()
+    //             .sort((a, b) =>
+    //                 selectedSort === 'priceLowToHigh'
+    //                     ? a.product_price > b.product_price
+    //                         ? -1
+    //                         : 1
+    //                     : selectedSort === 'priceHighToLow'
+    //                       ? a.product_price < b.product_price
+    //                           ? -1
+    //                           : 1
+    //                       : selectedSort === 'createdAt'
+    //                         ? 1
+    //                         : -1
+    //             )
+    //     );
+    // }, [selectedSort]);
 
     return (
         <div>
@@ -229,23 +305,141 @@ export default function Category() {
                                     <form className="mt-4 border-t border-gray-200">
                                         <h3 className="sr-only">Categories</h3>
                                         <ul className="px-2 py-3 font-medium text-gray-900">
-                                            {category
-                                                ?.slice()
-                                                .filter(
-                                                    (item) =>
-                                                        item.parent_id ===
-                                                        sub_category
-                                                )
-                                                .map((item) => (
-                                                    <li key={item._id}>
-                                                        <Link
-                                                            to={`/san-pham-theo-danh-muc/${gender}/${sub_category}/${item.category_slug}`}
-                                                            className={`block px-2 py-3 ${category_slug === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
-                                                        >
-                                                            {item.category_name}
-                                                        </Link>
-                                                    </li>
-                                                ))}
+                                            {category1 === undefined &&
+                                            category2 === undefined &&
+                                            category3 === undefined
+                                                ? category
+                                                      ?.slice()
+                                                      .filter(
+                                                          (item) =>
+                                                              item.parent_id ===
+                                                              null
+                                                      )
+                                                      .map((item) => (
+                                                          <li key={item._id}>
+                                                              <Link
+                                                                  to={`/san-pham-theo-danh-muc/${item.category_slug}`}
+                                                                  className={`block px-2 py-3 ${category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                                              >
+                                                                  {
+                                                                      item.category_name
+                                                                  }
+                                                              </Link>
+                                                          </li>
+                                                      ))
+                                                : category1 !== undefined &&
+                                                    category2 === undefined &&
+                                                    category3 === undefined
+                                                  ? category
+                                                        ?.slice()
+                                                        .filter(
+                                                            (item) =>
+                                                                item.parent_id ===
+                                                                category
+                                                                    ?.slice()
+                                                                    .find(
+                                                                        (
+                                                                            item
+                                                                        ) =>
+                                                                            item.category_slug ===
+                                                                            category1
+                                                                    )?._id
+                                                        )
+                                                        .map((item) => (
+                                                            <li key={item._id}>
+                                                                <Link
+                                                                    to={`/san-pham-theo-danh-muc/${category1}/${item.category_slug}`}
+                                                                    className={`block px-2 py-3 ${category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                                                >
+                                                                    {
+                                                                        item.category_name
+                                                                    }
+                                                                </Link>
+                                                            </li>
+                                                        ))
+                                                  : category1 !== undefined &&
+                                                      category2 !== undefined &&
+                                                      category3 === undefined
+                                                    ? category
+                                                          ?.slice()
+                                                          .filter(
+                                                              (item) =>
+                                                                  item.parent_id ===
+                                                                  category
+                                                                      ?.slice()
+                                                                      .find(
+                                                                          (
+                                                                              item
+                                                                          ) =>
+                                                                              item.parent_id ===
+                                                                                  category
+                                                                                      ?.slice()
+                                                                                      .find(
+                                                                                          (
+                                                                                              item
+                                                                                          ) =>
+                                                                                              item.category_slug ===
+                                                                                              category1
+                                                                                      )
+                                                                                      ?._id &&
+                                                                              item.category_slug ===
+                                                                                  category2
+                                                                      )?._id
+                                                          )
+                                                          .map((item) => (
+                                                              <li
+                                                                  key={item._id}
+                                                              >
+                                                                  <Link
+                                                                      to={`/san-pham-theo-danh-muc/${category1}/${category2}/${item.category_slug}`}
+                                                                      className={`block px-2 py-3 ${category3 !== undefined && category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                                                  >
+                                                                      {
+                                                                          item.category_name
+                                                                      }
+                                                                  </Link>
+                                                              </li>
+                                                          ))
+                                                    : category
+                                                          ?.slice()
+                                                          .filter(
+                                                              (item) =>
+                                                                  item.parent_id ===
+                                                                  category
+                                                                      ?.slice()
+                                                                      .find(
+                                                                          (
+                                                                              item
+                                                                          ) =>
+                                                                              item.parent_id ===
+                                                                                  category
+                                                                                      ?.slice()
+                                                                                      .find(
+                                                                                          (
+                                                                                              item
+                                                                                          ) =>
+                                                                                              item.category_slug ===
+                                                                                              category1
+                                                                                      )
+                                                                                      ?._id &&
+                                                                              item.category_slug ===
+                                                                                  category2
+                                                                      )?._id
+                                                          )
+                                                          .map((item) => (
+                                                              <li
+                                                                  key={item._id}
+                                                              >
+                                                                  <Link
+                                                                      to={`/san-pham-theo-danh-muc/${category1}/${category2}/${item.category_slug}`}
+                                                                      className={`block px-2 py-3 ${category3 !== undefined && category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                                                  >
+                                                                      {
+                                                                          item.category_name
+                                                                      }
+                                                                  </Link>
+                                                              </li>
+                                                          ))}
                                         </ul>
                                         {brand && (
                                             <Disclosure
@@ -498,14 +692,57 @@ export default function Category() {
 
                 <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
-                        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
-                            {
-                                category
-                                    ?.slice()
-                                    .find((item) => item._id === sub_category)
-                                    .category_name
-                            }
-                        </h1>
+                        <div>
+                            <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
+                                {category1 === undefined &&
+                                category2 === undefined &&
+                                category3 === undefined
+                                    ? 'Danh mục'
+                                    : category1 !== undefined &&
+                                        category2 === undefined &&
+                                        category3 === undefined
+                                      ? category
+                                            ?.slice()
+                                            .find(
+                                                (item) =>
+                                                    item.category_slug ===
+                                                    category1
+                                            )?.category_name
+                                      : category1 !== undefined &&
+                                          category2 !== undefined &&
+                                          category3 === undefined
+                                        ? category
+                                              ?.slice()
+                                              .find(
+                                                  (item) =>
+                                                      item.parent_id ===
+                                                          category
+                                                              ?.slice()
+                                                              .find(
+                                                                  (item) =>
+                                                                      item.category_slug ===
+                                                                      category1
+                                                              )?._id &&
+                                                      item.category_slug ===
+                                                          category2
+                                              )?.category_name
+                                        : category
+                                              ?.slice()
+                                              .find(
+                                                  (item) =>
+                                                      item.parent_id ===
+                                                          category
+                                                              ?.slice()
+                                                              .find(
+                                                                  (item) =>
+                                                                      item.category_slug ===
+                                                                      category1
+                                                              )?._id &&
+                                                      item.category_slug ===
+                                                          category2
+                                              )?.category_name}
+                            </h1>
+                        </div>
 
                         <div className="flex items-center">
                             <Menu
@@ -610,22 +847,124 @@ export default function Category() {
                             <form className="hidden lg:block">
                                 <h3 className="sr-only">Categories</h3>
                                 <ul className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900 dark:text-white">
-                                    {category
-                                        ?.slice()
-                                        .filter(
-                                            (item) =>
-                                                item.parent_id === sub_category
-                                        )
-                                        .map((item) => (
-                                            <li key={item._id}>
-                                                <Link
-                                                    to={`/san-pham-theo-danh-muc/${gender}/${sub_category}/${item.category_slug}`}
-                                                    className={`${category_slug === item.category_slug ? 'pointer-events-none text-magenta-500' : ''}`}
-                                                >
-                                                    {item.category_name}
-                                                </Link>
-                                            </li>
-                                        ))}
+                                    {category1 === undefined &&
+                                    category2 === undefined &&
+                                    category3 === undefined
+                                        ? category
+                                              ?.slice()
+                                              .filter(
+                                                  (item) =>
+                                                      item.parent_id === null
+                                              )
+                                              .map((item) => (
+                                                  <li key={item._id}>
+                                                      <Link
+                                                          to={`/san-pham-theo-danh-muc/${item.category_slug}`}
+                                                      >
+                                                          {item.category_name}
+                                                      </Link>
+                                                  </li>
+                                              ))
+                                        : category1 !== undefined &&
+                                            category2 === undefined &&
+                                            category3 === undefined
+                                          ? category
+                                                ?.slice()
+                                                .filter(
+                                                    (item) =>
+                                                        item.parent_id ===
+                                                        category
+                                                            ?.slice()
+                                                            .find(
+                                                                (item) =>
+                                                                    item.category_slug ===
+                                                                    category1
+                                                            )?._id
+                                                )
+                                                .map((item) => (
+                                                    <li key={item._id}>
+                                                        <Link
+                                                            to={`/san-pham-theo-danh-muc/${category1}/${item.category_slug}`}
+                                                        >
+                                                            {item.category_name}
+                                                        </Link>
+                                                    </li>
+                                                ))
+                                          : category1 !== undefined &&
+                                              category2 !== undefined &&
+                                              category3 === undefined
+                                            ? category
+                                                  ?.slice()
+                                                  .filter(
+                                                      (item) =>
+                                                          item.parent_id ===
+                                                          category
+                                                              ?.slice()
+                                                              .find(
+                                                                  (item) =>
+                                                                      item.parent_id ===
+                                                                          category
+                                                                              ?.slice()
+                                                                              .find(
+                                                                                  (
+                                                                                      item
+                                                                                  ) =>
+                                                                                      item.category_slug ===
+                                                                                      category1
+                                                                              )
+                                                                              ?._id &&
+                                                                      item.category_slug ===
+                                                                          category2
+                                                              )?._id
+                                                  )
+                                                  .map((item) => (
+                                                      <li key={item._id}>
+                                                          <Link
+                                                              to={`/san-pham-theo-danh-muc/${category1}/${category2}/${item.category_slug}`}
+                                                              className={`${category3 !== undefined && category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                                          >
+                                                              {
+                                                                  item.category_name
+                                                              }
+                                                          </Link>
+                                                      </li>
+                                                  ))
+                                            : category
+                                                  ?.slice()
+                                                  .filter(
+                                                      (item) =>
+                                                          item.parent_id ===
+                                                          category
+                                                              ?.slice()
+                                                              .find(
+                                                                  (item) =>
+                                                                      item.parent_id ===
+                                                                          category
+                                                                              ?.slice()
+                                                                              .find(
+                                                                                  (
+                                                                                      item
+                                                                                  ) =>
+                                                                                      item.category_slug ===
+                                                                                      category1
+                                                                              )
+                                                                              ?._id &&
+                                                                      item.category_slug ===
+                                                                          category2
+                                                              )?._id
+                                                  )
+                                                  .map((item) => (
+                                                      <li key={item._id}>
+                                                          <Link
+                                                              to={`/san-pham-theo-danh-muc/${category1}/${category2}/${item.category_slug}`}
+                                                              className={`${category3 !== undefined && category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                                          >
+                                                              {
+                                                                  item.category_name
+                                                              }
+                                                          </Link>
+                                                      </li>
+                                                  ))}
                                 </ul>
                                 {brand && (
                                     <Disclosure
@@ -901,15 +1240,13 @@ export default function Category() {
                                     )}
                                 </div>
                                 <div className="col-span-3 pt-5">
-                                    {product_by_category &&
-                                    product_by_category?.length > 8 ? (
+                                    {products && products?.length > 8 ? (
                                         <Pagination
                                             className="col-span-3"
                                             data={Array.from(
                                                 {
                                                     length: Math.ceil(
-                                                        product_by_category?.length /
-                                                            8
+                                                        products?.length / 8
                                                     ),
                                                 },
                                                 (_, index) => index + 1

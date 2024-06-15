@@ -261,7 +261,7 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                                                                                                                         className="flex"
                                                                                                                     >
                                                                                                                         <Link
-                                                                                                                            to={`/san-pham-theo-danh-muc/${item.category_slug}/${subitem._id}/${subsubitem.category_slug}`}
+                                                                                                                            to={`/san-pham-theo-danh-muc/${item.category_slug}/${subitem.category_slug}/${subsubitem.category_slug}`}
                                                                                                                             onClick={async () => {
                                                                                                                                 close();
                                                                                                                             }}
