@@ -30,31 +30,33 @@ import MultipleSelect from "@ui/MultipleSelect";
 
 const ProductEditor = () => {
   const dispact = useDispatch();
-  const [attributes_management, setAttributes_management] = useState([])
-  const [categories_management, seCategories_management] = useState([])
-  const [brand_management, setBrand_management] = useState([])
-  const [brand_options, setBrand_options] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-
+  const [attributes_management, setAttributes_management] = useState([]);
+  const [categories_management, seCategories_management] = useState([]);
+  const [brand_management, setBrand_management] = useState([]);
+  const [brand_options, setBrand_options] = useState([]);
 
   const fetchCategoriesOnloadPage = async () => {
-    const repoCat = await dispact(findAllCategory({ isPublished: true }))
-    seCategories_management(repoCat?.payload?.metaData)
-  }
+    const repoCat = await dispact(findAllCategory({ isPublished: true }));
+    seCategories_management(repoCat?.payload?.metaData);
+  };
   const fetchBrandOnloadPage = async () => {
-    const repoBrand = await dispact(findAllBrand({ isPublished: true }))
-    setBrand_management(repoBrand?.payload?.metaData)
-  }
+    const repoBrand = await dispact(findAllBrand({ isPublished: true }));
+    setBrand_management(repoBrand?.payload?.metaData);
+  };
   const fetchAttributeOnloadPage = async () => {
-    const repoAttribute = await dispact(findAllAttribute({ isPublished: true }))
-    setAttributes_management(repoAttribute?.payload?.metaData)
-  }
+    const repoAttribute = await dispact(
+      findAllAttribute({ isPublished: true })
+    );
+    setAttributes_management(repoAttribute?.payload?.metaData);
+  };
 
   useEffect(() => {
-    setBrand_options(brand_management?.map((brand) => {
-      return { label: brand.brand_name, value: brand._id }
-    }))
-  }, [brand_management])
+    setBrand_options(
+      brand_management?.map((brand) => {
+        return { label: brand.brand_name, value: brand._id };
+      })
+    );
+  }, [brand_management]);
 
   useEffect(() => {
     fetchCategoriesOnloadPage();
@@ -413,7 +415,6 @@ const ProductEditor = () => {
     updateSKUList();
     updatedVariationTables();
   }, [variations]);
-  console.log("skuList", sKUList)
 
   //SKU_stock, SKU_price, image handle if a user put something in input
   const handleSKUPriceChange = (sku_tier_idx, value) => {
@@ -477,12 +478,144 @@ const ProductEditor = () => {
   }, [sKUList]);
 
   // do something with the data
-  const handlePublish = (data) => {
-    toast.success("Product published successfully");
+  const handlePublish = async (data) => {
+    const id = toast.loading("Vui lòng đợi...");
+    let inputProductData = {
+      product_name: data.productName,
+      isPublished: true,
+      isDraft: false,
+      product_thumb: [],
+      product_description: data.description,
+      product_price: Number(data.regularPrice),
+      product_quantity: Number(data.product_quantity),
+      product_unit: data.unit,
+      product_weight: data.weight,
+      product_brand: data.brandName.value,
+      product_category:
+        data.product_category?.length > 0
+          ? data.product_category.flatMap((category) => category.value)
+          : [],
+      product_attributes: [],
+      product_variations: [],
+      sku_list: [],
+    };
+    try {
+      const list_image = new FormData();
+
+      if (sKUList.length > 1 || sKUList[0].image != null) {
+        sKUList.forEach((item) => {
+          if (item.image != null) {
+            list_image.append("files", item.image[0]);
+            list_image.append("sku_list", item.sku_tier_idx);
+          }
+        });
+        list_image.append("folderName", "outrunner/images/products");
+        const list_url_thumb = await dispact(
+          upLoadProductImageList(list_image)
+        );
+        inputProductData.sku_list = list_url_thumb?.payload?.metaData
+          ? sKUList?.map((sku) => {
+            const skuImageFound = list_url_thumb?.payload?.metaData?.find(
+              (url_thumb) =>
+                sku.sku_tier_idx.toString() ===
+                url_thumb.sku_tier_idx.toString()
+            );
+            if (skuImageFound) {
+              const { image, ...skuNoImage } = sku;
+              return {
+                ...skuNoImage,
+                thumb_url: skuImageFound?.thumb_url,
+                public_id: skuImageFound?.public_id,
+              };
+            } else {
+              const { image, ...skuNoImage } = sku;
+              return { ...skuNoImage, thumb_url: null, public_id: null };
+            }
+          })
+          : [];
+      }
+
+      if (product_images.length > 0) {
+        const image_array = new FormData();
+        product_images
+          .sort((a, b) => a.indexNumber - b.indexNumber)
+          .forEach((item) => {
+            if (item.file) {
+              image_array.append("files", item.file[0]);
+            }
+          });
+        image_array.append("folderName", "outrunner/iamges/products");
+        const uploadImage = await dispact(upLoadImageArray(image_array));
+        inputProductData.product_thumb =
+          uploadImage?.payload?.metaData?.length > 0
+            ? uploadImage.payload.metaData
+            : [];
+      }
+
+      variations.forEach((variation) => {
+        inputProductData.product_variations.push({
+          images: [],
+          name: variation.variationName,
+          options: variation.options.map((option) => option.value),
+        });
+      });
+
+      inputProductData.product_attributes = attributes_management.map(
+        (item) => {
+          if (Object.hasOwn(data, item.attribute_slug) === true) {
+            return {
+              attribute_id: data[item.attribute_slug].find(
+                (value) => value.attribute_id === item._id
+              ).attribute_id,
+              attribute_value: data[item.attribute_slug].map((item) => {
+                return { value: item.value };
+              }),
+            };
+          }
+        }
+      );
+    } catch (error) {
+      toast.update(id, {
+        render: "Thêm sản phẩm không thành công",
+        type: "error",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 5000,
+      });
+      console.error(error);
+    } finally {
+      console.log("inputProductData", inputProductData);
+      dispact(
+        createSpu({
+          product_name: inputProductData.product_name,
+          isPublished: inputProductData.isPublished,
+          isDraft: inputProductData.isDraft,
+          product_thumb: inputProductData.product_thumb,
+          product_description: inputProductData.product_description,
+          product_price: inputProductData.product_price,
+          product_quantity: inputProductData.product_quantity,
+          product_unit: inputProductData.product_unit,
+          product_weight: inputProductData.product_weight,
+          product_brand: inputProductData.product_brand,
+          product_category: inputProductData.product_category,
+          product_attributes: inputProductData.product_attributes,
+          product_variations: inputProductData.product_variations,
+          sku_list: inputProductData.sku_list,
+        })
+      );
+      toast.update(id, {
+        render: "Thêm sản phẩm thành công",
+        type: "success",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 5000,
+      });
+      return;
+    }
   };
 
   const handleSave = async (data) => {
-    console.log("data", data)
+    const id = toast.loading("Vui lòng đợi...");
     let inputProductData = {
       product_name: data.productName,
       isPublished: false,
@@ -494,17 +627,18 @@ const ProductEditor = () => {
       product_unit: data.unit,
       product_weight: data.weight,
       product_brand: data.brandName.value,
-      product_category: data.product_category?.length > 0 ? data.product_category.flatMap((category) => category.value) : [],
+      product_category:
+        data.product_category?.length > 0
+          ? data.product_category.flatMap((category) => category.value)
+          : [],
       product_attributes: [],
       product_variations: [],
-      sku_list: []
-    }
+      sku_list: [],
+    };
     try {
-      setIsLoading(true)
       const list_image = new FormData();
 
       if (sKUList.length > 1 || sKUList[0].image != null) {
-
         sKUList.forEach((item) => {
           if (item.image != null) {
             list_image.append("files", item.image[0]);
@@ -512,41 +646,71 @@ const ProductEditor = () => {
           }
         });
         list_image.append("folderName", "outrunner/images/products");
-        const list_url_thumb = await dispact(upLoadProductImageList(list_image));
-        inputProductData.sku_list = list_url_thumb?.payload?.metaData ? sKUList?.map((sku) => {
-          const skuImageFound = list_url_thumb?.payload?.metaData?.find((url_thumb) => sku.sku_tier_idx.toString() === url_thumb.sku_tier_idx.toString())
-          if (skuImageFound) {
-            const { image, ...skuNoImage } = sku
-            return { ...skuNoImage, thumb_url: skuImageFound?.thumb_url, public_id: skuImageFound?.public_id }
-          } else {
-            const { image, ...skuNoImage } = sku
-            return { ...skuNoImage, thumb_url: null, public_id: null }
-          }
-        }) : []
-
+        const list_url_thumb = await dispact(
+          upLoadProductImageList(list_image)
+        );
+        inputProductData.sku_list = list_url_thumb?.payload?.metaData
+          ? sKUList?.map((sku) => {
+            const skuImageFound = list_url_thumb?.payload?.metaData?.find(
+              (url_thumb) =>
+                sku.sku_tier_idx.toString() ===
+                url_thumb.sku_tier_idx.toString()
+            );
+            if (skuImageFound) {
+              const { image, ...skuNoImage } = sku;
+              return {
+                ...skuNoImage,
+                thumb_url: skuImageFound?.thumb_url,
+                public_id: skuImageFound?.public_id,
+              };
+            } else {
+              const { image, ...skuNoImage } = sku;
+              return { ...skuNoImage, thumb_url: null, public_id: null };
+            }
+          })
+          : [];
       }
 
       if (product_images.length > 0) {
         const image_array = new FormData();
-        product_images.sort((a, b) => a.indexNumber - b.indexNumber).forEach((item) => {
-          if (item.file) {
-            image_array.append("files", item.file[0]);
-          }
-        });
+        product_images
+          .sort((a, b) => a.indexNumber - b.indexNumber)
+          .forEach((item) => {
+            if (item.file) {
+              image_array.append("files", item.file[0]);
+            }
+          });
         image_array.append("folderName", "outrunner/iamges/products");
         const uploadImage = await dispact(upLoadImageArray(image_array));
-        inputProductData.product_thumb = uploadImage?.payload?.metaData?.length > 0 ? uploadImage.payload.metaData : []
+        inputProductData.product_thumb =
+          uploadImage?.payload?.metaData?.length > 0
+            ? uploadImage.payload.metaData
+            : [];
       }
 
       variations.forEach((variation) => {
-        inputProductData.product_variations.push({ images: [], name: variation.variationName, options: variation.options.map((option) => option.value) })
-      })
+        inputProductData.product_variations.push({
+          images: [],
+          name: variation.variationName,
+          options: variation.options.map((option) => option.value),
+        });
+      });
 
-      inputProductData.product_attributes = attributes_management.map((item) => {
-        if (Object.hasOwn(data, item.attribute_slug) === true) {
-          return { attribute_id: data[item.attribute_slug].find((value) => value.attribute_id === item._id).attribute_id, attribute_value: data[item.attribute_slug].map((item) => { return { value: item.value } }) }
-        }
-      })
+      inputProductData.product_attributes = attributes_management.map(
+        (item) => {
+          if (Object.hasOwn(data, item.attribute_slug) === true) {
+            return {
+              attribute_id: data[item.attribute_slug].find(
+                (value) => value.attribute_id === item._id
+              ).attribute_id,
+              attribute_value: data[item.attribute_slug].map((item) => {
+                return { value: item.value };
+              }),
+            };
+          }
+        })
+
+
       console.log("inputProductData", inputProductData)
       const addPrd = await dispact(createSpu({
         product_name: inputProductData.product_name,
@@ -564,7 +728,6 @@ const ProductEditor = () => {
         product_variations: inputProductData.product_variations,
         sku_list: inputProductData.sku_list
       }));
-      setIsLoading(false)
       if (addPrd.payload.status === (200 || 201)) {
         toast.success("Thêm sản phẩm thành công");
       } else {
@@ -593,7 +756,7 @@ const ProductEditor = () => {
         return [...s, { file: value, indexNumber: indexNumber }];
       });
     }
-  }
+  };
   return (
     <Spring className="card flex-1 xl:py-10">
       <div className="grid grid-cols-1 items-start gap-5 xl:gap-10">
@@ -776,7 +939,6 @@ const ProductEditor = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
-
             {/* {attributes_management?.length > 0 && attributes_management.map((attribute, index) => {
               const value_attribute_options = attribute.attribute_value_list?.map((value_attribute) => {
                 return { label: value_attribute.attribute_value, value: value_attribute._id, attribute_id: value_attribute.attribute_id }
@@ -805,37 +967,43 @@ const ProductEditor = () => {
                 </div>
               )
             })} */}
-            {attributes_management?.length > 0 && attributes_management.map((attribute, index) => {
-              const value_attribute_options = attribute.attribute_value_list?.map((value_attribute) => {
-                return { label: value_attribute.attribute_value, value: value_attribute._id, attribute_id: value_attribute.attribute_id }
-              })
-              return (
-                <div className="field-wrapper" key={index}>
-                  <label className="field-label" htmlFor={attribute.attribute_slug}>
-                    {attribute.attribute_name}
-                  </label>
-                  <Controller
-                    name={attribute.attribute_slug}
-                    control={control}
-                    defaultValue={defaultValues.product_attributes}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <MultipleSelect
-                        isInvalid={errors.product_attributes}
-                        id={attribute.attribute_slug}
-                        placeholder={`Chọn ${attribute.attribute_name}`}
-                        options={value_attribute_options}
-                        value={field.value}
-                        onChange={(value) => field.onChange(value)}
-                      />
-                    )}
-                  />
-                </div>
-              )
-            })}
-
-
-
+            {attributes_management?.length > 0 &&
+              attributes_management.map((attribute, index) => {
+                const value_attribute_options =
+                  attribute.attribute_value_list?.map((value_attribute) => {
+                    return {
+                      label: value_attribute.attribute_value,
+                      value: value_attribute._id,
+                      attribute_id: value_attribute.attribute_id,
+                    };
+                  });
+                return (
+                  <div className="field-wrapper" key={index}>
+                    <label
+                      className="field-label"
+                      htmlFor={attribute.attribute_slug}
+                    >
+                      {attribute.attribute_name}
+                    </label>
+                    <Controller
+                      name={attribute.attribute_slug}
+                      control={control}
+                      defaultValue={defaultValues.product_attributes}
+                      rules={{ required: true }}
+                      render={({ field }) => (
+                        <MultipleSelect
+                          isInvalid={errors.product_attributes}
+                          id={attribute.attribute_slug}
+                          placeholder={`Chọn ${attribute.attribute_name}`}
+                          options={value_attribute_options}
+                          value={field.value}
+                          onChange={(value) => field.onChange(value)}
+                        />
+                      )}
+                    />
+                  </div>
+                );
+              })}
           </div>
           <Divider />
           <h4 className="text-center">Phân loại sản phẩm</h4>

@@ -28,6 +28,8 @@ const sortOptions = [
 ];
 
 export default function Category() {
+    // eslint-disable-next-line no-unused-vars
+    const limit = 8;
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
     const [isListView, setIsListView] = useState(false);
     // eslint-disable-next-line no-unused-vars
@@ -80,13 +82,17 @@ export default function Category() {
     }, [gender, sub_category, category_slug]);
 
     useEffect(() => {
-        setProducts(product_by_category);
-    }, [product_by_category]);
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        setProducts(product_by_category?.slice(startIndex, endIndex));
+    }, [product_by_category, page, limit]);
 
     useEffect(() => {
         if (selectedBrands?.length === 0) {
             if (selectedAttributes?.length === 0) {
-                setProducts(product_by_category);
+                const startIndex = (page - 1) * limit;
+                const endIndex = startIndex + limit;
+                setProducts(product_by_category?.slice(startIndex, endIndex));
             } else {
                 setProducts(
                     product_by_category
@@ -116,7 +122,9 @@ export default function Category() {
     useEffect(() => {
         if (selectedAttributes?.length === 0) {
             if (selectedBrands?.length === 0) {
-                setProducts(product_by_category);
+                const startIndex = (page - 1) * limit;
+                const endIndex = startIndex + limit;
+                setProducts(product_by_category?.slice(startIndex, endIndex));
             } else {
                 setProducts(
                     product_by_category
@@ -506,7 +514,7 @@ export default function Category() {
                             >
                                 <div>
                                     <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 transition duration-200 ease-out hover:text-gray-900 dark:text-white dark:hover:text-stone-300">
-                                        Sort
+                                        Sắp xếp
                                         <ChevronDownIcon
                                             className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500 dark:text-white dark:group-hover:text-stone-300"
                                             aria-hidden="true"
@@ -523,7 +531,7 @@ export default function Category() {
                                     leaveFrom="transform opacity-100 scale-100"
                                     leaveTo="transform opacity-0 scale-95"
                                 >
-                                    <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-magenta-400">
+                                    <Menu.Items className="absolute right-0 z-40 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-magenta-400">
                                         <div className="py-1">
                                             {sortOptions.map((option) => (
                                                 <Menu.Item key={option.name}>
@@ -893,8 +901,22 @@ export default function Category() {
                                     )}
                                 </div>
                                 <div className="col-span-3 pt-5">
-                                    {products && products?.length > 1 ? (
-                                        <Pagination className="col-span-3" />
+                                    {product_by_category &&
+                                    product_by_category?.length > 8 ? (
+                                        <Pagination
+                                            className="col-span-3"
+                                            data={Array.from(
+                                                {
+                                                    length: Math.ceil(
+                                                        product_by_category?.length /
+                                                            8
+                                                    ),
+                                                },
+                                                (_, index) => index + 1
+                                            )}
+                                            currentPage={page}
+                                            setCurrentPage={setPage}
+                                        />
                                     ) : (
                                         ''
                                     )}
