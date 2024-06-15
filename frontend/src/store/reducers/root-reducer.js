@@ -12,6 +12,7 @@ import Special_offerReducer from './spicial-offer-reducer';
 import MenuReducer from './menu-reducer';
 import BrandReducer from './brand-reducer';
 import AttributeReducer from './attribute-reducer';
+import OrderReducer from './order-reducer';
 
 const reducers = combineReducers({
     userReducer: UserReducer,
@@ -23,6 +24,7 @@ const reducers = combineReducers({
     menuReducer: MenuReducer,
     postReducer: PostReducer,
     brandReducer: BrandReducer,
+    orderReducer: OrderReducer,
     attributeReducer: AttributeReducer,
     wishListReducer: WishListReducer,
     paymentReducer: PaymentReducer,

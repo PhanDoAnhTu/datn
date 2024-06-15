@@ -15,7 +15,7 @@ export default function Blog() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [all_posts]);
     return (
-        <div className="border-none px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <div className="border-none px-4 py-16 sm:px-6 sm:py-10 lg:px-8">
             <div className="mx-auto max-w-screen-2xl ">
                 <div className="flex items-center">
                     <div className="flex-1">

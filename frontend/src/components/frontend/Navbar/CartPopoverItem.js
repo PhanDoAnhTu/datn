@@ -123,7 +123,7 @@ export default function CartPopoverItem({
                           ? selected_sku.sku_price
                           : price,
                     product_name: product_item?.spu_info?.product_name,
-                    product_image: product_item?.spu_info?.product_thumb[0],
+                    product_image: product_item?.spu_info?.product_thumb,
                     product_slug_id: `${product_item?.spu_info?.product_slug}-${product_item?.spu_info?._id}`,
                     product_variation: selected,
                     product_option: product_item?.spu_info?.product_variations,
@@ -235,7 +235,7 @@ export default function CartPopoverItem({
                                                     ?.product_name,
                                             product_image:
                                                 product_item?.spu_info
-                                                    ?.product_thumb[0],
+                                                    ?.product_thumb,
                                             product_slug_id: `${product_item?.spu_info?.product_slug}-${product_item?.spu_info?._id}`,
                                             product_variation: selected,
                                             product_option:
@@ -268,7 +268,7 @@ export default function CartPopoverItem({
                                                     ?.product_name,
                                             product_image:
                                                 product_item?.spu_info
-                                                    ?.product_thumb[0],
+                                                    ?.product_thumb,
                                             product_slug_id: `${product_item?.spu_info?.product_slug}-${product_item?.spu_info?._id}`,
                                             product_variation: selected,
                                             product_option:
@@ -516,7 +516,7 @@ export default function CartPopoverItem({
                                                 ?.product_name,
                                         product_image:
                                             product_item?.spu_info
-                                                ?.product_thumb[0],
+                                                ?.product_thumb,
                                         product_slug_id: `${product_item?.spu_info?.product_slug}-${product_item?.spu_info?._id}`,
                                         product_variation: selected,
                                         product_option:
@@ -559,7 +559,7 @@ export default function CartPopoverItem({
                                                 ?.product_name,
                                         product_image:
                                             product_item?.spu_info
-                                                ?.product_thumb[0],
+                                                ?.product_thumb,
                                         product_slug_id: `${product_item?.spu_info?.product_slug}-${product_item?.spu_info?._id}`,
                                         product_variation: selected,
                                         product_option:

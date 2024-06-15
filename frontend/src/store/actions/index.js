@@ -44,6 +44,9 @@ export const Action = {
     //slider
     GET_ALL_SLIDER_BY_ACTIVE: 'GET_ALL_SLIDER_BY_ACTIVE',
 
+    //order
+    GET_ALL_ORDER_BY_USER_ID: 'GET_ALL_ORDER_BY_USER_ID',
+
     //topic
     GET_ALL_TOPIC: 'GET_ALL_TOPIC',
 
