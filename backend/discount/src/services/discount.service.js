@@ -16,15 +16,13 @@ class DiscountService {
             discount_start_date,
             discount_end_date,
             discount_max_uses,
-            discount_uses_count,
-            discount_users_used,
             discount_max_person_uses,
             discount_max_user_uses,
             discount_min_order_value,
             discount_min_order_qty,
-            discount_is_active,
+            discount_is_active = false,
             discount_applies_to,
-            discount_product_ids
+            discount_product_ids = []
         } = payload
 
         //kiem tra
@@ -41,9 +39,8 @@ class DiscountService {
             discount_code: discount_code
         })
 
-        if (foundDiscount && foundDiscount.discount_is_active) {
+        if (foundDiscount) {
             throw new errorResponse.ForbiddenRequestError('Discount exists')
-
         }
         console.log('payload', payload)
 
@@ -57,8 +54,6 @@ class DiscountService {
             discount_start_date: discount_start_date, // ngay bat dau
             discount_end_date: discount_end_date, // ngyay ket thuc
             discount_max_uses: discount_max_uses, // so luong discount duoc ap dung 
-            discount_uses_count: discount_uses_count, // so discount da su dung
-            discount_users_used: discount_users_used, // ai da sung
             discount_max_person_uses: discount_max_person_uses, // số lượng người dùng tối đa
             discount_max_user_uses: discount_max_user_uses,  // 1 người sử dụng tối đa bao nhiêu lần
             discount_min_order_value: discount_min_order_value,
@@ -71,20 +66,45 @@ class DiscountService {
     }
 
     async getAllDiscountCodeByShop({
-        limit, page
+        limit = 50, page = 1, sort = 'ctime', filter = {
+            discount_is_active: true
+        }
     }) {
         const discounts = await discountRepository.findAllDiscountCodeUnSelect({
-            limit: +limit,
-            page: +page,
-            filter: {
-                discount_is_active: true
-            },
-            unSelect: ['__v'],
+            limit,
+            page,
+            sort,
+            filter,
             model: DiscountModel
         })
 
         return discounts
 
+    }
+    async findOneDiscount({
+        discount_id
+    }) {
+        const discount = await DiscountModel.findOne({
+            _id: discount_id
+        })
+        return discount
+    }
+
+    async publishedDiscount({
+        discount_id
+    }) {
+        const discount = await DiscountModel.findOne({
+            _id: discount_id
+        })
+        return discount
+    }
+    async unPublishedDiscount({
+        discount_id
+    }) {
+        const discount = await DiscountModel.findOne({
+            _id: discount_id
+        })
+        return discount
     }
     /**
      * 

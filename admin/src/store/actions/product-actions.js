@@ -2,11 +2,20 @@ import { GetData, PostData } from '../../utils/apicall'
 import { Action } from './index'
 
 
-export const allProducts = ({ limit, page }) => async (dispatch) => {
+export const allProducts = (data) => async (dispatch) => {
   try {
-    const response = await PostData('/product/v1/spu/allproducts', {
-      limit, page
-    });
+    const response = await PostData('/product/v1/spu/allproducts', data);
+    console.log('response:', response)
+    return dispatch({ type: Action.ALL_PRODUCTS, payload: response.data });
+  } catch (err) {
+    console.log(err)
+    return err.response.data
+  }
+};
+
+export const onAllProductsOption = (data) => async (dispatch) => {
+  try {
+    const response = await PostData('/product/v1/spu/AllProductsOption', data);
     console.log('response:', response)
     return dispatch({ type: Action.ALL_PRODUCTS, payload: response.data });
 
@@ -49,7 +58,7 @@ export const listImageByProductId = (product_id) => async (dispatch) => {
 
 export const createSpu = (data) => async (dispatch) => {
   try {
-    const response = await PostData('/product/v1/spu/create',data);
+    const response = await PostData('/product/v1/spu/create', data);
     console.log('response:', response)
     return dispatch({ type: Action.CREATE_PRODUCT, payload: response.data });
 
@@ -59,3 +68,5 @@ export const createSpu = (data) => async (dispatch) => {
 
   }
 };
+
+

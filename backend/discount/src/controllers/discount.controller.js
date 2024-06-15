@@ -20,6 +20,18 @@ class DiscountController {
             metaData: await this.service.getDiscountAmount(req.body)
         }).send(res)
     }
+    getAllDiscount = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: " getAllDiscountCodeByShop amount success",
+            metaData: await this.service.getAllDiscountCodeByShop(req.body)
+        }).send(res)
+    }
+    findOneDiscount = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: " findOneDiscount amount success",
+            metaData: await this.service.findOneDiscount(req.body)
+        }).send(res)
+    }
 }
 
 module.exports = new DiscountController()

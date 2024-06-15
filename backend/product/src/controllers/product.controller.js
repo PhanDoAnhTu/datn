@@ -25,6 +25,12 @@ class spuController {
       metaData: await SpuService.AllProducts(req.body),
     }).send(res);
   };
+  AllProductsOption = async (req, res, next) => {
+    return new successResponse.SuccessResponse({
+      message: "AllProductsOption",
+      metaData: await SpuService.AllProductsOption(req.body),
+    }).send(res);
+  };
   getAllProductsByfilter = async (req, res, next) => {
     return new successResponse.SuccessResponse({
       message: "getAllProductsByfilter success",

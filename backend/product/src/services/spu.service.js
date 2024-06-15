@@ -385,6 +385,13 @@ const productFromCart = async ({ spu_id, isPublished = true }) => {
     return null;
   }
 };
+const AllProductsOption = async ({ sort = "ctime", isPublished = true }) => {
+  const all_Products = await spuRepository.getAllProducts({
+    sort,
+    isPublished,
+  });
+return all_Products
+};
 // const products_checkout = async ({ spu_id_list, isPublished = true, products_checkout = [] }) => {
 //     try {
 //         const spu = await SpuModel.find({
@@ -482,4 +489,5 @@ module.exports = {
   findProductsByCategory,
   findProductDetail,
   productFromCart,
+  AllProductsOption
 };

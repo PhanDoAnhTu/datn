@@ -4,7 +4,7 @@ const { DiscountModel } = require('../models')
 
 const findAllDiscountCodeUnSelect = async({
     limit = 50,page =1,sort='ctime',
-    filter,unSelect,model
+    filter,model
 
 })=>{
     const skip = (page - 1) * limit;
@@ -13,7 +13,6 @@ const findAllDiscountCodeUnSelect = async({
         .sort(sortBy)
         .skip(skip)
         .limit(limit)
-        .select(unGetSelectData(unSelect))
         .lean()
     return documents
 }

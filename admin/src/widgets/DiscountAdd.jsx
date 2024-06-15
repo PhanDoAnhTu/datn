@@ -10,9 +10,13 @@ import classNames from "classnames";
 import Select from "@ui/Select";
 import RangeDatePicker from "@ui/RangeDatePicker";
 import MultipleSelect from "@ui/MultipleSelect";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { onAddDiscount, onAllProductsOption } from "../store/actions";
+import { useDispatch } from "react-redux";
 
 const DiscountAdd = ({ item }) => {
+
+
   const defaultValues = {
     discount_name: "",
     discount_description: "",
@@ -22,16 +26,16 @@ const DiscountAdd = ({ item }) => {
     discount_start_date: "",
     discount_end_date: "",
     discount_max_uses: 0,
-    discount_uses_count: 0,
-    discount_users_used: [],
+    discount_value: 0,
+    discount_min_order_qty: 0,
     discount_max_person_uses: 0,
     discount_max_user_uses: 0,
     discount_min_order_value: 0,
-    discount_is_active: true,
+    discount_is_active: { label: "Chỉ tạo mã", value: false },
     discount_applies_to: { label: "Tất cả sản phẩm", value: "all" },
     discount_product_ids: [],
   };
-
+  const dispatch = useDispatch()
   const {
     register,
     control,
@@ -46,24 +50,80 @@ const DiscountAdd = ({ item }) => {
   const startDate = watch("discount_start_date");
   const endDate = watch("discount_end_date");
   const applyTo = watch("discount_applies_to");
-  //watch if product_ids has some changes
-  // eslint-disable-next-line no-unused-vars
-  const product_ids = watch("discount_product_ids");
+
+  // const product_ids = watch("discount_product_ids");
 
   useEffect(() => {
     const onChangeApplyTo = () => {
       if (applyTo.value === "all") {
         setValue("discount_product_ids", []);
+      } else {
+        fetchProductOptions()
       }
     };
     onChangeApplyTo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applyTo]);
 
+  const [productOptions, setProductOptions] = useState([])
+
+  const fetchProductOptions = async () => {
+    const reposProd = await dispatch(onAllProductsOption({ isPublished: true }))
+    reposProd && setProductOptions(reposProd?.payload?.metaData?.map((prod) => { return { label: prod.product_name, value: prod._id } }))
+  }
+
   // do something with the data
-  const handlePublish = (data) => {
-    console.log(data);
-    toast.success("Product published successfully");
+  const handlePublish = async (data) => {
+
+    let discountInputData = {
+      discount_name: data.discount_name,
+      discount_description: data.discount_description,
+      discount_type: data.discount_type?.value,
+      discount_max_value: data.discount_max_value,
+      discount_code: data.discount_code,
+      discount_start_date: `${data.discount_start_date.$y}-${data.discount_start_date.$M}-${data.discount_start_date.$D} 00:00:00`,
+      discount_end_date: `${data.discount_end_date.$y}-${data.discount_end_date.$M}-${data.discount_end_date.$D} 00:00:00`,
+      discount_max_uses: data.discount_max_uses,
+      discount_value: data.discount_value,
+      discount_min_order_qty: data.discount_min_order_qty,
+      discount_max_person_uses: data.discount_max_person_uses,
+      discount_max_user_uses: data.discount_max_user_uses,
+      discount_min_order_value: data.discount_max_user_uses,
+      discount_is_active: data.discount_is_active?.value,
+      discount_applies_to: data.discount_applies_to?.value,
+      discount_product_ids: data.discount_product_ids.flatMap((product) => product.value)
+    }
+    try {
+      const addDiscount = await dispatch(onAddDiscount({
+        discount_name: discountInputData.discount_name,
+        discount_description: discountInputData.discount_description,
+        discount_type: discountInputData.discount_type,
+        discount_max_value: discountInputData.discount_max_value,
+        discount_code: discountInputData.discount_code,
+        discount_start_date: discountInputData.discount_start_date,
+        discount_end_date: discountInputData.discount_end_date,
+        discount_max_uses: discountInputData.discount_max_uses,
+        discount_value: discountInputData.discount_value,
+        discount_min_order_qty: discountInputData.discount_min_order_qty,
+        discount_max_person_uses: discountInputData.discount_max_person_uses,
+        discount_max_user_uses: discountInputData.discount_max_user_uses,
+        discount_min_order_value: discountInputData.discount_max_user_uses,
+        discount_is_active: discountInputData.discount_is_active,
+        discount_applies_to: discountInputData.discount_applies_to,
+        discount_product_ids: discountInputData.discount_product_ids
+      }))
+      if (addDiscount.payload.status === (200 || 201)) {
+        toast.success(`Thêm mã giảm giá thành công`);
+      } else {
+        toast.error("Thêm mã giảm giá không thành công");
+
+      }
+      console.log("discountInputData", discountInputData)
+    } catch (error) {
+      toast.error("Thêm mã giảm giá không thành công");
+
+    }
+
   };
 
   return (
@@ -88,7 +148,7 @@ const DiscountAdd = ({ item }) => {
             <div className="grid grid-cols-1 gap-y-4 gap-x-2 md:grid-cols-2">
               <div className="field-wrapper">
                 <label className="field-label" htmlFor="discount_type">
-                  Loại mã giảm giá
+                  Chọn loại giảm giá
                 </label>
                 <Controller
                   name="discount_type"
@@ -99,10 +159,10 @@ const DiscountAdd = ({ item }) => {
                     <Select
                       isInvalid={errors.discount_type}
                       id="discount_type"
-                      placeholder="Chọn loại giảm giá"
+                      placeholder=" Giảm theo"
                       options={[
-                        { label: "Percentage", value: "percentage" },
-                        { label: "Fixed amount", value: "fixed_amount" },
+                        { label: "Phẩn trăm", value: "percentage" },
+                        { label: "Giá trị cố định", value: "fixed_amount" },
                       ]}
                       value={field.value}
                       onChange={(value) => field.onChange(value)}
@@ -111,17 +171,21 @@ const DiscountAdd = ({ item }) => {
                 />
               </div>
               <div className="field-wrapper">
-                <label className="field-label" htmlFor="discount_max_value">
-                  Giá giảm
+                <label className="field-label" htmlFor="discount_value">
+                  Giá trị theo loại giảm giá
                 </label>
                 <input
                   className={classNames("field-input", {
-                    "field-input--error": errors.discount_max_value,
+                    "field-input--error": errors.discount_value,
                   })}
-                  id="discount_max_value"
-                  defaultValue={defaultValues.discount_max_value}
-                  placeholder="Enter title name"
-                  {...register("discount_max_value", { required: true })}
+                  id="discount_value"
+                  defaultValue={defaultValues.discount_value}
+                  placeholder="Nhập giá trị theo loại giảm giá"
+                  {...register("discount_value", {
+                    required: true,
+                    pattern: /^[0-9]*$/,
+
+                  })}
                 />
               </div>
             </div>
@@ -155,20 +219,62 @@ const DiscountAdd = ({ item }) => {
               </div>
             </div>
           </div>
-          <div className="field-wrapper">
-            <label className="field-label" htmlFor="discount_code">
-              Mã giảm giá
-            </label>
-            <input
-              className={classNames("field-input", {
-                "field-input--error": errors.discount_code,
-              })}
-              id="discount_code"
-              defaultValue={defaultValues.discount_code}
-              placeholder="VD: XXXXX13, SM4V6D, R4K3RVD,..."
-              {...register("discount_code", { required: true })}
-            />
+          <div className="grid grid-cols-1 gap-y-4 gap-x-2 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-y-4 gap-x-2 md:grid-cols-2">
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="discount_code">
+                  Mã giảm giá
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.discount_code,
+                  })}
+                  id="discount_code"
+                  defaultValue={defaultValues.discount_code}
+                  placeholder="VD: XXXXX13, SM4V6D, R4K3RVD,..."
+                  {...register("discount_code", { required: true })}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="discount_max_value">
+                  Giảm giá tối đa
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.discount_max_value,
+                  })}
+                  id="discount_max_value"
+                  type="number"
+                  defaultValue={defaultValues.discount_max_value}
+                  placeholder="Enter title name"
+                  {...register("discount_max_value", {
+                    required: true,
+                    pattern: /^[0-9]*$/,
+                  })}
+                />
+              </div>
+            </div>
+
+            <div className="field-wrapper">
+              <label className="field-label" htmlFor="discount_max_uses">
+                Số lượng mã giảm giá
+              </label>
+              <input
+                className={classNames("field-input", {
+                  "field-input--error": errors.discount_max_uses,
+                })}
+                id="discount_max_uses"
+                type="number"
+                defaultValue={defaultValues.discount_max_uses}
+                placeholder="Nhập số lượng mã giảm giá"
+                {...register("discount_max_uses", {
+                  required: true,
+                  pattern: /^[0-9]*$/
+                })}
+              />
+            </div>
           </div>
+
           <div className="field-wrapper">
             <label className="field-label" htmlFor="discount_description">
               Mô tả mã giảm giá
@@ -183,46 +289,97 @@ const DiscountAdd = ({ item }) => {
               {...register("discount_description", { required: true })}
             />
           </div>
-          <div className="field-wrapper">
-            <label className="field-label" htmlFor="discount_max_uses">
-              Số lượng mã giảm giá
-            </label>
-            <input
-              className={classNames("field-input", {
-                "field-input--error": errors.discount_max_uses,
-              })}
-              id="discount_max_uses"
-              defaultValue={defaultValues.discount_max_uses}
-              placeholder="Nhập số lượng mã giảm giá"
-              {...register("discount_max_uses", { required: true })}
-            />
+          <div className="grid grid-cols-1 gap-y-4 gap-x-2 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-y-4 gap-x-2 md:grid-cols-2">
+
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="discount_max_user_uses">
+                  Số người dùng tối đa
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.discount_max_user_uses,
+                  })}
+                  id="discount_max_user_uses"
+                  type="number"
+                  defaultValue={defaultValues.discount_max_user_uses}
+                  placeholder="Nhập số lần sử dụng mã giảm giá này trên mỗi người dùng"
+                  {...register("discount_max_user_uses", { required: true, pattern: /^[0-9]*$/ })}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="discount_max_person_uses">
+                  Số lần sử dụng mã giảm giá / người dùng
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.discount_max_person_uses,
+                  })}
+                  type="number"
+                  id="discount_max_person_uses"
+                  defaultValue={defaultValues.discount_max_person_uses}
+                  placeholder="Nhập số lần sử dụng mã giảm giá này trên mỗi người dùng"
+                  {...register("discount_max_person_uses", { required: true, pattern: /^[0-9]*$/ })}
+                />
+              </div>
+
+            </div>
+
+            <div className="grid grid-cols-1 gap-y-4 gap-x-2 md:grid-cols-2">
+
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="discount_min_order_value">
+                  Giá trị đơn hàng tối thiểu
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.discount_min_order_value,
+                  })}
+                  type="number"
+                  id="discount_min_order_value"
+                  defaultValue={defaultValues.discount_min_order_value}
+                  placeholder="Giá trị đơn hàng tối thiểu mà mã giảm giá có thể sử dụng"
+                  {...register("discount_min_order_value", { required: true, pattern: /^[0-9]*$/, })}
+                />
+              </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="discount_min_order_qty">
+                  Áp dụng cho khách hàng có số hóa đơn đã mua tối thiểu
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.discount_min_order_qty,
+                  })}
+                  type="number"
+                  id="discount_min_order_qty"
+                  defaultValue={defaultValues.discount_min_order_qty}
+                  placeholder="Giá trị đơn hàng tối thiểu mà mã giảm giá có thể sử dụng"
+                  {...register("discount_min_order_qty", { required: true, pattern: /^[0-9]*$/ })}
+                />
+              </div>
+            </div>
           </div>
           <div className="field-wrapper">
-            <label className="field-label" htmlFor="discount_max_user_uses">
-              Số lần sử dụng mã giảm giá / người dùng
+            <label className="field-label" htmlFor="discount_is_active">
+              Trạng thái sau khi tạo
             </label>
-            <input
-              className={classNames("field-input", {
-                "field-input--error": errors.discount_max_user_uses,
-              })}
-              id="discount_max_user_uses"
-              defaultValue={defaultValues.discount_max_user_uses}
-              placeholder="Nhập số lần sử dụng mã giảm giá này trên mỗi người dùng"
-              {...register("discount_max_user_uses", { required: true })}
-            />
-          </div>
-          <div className="field-wrapper">
-            <label className="field-label" htmlFor="discount_min_order_value">
-              Giá trị đơn hàng tối thiểu
-            </label>
-            <input
-              className={classNames("field-input", {
-                "field-input--error": errors.discount_min_order_value,
-              })}
-              id="discount_min_order_value"
-              defaultValue={defaultValues.discount_min_order_value}
-              placeholder="Giá trị đơn hàng tối thiểu mà mã giảm giá có thể sử dụng"
-              {...register("discount_min_order_value", { required: true })}
+            <Controller
+              name="discount_is_active"
+              control={control}
+              defaultValue={defaultValues.discount_is_active}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <Select
+                  isInvalid={errors.discount_is_active}
+                  id="discount_is_active"
+                  options={[
+                    { label: "Áp dụng ngay", value: true },
+                    { label: "Chỉ tạo mã", value: false },
+                  ]}
+                  value={field.value}
+                  onChange={(value) => field.onChange(value)}
+                />
+              )}
             />
           </div>
           <div className="field-wrapper">
@@ -234,13 +391,15 @@ const DiscountAdd = ({ item }) => {
               control={control}
               defaultValue={defaultValues.discount_applies_to}
               rules={{ required: true }}
+
               render={({ field }) => (
                 <Select
+
                   isInvalid={errors.discount_applies_to}
                   id="discount_applies_to"
                   options={[
                     { label: "Tất cả sản phẩm", value: "all" },
-                    { label: "Một vài sản phẩm nhất định", value: "specified" },
+                    { label: "Ch sản phẩm nhất định", value: "specific" },
                   ]}
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
@@ -249,9 +408,8 @@ const DiscountAdd = ({ item }) => {
             />
           </div>
           <Spring
-            className={`card flex-1 xl:py-10 ${
-              applyTo.value !== "all" ? "" : "hidden"
-            }`}
+            className={`card flex-1 xl:py-10 ${applyTo.value !== "all" ? "" : "hidden"
+              }`}
           >
             <div className="field-wrapper">
               <Controller
@@ -263,11 +421,7 @@ const DiscountAdd = ({ item }) => {
                     isInvalid={errors.discount_product_ids}
                     isSearchable={true}
                     value={field.value}
-                    options={[
-                      { label: "All", value: "all" },
-                      { label: "Specified Products", value: "specified" },
-                      { label: "Specified Products", value: "specified1" },
-                    ]}
+                    options={productOptions}
                     onChange={(value) => field.onChange(value)}
                   />
                 )}
@@ -283,7 +437,9 @@ const DiscountAdd = ({ item }) => {
           >
             Tạo mã giảm giá
           </button>
+
         </div>
+
       </form>
     </Spring>
   );

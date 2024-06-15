@@ -6,6 +6,7 @@ export * from './upload-actions';
 export * from './category-action';
 export * from './brand-actions';
 export * from './attribute-actions';
+export * from './discount-actions';
 
 
 export const Action = {
@@ -39,9 +40,18 @@ export const Action = {
   //attribute
   ALL_ATTRIBUTE: "ALL_ATTRIBUTE",
   NEW_ATTRIBUTE: "NEW_ATTRIBUTE",
-//brand
+  //brand
 
-ALL_BRAND:"ALL_BRAND",
+  ALL_BRAND: "ALL_BRAND",
+  //discount
+
+  ADD_DISCOUNT: "ADD_DISCOUNT",
+  GET_ALL_DISCOUNT: "GET_ALL_DISCOUNT",
+  AMOUNT_DISCOUNT: "AMOUNT_DISCOUNT",
+  DISCOUNT_BY_ID: "DISCOUNT_BY_ID",
+
+
+
 
 
   // PROFILE: "PROFILE",

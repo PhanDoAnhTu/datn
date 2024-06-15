@@ -17,6 +17,6 @@ router.post("/spu/findAttributeBySpuId", asynchandler(productController.findAttr
 router.post("/spu/findProductsByCategory", asynchandler(productController.findProductsByCategory));
 router.post("/spu/findProductDetail", asynchandler(productController.findProductDetail));
 router.post("/spu/productFromCart", asynchandler(productController.productFromCart));
-
+router.post("/spu/AllProductsOption", asynchandler(productController.AllProductsOption));
 
 module.exports = router;

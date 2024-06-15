@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 const api = axios.create({
   baseURL: 'http://localhost:5000/api',
   timeout: 60000,
@@ -9,10 +10,10 @@ const api = axios.create({
 
 const setHeader = async () => {
   const tokens = JSON.parse(localStorage.getItem("tokens"))
-  if (tokens) {
-    const CLIENT_ID = JSON.parse(localStorage.getItem("userInfo"))._id
+  const CLIENT_ID = JSON.parse(localStorage.getItem("userInfo"))
+  if (tokens & CLIENT_ID) {
     api.defaults.headers.common['authorization'] = `${tokens.accessToken}`
-    api.defaults.headers.common['x-client-id'] = `${CLIENT_ID}`
+    api.defaults.headers.common['x-client-id'] = `${CLIENT_ID._id}`
   }
 }
 

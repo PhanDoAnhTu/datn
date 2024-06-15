@@ -413,7 +413,7 @@ const ProductEditor = () => {
     updateSKUList();
     updatedVariationTables();
   }, [variations]);
-  console.log("skuList",sKUList)
+  console.log("skuList", sKUList)
 
   //SKU_stock, SKU_price, image handle if a user put something in input
   const handleSKUPriceChange = (sku_tier_idx, value) => {
@@ -547,12 +547,8 @@ const ProductEditor = () => {
           return { attribute_id: data[item.attribute_slug].find((value) => value.attribute_id === item._id).attribute_id, attribute_value: data[item.attribute_slug].map((item) => { return { value: item.value } }) }
         }
       })
-    } catch (error) {
-      toast.error("Thêm sản phẩm không thành công");
-      console.error(error)
-    } finally {
       console.log("inputProductData", inputProductData)
-      dispact(createSpu({
+      const addPrd = await dispact(createSpu({
         product_name: inputProductData.product_name,
         isPublished: inputProductData.isPublished,
         isDraft: inputProductData.isDraft,
@@ -569,7 +565,14 @@ const ProductEditor = () => {
         sku_list: inputProductData.sku_list
       }));
       setIsLoading(false)
-      return toast.success("Thêm sản phẩm thành công");
+      if (addPrd.payload.status === (200 || 201)) {
+        toast.success("Thêm sản phẩm thành công");
+      } else {
+        toast.error("Thêm sản phẩm không thành công");
+      }
+    } catch (error) {
+      toast.error("Thêm sản phẩm không thành công");
+      console.error(error)
     }
   };
   const [product_images, set_product_images] = useState([]);

@@ -10,7 +10,7 @@ module.exports = async (app, channel) => {
     // app.use(permission('0000'))
     RPCObserver("DISCOUNT_RPC", new DiscountService())
 
-    app.use('/v1/discount', require('./discount'))
+    app.use('/v1', require('./discount'))
 
 
 
