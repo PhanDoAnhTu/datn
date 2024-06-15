@@ -511,7 +511,7 @@ const ProductEditor = () => {
             list_image.append("sku_list", item.sku_tier_idx);
           }
         });
-        list_image.append("folderName", "outrunner/products");
+        list_image.append("folderName", "outrunner/images/products");
         const list_url_thumb = await dispact(upLoadProductImageList(list_image));
         inputProductData.sku_list = list_url_thumb?.payload?.metaData ? sKUList?.map((sku) => {
           const skuImageFound = list_url_thumb?.payload?.metaData?.find((url_thumb) => sku.sku_tier_idx.toString() === url_thumb.sku_tier_idx.toString())
@@ -533,7 +533,7 @@ const ProductEditor = () => {
             image_array.append("files", item.file[0]);
           }
         });
-        image_array.append("folderName", "outrunner/products");
+        image_array.append("folderName", "outrunner/iamges/products");
         const uploadImage = await dispact(upLoadImageArray(image_array));
         inputProductData.product_thumb = uploadImage?.payload?.metaData?.length > 0 ? uploadImage.payload.metaData : []
       }

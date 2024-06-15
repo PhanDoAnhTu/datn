@@ -5,7 +5,7 @@ const cloudinary = require("../config/cloudinary.config");
 class UploadService {
   async uploadSkuImageList(
     files,
-    { folderName = "outrunner/products", sku_list = "" }
+    { folderName = "outrunner/images/test", sku_list = "" }
   ) {
     // console.log("Array.isArray(sku_list)", Array.isArray(sku_list));
     try {
@@ -35,7 +35,7 @@ class UploadService {
       console.log("Err uploading image: ", error);
     }
   }
-  async uploadImageArray(files, { folderName = "outrunner/products" }) {
+  async uploadImageArray(files, { folderName = "outrunner/images/test" }) {
     try {
       if (!files.length) return;
       const uploaderUrls = [];
@@ -59,9 +59,7 @@ class UploadService {
   }
 
 
-
-
-  async uploadSingleImage(file, { folderName = "outrunner/products" }) {
+  async uploadSingleImage(file, { folderName = "outrunner/images/test" }) {
     try {
       if (!file) return;
       const result = await cloudinary.v2.uploader.upload(file.path, {
