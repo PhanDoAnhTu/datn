@@ -1,6 +1,7 @@
 import Banner from './Banner';
 // import ProductList from '../../../components/frontend/ProductList';
 import CategorySection from './Category';
+// eslint-disable-next-line no-unused-vars
 import PromoSection from './PromoSection';
 import Blog from './Blog';
 import Subscribe from '../../../components/frontend/home/Subscribe';
@@ -52,7 +53,6 @@ export default function Home() {
                 )}
             </div>
 
-            <PromoSection />
             <Blog />
             <Subscribe />
         </div>

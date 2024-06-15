@@ -180,12 +180,20 @@ export default function ProductDetail() {
         if (selected_sku) {
             setPrice(selected_sku.sku_price);
             setStock(selected_sku.sku_stock);
-            setSelectedImage(
+            if (
                 product_images &&
-                    product_images.find(
-                        (item) => item.sku_id == selected_sku._id
-                    )
-            );
+                product_images.find(
+                    (item) => item.sku_id === selected_sku._id
+                ) !== undefined
+            ) {
+                setSelectedImage(
+                    product_images &&
+                        product_images.find(
+                            (item) => item.sku_id === selected_sku._id
+                        )
+                );
+            }
+
             special_offer?.sku_list.map((sku) => {
                 if (
                     sku.sku_tier_idx.toString() == selectedVariation.toString()
@@ -203,8 +211,6 @@ export default function ProductDetail() {
     const HandleImageChoose = (e) => {
         setSelectedImage(e);
     };
-    console.log('selectedVariation', selectedVariation);
-    console.log('selectedsku', selected_sku);
 
     ////////////quantity
     const handleDecrement = async (quantity) => {
@@ -275,6 +281,7 @@ export default function ProductDetail() {
         setfavoriesProduct(getFavoritesFromLocalStorage());
         toast.info('Đã xóa sản phẩm ra khỏi mục yêu thích!');
     };
+    console.log(selectedImage);
 
     return (
         <div className="bg-transparent pt-10 md:pt-20">
@@ -346,17 +353,17 @@ export default function ProductDetail() {
                                     <button
                                         onClick={() => HandleImageChoose(item)}
                                         key={index}
-                                        className="h-36 w-24 flex-shrink-0  bg-gray-200 sm:overflow-hidden sm:rounded-lg lg:w-full"
+                                        className="h-24 w-24 flex-shrink-0  bg-gray-200 sm:overflow-hidden sm:rounded-lg lg:h-36 lg:w-full"
                                     >
                                         <img
                                             src={item.thumb_url}
                                             alt={item.thumb_url}
-                                            className="h-full w-full object-cover object-center"
+                                            className="h-full w-full object-fill object-center"
                                         />
                                     </button>
                                 ))}
                         </div>
-                        <div className="w-full bg-gray-200 sm:overflow-hidden sm:rounded-lg">
+                        <div className="h-9/10 w-full bg-gray-200 sm:overflow-hidden sm:rounded-lg">
                             <img
                                 src={selectedImage && selectedImage.thumb_url}
                                 alt={selectedImage && selectedImage.thumb_url}

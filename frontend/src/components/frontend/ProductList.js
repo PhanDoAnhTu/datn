@@ -90,7 +90,7 @@ export default function ProductList({ title, summary, products }) {
 
                 <div
                     ref={carousel}
-                    className="no-scrollbar mt-6 flex w-full touch-auto snap-x snap-mandatory flex-row flex-nowrap space-x-2 overflow-auto scroll-smooth lg:space-x-3"
+                    className="no-scrollbar touch-snap-x mt-6 flex w-full snap-x snap-mandatory flex-row flex-nowrap space-x-2 overflow-x-scroll scroll-smooth lg:space-x-3"
                 >
                     {products?.map((product) => {
                         return (

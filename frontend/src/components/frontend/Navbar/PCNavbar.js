@@ -155,7 +155,7 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                                                                                             index
                                                                                         ) => {
                                                                                             if (
-                                                                                                index !=
+                                                                                                index <
                                                                                                 2
                                                                                             ) {
                                                                                                 return (
