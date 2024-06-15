@@ -87,7 +87,7 @@ const services = [
   },
 ];
 
-const rateLimit = 500; // Max requests per minute
+const rateLimit = 1000; // Max requests per minute
 const interval = 60 * 1000; // Time window in milliseconds (1 minute)
 
 const requestCounts = {};
@@ -112,7 +112,7 @@ function rateLimitAndTimeout(req, res, next) {
     });
   }
 
-  req.setTimeout(15000, () => {
+  req.setTimeout(60000, () => {
     res.status(504).json({
       code: 504,
       status: "Error",
@@ -122,7 +122,7 @@ function rateLimitAndTimeout(req, res, next) {
     req.abort();
   });
 
-  next(); 
+  next();
 }
 
 app.use(rateLimitAndTimeout);

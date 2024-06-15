@@ -27,7 +27,7 @@ const multerFilter = (req, file, cb) => {
 const uploadDisk = multer({
     storage: storage,
     fileFilter: multerFilter,
-    limits: { fileSize: 1000000 },
+    limits: { fileSize: 10 * 1024 * 1024 }
 })
 
 const productImgResize = async (req, res, next) => {

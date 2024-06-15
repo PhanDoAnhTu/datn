@@ -13,9 +13,10 @@ const newSku = async ({
             return { ...skuNoImage, product_id: spu_id }
 
         })
-        // console.log(convert_sku_list)
+         console.log("convert_sku_list",convert_sku_list)
 
         const skus = await SkuModel.create(convert_sku_list)
+        console.log("skus///////////////////////////////////////////////",skus)
 
         return skus
 

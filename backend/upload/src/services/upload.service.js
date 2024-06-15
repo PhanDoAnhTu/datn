@@ -7,22 +7,19 @@ class UploadService {
     files,
     { folderName = "outrunner/products", sku_list = "" }
   ) {
-    console.log("Array.isArray(sku_list)", Array.isArray(sku_list));
+    // console.log("Array.isArray(sku_list)", Array.isArray(sku_list));
     try {
       if (!files.length) return;
       const uploaderUrls = [];
       for (const file of files) {
         const result = await cloudinary.v2.uploader.upload(file.path, {
-          folder: folderName,
+          folder: folderName
         });
         uploaderUrls.push({
-          image_url: result.secure_url,
+          thumb_url: result.secure_url,
           public_id: result.public_id,
-          thumb_url: await cloudinary.url(result.public_id, {
-            // height: 300,
-            // width: 300,
-          }),
-          result: result,
+          // thumb_url: await cloudinary.v2.url(result.public_id),
+          // result: result
         });
       }
       if (Array.isArray(sku_list) == true) {
@@ -47,13 +44,10 @@ class UploadService {
           folder: folderName,
         });
         uploaderUrls.push({
-          image_url: result.secure_url,
+          thumb_url: result.secure_url,
           public_id: result.public_id,
-          thumb_url: await cloudinary.url(result.public_id, {
-            // height: 300,
-            // width: 300,
-          }),
-          result: result,
+          // thumb_url: await cloudinary.url(result.public_id),
+          // result: result,
         });
       }
 
@@ -63,6 +57,10 @@ class UploadService {
       console.log("Err uploading image: ", error);
     }
   }
+
+
+
+
   async uploadSingleImage(file, { folderName = "outrunner/products" }) {
     try {
       if (!file) return;
@@ -70,10 +68,10 @@ class UploadService {
         folder: folderName,
       });
       return {
-        image_url: result.secure_url,
-        thumb_url: await cloudinary.url(result.public_id),
+        thumb_url: result.secure_url,
+        // thumb_url: await cloudinary.url(result.public_id),
         public_id: result.public_id,
-        result: result,
+        // result: result,
       };
     } catch (error) {
       console.log("Err uploading image: ", error);

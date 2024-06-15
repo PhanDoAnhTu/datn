@@ -108,7 +108,7 @@ const ProductEditor = () => {
                 className={classNames(
                   "field-input focus:text-left text-center"
                 )}
-                type="text"
+                type="number"
                 onChange={(e) =>
                   handleSKUPriceChange(record.sku_tier_idx, e.target.value)
                 }
@@ -130,7 +130,7 @@ const ProductEditor = () => {
           <div className="field-wrapper">
             <input
               className={"field-input focus:text-left text-center"}
-              type="text"
+              type="number"
               value={sku_stock}
               onChange={(e) =>
                 handleSKUStockChange(record.sku_tier_idx, e.target.value)
@@ -354,15 +354,14 @@ const ProductEditor = () => {
 
         newSKUList.push({
           sku_tier_idx,
-          sku_price: "",
-          sku_stock: "",
+          sku_price: 0,
+          sku_stock: 1,
           image: null, // Increment product_quantity for demonstration
         });
         newSKUList.sort((a, b) => (a.sku_tier_idx > b.sku_tier_idx ? 1 : -1));
       }
       setSKUList(newSKUList);
     };
-
     const updatedVariationTables = () => {
       setVariationTables(() => {
         const s = defaultVariationTables?.slice();
@@ -378,11 +377,11 @@ const ProductEditor = () => {
                 <div className="flex flex-col text-center">
                   {item.id === 1
                     ? variations.find((item1) => item1.id === item.id).options[
-                        sku_tier_idx[0]
-                      ]?.value
+                      sku_tier_idx[0]
+                    ]?.value
                     : variations.find((item1) => item1.id === item.id).options[
-                        sku_tier_idx[1]
-                      ]?.value}
+                      sku_tier_idx[1]
+                    ]?.value}
                 </div>
               ),
             });
@@ -397,11 +396,11 @@ const ProductEditor = () => {
                 <div className="flex flex-col text-center">
                   {item.id === 1
                     ? variations.find((item1) => item1.id === item.id).options[
-                        sku_tier_idx[0]
-                      ].value
+                      sku_tier_idx[0]
+                    ].value
                     : variations.find((item1) => item1.id === item.id).options[
-                        sku_tier_idx[1]
-                      ].value}
+                      sku_tier_idx[1]
+                    ].value}
                 </div>
               ),
             };
@@ -414,6 +413,8 @@ const ProductEditor = () => {
     updateSKUList();
     updatedVariationTables();
   }, [variations]);
+  console.log("skuList",sKUList)
+
   //SKU_stock, SKU_price, image handle if a user put something in input
   const handleSKUPriceChange = (sku_tier_idx, value) => {
     setSKUList((s) => {
@@ -839,17 +840,15 @@ const ProductEditor = () => {
             <button
               onClick={handleToggleIsVariation}
               id="variationBtn"
-              className={` ${
-                isVariation === false ? "btn--social btn block" : "hidden"
-              }`}
+              className={` ${isVariation === false ? "btn--social btn block" : "hidden"
+                }`}
             >
               <i className={`icon icon-circle-plus-regular`} />
               <span>Bật phân loại</span>
             </button>
             <div
-              className={`${
-                isVariation ? "" : "hidden"
-              } grid grid-cols-1 gap-y-4 gap-x-2`}
+              className={`${isVariation ? "" : "hidden"
+                } grid grid-cols-1 gap-y-4 gap-x-2`}
             >
               {variations.map((item, index) => {
                 return (

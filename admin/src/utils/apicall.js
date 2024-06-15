@@ -1,7 +1,11 @@
-import api from 'axios';
+import axios from 'axios';
+const api = axios.create({
+  baseURL: 'http://localhost:5000/api',
+  timeout: 60000,
+  headers: { 'X-Custom-Header': 'foobar' }
+});
 
-
-api.defaults.baseURL = "http://localhost:5000/api";
+// api.defaults.baseURL = "http://localhost:5000/api";
 
 const setHeader = async () => {
   const tokens = JSON.parse(localStorage.getItem("tokens"))
