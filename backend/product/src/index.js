@@ -10,8 +10,8 @@ const StartServer = async () => {
     
     await databaseConnection();
 
-    const channel = await CreateChannel()
-    // const channel = 0
+    // const channel = await CreateChannel()
+    const channel = 0
     await expressApp(app,channel);
     app.listen(PORT, () => {
         console.log(`listening to port ${PORT}, ${SERVICE}`);

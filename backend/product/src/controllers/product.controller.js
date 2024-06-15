@@ -3,6 +3,7 @@
 const SpuService = require("../services/spu.service");
 const { successResponse } = require("../core");
 class spuController {
+
   newSpu = async (req, res, next) => {
     return new successResponse.SuccessResponse({
       message: "Created new spu",
@@ -83,4 +84,4 @@ class spuController {
   }
 }
 
-module.exports = new spuController();
+module.exports = new spuController;

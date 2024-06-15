@@ -14,8 +14,6 @@ const Special_offerReducer = (state = initialState, action) => {
                 ...state,
                 spicial_offer: action.payload.metaData
             }
-
-
         default:
             return state;
     }

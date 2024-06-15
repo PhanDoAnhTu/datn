@@ -123,7 +123,6 @@ const UnPublishProduct = async ({ product_id }) => {
     _id: Types.ObjectId(product_id),
   });
   if (!spuFound) throw new errorResponse.NotFoundRequestError("spu not found");
-  console.log(product_id);
   return await spuRepository.unPublishProduct({ product_id });
 };
 
@@ -390,7 +389,7 @@ const AllProductsOption = async ({ sort = "ctime", isPublished = true }) => {
     sort,
     isPublished,
   });
-return all_Products
+  return all_Products
 };
 // const products_checkout = async ({ spu_id_list, isPublished = true, products_checkout = [] }) => {
 //     try {

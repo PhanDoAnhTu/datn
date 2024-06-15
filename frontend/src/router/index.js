@@ -58,7 +58,7 @@ const router = createBrowserRouter(
             <Route path="/dang-nhap" element={<Login />} />
             <Route path="/dang-ky" element={<Register />} />
             <Route
-                path="/san-pham-theo-danh-muc/:gender/:sub_category/:category_slug?"
+                path="/san-pham-theo-danh-muc/:gender?/:sub_category?/:category_slug?"
                 element={<Category />}
             />
             <Route

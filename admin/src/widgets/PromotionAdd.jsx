@@ -17,6 +17,7 @@ import skus_manangement from "@db/skus_manangement";
 import products_management from "@db/products_management";
 import { Switch } from "antd";
 import { capitalize } from "@mui/material";
+import { onCreateSpecialOffer } from "../store/actions";
 
 const PromotionAdd = () => {
   const [products, setProducts] = useState([]);
@@ -27,6 +28,7 @@ const PromotionAdd = () => {
     }));
     setProducts(firstLoadProducts);
   }, []);
+
   const defaultValues = {
     special_offer_name: "",
     special_offer_description: "",
@@ -123,9 +125,9 @@ const PromotionAdd = () => {
         e.target.value
       )
         ? ((updatedProducts[productIndex].sku_list[skuIndex].original_price -
-            parseInt(e.target.value)) /
-            updatedProducts[productIndex].sku_list[skuIndex].original_price) *
-          100
+          parseInt(e.target.value)) /
+          updatedProducts[productIndex].sku_list[skuIndex].original_price) *
+        100
         : "";
     }
 
@@ -139,8 +141,8 @@ const PromotionAdd = () => {
         e.target.value
       )
         ? updatedProducts[productIndex].sku_list[skuIndex].original_price -
-          updatedProducts[productIndex].sku_list[skuIndex].original_price *
-            (parseInt(e.target.value) / 100)
+        updatedProducts[productIndex].sku_list[skuIndex].original_price *
+        (parseInt(e.target.value) / 100)
         : "";
     }
     if (name === "quantity") {
@@ -183,8 +185,23 @@ const PromotionAdd = () => {
 
   // do something with the data
   const handlePublish = (data) => {
+
+    const id = toast.loading("Vui lòng đợi...");
+
     console.log(data);
-    toast.success("Product published successfully");
+
+
+
+
+
+    
+    toast.update(id, {
+      render: "Thêm sản phẩm không thành công",
+      type: "error",
+      isLoading: false,
+      closeOnClick: true,
+      autoClose: 3000,
+    });
   };
 
   return (

@@ -19,7 +19,7 @@ module.exports = async (app,channel) => {
     app.use(express.static(__dirname + '/public'))
 
     routes(app,channel)
-
+    
     app.use((error, req, res, next) => {
         const statusCode = error.status || 500
         return res.status(statusCode).json(

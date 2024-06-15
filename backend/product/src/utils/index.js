@@ -193,7 +193,7 @@ module.exports.RPCObserver = async (RPC_QUEUE_NAME, service) => {
       if (msg.content) {
         // DB Operation
         const payload = JSON.parse(msg.content.toString());
-        console.log(payload)
+        console.log(payload,"sss")
         const response = await service.serverRPCRequest(payload);
         channel.sendToQueue(
           msg.properties.replyTo,

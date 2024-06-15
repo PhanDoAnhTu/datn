@@ -479,6 +479,7 @@ const ProductEditor = () => {
 
   // do something with the data
   const handlePublish = async (data) => {
+
     const id = toast.loading("Vui lòng đợi...");
     let inputProductData = {
       product_name: data.productName,
@@ -580,12 +581,12 @@ const ProductEditor = () => {
         type: "error",
         isLoading: false,
         closeOnClick: true,
-        autoClose: 5000,
+        autoClose: 3000,
       });
       console.error(error);
     } finally {
       console.log("inputProductData", inputProductData);
-      dispact(
+      const addPro = await dispact(
         createSpu({
           product_name: inputProductData.product_name,
           isPublished: inputProductData.isPublished,
@@ -603,14 +604,24 @@ const ProductEditor = () => {
           sku_list: inputProductData.sku_list,
         })
       );
-      toast.update(id, {
-        render: "Thêm sản phẩm thành công",
-        type: "success",
-        isLoading: false,
-        closeOnClick: true,
-        autoClose: 5000,
-      });
-      return;
+      if (addPro.payload.status === (200 || 201)) {
+        toast.update(id, {
+          render: "Thêm sản phẩm thành công",
+          type: "success",
+          isLoading: false,
+          closeOnClick: true,
+          autoClose: 3000,
+        });
+      } else {
+        toast.update(id, {
+          render: "Thêm sản phẩm không thành công",
+          type: "error",
+          isLoading: false,
+          closeOnClick: true,
+          autoClose: 3000,
+        });
+      }
+
     }
   };
 
@@ -729,12 +740,30 @@ const ProductEditor = () => {
         sku_list: inputProductData.sku_list
       }));
       if (addPrd.payload.status === (200 || 201)) {
-        toast.success("Thêm sản phẩm thành công");
+        toast.update(id, {
+          render: "Thêm sản phẩm thành công",
+          type: "success",
+          isLoading: false,
+          closeOnClick: true,
+          autoClose: 3000,
+        });
       } else {
-        toast.error("Thêm sản phẩm không thành công");
+        toast.update(id, {
+          render: "Thêm sản phẩm không thành công",
+          type: "error",
+          isLoading: false,
+          closeOnClick: true,
+          autoClose: 3000,
+        });
       }
     } catch (error) {
-      toast.error("Thêm sản phẩm không thành công");
+      toast.update(id, {
+        render: "Thêm sản phẩm không thành công",
+        type: "error",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
       console.error(error)
     }
   };
