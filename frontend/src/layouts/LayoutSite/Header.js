@@ -20,7 +20,12 @@ export default function Header() {
     return (
         <div className="bg-white">
             {/* Mobile menu */}
-            <MobileNavbar category={category} open={open} setOpen={setOpen} />
+            <MobileNavbar
+                category={category}
+                open={open}
+                navbar={navbar}
+                setOpen={setOpen}
+            />
 
             <header className="relative bg-white">
                 <PCNavbar
