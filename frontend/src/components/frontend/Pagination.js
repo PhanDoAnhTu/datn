@@ -34,6 +34,7 @@ export default function Pagination({ data, currentPage, setCurrentPage }) {
                     >
                         <Link
                             to="#"
+                            onClick={() => setCurrentPage(currentPage - 1)}
                             className={`${currentPage === 1 ? 'pointer-events-none relative inline-flex items-center bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 brightness-50 transition duration-200  ease-out hover:bg-gray-50 focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700' : 'relative inline-flex items-center bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 transition duration-200 ease-out hover:bg-gray-50  focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700'}`}
                         >
                             <span className="sr-only">Previous</span>
@@ -57,6 +58,7 @@ export default function Pagination({ data, currentPage, setCurrentPage }) {
 
                         <Link
                             to="#"
+                            onClick={() => setCurrentPage(currentPage + 1)}
                             className={`${currentPage >= data?.length ? 'pointer-events-none relative inline-flex items-center bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 brightness-50 transition duration-200  ease-out hover:bg-gray-50 focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700' : 'relative inline-flex items-center bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 transition duration-200 ease-out hover:bg-gray-50  focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700'}`}
                         >
                             <span className="sr-only">Next</span>

@@ -1,34 +1,49 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { products } from '../../test/products';
 import ProductSingle from '../../components/frontend/ProductSingle';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 export default function Search() {
     const navigate = useNavigate();
-    const params = useParams();
-    const [keyword, setKeyword] = useState('');
-    useEffect(() => {
-        setKeyword(params.keyword);
-    }, [params]);
+    const { keyword } = useParams();
+    const searchRef = useRef(null);
+    const [products, setProducts] = useState(null);
+
+    const { all_products } = useSelector((state) => state.productReducer);
     const handleSearch = (e) => {
         e.preventDefault();
-        if (keyword === '') {
-            alert('please give us some infos to find');
+        if (searchRef.current.value === '') {
+            toast.error('Vui lòng cung cấp từ khóa để tìm kiếm');
             return;
         }
-        navigate(`/tim-kiem-san-pham/${keyword}`);
+        navigate(`/tim-kiem-san-pham/${searchRef.current?.value}`, {
+            replace: true,
+        });
     };
+    useEffect(() => {
+        setProducts(
+            all_products
+                ?.slice()
+                .filter((item) =>
+                    item.product_name
+                        .toLowerCase()
+                        .includes(keyword.toLowerCase())
+                )
+        );
+    }, [keyword]);
+
     return (
-        <div className=" pb-7 pt-10 sm:px-10 md:pt-24">
+        <div className="pb-7 pt-10 sm:px-10 md:pt-24">
             <form
                 className="flex w-full space-x-2 px-10"
                 method="post"
                 onSubmit={handleSearch}
             >
                 <input
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
+                    defaultValue={keyword}
+                    ref={searchRef}
                     className="w-full border-2 border-white bg-transparent text-lg text-gray-900 outline-none ring-0 transition duration-500 ease-out focus:border-magenta-500 focus:bg-zinc-900/50 focus:ring-0 dark:text-white"
                 />
                 <button
@@ -41,10 +56,16 @@ export default function Search() {
                     />
                 </button>
             </form>
-            <div className="mt-5 grid grid-cols-2 px-4 text-white max-sm:gap-10 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-                {products.map((product, index) => (
-                    <ProductSingle key={index} product={product} />
-                ))}
+            <div className="mt-5 grid grid-cols-2 gap-4 px-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                {products && products?.length > 0 ? (
+                    products.map((product, index) => (
+                        <ProductSingle key={index} product={product} />
+                    ))
+                ) : (
+                    <div className="col-span-full pb-24 text-center align-middle text-xl font-bold tracking-wide text-gray-900 dark:text-white">
+                        Không có sản phẩm khớp với thông tin tìm kiếm!
+                    </div>
+                )}
             </div>
         </div>
     );

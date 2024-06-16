@@ -40,6 +40,7 @@ export default function Category() {
     // eslint-disable-next-line no-unused-vars
     const [products, setProducts] = useState(null);
     const [filteredProduct, setFilteredProducts] = useState(null);
+    const [pagedProducts, setPagedProducts] = useState(null);
     ///demo setProducts
     const dispatch = useDispatch();
     // eslint-disable-next-line no-unused-vars
@@ -64,23 +65,14 @@ export default function Category() {
         }
     }, [brand, attribute]);
 
-    ///demo setProducts
     const [selectedBrands, setSelectedBrands] = useState([]);
     const [selectedAttributes, setSelectedAttributes] = useState([]);
     const [selectedSort, setSelectedSort] = useState('createdAt');
-    useEffect(() => {
-        setFilteredProducts(products);
-    }, [products]);
-
-    // useEffect(() => {
-    //     const startIndex = (page - 1) * limit;
-    //     const endIndex = startIndex + limit;
-    //     setProducts(all_products?.slice(startIndex, endIndex));
-    // }, [page, limit]);
 
     useEffect(() => {
         setSelectedBrands([]);
         setSelectedAttributes([]);
+        setPage(1);
         setSelectedSort(sortOptions[0].value);
         if (
             category1 === undefined &&
@@ -171,8 +163,11 @@ export default function Category() {
     }, [all_products, category1, category2, category3]);
 
     useEffect(() => {
-        const startIndex = (page - 1) * limit;
-        const endIndex = startIndex + limit;
+        setFilteredProducts(products);
+    }, [products]);
+
+    useEffect(() => {
+        setPage(1);
         if (selectedBrands?.length === 0) {
             if (selectedAttributes?.length === 0) {
                 if (
@@ -182,7 +177,7 @@ export default function Category() {
                 ) {
                     setFilteredProducts(
                         products
-                            ?.slice(startIndex, endIndex)
+                            ?.slice()
                             .sort((a, b) =>
                                 selectedSort === 'priceLowToHigh'
                                     ? a.product_price < b.product_price
@@ -205,7 +200,7 @@ export default function Category() {
                 ) {
                     setFilteredProducts(
                         products
-                            ?.slice(startIndex, endIndex)
+                            ?.slice()
                             .filter((item) =>
                                 item.product_category.includes(
                                     category?.find(
@@ -236,7 +231,7 @@ export default function Category() {
                 ) {
                     setFilteredProducts(
                         products
-                            ?.slice(startIndex, endIndex)
+                            ?.slice()
                             .filter((item) =>
                                 item.product_category.includes(
                                     category?.find(
@@ -273,7 +268,7 @@ export default function Category() {
                 ) {
                     setFilteredProducts(
                         products
-                            ?.slice(startIndex, endIndex)
+                            ?.slice()
                             .filter((item) =>
                                 item.product_category.includes(
                                     category
@@ -321,29 +316,28 @@ export default function Category() {
             } else {
                 setFilteredProducts(
                     products
-                        ?.slice(startIndex, endIndex)
+                        ?.slice()
                         .filter((item) =>
-                            selectedAttributes
-                                .some((UUID) =>
-                                    item.product_attributes.some((attribute) =>
-                                        attribute.attribute_value.some(
-                                            (subitem) => subitem.value === UUID
-                                        )
+                            selectedAttributes?.some((UUID) =>
+                                item.product_attributes.some((attribute) =>
+                                    attribute.attribute_value.some(
+                                        (subitem) => subitem.value === UUID
                                     )
                                 )
-                                .sort((a, b) =>
-                                    selectedSort === 'priceLowToHigh'
-                                        ? a.product_price > b.product_price
-                                            ? -1
-                                            : 1
-                                        : selectedSort === 'priceHighToLow'
-                                          ? a.product_price < b.product_price
-                                              ? -1
-                                              : 1
-                                          : selectedSort === 'createdAt'
-                                            ? 1
-                                            : -1
-                                )
+                            )
+                        )
+                        ?.sort((a, b) =>
+                            selectedSort === 'priceLowToHigh'
+                                ? a.product_price > b.product_price
+                                    ? -1
+                                    : 1
+                                : selectedSort === 'priceHighToLow'
+                                  ? a.product_price < b.product_price
+                                      ? -1
+                                      : 1
+                                  : selectedSort === 'createdAt'
+                                    ? 1
+                                    : -1
                         )
                 );
             }
@@ -351,11 +345,11 @@ export default function Category() {
             if (selectedBrands?.length > 0 && selectedAttributes?.length > 0) {
                 setFilteredProducts(
                     products
-                        ?.slice(startIndex, endIndex)
+                        ?.slice()
                         .filter(
                             (item) =>
-                                selectedBrands.includes(item.product_brand) &&
-                                selectedAttributes.some((UUID) =>
+                                selectedBrands?.includes(item.product_brand) &&
+                                selectedAttributes?.some((UUID) =>
                                     item.product_attributes.some((attribute) =>
                                         attribute.attribute_value.some(
                                             (subitem) => subitem.value === UUID
@@ -363,7 +357,7 @@ export default function Category() {
                                     )
                                 )
                         )
-                        .sort((a, b) =>
+                        ?.sort((a, b) =>
                             selectedSort === 'priceLowToHigh'
                                 ? a.product_price > b.product_price
                                     ? -1
@@ -380,11 +374,11 @@ export default function Category() {
             } else {
                 setFilteredProducts(
                     products
-                        ?.slice(startIndex, endIndex)
+                        ?.slice()
                         .filter((item) =>
-                            selectedBrands.includes(item.product_brand)
+                            selectedBrands?.includes(item.product_brand)
                         )
-                        .sort((a, b) =>
+                        ?.sort((a, b) =>
                             selectedSort === 'priceLowToHigh'
                                 ? a.product_price > b.product_price
                                     ? -1
@@ -403,8 +397,7 @@ export default function Category() {
     }, [selectedBrands, selectedSort]);
 
     useEffect(() => {
-        const startIndex = (page - 1) * limit;
-        const endIndex = startIndex + limit;
+        setPage(1);
         if (selectedAttributes?.length === 0) {
             if (selectedBrands?.length === 0) {
                 if (
@@ -414,8 +407,8 @@ export default function Category() {
                 ) {
                     setFilteredProducts(
                         products
-                            ?.slice(startIndex, endIndex)
-                            .sort((a, b) =>
+                            ?.slice()
+                            ?.sort((a, b) =>
                                 selectedSort === 'priceLowToHigh'
                                     ? a.product_price < b.product_price
                                         ? -1
@@ -437,7 +430,7 @@ export default function Category() {
                 ) {
                     setFilteredProducts(
                         products
-                            ?.slice(startIndex, endIndex)
+                            ?.slice()
                             .filter((item) =>
                                 item.product_category.includes(
                                     category?.find(
@@ -468,7 +461,7 @@ export default function Category() {
                 ) {
                     setFilteredProducts(
                         products
-                            ?.slice(startIndex, endIndex)
+                            ?.slice()
                             .filter((item) =>
                                 item.product_category.includes(
                                     category?.find(
@@ -505,7 +498,7 @@ export default function Category() {
                 ) {
                     setFilteredProducts(
                         products
-                            ?.slice(startIndex, endIndex)
+                            ?.slice()
                             .filter((item) =>
                                 item.product_category.includes(
                                     category
@@ -553,7 +546,7 @@ export default function Category() {
             } else {
                 setFilteredProducts(
                     products
-                        ?.slice(startIndex, endIndex)
+                        ?.slice()
                         .filter((item) =>
                             selectedBrands.includes(item.product_brand)
                         )
@@ -576,7 +569,7 @@ export default function Category() {
             if (selectedAttributes?.length > 0 && selectedBrands?.length > 0) {
                 setFilteredProducts(
                     products
-                        ?.slice(startIndex, endIndex)
+                        ?.slice()
                         .filter(
                             (item) =>
                                 selectedAttributes.some((UUID) =>
@@ -604,7 +597,7 @@ export default function Category() {
             } else {
                 setFilteredProducts(
                     products
-                        ?.slice(startIndex, endIndex)
+                        ?.slice()
                         .filter((item) =>
                             selectedAttributes.some((UUID) =>
                                 item.product_attributes.some((attribute) =>
@@ -631,6 +624,12 @@ export default function Category() {
             }
         }
     }, [selectedAttributes, selectedSort]);
+
+    useEffect(() => {
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        setPagedProducts(filteredProduct?.slice(startIndex, endIndex));
+    }, [filteredProduct, page]);
 
     return (
         <div>
@@ -1595,12 +1594,12 @@ export default function Category() {
                             {/* Product grid */}
                             <div className="col-span-3 grid grid-rows-1">
                                 <div
-                                    className={`relative col-span-3 grid h-fit gap-x-6 ${isListView ? '' : 'grid-cols-2 gap-y-10 sm:grid-cols-4 lg:grid-cols-4 xl:gap-x-3'}`}
+                                    className={`relative col-span-3 grid h-fit gap-x-6 ${isListView ? 'gap-4' : 'grid-cols-2 gap-y-10 sm:grid-cols-4 lg:grid-cols-4 xl:gap-x-3'}`}
                                 >
                                     {!isListView ? (
-                                        filteredProduct &&
-                                        filteredProduct.length !== 0 ? (
-                                            filteredProduct?.map(
+                                        pagedProducts &&
+                                        pagedProducts.length !== 0 ? (
+                                            pagedProducts?.map(
                                                 (product, index) => (
                                                     <ProductSingle
                                                         product={product}
@@ -1613,16 +1612,14 @@ export default function Category() {
                                                 Hiện không có sản phẩm
                                             </div>
                                         )
-                                    ) : filteredProduct &&
-                                      filteredProduct.length !== 0 ? (
-                                        filteredProduct?.map(
-                                            (product, index) => (
-                                                <ProductSingleList
-                                                    product={product}
-                                                    key={index}
-                                                />
-                                            )
-                                        )
+                                    ) : pagedProducts &&
+                                      pagedProducts.length !== 0 ? (
+                                        pagedProducts?.map((product, index) => (
+                                            <ProductSingleList
+                                                product={product}
+                                                key={index}
+                                            />
+                                        ))
                                     ) : (
                                         <div className="col-span-full text-center text-lg font-bold text-gray-900 dark:text-white">
                                             Hiện không có sản phẩm
@@ -1630,13 +1627,15 @@ export default function Category() {
                                     )}
                                 </div>
                                 <div className="col-span-3 pt-5">
-                                    {products && products?.length > 8 ? (
+                                    {filteredProduct &&
+                                    filteredProduct?.length > 8 ? (
                                         <Pagination
                                             className="col-span-3"
                                             data={Array.from(
                                                 {
                                                     length: Math.ceil(
-                                                        products?.length / 8
+                                                        filteredProduct?.length /
+                                                            8
                                                     ),
                                                 },
                                                 (_, index) => index + 1

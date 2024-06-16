@@ -50,9 +50,12 @@ export default function ProductSingleList({ product, reload }) {
     };
 
     return (
-        <div key={product._id} className="flex w-full pt-6 sm:space-x-2">
+        <div
+            key={product._id}
+            className="flex w-full items-center rounded-md bg-zinc-800 shadow-inner shadow-zinc-600 max-sm:flex-col "
+        >
             <div
-                className="h-fit w-32 overflow-hidden rounded-md md:w-40"
+                className="h-fit overflow-hidden  rounded-md max-sm:m-2 md:w-40"
                 onClick={() =>
                     navigate(`/san-pham/${product.product_slug}-${product._id}`)
                 }
@@ -62,17 +65,17 @@ export default function ProductSingleList({ product, reload }) {
                     className="object-contain object-center"
                 />
             </div>
-            <div className="flex flex-1 text-white">
-                <div className="flex flex-1 flex-col space-y-1 overflow-hidden px-2">
-                    <div className="flex">
-                        <div className="flex-1">
+            <div className="flex flex-1 px-2 text-white max-sm:w-full max-sm:px-2 max-sm:py-2">
+                <div className="flex flex-1 flex-col space-y-1 overflow-hidden">
+                    <div className="flex justify-between">
+                        <div>
                             <h1 className="truncate text-wrap text-sm font-bold max-sm:w-36 md:text-xl">
                                 {product.product_name}
                             </h1>
                             <div className="text-md text-gray-300">Brand</div>
                         </div>
                         <div className="flex flex-col items-end">
-                            <span className="font-bold md:text-2xl">
+                            <span className="text-sm font-bold md:text-2xl">
                                 <NumericFormat
                                     value={product.product_price}
                                     displayType={'text'}
@@ -109,8 +112,8 @@ export default function ProductSingleList({ product, reload }) {
                         ))}
                     </div>
 
-                    <div className="grid gap-3 pt-5 md:grid-cols-2">
-                        <button className="border-2 px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                    <div className="grid grid-cols-2 gap-3 py-2">
+                        <button className="rounded-md border-2 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
                             Thêm vào giỏ hàng
                         </button>
                         {userInfo ? (
@@ -124,7 +127,7 @@ export default function ProductSingleList({ product, reload }) {
                                             productId: product._id,
                                         })
                                     }
-                                    className="border-2 px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs"
+                                    className="rounded-md border-2 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs"
                                 >
                                     Bỏ thích
                                 </button>
@@ -136,13 +139,13 @@ export default function ProductSingleList({ product, reload }) {
                                             productId: product._id,
                                         })
                                     }
-                                    className="border-2 px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs"
+                                    className="rounded-md border-2 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs"
                                 >
                                     Thêm vào yêu thích
                                 </button>
                             )
                         ) : (
-                            <button className="border-2  px-3 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                            <button className="rounded-md  border-2 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
                                 Thêm vào yêu thích
                             </button>
                         )}
