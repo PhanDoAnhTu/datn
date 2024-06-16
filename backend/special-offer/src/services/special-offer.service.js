@@ -8,7 +8,7 @@ class SpecialOfferService {
 
     async createSpecialOffer(payload) {
         const {
-            special_offer_name, special_offer_start_date, special_offer_end_date, special_offer_image = [], special_offer_is_active = false,
+            special_offer_name, special_offer_start_date, special_offer_end_date, special_offer_image = null, special_offer_is_active = false,
             special_offer_description, special_offer_spu_list = []
         } = payload
 
@@ -21,7 +21,7 @@ class SpecialOfferService {
         }
         const checkStartDate = await this.findSpecialOfferBetweenStartDateAndEndByDate({ date: special_offer_start_date })
         const checkEndDate = await this.findSpecialOfferBetweenStartDateAndEndByDate({ date: special_offer_end_date })
-        if (checkStartDate.length > 0 || checkEndDate.length > 0) {
+        if (checkStartDate || checkEndDate) {
             throw new errorResponse.ForbiddenRequestError('The time of the special offer program overlapped')
         }
 
@@ -89,6 +89,38 @@ class SpecialOfferService {
             }
         })
         return special
+    }
+    async getAllSpecialOffer() {
+        const special = await SpecialOfferModel.find()
+        return special
+    }
+    async onChangeStatusSpecialOfferById({ special_offer_is_active, special_offer_id }) {
+
+        if (special_offer_is_active == true) {
+            const special = await SpecialOfferModel.findOne({ _id: special_offer_id })
+            if (!special) throw new errorResponse.NotFoundRequestError("not found")
+            const checkStartDate = await this.findSpecialOfferBetweenStartDateAndEndByDate({ date: special.special_offer_start_date })
+            const checkEndDate = await this.findSpecialOfferBetweenStartDateAndEndByDate({ date: special.special_offer_end_date })
+            if (checkStartDate || checkEndDate) {
+                throw new errorResponse.ForbiddenRequestError('The time of the special offer program overlapped')
+            }
+        }
+        const query = { _id: special_offer_id }
+        const updateOrInsert = {
+            $set: {
+                special_offer_is_active: special_offer_is_active
+            }
+        }, options = {
+            upsert: true,
+            new: true
+        }
+        return await SpecialOfferModel.findOneAndUpdate(query, updateOrInsert, options)
+    }
+    async removeSpecialOfferById({ special_offer_id }) {
+        const special = await SpecialOfferModel.findOne({ _id: special_offer_id })
+        if (!special) throw new errorResponse.NotFoundRequestError("not found")
+        if (special.special_offer_is_active == true) throw new errorResponse.ForbiddenRequestError("active using")
+        return await SpecialOfferModel.deleteOne({ special_offer_id })
     }
     async serverRPCRequest(payload) {
         const { type, data } = payload;

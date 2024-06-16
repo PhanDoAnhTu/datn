@@ -13,21 +13,22 @@ import MultipleSelect from "@ui/MultipleSelect";
 import DropFiles from "@components/DropFiles";
 import MediaDropPlaceholder from "@ui/MediaDropPlaceholder";
 import { useEffect, useState } from "react";
-import skus_manangement from "@db/skus_manangement";
-import products_management from "@db/products_management";
+// import skus_manangement from "@db/skus_manangement";
+// import products_management from "@db/products_management";
 import { Switch } from "antd";
 import { capitalize } from "@mui/material";
-import { onCreateSpecialOffer } from "../store/actions";
-
+import { onCreateSpecialOffer, upLoadImageSingle, onAllProductsOption } from "../store/actions";
+import { useDispatch } from "react-redux";
 const PromotionAdd = () => {
-  const [products, setProducts] = useState([]);
-  useEffect(() => {
-    const firstLoadProducts = products_management.map((item) => ({
-      value: item._id,
-      label: item.product_name,
-    }));
-    setProducts(firstLoadProducts);
-  }, []);
+  const dispatch = useDispatch()
+  // const [products, setProducts] = useState([]);
+  // useEffect(() => {
+  //   const firstLoadProducts = products_management.map((item) => ({
+  //     value: item._id,
+  //     label: item.product_name,
+  //   }));
+  //   setProducts(firstLoadProducts);
+  // }, []);
 
   const defaultValues = {
     special_offer_name: "",
@@ -51,29 +52,53 @@ const PromotionAdd = () => {
     defaultValues: defaultValues,
   });
 
+  /////product Options
+  useEffect(() => {
+    fetchProductOptions()
+  }, []);
+
+  const [productOptions, setProductOptions] = useState([])
+  const [products_management, setProducts_management] = useState([])
+
+  const fetchProductOptions = async () => {
+    const reposProd = await dispatch(onAllProductsOption({ isPublished: true }))
+    reposProd && setProductOptions(reposProd?.payload?.metaData?.map((prod) => { return { label: prod.product_name, value: prod._id } }))
+    reposProd && setProducts_management(reposProd?.payload?.metaData)
+  }
+  /////product Options????
+
   const startDate = watch("special_offer_start_date");
   const endDate = watch("special_offer_end_date");
   //watch if product_ids has some changes
   const selected_products = watch("selected_products");
   const product_ids = watch("special_offer_spu_list");
-
   useEffect(() => {
     const fetchSKU = selected_products.map((item) => {
       const productInfo = products_management.find(
         (product) => product._id === item.value
       );
 
-      const updatedSKU = skus_manangement
-        .filter((sku) => sku.product_id === item.value)
-        .map((foundSKU) => {
-          const option1 =
-            productInfo.product_variations[0].options[foundSKU.sku_tier_idx[0]];
-          const option2 =
-            productInfo.product_variations[1].options[foundSKU.sku_tier_idx[1]];
+      const updatedSKU = productInfo?.sku_list
+        ?.filter((sku) => sku.product_id === item.value)
+        ?.map((foundSKU) => {
+
+          let optionsString = ""
+          productInfo.product_variations?.forEach((variation, index) => {
+            if (productInfo.product_variations?.length === index + 1) {
+              optionsString += `${variation?.options[foundSKU.sku_tier_idx[index]]}`
+              return
+            }
+            optionsString += `${variation?.options[foundSKU.sku_tier_idx[index]]}, `
+            return
+          })
+          // const option1 =
+          //   productInfo.product_variations[0]?.options[foundSKU.sku_tier_idx[0]];
+          // const option2 =
+          //   productInfo.product_variations[1]?.options[foundSKU.sku_tier_idx[1]];
 
           return {
             sku_id: foundSKU._id,
-            sku_name: capitalize(option1) + ", " + capitalize(option2),
+            sku_name: capitalize(optionsString),
             sku_tier_idx: foundSKU.sku_tier_idx,
             original_price: foundSKU.sku_price,
             sku_stock: foundSKU.sku_stock,
@@ -84,11 +109,18 @@ const PromotionAdd = () => {
             is_active: false,
           };
         });
-
       return {
         product_id: productInfo._id,
         product_name: productInfo.product_name,
-        product_image: productInfo.product_thumb,
+        product_thumb: productInfo.product_thumb,
+        product_stock: productInfo.product_quantity,
+        original_price: productInfo.product_price,
+        is_Apply_To_ALl: false,
+        price_sale: productInfo.product_price,
+        percentage: 0,
+        quantity: 0,
+        quantity_sold: 0,
+        is_active: false,
         sku_list: updatedSKU,
       };
     });
@@ -97,85 +129,174 @@ const PromotionAdd = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected_products]);
 
-  const removeProductFromList = (e, index) => {
-    e.preventDefault();
-    setValue(
-      "selected_products",
-      selected_products.length === 1 ? [] : selected_products.splice(index, 1)
-    );
-  };
+
+  const [isDisablePriceApplyToAll, setIsDisablePriceApplyToAll] = useState(true)
 
   const handleChangeSpuData = (e, productID, SKU_ID, name) => {
     e.preventDefault();
-    const productIndex = product_ids.findIndex(
+
+    const productIndex = product_ids?.findIndex(
       (item) => item.product_id === productID
     );
-    const skuIndex = product_ids[productIndex].sku_list.findIndex(
-      (item) => item.sku_id === SKU_ID
-    );
-    const updatedProducts = product_ids.slice();
+    const updatedProducts = product_ids?.slice();
 
-    if (name === "price_sale") {
-      updatedProducts[productIndex].sku_list[skuIndex].price_sale = parseInt(
-        e.target.value
-      )
-        ? parseInt(e.target.value)
-        : "";
-      updatedProducts[productIndex].sku_list[skuIndex].percentage = parseInt(
-        e.target.value
-      )
-        ? ((updatedProducts[productIndex].sku_list[skuIndex].original_price -
-          parseInt(e.target.value)) /
-          updatedProducts[productIndex].sku_list[skuIndex].original_price) *
-        100
-        : "";
-    }
+    if (SKU_ID) {
+      const skuIndex = product_ids[productIndex]?.sku_list?.findIndex(
+        (item) => item.sku_id === SKU_ID
+      );
 
-    if (name === "percentage") {
-      updatedProducts[productIndex].sku_list[skuIndex].percentage = parseInt(
-        e.target.value
-      )
-        ? parseInt(e.target.value)
-        : "";
-      updatedProducts[productIndex].sku_list[skuIndex].price_sale = parseInt(
-        e.target.value
-      )
-        ? updatedProducts[productIndex].sku_list[skuIndex].original_price -
-        updatedProducts[productIndex].sku_list[skuIndex].original_price *
-        (parseInt(e.target.value) / 100)
-        : "";
-    }
-    if (name === "quantity") {
-      updatedProducts[productIndex].sku_list[skuIndex].quantity = parseInt(
-        e.target.value
-      )
-        ? parseInt(e.target.value)
-        : "";
-      if (
-        updatedProducts[productIndex].sku_list[skuIndex].quantity >
-        updatedProducts[productIndex].sku_list[skuIndex].sku_stock
-      ) {
-        updatedProducts[productIndex].sku_list[skuIndex].quantity =
-          updatedProducts[productIndex].sku_list[skuIndex].sku_stock;
+      if (name === "price_sale") {
+        updatedProducts[productIndex].sku_list[skuIndex].price_sale = parseInt(
+          e.target.value
+        )
+          ? parseInt(e.target.value)
+          : "";
+        updatedProducts[productIndex].sku_list[skuIndex].percentage = parseInt(
+          e.target.value
+        )
+          ? ((updatedProducts[productIndex].sku_list[skuIndex].original_price -
+            parseInt(e.target.value)) /
+            updatedProducts[productIndex].sku_list[skuIndex].original_price) *
+          100
+          : "";
+      }
+
+      if (name === "percentage") {
+        updatedProducts[productIndex].sku_list[skuIndex].percentage = parseInt(
+          e.target.value
+        )
+          ? parseInt(e.target.value)
+          : "";
+        updatedProducts[productIndex].sku_list[skuIndex].price_sale = parseInt(
+          e.target.value
+        )
+          ? updatedProducts[productIndex].sku_list[skuIndex].original_price -
+          updatedProducts[productIndex].sku_list[skuIndex].original_price *
+          (parseInt(e.target.value) / 100)
+          : "";
+      }
+      if (name === "quantity") {
+        updatedProducts[productIndex].sku_list[skuIndex].quantity = parseInt(
+          e.target.value
+        )
+          ? parseInt(e.target.value)
+          : "";
+        if (
+          updatedProducts[productIndex].sku_list[skuIndex].quantity >
+          updatedProducts[productIndex].sku_list[skuIndex].sku_stock
+        ) {
+          updatedProducts[productIndex].sku_list[skuIndex].quantity =
+            updatedProducts[productIndex].sku_list[skuIndex].sku_stock;
+        }
       }
     }
-    if (name === "is_active") {
-      updatedProducts[productIndex].sku_list[skuIndex].is_active = e;
+    if (!SKU_ID) {
+      if (name === "price_sale") {
+
+        const priceToAll = parseInt(
+          e.target.value
+        )
+          ? parseInt(e.target.value)
+          : ""
+        const percentageToAll = parseInt(
+          e.target.value
+        )
+          ? ((updatedProducts[productIndex].original_price -
+            parseInt(e.target.value)) /
+            updatedProducts[productIndex].original_price) *
+          100
+          : ""
+        updatedProducts[productIndex].price_sale = priceToAll
+        updatedProducts[productIndex].percentage = percentageToAll
+        const sku_list = updatedProducts[productIndex]?.sku_list
+        if (sku_list.length > 0) {
+          for (let i = 0; i < sku_list?.length; i++) {
+            updatedProducts[productIndex].sku_list[i].price_sale = priceToAll
+            updatedProducts[productIndex].sku_list[i].percentage = percentageToAll
+          }
+        }
+      }
+
+      if (name === "percentage") {
+        const priceToAll = parseInt(
+          e.target.value
+        )
+          ? updatedProducts[productIndex].original_price -
+          updatedProducts[productIndex].original_price *
+          (parseInt(e.target.value) / 100)
+          : ""
+        const percentageToAll = parseInt(
+          e.target.value
+        )
+          ? parseInt(e.target.value)
+          : ""
+
+        updatedProducts[productIndex].price_sale = priceToAll
+        updatedProducts[productIndex].percentage = percentageToAll
+        const sku_list = updatedProducts[productIndex]?.sku_list
+        if (sku_list.length > 0) {
+          for (let i = 0; i < sku_list?.length; i++) {
+            updatedProducts[productIndex].sku_list[i].price_sale = priceToAll
+            updatedProducts[productIndex].sku_list[i].percentage = percentageToAll
+          }
+        }
+      }
+      if (name === "quantity") {
+        const quantityApplyToAll = parseInt(
+          e.target.value
+        )
+          ? parseInt(e.target.value)
+          : "";
+
+        updatedProducts[productIndex].quantity = quantityApplyToAll
+        if (
+          updatedProducts[productIndex].quantity >
+          updatedProducts[productIndex].product_stock
+        ) {
+          updatedProducts[productIndex].quantity =
+            updatedProducts[productIndex].product_stock;
+
+          const sku_list = updatedProducts[productIndex]?.sku_list
+          if (sku_list.length > 0) {
+            for (let i = 0; i < sku_list?.length; i++) {
+              updatedProducts[productIndex].sku_list[i].quantity = updatedProducts[productIndex].product_stock
+            }
+          }
+        } else {
+          const sku_list = updatedProducts[productIndex]?.sku_list
+          if (sku_list.length > 0) {
+            for (let i = 0; i < sku_list?.length; i++) {
+              updatedProducts[productIndex].sku_list[i].quantity = quantityApplyToAll
+            }
+          }
+        }
+      }
     }
     setValue("special_offer_spu_list", updatedProducts);
   };
 
-  const handleToggleActive = (productID, SKU_ID) => {
-    const productIndex = product_ids.findIndex(
+  const handleToggleActive = (change, checked_value, productID, SKU_ID) => {
+    const productIndex = product_ids?.findIndex(
       (item) => item.product_id === productID
     );
-    const skuIndex = product_ids[productIndex].sku_list.findIndex(
-      (item) => item.sku_id === SKU_ID
-    );
-    const updatedProducts = product_ids.slice();
-
-    updatedProducts[productIndex].sku_list[skuIndex].is_active =
-      !updatedProducts[productIndex].sku_list[skuIndex].is_active;
+    const updatedProducts = product_ids?.slice();
+    if (change === "all") {
+      const sku_list = product_ids[productIndex]?.sku_list
+      updatedProducts[productIndex].is_active = checked_value
+      for (let i = 0; i < sku_list?.length; i++) {
+        updatedProducts[productIndex].sku_list[i].is_active = checked_value
+      }
+    }
+    if (change === "one") {
+      const skuIndex = product_ids[productIndex]?.sku_list?.findIndex(
+        (item) => item.sku_id === SKU_ID
+      );
+      updatedProducts[productIndex].sku_list[skuIndex].is_active = checked_value
+    }
+    if (change === "priceToAll") {
+      updatedProducts[productIndex].is_Apply_To_ALl = checked_value
+      setIsDisablePriceApplyToAll(!checked_value)
+    }
     setValue("special_offer_spu_list", updatedProducts);
   };
 
@@ -183,25 +304,73 @@ const PromotionAdd = () => {
     console.log(product_ids);
   }, [product_ids]);
 
+  const removeProductFromList = async (e, index) => {
+    e.preventDefault();
+    const removeProductByIndex = await selected_products.filter((selectedProd, indexSelected) => indexSelected !== index)
+    setValue("selected_products", removeProductByIndex);
+  };
   // do something with the data
-  const handlePublish = (data) => {
-
+  const handlePublish = async (data) => {
+    // console.log(data)
     const id = toast.loading("Vui lòng đợi...");
+    const promotionInputData = {
+      special_offer_name: data.special_offer_name,
+      special_offer_description: data.special_offer_description,
+      special_offer_image: "",
+      special_offer_start_date: `${data.special_offer_start_date.$y}-${data.special_offer_start_date.$M + 1}-${data.special_offer_start_date.$D + 1} 00:00:00`,
+      special_offer_end_date: `${data.special_offer_end_date.$y}-${data.special_offer_end_date.$M + 1}-${data.special_offer_end_date.$D + 1} 00:00:00`,
+      special_offer_is_active: false,
+      special_offer_spu_list: data.special_offer_spu_list,
+    }
+    console.log(promotionInputData)
 
-    console.log(data);
+    try {
+      const image = new FormData()
+      image.append("file", data.special_offer_image[0])
+      // image.append("folderName", "outrunner/images/promotion")
 
 
+      const uploadImageSingle = await dispatch(upLoadImageSingle(image))
+      promotionInputData.special_offer_image = uploadImageSingle && uploadImageSingle?.payload?.metaData?.thumb_url
 
+      const createPromotion = await dispatch(onCreateSpecialOffer({
+        special_offer_name: promotionInputData.special_offer_name,
+        special_offer_description: promotionInputData.special_offer_description,
+        special_offer_image: promotionInputData.special_offer_image,
+        special_offer_start_date: promotionInputData.special_offer_start_date,
+        special_offer_end_date: promotionInputData.special_offer_end_date,
+        special_offer_is_active: promotionInputData.special_offer_is_active,
+        special_offer_spu_list: promotionInputData.special_offer_spu_list,
+      }))
 
+      if (createPromotion.payload.status === (200 || 201)) {
+        toast.update(id, {
+          render: "Thêm chương trình giảm giá thành công",
+          type: "success",
+          isLoading: false,
+          closeOnClick: true,
+          autoClose: 3000,
+        });
 
-    
-    toast.update(id, {
-      render: "Thêm sản phẩm không thành công",
-      type: "error",
-      isLoading: false,
-      closeOnClick: true,
-      autoClose: 3000,
-    });
+      } else {
+        toast.update(id, {
+          render: "Thêm chương trình giảm giá không thành công",
+          type: "error",
+          isLoading: false,
+          closeOnClick: true,
+          autoClose: 3000,
+        });
+      }
+    } catch (error) {
+      toast.update(id, {
+        render: "Thêm chương trình giảm giá không thành công",
+        type: "error",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+      console.log(error)
+    }
   };
 
   return (
@@ -210,7 +379,7 @@ const PromotionAdd = () => {
         <div className="grid grid-cols-1 gap-y-4 gap-x-2">
           <div>
             <div>
-              <span className="block field-label mb-2.5">Promotion Banner</span>
+              <span className="block field-label mb-2.5">Chương trình giảm giá</span>
               <div className="grid grid-cols-1 gap-5">
                 <Controller
                   name="special_offer_image"
@@ -245,6 +414,7 @@ const PromotionAdd = () => {
                 {...register("special_offer_name", { required: true })}
               />
             </div>
+
             <div className="field-wrapper">
               <label className="field-label" htmlFor="special_offer_start_date">
                 Ngày bắt đầu - Ngày kết thúc
@@ -300,7 +470,7 @@ const PromotionAdd = () => {
                   isInvalid={errors.selected_products}
                   isSearchable={true}
                   value={field.value}
-                  options={products}
+                  options={productOptions}
                   onChange={(value) => field.onChange(value)}
                 />
               )}
@@ -320,6 +490,124 @@ const PromotionAdd = () => {
                   <h6 className="sm:truncate text-ellipsis max-sm:!text-xs max-sm:text-center">
                     {item.product_name}
                   </h6>
+                  <div className="grid grid-cols-1 gap-y-4 gap-x-2 md:grid-cols-5">
+
+                    {/* <div className="max-sm:!text-xs inline-block h6">
+                        Giá gốc: {item.original_price}đ
+                      </div>
+        
+                      <div className="max-sm:!text-xs inline-block h6">
+                        Kho hàng: {item.product_stock}
+                      </div> */}
+                    <div className="field-wrapper">
+                      <label
+                        className="field-label"
+                        htmlFor={`quantity-${item.quantity}`}
+                      >
+                        Sô lượng khuyến mãi
+                      </label>
+                      <input
+                        disabled={isDisablePriceApplyToAll}
+                        className={"field-input"}
+                        id={`quantity-${item.quantity}`}
+                        value={item.quantity}
+                        onChange={(e) => {
+                          handleChangeSpuData(
+                            e,
+                            item.product_id,
+                            null,
+                            "quantity"
+                          )
+                        }}
+                        placeholder="VD: 0 = không giới hạn, 5, 10, 20 , 30,..."
+                      />
+                    </div>
+
+                    <div className="field-wrapper">
+                      <label
+                        className="field-label"
+                        htmlFor={`percentage-${item.product_id}`}
+                      >
+                        phần trăm giảm (%)
+                      </label>
+                      <input
+                        disabled={isDisablePriceApplyToAll}
+                        className={"field-input"}
+                        id={`percentage-${item.product_id}`}
+                        value={item.percentage}
+                        onChange={(e) =>
+                          handleChangeSpuData(
+                            e,
+                            item.product_id,
+                            null,
+                            "percentage"
+                          )
+                        }
+                        placeholder="VD: 5%, 10%, 15%,..."
+                      />
+                    </div>
+                    <div className="field-wrapper">
+                      <label
+                        className="field-label"
+                        htmlFor={`price-sale-${item.product_id}`}
+                      >
+                        Giá sau giảm (đ)
+                      </label>
+                      <input
+                        disabled={isDisablePriceApplyToAll}
+                        className={"field-input"}
+                        id={`price-sale-${item.product_id}`}
+                        value={item.price_sale}
+                        onChange={(e) => {
+                          handleChangeSpuData(
+                            e,
+                            item.product_id,
+                            null,
+                            "price_sale"
+                          )
+                        }}
+                        placeholder="VD: 100000, 200000, 300000,..."
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end items-center">
+                    <label
+                      className="field-label"
+                      htmlFor={`is-active-${item.product_id}1`}
+                    >
+                      Áp dụng chung
+                    </label>
+                    <Switch
+                      checkedChildren={"ON"}
+                      unCheckedChildren={"OFF"}
+                      id={`is-active-${item.product_id}1`}
+                      onChange={(e) =>
+                        handleToggleActive("priceToAll", e, item.product_id, null)
+                      }
+                      loading={false}
+                      value={item.is_Apply_To_ALl}
+                    />
+                  </div>
+
+                  <div className="flex justify-end items-center">
+                    <label
+                      className="field-label"
+                      htmlFor={`is-active-${item.product_id}`}
+                    >
+                      Bật/Tắt
+                    </label>
+                    <Switch
+                      checkedChildren={"ON"}
+                      unCheckedChildren={"OFF"}
+                      id={`is-active-${item.product_id}`}
+                      onChange={(e) =>
+                        handleToggleActive("all", e, item.product_id, null)
+                      }
+                      loading={false}
+                      checked={item.is_active}
+                    />
+                  </div>
+
                 </div>
                 {item.sku_list.map((subitem, subindex) => (
                   <Spring
@@ -342,6 +630,7 @@ const PromotionAdd = () => {
                       <div className="max-sm:!text-xs inline-block h6">
                         Kho hàng: {subitem.sku_stock}
                       </div>
+
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-11 gap-y-4 gap-x-2">
                       <div className="field-wrapper sm:col-span-5">
@@ -377,7 +666,7 @@ const PromotionAdd = () => {
                           className="field-label"
                           htmlFor={`percentage-${subitem.sku_id}`}
                         >
-                          Giá giảm (%)
+                          phần trăm giảm (%)
                         </label>
                         <input
                           className={"field-input"}
@@ -429,15 +718,16 @@ const PromotionAdd = () => {
                         unCheckedChildren={"OFF"}
                         id={`is-active-${subitem.sku_id}`}
                         onClick={(e) =>
-                          handleToggleActive(item.product_id, subitem.sku_id)
+                          handleToggleActive("one", e, item.product_id, subitem.sku_id)
                         }
                         loading={false}
                         checked={subitem.is_active}
                       />
                     </div>
                   </Spring>
-                ))}
-                <button
+                ))
+                }
+                < button
                   onClick={(e) => removeProductFromList(e, index)}
                   className="group btn btn--social red"
                 >
@@ -445,8 +735,9 @@ const PromotionAdd = () => {
                 </button>
               </div>
             </Spring>
-          ))}
-        </div>
+          ))
+          }
+        </div >
 
         <div className="grid gap-2 mt-5 sm:mt-10 md:mt-11">
           <button
@@ -456,8 +747,8 @@ const PromotionAdd = () => {
             Tạo chương trình
           </button>
         </div>
-      </form>
-    </Spring>
+      </form >
+    </Spring >
   );
 };
 

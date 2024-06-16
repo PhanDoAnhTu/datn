@@ -399,7 +399,7 @@ const DiscountAdd = ({ item }) => {
                   id="discount_applies_to"
                   options={[
                     { label: "Tất cả sản phẩm", value: "all" },
-                    { label: "Ch sản phẩm nhất định", value: "specific" },
+                    { label: "Chọn sản phẩm nhất định", value: "specific" },
                   ]}
                   value={field.value}
                   onChange={(value) => field.onChange(value)}

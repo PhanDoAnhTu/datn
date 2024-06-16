@@ -28,6 +28,24 @@ class SpecialOfferController {
         }).send(res)
 
     }
+    getAllSpecialOffer = async (req, res, next) => {
+        new successResponse.SuccessResponse({
+            message: 'getAllSpecialOffer success',
+            metaData: await this.service.getAllSpecialOffer()
+        }).send(res)
+    }
+    onChangeStatusSpecialOfferById = async (req, res, next) => {
+        new successResponse.SuccessResponse({
+            message: 'onChangeStatusSpecialOfferById success',
+            metaData: await this.service.onChangeStatusSpecialOfferById(req.body)
+        }).send(res)
+    }
+    removeSpecialOfferById = async (req, res, next) => {
+        new successResponse.SuccessResponse({
+            message: 'removeSpecialOfferById success',
+            metaData: await this.service.removeSpecialOfferById(req.body)
+        }).send(res)
+    }
 }
 
 module.exports = new SpecialOfferController()
