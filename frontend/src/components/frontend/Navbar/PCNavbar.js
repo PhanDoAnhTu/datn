@@ -227,14 +227,15 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                                                                                                     subindex
                                                                                                 }
                                                                                             >
-                                                                                                <p
+                                                                                                <Link
                                                                                                     id={`${subitem.category_name}-heading`}
-                                                                                                    className="font-medium text-gray-500 dark:text-magenta-600"
+                                                                                                    to={`/san-pham-theo-danh-muc/${item.category_slug}/${subitem.category_slug}`}
+                                                                                                    className="font-medium text-gray-500 transition duration-300 ease-out hover:text-magenta-400 dark:text-magenta-600"
                                                                                                 >
                                                                                                     {
                                                                                                         subitem.category_name
                                                                                                     }
-                                                                                                </p>
+                                                                                                </Link>
                                                                                                 <ul
                                                                                                     aria-labelledby={`${subitem.category_name}-heading`}
                                                                                                     className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"

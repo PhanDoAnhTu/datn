@@ -39,6 +39,7 @@ export default function Category() {
     const { category1, category2, category3 } = useParams();
     // eslint-disable-next-line no-unused-vars
     const [products, setProducts] = useState(null);
+    const [filteredProduct, setFilteredProducts] = useState(null);
     ///demo setProducts
     const dispatch = useDispatch();
     // eslint-disable-next-line no-unused-vars
@@ -67,6 +68,9 @@ export default function Category() {
     const [selectedBrands, setSelectedBrands] = useState([]);
     const [selectedAttributes, setSelectedAttributes] = useState([]);
     const [selectedSort, setSelectedSort] = useState('createdAt');
+    useEffect(() => {
+        setFilteredProducts(products);
+    }, [products]);
 
     // useEffect(() => {
     //     const startIndex = (page - 1) * limit;
@@ -75,6 +79,9 @@ export default function Category() {
     // }, [page, limit]);
 
     useEffect(() => {
+        setSelectedBrands([]);
+        setSelectedAttributes([]);
+        setSelectedSort(sortOptions[0].value);
         if (
             category1 === undefined &&
             category2 === undefined &&
@@ -163,89 +170,467 @@ export default function Category() {
         }
     }, [all_products, category1, category2, category3]);
 
-    // useEffect(() => {
-    //     if (selectedAttributes?.length === 0) {
-    //         if (selectedBrands?.length === 0) {
-    //             const startIndex = (page - 1) * limit;
-    //             const endIndex = startIndex + limit;
-    //             setProducts(all_products?.slice(startIndex, endIndex));
-    //         } else {
-    //             setProducts(
-    //                 products
-    //                     ?.slice()
-    //                     .filter((item) =>
-    //                         selectedBrands.includes(item.product_brand)
-    //                     )
-    //             );
-    //         }
-    //     } else {
-    //         setProducts(
-    //             products
-    //                 ?.slice()
-    //                 .filter((item) =>
-    //                     selectedAttributes.some((UUID) =>
-    //                         item.product_attributes.some((attribute) =>
-    //                             attribute.attribute_value.some(
-    //                                 (subitem) => subitem.value === UUID
-    //                             )
-    //                         )
-    //                     )
-    //                 )
-    //         );
-    //     }
-    // }, [selectedAttributes]);
-    // useEffect(() => {
-    //     if (selectedBrands?.length === 0) {
-    //         if (selectedAttributes?.length === 0) {
-    //             const startIndex = (page - 1) * limit;
-    //             const endIndex = startIndex + limit;
-    //             setProducts(all_products?.slice(startIndex, endIndex));
-    //         } else {
-    //             setProducts(
-    //                 products
-    //                     ?.slice()
-    //                     .filter((item) =>
-    //                         item.product_attributes.every((subitem) =>
-    //                             selectedAttributes.every((checkValue) =>
-    //                                 subitem.attribute_value.some(
-    //                                     (subsubitem) =>
-    //                                         subsubitem.value === checkValue
-    //                                 )
-    //                             )
-    //                         )
-    //                     )
-    //             );
-    //         }
-    //     } else {
-    //         setProducts(
-    //             products
-    //                 ?.slice()
-    //                 .filter((item) =>
-    //                     selectedBrands.includes(item.product_brand)
-    //                 )
-    //         );
-    //     }
-    // }, [selectedBrands]);
+    useEffect(() => {
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        if (selectedBrands?.length === 0) {
+            if (selectedAttributes?.length === 0) {
+                if (
+                    category1 === undefined &&
+                    category2 === undefined &&
+                    category3 === undefined
+                ) {
+                    setFilteredProducts(
+                        products
+                            ?.slice(startIndex, endIndex)
+                            .sort((a, b) =>
+                                selectedSort === 'priceLowToHigh'
+                                    ? a.product_price < b.product_price
+                                        ? -1
+                                        : 1
+                                    : selectedSort === 'priceHighToLow'
+                                      ? a.product_price > b.product_price
+                                          ? -1
+                                          : 1
+                                      : selectedSort === 'createdAt'
+                                        ? 1
+                                        : -1
+                            )
+                    );
+                }
+                if (
+                    category1 !== undefined &&
+                    category2 === undefined &&
+                    category3 === undefined
+                ) {
+                    setFilteredProducts(
+                        products
+                            ?.slice(startIndex, endIndex)
+                            .filter((item) =>
+                                item.product_category.includes(
+                                    category?.find(
+                                        (item) =>
+                                            item.category_slug === category1
+                                    )?._id
+                                )
+                            )
+                            .sort((a, b) =>
+                                selectedSort === 'priceLowToHigh'
+                                    ? a.product_price < b.product_price
+                                        ? -1
+                                        : 1
+                                    : selectedSort === 'priceHighToLow'
+                                      ? a.product_price > b.product_price
+                                          ? -1
+                                          : 1
+                                      : selectedSort === 'createdAt'
+                                        ? 1
+                                        : -1
+                            )
+                    );
+                }
+                if (
+                    category1 !== undefined &&
+                    category2 !== undefined &&
+                    category3 === undefined
+                ) {
+                    setFilteredProducts(
+                        products
+                            ?.slice(startIndex, endIndex)
+                            .filter((item) =>
+                                item.product_category.includes(
+                                    category?.find(
+                                        (item) =>
+                                            item.parent_id ===
+                                                category?.find(
+                                                    (subitem) =>
+                                                        subitem.category_slug ===
+                                                        category1
+                                                )?._id &&
+                                            item.category_slug === category2
+                                    )?._id
+                                )
+                            )
+                            .sort((a, b) =>
+                                selectedSort === 'priceLowToHigh'
+                                    ? a.product_price < b.product_price
+                                        ? -1
+                                        : 1
+                                    : selectedSort === 'priceHighToLow'
+                                      ? a.product_price > b.product_price
+                                          ? -1
+                                          : 1
+                                      : selectedSort === 'createdAt'
+                                        ? 1
+                                        : -1
+                            )
+                    );
+                }
+                if (
+                    category1 !== undefined &&
+                    category2 !== undefined &&
+                    category3 !== undefined
+                ) {
+                    setFilteredProducts(
+                        products
+                            ?.slice(startIndex, endIndex)
+                            .filter((item) =>
+                                item.product_category.includes(
+                                    category
+                                        ?.slice()
+                                        .find(
+                                            (item) =>
+                                                item.parent_id ===
+                                                    category
+                                                        ?.slice()
+                                                        .find(
+                                                            (subitem) =>
+                                                                subitem.parent_id ===
+                                                                    category
+                                                                        ?.slice()
+                                                                        .find(
+                                                                            (
+                                                                                subsubitem
+                                                                            ) =>
+                                                                                subsubitem.category_slug ===
+                                                                                category1
+                                                                        )
+                                                                        ?._id &&
+                                                                subitem.category_slug ===
+                                                                    category2
+                                                        )?._id &&
+                                                item.category_slug === category3
+                                        )?._id
+                                )
+                            )
+                            .sort((a, b) =>
+                                selectedSort === 'priceLowToHigh'
+                                    ? a.product_price < b.product_price
+                                        ? -1
+                                        : 1
+                                    : selectedSort === 'priceHighToLow'
+                                      ? a.product_price > b.product_price
+                                          ? -1
+                                          : 1
+                                      : selectedSort === 'createdAt'
+                                        ? 1
+                                        : -1
+                            )
+                    );
+                }
+            } else {
+                setFilteredProducts(
+                    products
+                        ?.slice(startIndex, endIndex)
+                        .filter((item) =>
+                            selectedAttributes
+                                .some((UUID) =>
+                                    item.product_attributes.some((attribute) =>
+                                        attribute.attribute_value.some(
+                                            (subitem) => subitem.value === UUID
+                                        )
+                                    )
+                                )
+                                .sort((a, b) =>
+                                    selectedSort === 'priceLowToHigh'
+                                        ? a.product_price > b.product_price
+                                            ? -1
+                                            : 1
+                                        : selectedSort === 'priceHighToLow'
+                                          ? a.product_price < b.product_price
+                                              ? -1
+                                              : 1
+                                          : selectedSort === 'createdAt'
+                                            ? 1
+                                            : -1
+                                )
+                        )
+                );
+            }
+        } else {
+            if (selectedBrands?.length > 0 && selectedAttributes?.length > 0) {
+                setFilteredProducts(
+                    products
+                        ?.slice(startIndex, endIndex)
+                        .filter(
+                            (item) =>
+                                selectedBrands.includes(item.product_brand) &&
+                                selectedAttributes.some((UUID) =>
+                                    item.product_attributes.some((attribute) =>
+                                        attribute.attribute_value.some(
+                                            (subitem) => subitem.value === UUID
+                                        )
+                                    )
+                                )
+                        )
+                        .sort((a, b) =>
+                            selectedSort === 'priceLowToHigh'
+                                ? a.product_price > b.product_price
+                                    ? -1
+                                    : 1
+                                : selectedSort === 'priceHighToLow'
+                                  ? a.product_price < b.product_price
+                                      ? -1
+                                      : 1
+                                  : selectedSort === 'createdAt'
+                                    ? 1
+                                    : -1
+                        )
+                );
+            } else {
+                setFilteredProducts(
+                    products
+                        ?.slice(startIndex, endIndex)
+                        .filter((item) =>
+                            selectedBrands.includes(item.product_brand)
+                        )
+                        .sort((a, b) =>
+                            selectedSort === 'priceLowToHigh'
+                                ? a.product_price > b.product_price
+                                    ? -1
+                                    : 1
+                                : selectedSort === 'priceHighToLow'
+                                  ? a.product_price < b.product_price
+                                      ? -1
+                                      : 1
+                                  : selectedSort === 'createdAt'
+                                    ? 1
+                                    : -1
+                        )
+                );
+            }
+        }
+    }, [selectedBrands, selectedSort]);
 
-    // useEffect(() => {
-    //     setProducts(
-    //         all_products
-    //             ?.slice()
-    //             .sort((a, b) =>
-    //                 selectedSort === 'priceLowToHigh'
-    //                     ? a.product_price > b.product_price
-    //                         ? -1
-    //                         : 1
-    //                     : selectedSort === 'priceHighToLow'
-    //                       ? a.product_price < b.product_price
-    //                           ? -1
-    //                           : 1
-    //                       : selectedSort === 'createdAt'
-    //                         ? 1
-    //                         : -1
-    //             )
-    //     );
-    // }, [selectedSort]);
+    useEffect(() => {
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        if (selectedAttributes?.length === 0) {
+            if (selectedBrands?.length === 0) {
+                if (
+                    category1 === undefined &&
+                    category2 === undefined &&
+                    category3 === undefined
+                ) {
+                    setFilteredProducts(
+                        products
+                            ?.slice(startIndex, endIndex)
+                            .sort((a, b) =>
+                                selectedSort === 'priceLowToHigh'
+                                    ? a.product_price < b.product_price
+                                        ? -1
+                                        : 1
+                                    : selectedSort === 'priceHighToLow'
+                                      ? a.product_price > b.product_price
+                                          ? -1
+                                          : 1
+                                      : selectedSort === 'createdAt'
+                                        ? 1
+                                        : -1
+                            )
+                    );
+                }
+                if (
+                    category1 !== undefined &&
+                    category2 === undefined &&
+                    category3 === undefined
+                ) {
+                    setFilteredProducts(
+                        products
+                            ?.slice(startIndex, endIndex)
+                            .filter((item) =>
+                                item.product_category.includes(
+                                    category?.find(
+                                        (item) =>
+                                            item.category_slug === category1
+                                    )?._id
+                                )
+                            )
+                            .sort((a, b) =>
+                                selectedSort === 'priceLowToHigh'
+                                    ? a.product_price < b.product_price
+                                        ? -1
+                                        : 1
+                                    : selectedSort === 'priceHighToLow'
+                                      ? a.product_price > b.product_price
+                                          ? -1
+                                          : 1
+                                      : selectedSort === 'createdAt'
+                                        ? 1
+                                        : -1
+                            )
+                    );
+                }
+                if (
+                    category1 !== undefined &&
+                    category2 !== undefined &&
+                    category3 === undefined
+                ) {
+                    setFilteredProducts(
+                        products
+                            ?.slice(startIndex, endIndex)
+                            .filter((item) =>
+                                item.product_category.includes(
+                                    category?.find(
+                                        (item) =>
+                                            item.parent_id ===
+                                                category?.find(
+                                                    (subitem) =>
+                                                        subitem.category_slug ===
+                                                        category1
+                                                )?._id &&
+                                            item.category_slug === category2
+                                    )?._id
+                                )
+                            )
+                            .sort((a, b) =>
+                                selectedSort === 'priceLowToHigh'
+                                    ? a.product_price < b.product_price
+                                        ? -1
+                                        : 1
+                                    : selectedSort === 'priceHighToLow'
+                                      ? a.product_price > b.product_price
+                                          ? -1
+                                          : 1
+                                      : selectedSort === 'createdAt'
+                                        ? 1
+                                        : -1
+                            )
+                    );
+                }
+                if (
+                    category1 !== undefined &&
+                    category2 !== undefined &&
+                    category3 !== undefined
+                ) {
+                    setFilteredProducts(
+                        products
+                            ?.slice(startIndex, endIndex)
+                            .filter((item) =>
+                                item.product_category.includes(
+                                    category
+                                        ?.slice()
+                                        .find(
+                                            (item) =>
+                                                item.parent_id ===
+                                                    category
+                                                        ?.slice()
+                                                        .find(
+                                                            (subitem) =>
+                                                                subitem.parent_id ===
+                                                                    category
+                                                                        ?.slice()
+                                                                        .find(
+                                                                            (
+                                                                                subsubitem
+                                                                            ) =>
+                                                                                subsubitem.category_slug ===
+                                                                                category1
+                                                                        )
+                                                                        ?._id &&
+                                                                subitem.category_slug ===
+                                                                    category2
+                                                        )?._id &&
+                                                item.category_slug === category3
+                                        )?._id
+                                )
+                            )
+                            .sort((a, b) =>
+                                selectedSort === 'priceLowToHigh'
+                                    ? a.product_price < b.product_price
+                                        ? -1
+                                        : 1
+                                    : selectedSort === 'priceHighToLow'
+                                      ? a.product_price > b.product_price
+                                          ? -1
+                                          : 1
+                                      : selectedSort === 'createdAt'
+                                        ? 1
+                                        : -1
+                            )
+                    );
+                }
+            } else {
+                setFilteredProducts(
+                    products
+                        ?.slice(startIndex, endIndex)
+                        .filter((item) =>
+                            selectedBrands.includes(item.product_brand)
+                        )
+                        .sort((a, b) =>
+                            selectedSort === 'priceLowToHigh'
+                                ? a.product_price > b.product_price
+                                    ? -1
+                                    : 1
+                                : selectedSort === 'priceHighToLow'
+                                  ? a.product_price < b.product_price
+                                      ? -1
+                                      : 1
+                                  : selectedSort === 'createdAt'
+                                    ? 1
+                                    : -1
+                        )
+                );
+            }
+        } else {
+            if (selectedAttributes?.length > 0 && selectedBrands?.length > 0) {
+                setFilteredProducts(
+                    products
+                        ?.slice(startIndex, endIndex)
+                        .filter(
+                            (item) =>
+                                selectedAttributes.some((UUID) =>
+                                    item.product_attributes.some((attribute) =>
+                                        attribute.attribute_value.some(
+                                            (subitem) => subitem.value === UUID
+                                        )
+                                    )
+                                ) && selectedBrands.includes(item.product_brand)
+                        )
+                        .sort((a, b) =>
+                            selectedSort === 'priceLowToHigh'
+                                ? a.product_price > b.product_price
+                                    ? -1
+                                    : 1
+                                : selectedSort === 'priceHighToLow'
+                                  ? a.product_price < b.product_price
+                                      ? -1
+                                      : 1
+                                  : selectedSort === 'createdAt'
+                                    ? 1
+                                    : -1
+                        )
+                );
+            } else {
+                setFilteredProducts(
+                    products
+                        ?.slice(startIndex, endIndex)
+                        .filter((item) =>
+                            selectedAttributes.some((UUID) =>
+                                item.product_attributes.some((attribute) =>
+                                    attribute.attribute_value.some(
+                                        (subitem) => subitem.value === UUID
+                                    )
+                                )
+                            )
+                        )
+                        .sort((a, b) =>
+                            selectedSort === 'priceLowToHigh'
+                                ? a.product_price > b.product_price
+                                    ? -1
+                                    : 1
+                                : selectedSort === 'priceHighToLow'
+                                  ? a.product_price < b.product_price
+                                      ? -1
+                                      : 1
+                                  : selectedSort === 'createdAt'
+                                    ? 1
+                                    : -1
+                        )
+                );
+            }
+        }
+    }, [selectedAttributes, selectedSort]);
 
     return (
         <div>
@@ -773,8 +1158,7 @@ export default function Category() {
                                             {sortOptions.map((option) => (
                                                 <Menu.Item key={option.name}>
                                                     {({ active }) => (
-                                                        <Link
-                                                            to={'#'}
+                                                        <button
                                                             className={classNames(
                                                                 selectedSort ===
                                                                     option.value
@@ -783,7 +1167,7 @@ export default function Category() {
                                                                 active
                                                                     ? 'bg-gray-100 dark:bg-zinc-950'
                                                                     : '',
-                                                                'block px-4 py-2 text-sm transition duration-200 ease-out'
+                                                                'block w-full px-4 py-2 text-left text-sm transition duration-200 ease-out'
                                                             )}
                                                             onClick={() =>
                                                                 setSelectedSort(
@@ -792,7 +1176,7 @@ export default function Category() {
                                                             }
                                                         >
                                                             {option.name}
-                                                        </Link>
+                                                        </button>
                                                     )}
                                                 </Menu.Item>
                                             ))}
@@ -1214,25 +1598,31 @@ export default function Category() {
                                     className={`relative col-span-3 grid h-fit gap-x-6 ${isListView ? '' : 'grid-cols-2 gap-y-10 sm:grid-cols-4 lg:grid-cols-4 xl:gap-x-3'}`}
                                 >
                                     {!isListView ? (
-                                        products && products.length !== 0 ? (
-                                            products?.map((product, index) => (
-                                                <ProductSingle
-                                                    product={product}
-                                                    key={index}
-                                                />
-                                            ))
+                                        filteredProduct &&
+                                        filteredProduct.length !== 0 ? (
+                                            filteredProduct?.map(
+                                                (product, index) => (
+                                                    <ProductSingle
+                                                        product={product}
+                                                        key={index}
+                                                    />
+                                                )
+                                            )
                                         ) : (
                                             <div className="col-span-full text-center text-lg font-bold text-gray-900 dark:text-white">
                                                 Hiện không có sản phẩm
                                             </div>
                                         )
-                                    ) : products && products.length !== 0 ? (
-                                        products?.map((product, index) => (
-                                            <ProductSingleList
-                                                product={product}
-                                                key={index}
-                                            />
-                                        ))
+                                    ) : filteredProduct &&
+                                      filteredProduct.length !== 0 ? (
+                                        filteredProduct?.map(
+                                            (product, index) => (
+                                                <ProductSingleList
+                                                    product={product}
+                                                    key={index}
+                                                />
+                                            )
+                                        )
                                     ) : (
                                         <div className="col-span-full text-center text-lg font-bold text-gray-900 dark:text-white">
                                             Hiện không có sản phẩm

@@ -3,9 +3,10 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import classNames from '../../../helpers/classNames';
-import { navigation } from '../../../test/categories';
+import { useSelector } from 'react-redux';
 
-export default function MobileNavbar({ category, open, setOpen }) {
+export default function MobileNavbar({ category, navbar, open, setOpen }) {
+    const { all_products } = useSelector((state) => state.productReducer);
     return (
         <Transition.Root show={open} as={Fragment}>
             <Dialog
@@ -88,42 +89,60 @@ export default function MobileNavbar({ category, open, setOpen }) {
                                                 className="space-y-10 px-4 pb-8 pt-10"
                                             >
                                                 <div className="grid grid-cols-2 gap-x-4">
-                                                    {navigation.categories[0].featured.map(
-                                                        (item) => (
-                                                            <div
-                                                                key={item.name}
-                                                                className="group relative text-sm"
-                                                            >
-                                                                <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-                                                                    <img
-                                                                        src={
-                                                                            item.imageSrc
-                                                                        }
-                                                                        alt={
-                                                                            item.imageAlt
-                                                                        }
-                                                                        className="object-cover object-center"
-                                                                    />
-                                                                </div>
-                                                                <Link
-                                                                    to={item.to}
-                                                                    className="mt-6 block font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white"
-                                                                >
-                                                                    <span
-                                                                        className="absolute inset-0 z-10"
-                                                                        aria-hidden="true"
-                                                                    />
-                                                                    {item.name}
-                                                                </Link>
-                                                                <p
-                                                                    aria-hidden="true"
-                                                                    className="mt-1 transition-colors duration-200 ease-out dark:text-gray-400"
-                                                                >
-                                                                    Shop now
-                                                                </p>
-                                                            </div>
-                                                        )
-                                                    )}
+                                                    {all_products &&
+                                                        all_products
+                                                            ?.slice()
+                                                            .map(
+                                                                (
+                                                                    item,
+                                                                    index
+                                                                ) => {
+                                                                    if (
+                                                                        index <
+                                                                        2
+                                                                    ) {
+                                                                        return (
+                                                                            <div
+                                                                                key={
+                                                                                    item.product_name
+                                                                                }
+                                                                                className="group relative text-sm"
+                                                                            >
+                                                                                <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+                                                                                    <img
+                                                                                        src={
+                                                                                            item.product_thumb
+                                                                                        }
+                                                                                        alt={
+                                                                                            item.product_name
+                                                                                        }
+                                                                                        className="object-cover object-center"
+                                                                                    />
+                                                                                </div>
+                                                                                <Link
+                                                                                    to={`/san-pham/${item.product_slug}-${item._id}`}
+                                                                                    className="mt-6 block font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white"
+                                                                                >
+                                                                                    <span
+                                                                                        className="absolute inset-0 z-10"
+                                                                                        aria-hidden="true"
+                                                                                    />
+                                                                                    {
+                                                                                        item.product_name
+                                                                                    }
+                                                                                </Link>
+                                                                                <p
+                                                                                    aria-hidden="true"
+                                                                                    className="mt-1 transition-colors duration-200 ease-out dark:text-gray-400"
+                                                                                >
+                                                                                    Mua
+                                                                                    ngay
+                                                                                </p>
+                                                                            </div>
+                                                                        );
+                                                                    }
+                                                                }
+                                                            )}
                                                 </div>
                                                 {category
                                                     ?.slice()
@@ -138,14 +157,15 @@ export default function MobileNavbar({ category, open, setOpen }) {
                                                                 subitem.category_name
                                                             }
                                                         >
-                                                            <p
+                                                            <Link
                                                                 id={`${item._id}-${subitem._id}-heading-mobile`}
+                                                                to={`/san-pham-theo-danh-muc/${item.category_slug}/${subitem.category_slug}`}
                                                                 className="font-medium text-gray-900 dark:text-magenta-600"
                                                             >
                                                                 {
                                                                     subitem.category_name
                                                                 }
-                                                            </p>
+                                                            </Link>
                                                             <ul
                                                                 aria-labelledby={`${item._id}-${subitem._id}-heading-mobile`}
                                                                 className="mt-6 flex flex-col space-y-6"
@@ -168,9 +188,7 @@ export default function MobileNavbar({ category, open, setOpen }) {
                                                                                 className="flow-root"
                                                                             >
                                                                                 <Link
-                                                                                    to={
-                                                                                        '#'
-                                                                                    }
+                                                                                    to={`/san-pham-theo-danh-muc/${item.category_slug}/${subitem.category_slug}/${subsubitem.category_slug}`}
                                                                                     className="-m-2 block p-2 text-gray-500 dark:text-gray-300"
                                                                                 >
                                                                                     {
@@ -189,13 +207,13 @@ export default function MobileNavbar({ category, open, setOpen }) {
                             </Tab.Group>
 
                             <div className="space-y-6 border-t border-gray-200 px-4 py-6 dark:border-stone-700">
-                                {navigation.pages.map((page) => (
-                                    <div key={page.name} className="flow-root">
+                                {navbar?.map((item) => (
+                                    <div key={item._id} className="flow-root">
                                         <Link
-                                            to={page.to}
+                                            to={item.menu_path}
                                             className="-m-2 block p-2 font-medium text-gray-900 dark:text-magenta-600"
                                         >
-                                            {page.name}
+                                            {item.menu_label}
                                         </Link>
                                     </div>
                                 ))}
