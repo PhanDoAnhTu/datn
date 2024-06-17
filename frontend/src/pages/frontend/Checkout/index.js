@@ -15,6 +15,7 @@ import { NumericFormat } from 'react-number-format';
 import { Listbox, Transition } from '@headlessui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllDiscount, discountAmount } from '../../../store/actions/discount-actions';
+import { toast } from 'react-toastify';
 
 export default function Checkout() {
     const dispatch = useDispatch();
@@ -36,6 +37,7 @@ export default function Checkout() {
     const [price, setPrice] = useState(0);
     const [price_discount_amount, setPrice_discount_amount] = useState(0);
     const [price_total, setprice_total] = useState(0);
+    // const [dataOrder, setDataOrder] = useState(null)
 
 
     // eslint-disable-next-line no-unused-vars
@@ -50,7 +52,7 @@ export default function Checkout() {
             phonenumber === '' ||
             address === ''
         ) {
-            alert('khong dc de trong');
+           toast.error("Vui lòng nhập đầy đủ tông tin giao hàng.")
             return;
         }
         setStep(step + 1);
@@ -96,7 +98,7 @@ export default function Checkout() {
             <StepCount step={step} />
             <Link to={`/`} className="mb-6 ml-20 flex items-center">
                 <ChevronLeftIcon className="h-6 w-6 text-white" />
-                <span className="text-lg font-bold text-white">Quay lại</span>
+                <span className="text-lg font-bold text-white">Quay lại trang chủ</span>
             </Link>
             <div
                 className={`flex ${step === 2 ? '-translate-x-full' : step === 3 ? '-translate-x-2full' : ''} transition duration-500 ease-out`}
@@ -402,7 +404,14 @@ export default function Checkout() {
                                         <div className="flex justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                             <h3>Giảm giá</h3>
                                             <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                {price_discount_amount}
+                                                <NumericFormat
+                                                    value={price_discount_amount}
+                                                    displayType="text"
+                                                    thousandSeparator={true}
+                                                    decimalScale={0}
+                                                    id="price"
+                                                    suffix={'đ'}
+                                                />
                                             </p>
                                         </div>
                                     </div>
@@ -524,9 +533,10 @@ export default function Checkout() {
                     setPaymentMethod={setPaymentMethod}
                 />
                 <Review
+
                     setStep={setStep}
                     step={step}
-                    information={{ email, fullname, phonenumber, address }}
+                    information={{ email, fullname, phonenumber, address, price_discount_amount, price_total }}
                     paymentMethod={paymentMethod}
                 />
             </div>

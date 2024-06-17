@@ -259,13 +259,21 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                     <div className="flex justify-between py-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                         <h3>Phí giao hàng</h3>
                                         <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                            0
+                                            0đ
                                         </p>
                                     </div>
                                     <div className="flex justify-between pb-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                         <h3>Giảm giá</h3>
                                         <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                            0
+                                            
+                                            <NumericFormat
+                                                value={information.price_discount_amount}
+                                                displayType="text"
+                                                thousandSeparator={true}
+                                                decimalScale={0}
+                                                id="price"
+                                                suffix={'đ'}
+                                            />
                                         </p>
                                     </div>
                                 </div>
@@ -274,7 +282,7 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                         <h3>Tổng</h3>
                                         <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                             <NumericFormat
-                                                value={price_total}
+                                                value={information.price_total}
                                                 displayType="text"
                                                 thousandSeparator={true}
                                                 decimalScale={0}
