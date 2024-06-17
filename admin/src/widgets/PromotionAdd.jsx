@@ -327,7 +327,7 @@ const PromotionAdd = () => {
     try {
       const image = new FormData()
       image.append("file", data.special_offer_image[0])
-      // image.append("folderName", "outrunner/images/promotion")
+      image.append("folderName", "outrunner/images/promotion")
 
 
       const uploadImageSingle = await dispatch(upLoadImageSingle(image))

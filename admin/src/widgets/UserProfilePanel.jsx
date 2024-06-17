@@ -8,7 +8,7 @@ const UserProfilePanel = () => {
                     <i className="icon-bell-solid"/>
                 </span>
                 <span>
-                    Notifications <span className="subheading-2">(2)</span>
+                    Thông báo <span className="subheading-2">(2)</span>
                 </span>
             </button>
             <button className="flex items-center gap-4 w-fit">
@@ -16,7 +16,7 @@ const UserProfilePanel = () => {
                     <i className="icon-message-solid"/>
                 </span>
                 <span>
-                    Messages <span className="subheading-2">(7)</span>
+                    Tin nhắn <span className="subheading-2">(7)</span>
                 </span>
             </button>
         </Spring>

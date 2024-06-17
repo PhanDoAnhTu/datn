@@ -28,8 +28,20 @@ class DiscountController {
     }
     findOneDiscount = async (req, res, next) => {
         return new successResponse.SuccessResponse({
-            message: " findOneDiscount amount success",
+            message: " findOneDiscount  success",
             metaData: await this.service.findOneDiscount(req.body)
+        }).send(res)
+    }
+    changeIsActiveDiscount = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: " changeIsActiveDiscount  success",
+            metaData: await this.service.changeIsActiveDiscount(req.body)
+        }).send(res)
+    }
+    deleteDiscountCode = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: " deleteDiscountCode  success",
+            metaData: await this.service.deleteDiscountCode(req.body)
         }).send(res)
     }
 }

@@ -39,9 +39,9 @@ export const PRODUCT_CATEGORIES = [
 
 export const PRODUCT_MANAGEMENT_OPTIONS = [
   { value: "all", label: "All" },
-  { value: "publish", label: "Published" },
-  { value: "draft", label: "Drafts" },
-  { value: "trash", label: "Trash" },
+  { value: "isPublished", label: "Published" },
+  { value: "isDraft", label: "Drafts" },
+  { value: "isDeleted", label: "Trash" },
 ];
 
 export const PRODUCT_SELECT_OPTIONS = [

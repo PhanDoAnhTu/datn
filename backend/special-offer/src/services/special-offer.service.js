@@ -120,7 +120,7 @@ class SpecialOfferService {
         const special = await SpecialOfferModel.findOne({ _id: special_offer_id })
         if (!special) throw new errorResponse.NotFoundRequestError("not found")
         if (special.special_offer_is_active == true) throw new errorResponse.ForbiddenRequestError("active using")
-        return await SpecialOfferModel.deleteOne({ special_offer_id })
+        return await SpecialOfferModel.deleteOne({ _id: special_offer_id })
     }
     async serverRPCRequest(payload) {
         const { type, data } = payload;

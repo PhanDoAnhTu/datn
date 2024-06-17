@@ -50,7 +50,7 @@ const PromotionMangementTable = () => {
     {
       title: "Ngày bắt đầu - Ngày kêt thúc",
       dataIndex: "dateAdded",
-      render: (date, record) => (
+      render: (record) => (
         <div>
           <div className="font-bold text-header">
             Bắt đầu:{" "}
@@ -68,7 +68,7 @@ const PromotionMangementTable = () => {
     {
       title: "Hoạt động",
       dataIndex: "status",
-      render: (status, record) => (
+      render: (record) => (
         <div>
           <Switch
             checkedChildren={"ON"}
@@ -89,7 +89,7 @@ const PromotionMangementTable = () => {
             <Link className="btn info-btn" to={"/test"}>
               <i className="icon icon-circle-info-solid text-lg" />
             </Link>
-            <Link className="btn info-btn" onClick={()=>onRemovePromotion(record._id)}>
+            <Link className="btn info-btn" onClick={() => onRemovePromotion(record._id)}>
               <i className="icon icon-trash-regular text-lg hover:text-red" />
             </Link>
           </div>
@@ -106,10 +106,10 @@ const PromotionMangementTable = () => {
   };
   // const [promotions_manangement, setPromotions_manangement] = useState([]);
   const [data, setData] = useState([]);
-  const [isLoad, setIsLoad] = useState(false);
   const [category, setCategory] = useState("all");
   const [sorts, setSorts] = useState(defaultSort);
   const [activeCollapse, setActiveCollapse] = useState("");
+  const [isLoad, setIsLoad] = useState(false);
 
   // console.log("data", data)
   const fetchDataPromotionManagement = async () => {
@@ -147,10 +147,10 @@ const PromotionMangementTable = () => {
   }
   const onRemovePromotion = async (special_offer_id) => {
     const id = toast.loading("Vui lòng đợi...");
-    const changeStatus = await dispatch(onRemovePromotion({ special_offer_id: special_offer_id }))
-    if (changeStatus?.payload?.status === (200 || 201)) {
+    const changeStatus = await dispatch(removeSpecialOfferById({ special_offer_id: special_offer_id }))
+    if (changeStatus?.payload?.status === (200 || 201) & changeStatus?.payload?.metaData?.deletedCount === 1) {
       toast.update(id, {
-        render: `Đã xóa`,
+        render: `Đã xóa chương trình giảm giá này`,
         type: "success",
         isLoading: false,
         closeOnClick: true,

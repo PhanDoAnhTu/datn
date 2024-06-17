@@ -18,13 +18,142 @@ import {
   ADDITIONAL_OPTIONS,
   SELECT_OPTIONS,
 } from "@constants/options";
-import { PRODUCTS_MANAGEMENT_COLUMN_DEFS } from "@constants/columnDefs";
+// import { PRODUCTS_MANAGEMENT_COLUMN_DEFS } from "@constants/columnDefs";
 
 // data placeholder
-import products_management from "@db/products_management";
+// import products_management from "@db/products_management";
 import categories_management from "@db/categories_management";
+import { useDispatch } from "react-redux";
+import { onAllProductsOption } from "../../store/actions";
+import EditBtn from "@components/EditBtn";
+import Actions from "@components/Actions";
+import dayjs from "dayjs";
 
 const ProductManagementTable = () => {
+  const PRODUCTS_MANAGEMENT_COLUMN_DEFS = [
+    {
+      title: (
+        <div className="flex items-center justify-center">
+          <i className="icon-image-regular text-[26px]" />
+        </div>
+      ),
+      dataIndex: "product_thumb",
+      width: 45,
+      render: (product_thumb) => (
+        <div className="img-wrapper w-[45px] h-[45px] flex items-center justify-center">
+          <img src={product_thumb} alt="product" />
+        </div>
+      ),
+    },
+    {
+      title: "Tên",
+      dataIndex: "product_name",
+      render: (product_name) => (
+        <span className="inline-block h6 !text-sm max-w-[155px]">{product_name}</span>
+      ),
+    },
+    {
+      title: "Kho",
+      dataIndex: "product_quantity",
+      width: 130,
+      render: (product_quantity) => (
+        <div className="flex items-center gap-5">
+          {product_quantity == null ? (
+            "On Demand"
+          ) : (
+            <span>
+              <span className={`${product_quantity !== 0 ? "text-green" : "text-red"}`}>
+                {product_quantity !== 0
+                  ? product_quantity >= 10
+                    ? "Còn hàng "
+                    : "Hàng còn ít "
+                  : "Hết hàng "}
+              </span>
+              ({product_quantity})
+            </span>
+          )}
+        </div>
+      ),
+    },
+    {
+      title: "Giá",
+      dataIndex: "product_price",
+      render: (price) => <span>${price ? price.toFixed(2) : "0.00"}</span>,
+    },
+    {
+      title: "Danh mục",
+      dataIndex: "product_category",
+      width: 125,
+      render: (categories) => (
+        <div className="flex flex-wrap gap-x-0.5">
+          {categories && categories.length
+            ? categories.map((tag, index) => (
+              <button className="tag text-accent capitalize" key={tag}>
+                {tag}
+                {index !== categories.length - 1 && ","}
+              </button>
+            ))
+            : "-"}
+        </div>
+      ),
+      responsive: ["xl"],
+    },
+    {
+      title: "Thuộc tính",
+      dataIndex: "product_attributes",
+      width: 200,
+      render: (categories) => (
+        <div className="flex flex-wrap gap-x-0.5">
+          {categories && categories.length
+            ? categories.map((attribute) => {
+              return attribute.attribute_value_list.map((value, subindex) => (
+                <button className="tag text-accent capitalize" key={subindex}>
+                  {value.attribute_value}
+                  {subindex !== attribute.attribute_value_list.length - 1 &&
+                    ","}
+                </button>
+              ));
+            })
+            : "-"}
+        </div>
+      ),
+      responsive: ["xl"],
+    },
+    {
+      title: "Ngày tạo",
+      dataIndex: "createdAt",
+      render: (date) => (
+        <div className="flex flex-col">
+          <span className="font-bold text-header">
+            {date && dayjs(date).format("DD/MM/YYYY")}
+          </span>
+        </div>
+      ),
+      responsive: ["lg"],
+    },
+    {
+      title: "Ngày chỉnh sửa",
+      dataIndex: "updatedAt",
+      render: (date) => (
+        <div className="flex flex-col">
+          <span className="font-bold text-header">
+            {date && dayjs(date).format("DD/MM/YYYY")}
+          </span>
+        </div>
+      ),
+      responsive: ["lg"],
+    },
+    {
+      title: "Chức năng",
+      dataIndex: "actions",
+      render: (text, record) => (
+        <div className="flex items-center justify-end gap-11">
+          <EditBtn link={`/product-editor/${record._id}`} record={record} />
+          <Actions record={record} table={"product"} />
+        </div>
+      ),
+    },
+  ];
   const { width } = useWindowSize();
   const defaultFilters = {
     stockStatus: null,
@@ -34,13 +163,28 @@ const ProductManagementTable = () => {
     sortBy: ADDITIONAL_OPTIONS[0],
     sortOrder: SELECT_OPTIONS[0],
   };
-
+  const [products_management, setProducts_management] = useState([]);
   const [data, setData] = useState(products_management);
   const [category, setCategory] = useState("all");
   const [sorts, setSorts] = useState(defaultSort);
   const [filters, setFilters] = useState(defaultFilters);
   const [activeCollapse, setActiveCollapse] = useState("");
 
+  const dispatch = useDispatch()
+
+  const [isLoad, setIsLoad] = useState(false);
+
+  const fetchDataProductsManagement = async () => {
+    const responseProducts = await dispatch((onAllProductsOption({ isPublished: true })))
+    if (responseProducts) {
+      setProducts_management(responseProducts.payload.metaData)
+    }
+  }
+
+  useEffect(() => {
+    fetchDataProductsManagement()
+  }, [isLoad])
+  
   const getQty = (category) => {
     if (category === "all") return products_management.length;
     return products_management.filter((product) => product.status === category)
@@ -77,7 +221,9 @@ const ProductManagementTable = () => {
 
   const dataByStatus = () => {
     if (category === "all") return data;
-    return data.filter((product) => product.status === category);
+    if (category === "isPublished") data.filter((product) => product.isPublished === true);
+    if (category === "isDraft") data.filter((product) => product.isDraft === true);
+    if (category === "isDeleted") data.filter((product) => product.isDeleted === true);
   };
 
   const pagination = usePagination(dataByStatus(), 8);
@@ -165,7 +311,7 @@ const ProductManagementTable = () => {
             dataSource={pagination.currentItems()}
             rowKey={(record) => record._id}
             locale={{
-              emptyText: <Empty text="No products found" />,
+              emptyText: <Empty text="Không có sản phẩm" />,
             }}
             rowSelection={{
               type: "checkbox",

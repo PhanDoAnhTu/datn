@@ -46,7 +46,7 @@ const NotificationsPanel = ({open, onOpen, onClose}) => {
                     onOpen={onOpen}>
             <div className="pt-[30px] px-[30px] pb-4" ref={headerRef}>
                 <div className="flex justify-between items-center">
-                    <h5>Notifications</h5>
+                    <h5>Thông báo</h5>
                     <button className="text-accent text-lg transition hover:text-red"
                             onClick={onClose}
                             aria-label="Close notifications panel">

@@ -29,10 +29,10 @@ const ProductManagementCollapseItem = ({
         <div className="flex items-center gap-4">
           <button
             className={`collapse-btn ${
-              activeCollapse === product.id ? "active" : ""
+              activeCollapse === product._id ? "active" : ""
             }`}
             aria-label="Toggle view"
-            onClick={() => handleCollapse(product.id)}
+            onClick={() => handleCollapse(product._id)}
           >
             <i className="icon icon-caret-down-solid" />
           </button>
@@ -45,7 +45,7 @@ const ProductManagementCollapseItem = ({
           <Actions record={product} table={"product"} />
         </div>
       </div>
-      <Collapse in={activeCollapse === product.id}>
+      <Collapse in={activeCollapse === product._id}>
         <table className="basic-table">
           <tbody>
             <tr>

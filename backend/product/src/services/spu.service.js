@@ -154,10 +154,10 @@ const AllProducts = async ({ sort = "ctime", isPublished = true }) => {
     });
     product_review.push(review);
     const specialoffer = await RPCRequest("SPECIAL_OFFER_RPC", {
-      type: "FIND_SPECIAL_OFFER_TODAY_BY_ID",
+      type: "FIND_SPECIAL_OFFER_BY_DATE",
       data: {
         special_offer_is_active: true,
-        spu_id: all_Products[index]._id,
+        date: Date.now()
       },
     });
     special_offer.push(specialoffer);
@@ -209,16 +209,16 @@ const getAllProductsByfilter = async ({
       isPublished: true,
     });
     product_review.push(review);
-    const specialoffer = await RPCRequest("SPECIAL_OFFER_RPC", {
-      type: "FIND_SPECIAL_OFFER_TODAY_BY_ID",
-      data: {
-        special_offer_is_active: true,
-        spu_id: all_Products[index]._id,
-      },
-    });
-    special_offer.push(specialoffer);
-  }
 
+  }
+  const specialoffer = await RPCRequest("SPECIAL_OFFER_RPC", {
+    type: "FIND_SPECIAL_OFFER_BY_DATE",
+    data: {
+      special_offer_is_active: true,
+      date: Date.now()
+    },
+  });
+  special_offer.push(specialoffer);
   product_list.all_Products = await all_Products.map((product, index) => {
     return {
       ...product,
@@ -264,14 +264,6 @@ const findProductsByCategory = async ({
       isPublished: true,
     });
     product_review.push(review);
-    // const specialoffer = await RPCRequest("SPECIAL_OFFER_RPC", {
-    //     type: "FIND_SPECIAL_OFFER_TODAY_BY_ID",
-    //     data: {
-    //         special_offer_is_active: true,
-    //         spu_id: productsByCategory[index]._id
-    //     }
-    // })
-    // special_offer.push(specialoffer)
   }
   const special_offer = await RPCRequest("SPECIAL_OFFER_RPC", {
     type: "FIND_SPECIAL_OFFER_BY_DATE",
@@ -332,10 +324,10 @@ const findProductDetail = async ({ spu_id, isPublished = true }) => {
       isPublished: true,
     });
     product.special_offer = await RPCRequest("SPECIAL_OFFER_RPC", {
-      type: "FIND_SPECIAL_OFFER_TODAY_BY_ID",
+      type: "FIND_SPECIAL_OFFER_BY_DATE",
       data: {
         special_offer_is_active: true,
-        spu_id: product.product_detail._id,
+        date: Date.now()
       },
     });
     const categories = await RPCRequest("CATEGORY_RPC", {
@@ -366,10 +358,10 @@ const productFromCart = async ({ spu_id, isPublished = true }) => {
       brand_id: spu.product_brand,
     });
     const special_offer = await RPCRequest("SPECIAL_OFFER_RPC", {
-      type: "FIND_SPECIAL_OFFER_TODAY_BY_ID",
+      type: "FIND_SPECIAL_OFFER_BY_DATE",
       data: {
         special_offer_is_active: true,
-        spu_id: spu._id,
+        date: Date.now(),
       },
     });
     return {

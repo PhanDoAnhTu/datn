@@ -54,7 +54,7 @@ const MessagesPanel = ({open, onOpen, onClose}) => {
         <DrawerBase open={open} onOpen={onOpen} onClose={onClose} anchor="right">
             <div className="py-8 px-[30px] pb-4" ref={headerRef}>
                 <div className="flex justify-between items-center">
-                    <h5>Messages</h5>
+                    <h5>Tin nhắn</h5>
                     <button className="text-accent text-lg transition hover:text-red"
                             onClick={onClose}
                             aria-label="Close messages panel">

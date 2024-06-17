@@ -15,7 +15,7 @@ const ProductsManagement = () => {
   const navigate = useNavigate();
   return (
     <>
-      <PageHeader title="Products Management" />
+      <PageHeader title="Quản lý sản phẩm" /> 
       <div className="flex flex-col-reverse gap-4 mb-5 md:flex-col lg:flex-row lg:justify-between">
         <div className="flex flex-col gap-4 md:flex-row md:gap-[14px]">
           <button

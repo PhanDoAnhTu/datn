@@ -90,21 +90,20 @@ class DiscountService {
         return discount
     }
 
-    async publishedDiscount({
-        discount_id
+    async changeIsActiveDiscount({
+        discount_id, discount_is_active
     }) {
-        const discount = await DiscountModel.findOne({
-            _id: discount_id
-        })
-        return discount
-    }
-    async unPublishedDiscount({
-        discount_id
-    }) {
-        const discount = await DiscountModel.findOne({
-            _id: discount_id
-        })
-        return discount
+        const query = { _id: discount_id }
+        const updateOrInsert = {
+            $set: {
+                discount_is_active: discount_is_active
+            }
+        }, options = {
+            upsert: true,
+            new: true
+        }
+        return await DiscountModel.findOneAndUpdate(query, updateOrInsert, options)
+
     }
     /**
      * 
@@ -188,7 +187,7 @@ class DiscountService {
 
     //xoa discount
     async deleteDiscountCode({ codeId }) {
-        const deleted = await DiscountModel.findOneAndDelete({
+        const deleted = await DiscountModel.deleteOne({
             discount_code: codeId
         })
         return deleted
@@ -202,7 +201,7 @@ class DiscountService {
             }
         })
         if (!foundDiscount) {
-            throw new ForbiddenRequestError('Discount exists')
+            throw new errorResponse.ForbiddenRequestError('Discount exists')
         }
         const result = await DiscountModel.findByIdAndUpdate(
             foundDiscount._id, {

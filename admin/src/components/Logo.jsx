@@ -8,8 +8,8 @@ import {useTheme} from '@contexts/themeContext';
 import {memo} from 'react';
 
 // assets
-import light from '@assets/logo_light.svg';
-import dark from '@assets/logo_dark.svg';
+import light from '../assets/icons/lightlogo.svg';
+import dark from '../assets/icons/darklogo.svg';
 
 const Logo = ({imgClass, textClass}) => {
     const {theme} = useTheme();
@@ -17,12 +17,12 @@ const Logo = ({imgClass, textClass}) => {
     return (
         <NavLink className="logo" to="/">
             <span className={`logo_img relative ${imgClass || ''}`}>
-                <img src={light} alt="ShopPoint" />
+                <img src={light} alt="OutrunnerStore" />
                 <img className={`absolute top-0 left-0 ${theme === 'light' ? 'hidden' : ''}`}
                      src={dark}
-                     alt="ShopPoint" />
+                     alt="OutrunnerStore" />
             </span>
-            <h4 className={`logo_text ${textClass || ''}`}>ShopPoint</h4>
+            <h4 className={`logo_text ${textClass || ''}`}>Outrunner Store</h4>
         </NavLink>
     )
 }

@@ -34,6 +34,28 @@ export const onFindDiscountById = (data) => async (dispatch) => {
         console.log(err)
     }
 };
+export const changeIsActiveDiscoun = (data) => async (dispatch) => {
+    try {
+        const response = await PostData('/discount/v1/changeIsActiveDiscoun', data);
+        console.log('response:', response)
+        return dispatch({ type: Action.DISCOUNT_BY_ID, payload: response.data });
+
+    } catch (err) {
+        console.log(err)
+    }
+};
+export const deleteDiscountCode = (data) => async (dispatch) => {
+    try {
+        const response = await PostData('/discount/v1/deleteDiscountCode', data);
+        console.log('response:', response)
+        return dispatch({ type: Action.DISCOUNT_BY_ID, payload: response.data });
+
+    } catch (err) {
+        console.log(err)
+    }
+};
+
+
 // export const onDiscountAmount = (data) => async (dispatch) => {
 //     try {
 //         const response = await PostData('/discount/v1/discountAmount', data);
