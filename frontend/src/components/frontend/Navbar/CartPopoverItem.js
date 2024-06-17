@@ -103,13 +103,13 @@ export default function CartPopoverItem({
         product_item &&
             selected_sku &&
             selected_sku_old &&
-            selected_sku._id.toString() !== selected_sku_old._id.toString() && (
-                updateCart('updateItemSkuV2', {
-                    productId: product.productId,
-                    sku_id: selected_sku._id,
-                    sku_id_old: selected_sku_old._id,
-                    quantity: _quantity,
-                }) &
+            selected_sku._id.toString() !== selected_sku_old._id.toString() &&
+            updateCart('updateItemSkuV2', {
+                productId: product.productId,
+                sku_id: selected_sku._id,
+                sku_id_old: selected_sku_old._id,
+                quantity: _quantity,
+            }) &
                 checkbox('variation', {
                     productId: product.productId,
                     quantity: _quantity,
@@ -118,18 +118,16 @@ export default function CartPopoverItem({
                     sku_id_old: selected_sku_old._id,
                     price: sku_sale
                         ? sku_sale.sku_id == selected_sku?._id &&
-                        sku_sale.price_sale
+                          sku_sale.price_sale
                         : selected_sku
-                            ? selected_sku.sku_price
-                            : price,
+                          ? selected_sku.sku_price
+                          : price,
                     product_name: product_item?.spu_info?.product_name,
                     product_image: product_item?.spu_info?.product_thumb,
                     product_slug_id: `${product_item?.spu_info?.product_slug}-${product_item?.spu_info?._id}`,
                     product_variation: selected,
                     product_option: product_item?.spu_info?.product_variations,
-                })
-            )
-
+                });
     }, [selected_sku]);
 
     useEffect(() => {
@@ -185,8 +183,7 @@ export default function CartPopoverItem({
                 });
             }
         }
-        setState(!state)
-
+        setState(!state);
     };
     const changeCheckbox = async (active, sku) => {
         if (active == true) {
@@ -229,11 +226,11 @@ export default function CartPopoverItem({
                                             productId: selected_sku.product_id,
                                             price: sku_sale
                                                 ? sku_sale.sku_id ==
-                                                selected_sku?._id &&
-                                                sku_sale.price_sale
+                                                      selected_sku?._id &&
+                                                  sku_sale.price_sale
                                                 : selected_sku
-                                                    ? selected_sku.sku_price
-                                                    : price,
+                                                  ? selected_sku.sku_price
+                                                  : price,
                                             product_name:
                                                 product_item?.spu_info
                                                     ?.product_name,
@@ -262,11 +259,11 @@ export default function CartPopoverItem({
                                             productId: selected_sku.product_id,
                                             price: sku_sale
                                                 ? sku_sale.sku_id ==
-                                                selected_sku?._id &&
-                                                sku_sale.price_sale
+                                                      selected_sku?._id &&
+                                                  sku_sale.price_sale
                                                 : selected_sku
-                                                    ? selected_sku.sku_price
-                                                    : price,
+                                                  ? selected_sku.sku_price
+                                                  : price,
                                             product_name:
                                                 product_item?.spu_info
                                                     ?.product_name,
@@ -301,21 +298,21 @@ export default function CartPopoverItem({
                             <a href={''}>
                                 {product_item &&
                                     (product_item.spu_info.product_name.length >
-                                        25
+                                    25
                                         ? product_item.spu_info.product_name
-                                            .substr(3)
-                                            .padEnd(
-                                                product_item.spu_info
-                                                    .product_name.length,
-                                                '...'
-                                            )
+                                              .substr(3)
+                                              .padEnd(
+                                                  product_item.spu_info
+                                                      .product_name.length,
+                                                  '...'
+                                              )
                                         : product_item.spu_info.product_name)}
                             </a>
                         </h3>
                         <div className="flex flex-col ">
                             <p className="text-md font-medium text-gray-900 dark:text-white">
                                 {sku_sale &&
-                                    sku_sale?.sku_id == selected_sku?._id ? (
+                                sku_sale?.sku_id == selected_sku?._id ? (
                                     <NumericFormat
                                         value={sku_sale.price_sale}
                                         displayType="text"
@@ -387,9 +384,9 @@ export default function CartPopoverItem({
                                                                                     index
                                                                                 ]
                                                                                     .options[
-                                                                                selected[
-                                                                                index
-                                                                                ]
+                                                                                    selected[
+                                                                                        index
+                                                                                    ]
                                                                                 ]}
                                                                         </span>
                                                                     </span>
@@ -510,11 +507,11 @@ export default function CartPopoverItem({
                                         sku_id: selected_sku._id,
                                         price: sku_sale
                                             ? sku_sale.sku_id ==
-                                            selected_sku?._id &&
-                                            sku_sale.price_sale
+                                                  selected_sku?._id &&
+                                              sku_sale.price_sale
                                             : selected_sku
-                                                ? selected_sku.sku_price
-                                                : price,
+                                              ? selected_sku.sku_price
+                                              : price,
                                         product_name:
                                             product_item?.spu_info
                                                 ?.product_name,
@@ -553,11 +550,11 @@ export default function CartPopoverItem({
                                         sku_id: selected_sku._id,
                                         price: sku_sale
                                             ? sku_sale.sku_id ==
-                                            selected_sku?._id &&
-                                            sku_sale.price_sale
+                                                  selected_sku?._id &&
+                                              sku_sale.price_sale
                                             : selected_sku
-                                                ? selected_sku.sku_price
-                                                : price,
+                                              ? selected_sku.sku_price
+                                              : price,
                                         product_name:
                                             product_item?.spu_info
                                                 ?.product_name,
