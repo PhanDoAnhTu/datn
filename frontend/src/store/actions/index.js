@@ -46,6 +46,8 @@ export const Action = {
 
     //order
     GET_ALL_ORDER_BY_USER_ID: 'GET_ALL_ORDER_BY_USER_ID',
+    //discount
+    GET_ALL_DISCOUNT: 'GET_ALL_DISCOUNT',
 
     //topic
     GET_ALL_TOPIC: 'GET_ALL_TOPIC',

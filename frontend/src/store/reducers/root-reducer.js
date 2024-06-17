@@ -13,6 +13,7 @@ import MenuReducer from './menu-reducer';
 import BrandReducer from './brand-reducer';
 import AttributeReducer from './attribute-reducer';
 import OrderReducer from './order-reducer';
+import DiscountReducer from './discount-reducer';
 
 const reducers = combineReducers({
     userReducer: UserReducer,
@@ -23,6 +24,7 @@ const reducers = combineReducers({
     topicReducer: TopicReducer,
     menuReducer: MenuReducer,
     postReducer: PostReducer,
+    discountReducer: DiscountReducer,
     brandReducer: BrandReducer,
     orderReducer: OrderReducer,
     attributeReducer: AttributeReducer,

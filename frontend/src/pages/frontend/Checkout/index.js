@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import StepCount from './StepCount';
 
@@ -6,25 +6,33 @@ import Payment from './Payment';
 import ButtonWithBorder from '../../../components/frontend/ButtonWithBorder';
 import Review from './Review';
 import { getSelectedListFromCart } from '../../../utils';
-import { ChevronLeftIcon } from '@heroicons/react/24/outline';
+import {
+    CheckIcon,
+    ChevronLeftIcon,
+    ChevronUpIcon,
+} from '@heroicons/react/24/outline';
 import { NumericFormat } from 'react-number-format';
+import { Listbox, Transition } from '@headlessui/react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllDiscount } from '../../../store/actions/discount-actions';
 
 export default function Checkout() {
+    const dispatch = useDispatch();
     const [step, setStep] = useState(1);
+    const { discount } = useSelector((state) => state.discountReducer);
+    useEffect(() => {
+        dispatch(getAllDiscount());
+    }, []);
     const [email, setEmail] = useState('');
     const [fullname, setFullName] = useState('');
     const [phonenumber, setPhoneNumber] = useState('');
     const [address, setAddress] = useState('');
 
-    const [cardNumber, setCardNumber] = useState('');
-    const [nameOnCard, setNameOnCard] = useState('');
-    const [expireMonth, setExpireMonth] = useState('');
-    const [expireYear, setExpireYear] = useState('');
-    const [securityCode, setSecurityCode] = useState('');
-
     const [paymentMethod, setPaymentMethod] = useState('COD');
     const [selectedProductFromCart] = useState(getSelectedListFromCart);
     const [price_total, setprice_total] = useState(0);
+    // eslint-disable-next-line no-unused-vars
+    const [selectedDiscount, setSelectedDiscount] = useState(null);
 
     // const navigate = useNavigate();
 
@@ -50,6 +58,8 @@ export default function Checkout() {
             )
         );
     }, [selectedProductFromCart]);
+    console.log('test1:', discount);
+    console.log('currentDiscount', selectedDiscount);
 
     return (
         <div className="overflow-hidden pb-7 pt-10 md:pt-24">
@@ -160,18 +170,194 @@ export default function Checkout() {
                             <div className="mt-6 flex py-4">
                                 <div className="flex flex-1 flex-col">
                                     <div>
-                                        <div className="flex items-center justify-between space-x-2 border-2 px-2 py-2 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                            <div className="relative">
-                                                <button className="block border-2 px-2 py-2 text-xs shadow-md transition duration-500 ease-out hover:-translate-y-0.5 hover:border-magenta-500 hover:bg-magenta-500">
-                                                    Áp dụng
-                                                </button>
+                                        <div className={` mt-2 pt-2`}>
+                                            <div
+                                                className={`mb-4 border-x-0 border-b-2 border-t-0 transition duration-500 ease-out dark:border-white`}
+                                            >
+                                                <Listbox
+                                                    value={selectedDiscount}
+                                                    onChange={(e) =>
+                                                        setSelectedDiscount(e)
+                                                    }
+                                                >
+                                                    <div className="relative mt-1 ">
+                                                        <Listbox.Button className="relative w-full cursor-default py-2 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-magenta-300 ui-disabled:brightness-50 sm:text-sm ">
+                                                            <span className="block truncate font-semibold text-gray-900 dark:text-white">
+                                                                {selectedDiscount ==
+                                                                null
+                                                                    ? 'Mã giảm giá'
+                                                                    : `${
+                                                                          discount
+                                                                              ?.slice()
+                                                                              .find(
+                                                                                  (
+                                                                                      item
+                                                                                  ) =>
+                                                                                      item._id ===
+                                                                                      selectedDiscount
+                                                                              )
+                                                                              .discount_code
+                                                                      } | ${
+                                                                          discount
+                                                                              ?.slice()
+                                                                              .find(
+                                                                                  (
+                                                                                      item
+                                                                                  ) =>
+                                                                                      item._id ===
+                                                                                      selectedDiscount
+                                                                              )
+                                                                              .discount_description
+                                                                      }`}
+                                                            </span>
+                                                            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                <ChevronUpIcon
+                                                                    className="h-5 w-5 text-gray-700 transition duration-200 ease-out ui-open:rotate-180 dark:text-white"
+                                                                    aria-hidden="true"
+                                                                />
+                                                            </span>
+                                                        </Listbox.Button>
+                                                        <Transition
+                                                            as={Fragment}
+                                                            leave="transition ease-in duration-100"
+                                                            leaveFrom="opacity-100"
+                                                            leaveTo="opacity-0"
+                                                        >
+                                                            <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto bg-zinc-900 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm dark:bg-white">
+                                                                <Listbox.Option
+                                                                    className={({
+                                                                        active,
+                                                                    }) =>
+                                                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                                                            active
+                                                                                ? 'bg-magenta-900    text-zinc-700'
+                                                                                : 'text-gray-900'
+                                                                        }`
+                                                                    }
+                                                                    value={null}
+                                                                >
+                                                                    {({
+                                                                        selected,
+                                                                    }) => (
+                                                                        <>
+                                                                            <span
+                                                                                className={`block truncate ${
+                                                                                    selected
+                                                                                        ? 'font-medium'
+                                                                                        : 'font-normal'
+                                                                                }`}
+                                                                            >
+                                                                                Không
+                                                                                áp
+                                                                                dụng
+                                                                            </span>
+                                                                            {selected ? (
+                                                                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-magenta-600">
+                                                                                    <CheckIcon
+                                                                                        className="h-5 w-5"
+                                                                                        aria-hidden="true"
+                                                                                    />
+                                                                                </span>
+                                                                            ) : null}
+                                                                        </>
+                                                                    )}
+                                                                </Listbox.Option>
+                                                                {discount &&
+                                                                    discount?.map(
+                                                                        (
+                                                                            item
+                                                                        ) => (
+                                                                            <Listbox.Option
+                                                                                key={
+                                                                                    item._id
+                                                                                }
+                                                                                className={({
+                                                                                    active,
+                                                                                }) =>
+                                                                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                                                                        active
+                                                                                            ? 'bg-magenta-900    text-zinc-700'
+                                                                                            : 'text-gray-900'
+                                                                                    }`
+                                                                                }
+                                                                                value={
+                                                                                    item._id
+                                                                                }
+                                                                            >
+                                                                                {({
+                                                                                    selected,
+                                                                                }) => (
+                                                                                    <>
+                                                                                        <span
+                                                                                            className={`block truncate ${
+                                                                                                selected
+                                                                                                    ? 'font-medium'
+                                                                                                    : 'font-normal'
+                                                                                            }`}
+                                                                                        >
+                                                                                            {
+                                                                                                item.discount_code
+                                                                                            }
+                                                                                        </span>
+                                                                                        <span
+                                                                                            className={`block truncate ${
+                                                                                                selected
+                                                                                                    ? 'font-medium'
+                                                                                                    : 'font-normal'
+                                                                                            }`}
+                                                                                        >
+                                                                                            {
+                                                                                                item.discount_description
+                                                                                            }
+                                                                                        </span>
+                                                                                        <span
+                                                                                            className={`block truncate ${
+                                                                                                selected
+                                                                                                    ? 'font-medium'
+                                                                                                    : 'font-normal'
+                                                                                            }`}
+                                                                                        >
+                                                                                            Giá
+                                                                                            trị
+                                                                                            đơn
+                                                                                            hàng
+                                                                                            tối
+                                                                                            thiểu:{' '}
+                                                                                            <NumericFormat
+                                                                                                value={
+                                                                                                    item.discount_min_order_value
+                                                                                                }
+                                                                                                displayType="text"
+                                                                                                thousandSeparator={
+                                                                                                    true
+                                                                                                }
+                                                                                                decimalScale={
+                                                                                                    0
+                                                                                                }
+                                                                                                id="price"
+                                                                                                suffix={
+                                                                                                    'đ'
+                                                                                                }
+                                                                                            />
+                                                                                        </span>
+                                                                                        {selected ? (
+                                                                                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-magenta-600">
+                                                                                                <CheckIcon
+                                                                                                    className="h-5 w-5"
+                                                                                                    aria-hidden="true"
+                                                                                                />
+                                                                                            </span>
+                                                                                        ) : null}
+                                                                                    </>
+                                                                                )}
+                                                                            </Listbox.Option>
+                                                                        )
+                                                                    )}
+                                                            </Listbox.Options>
+                                                        </Transition>
+                                                    </div>
+                                                </Listbox>
                                             </div>
-
-                                            <input
-                                                type="text"
-                                                className="flex-1 border-0 bg-transparent pl-0 text-center uppercase placeholder:text-zinc-300 focus:placeholder-transparent focus:ring-0"
-                                                placeholder="Mã giảm giá"
-                                            />
                                         </div>
                                     </div>
                                     <div>
@@ -221,9 +407,9 @@ export default function Checkout() {
                                     <h1 className="text-lg font-bold text-white">
                                         Thông tin giao hàng
                                     </h1>
-                                    <button className="bg-white px-2 py-2 text-xs font-bold text-black transition duration-500 ease-out hover:bg-magenta-500 hover:text-white">
+                                    {/* <button className="bg-white px-2 py-2 text-xs font-bold text-black transition duration-500 ease-out hover:bg-magenta-500 hover:text-white">
                                         Thay đổi
-                                    </button>
+                                    </button> */}
                                 </div>
                                 <div className="space-y-4 pt-4">
                                     <div className="flex flex-col">
@@ -313,16 +499,6 @@ export default function Checkout() {
                     information={{ email, fullname, phonenumber, address }}
                     paymentMethod={paymentMethod}
                     setPaymentMethod={setPaymentMethod}
-                    cardNumber={cardNumber}
-                    setCardNumber={setCardNumber}
-                    nameOnCard={nameOnCard}
-                    setNameOnCard={setNameOnCard}
-                    expireMonth={expireMonth}
-                    setExpireMonth={setExpireMonth}
-                    expireYear={expireYear}
-                    setExpireYear={setExpireYear}
-                    securityCode={securityCode}
-                    setSecurityCode={setSecurityCode}
                 />
                 <Review
                     setStep={setStep}
