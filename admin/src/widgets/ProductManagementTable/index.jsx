@@ -105,8 +105,8 @@ const ProductManagementTable = () => {
       render: (categories) => (
         <div className="flex flex-wrap gap-x-0.5">
           {categories && categories.length
-            ? categories.map((attribute) => {
-              return attribute.attribute_value_list.map((value, subindex) => (
+            ? categories?.map((attribute) => {
+              return attribute?.attribute_value_list?.map((value, subindex) => (
                 <button className="tag text-accent capitalize" key={subindex}>
                   {value.attribute_value}
                   {subindex !== attribute.attribute_value_list.length - 1 &&
@@ -164,7 +164,7 @@ const ProductManagementTable = () => {
     sortOrder: SELECT_OPTIONS[0],
   };
   const [products_management, setProducts_management] = useState([]);
-  const [data, setData] = useState(products_management);
+  const [data, setData] = useState([]);
   const [category, setCategory] = useState("all");
   const [sorts, setSorts] = useState(defaultSort);
   const [filters, setFilters] = useState(defaultFilters);
@@ -177,18 +177,19 @@ const ProductManagementTable = () => {
   const fetchDataProductsManagement = async () => {
     const responseProducts = await dispatch((onAllProductsOption({ isPublished: true })))
     if (responseProducts) {
-      setProducts_management(responseProducts.payload.metaData)
+      setData(responseProducts.payload.metaData)
     }
   }
 
   useEffect(() => {
     fetchDataProductsManagement()
   }, [isLoad])
-  
+
   const getQty = (category) => {
-    if (category === "all") return products_management.length;
-    return products_management.filter((product) => product.status === category)
-      .length;
+    if (category === "all") return data.length;
+    if (category === "isPublished") return data.filter((product) => product.isPublished === true).length;
+    if (category === "isDraft") return data.filter((product) => product.isDraft === true).length;
+    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true).length;
   };
 
   const handleFilterSelect = ({ value, label }, name) => {
@@ -208,7 +209,7 @@ const ProductManagementTable = () => {
   const handleApplyFilters = () => {
     if (filters.parentCategory != null) {
       setData(
-        products_management.filter(
+        data.filter(
           (item) => item.category === filters.parentCategory.label
         )
       );
@@ -219,14 +220,14 @@ const ProductManagementTable = () => {
     setFilters(defaultFilters);
   };
 
-  const dataByStatus = () => {
+  const dataByStatus = (category) => {
     if (category === "all") return data;
-    if (category === "isPublished") data.filter((product) => product.isPublished === true);
-    if (category === "isDraft") data.filter((product) => product.isDraft === true);
-    if (category === "isDeleted") data.filter((product) => product.isDeleted === true);
+    if (category === "isPublished") return data.filter((product) => product.isPublished === true);
+    if (category === "isDraft") return data.filter((product) => product.isDraft === true);
+    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true);
   };
 
-  const pagination = usePagination(dataByStatus(), 8);
+  const pagination = usePagination(dataByStatus(category), 8);
 
   // reset active collapse when page or window width changes
   useEffect(() => {

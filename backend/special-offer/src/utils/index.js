@@ -26,6 +26,45 @@ module.exports.getIntoData = async ({ fileds = [], object = {} }) => {
   return _.pick(object, fileds)
 };
 
+module.exports.getSelectData = (select = []) => {
+  return Object.fromEntries(select.map(el => [el, 1]))
+}
+
+module.exports.unGetSelectData = (select = []) => {
+  return Object.fromEntries(select.map(el => [el, 0]))
+}
+
+module.exports.removeUndefindObject = obj => {
+  Object.keys(obj).forEach(k => {
+    if (obj[k] == null) {
+      delete obj[k];
+    }
+  })
+  return obj
+}
+
+module.exports.updateNestedObjectParser = obj => {
+  console.log(`1;;`, obj)
+  const final = {}
+  Object.keys(obj).forEach(k => {
+    console.log(`3`, k)
+    if (typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
+      const response = updateNestedObjectParser(obj[k])
+      Object.keys(response).forEach(a => {
+        final[`${k}.${a}`] = response[a]
+      })
+    }
+    else {
+      final[k] = obj[k]
+    }
+  })
+  return final
+}
+
+module.exports.randomProductId = _ => {
+  return Math.floor(Math.random() * 899999 + 100000)
+}
+
 module.exports.GeneratePassword = async (password, salt) => {
   return await bcrypt.hash(password, salt);
 };
@@ -143,7 +182,6 @@ module.exports.SubscribeMessage = async (channel, service) => {
   );
 };
 module.exports.RPCObserver = async (RPC_QUEUE_NAME, service) => {
-
   const channel = await getChannel();
   await channel.assertQueue(RPC_QUEUE_NAME, {
     durable: false,
@@ -155,7 +193,7 @@ module.exports.RPCObserver = async (RPC_QUEUE_NAME, service) => {
       if (msg.content) {
         // DB Operation
         const payload = JSON.parse(msg.content.toString());
-        console.log(payload,"spec")
+        console.log(payload,"sss")
         const response = await service.serverRPCRequest(payload);
         channel.sendToQueue(
           msg.properties.replyTo,

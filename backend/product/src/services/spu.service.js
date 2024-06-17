@@ -2,7 +2,7 @@
 const { errorResponse } = require("../core");
 const { SpuModel, Spu_AttributeModel } = require("../database/models");
 const { addImageBySkuList, addImageBySpuId } = require("./gallery.service");
-const { newSku, allSkuBySpuId } = require("./sku.Service");
+const { newSku, allSkuBySpuId, oneSku } = require("./sku.Service");
 const { spuRepository } = require("../database");
 const _ = require("lodash");
 const { Types } = require("mongoose");
@@ -449,9 +449,36 @@ const checkProductById = async ({ productId }) => {
   return await spuRepository.getProductById({ productId });
 };
 
-const checkProductByServer = async ({ products }) => {
-  return await spuRepository.checkProductByServer({ products });
-};
+// const checkProductByServer = async ({ products }) => {
+//   return await spuRepository.checkProductByServer({ products });
+// };
+const checkProductByServer = async (products) => {
+  return await Promise.all(products.map(async product => {
+    if (product.sku_id) {
+      const foundSku = await oneSku({ product_id: product.productId, sku_id: product.sku_id })
+      if (foundSku) {
+        return {
+          price: foundSku.sku_price,
+          quantity: product.quantity,
+          productId: product.productId,
+          sku_id: foundSku._id
+        }
+      }
+    } else {
+      const foundProduct = await spuRepository.getProductById(product.productId)
+      if (foundProduct) {
+        return {
+          price: foundProduct.product_price,
+          quantity: product.quantity,
+          productId: product.productId,
+          sku_id: null
+        }
+      }
+    }
+
+
+  }))
+}
 
 const newSpuAttribute = async ({ attribute_id, spu_id, attribute_value }) => {
   try {

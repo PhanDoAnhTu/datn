@@ -130,13 +130,13 @@ class SpecialOfferService {
                 return this.findSpecialOfferBetweenStartDateAndEndByDate({ date, special_offer_is_active })
             case "FIND_SPECIAL_OFFER_TODAY_BY_ID_LIST":
                 return this.findSpecialOfferTodayBySpuIdList({ spu_id_list, special_offer_is_active })
-            // case "FIND_SPECIAL_OFFER_TODAY_BY_ID":
-            //     return this.findSpecialOfferBySpuId({ spu_id, special_offer_is_active })
+            case "FIND_SPECIAL_OFFER_TODAY_BY_ID":
+                return this.findSpecialOfferBySpuId({ spu_id, special_offer_is_active })
+                
             default:
                 break;
         }
     }
-
 
 
 }

@@ -18,11 +18,11 @@ class CheckoutService {
     //     throw new errorResponse.BadRequestError('cart does not exists!')
     // }
     const checkout_oder = {
-        totalPrice: 0,
-        feeShip: 0, //phi ship
-        totalDiscount: 0, //tong discount
-        totalCheckout: 0, //tong thanh toan
-      },
+      totalPrice: 0,
+      feeShip: 0, //phi ship
+      totalDiscount: 0, //tong discount
+      totalCheckout: 0, //tong thanh toan
+    },
       order_ids_new = {
         itemCheckout: {},
       };
@@ -136,10 +136,10 @@ class CheckoutService {
 
     const query = { _id: order_id };
     const updateOrInsert = {
-        $set: {
-          order_status: order_status,
-        },
+      $set: {
+        order_status: order_status,
       },
+    },
       options = {
         upsert: true,
         new: true,
@@ -166,5 +166,98 @@ class CheckoutService {
 
     return foundOrder;
   }
+
+  // static async checkoutReview({ cartId, userId, order_ids }) {
+
+  //   // const foundCart = await findCartById(cartId)
+
+  //   // if (!foundCart) {
+  //   //     throw new BadRequestError('cart does not exists!')
+  //   // }
+  //   const checkout_oder = {
+  //     totalPrice: 0,
+  //     feeShip: 0,//phi ship
+  //     totalSpecialOffer: 0,//tong discount
+  //     totalDiscount: 0,//tong discount
+  //     totalCheckout: 0,//tong thanh toan
+  //   }, order_ids_new = []
+
+  //   const { shop_discounts = [], item_products = [] } = order_ids
+
+  //   console.log("item_products:  ", item_products)
+  //   //checkout product available
+
+  //   const checkProductServer = await checkProductByServer(item_products)
+  //   console.log('checkProductServer', checkProductServer)
+  //   if (!checkProductServer[0]) throw new BadRequestError('order wrong')
+  //   //tong don hang
+
+  //   const checkoutPrice = checkProductServer.reduce((acc, product) => {
+  //     return acc + (product.quantity * product.price)
+  //   }, 0)
+  //   //tong tien truoc khi xuly
+  //   checkout_oder.totalPrice = + checkoutPrice
+  //   const itemCheckout = {
+  //     shop_discounts,//hmmmm
+  //     priceRaw: checkoutPrice,//tien truoc khi giam gia
+  //     priceApplySpecialOffer: checkoutPrice,
+  //     priceApplyDiscount: checkoutPrice,
+  //     item_products: checkProductServer
+  //   }
+  //   let checkProductServerSpecialOffer = []
+  //   const checkDateNow = await findSpecialOfferBetweenStartDateAndEndByDate({})
+  //   if (checkDateNow) {
+  //     checkDateNow.special_offer_spu_list?.map((spu) => {
+  //       if (spu.sku_list.length > 0) {
+  //         return spu.sku_list.map((sku) => {
+  //           return checkProductServer.find((prod) => {
+  //             if (prod.sku_id == sku.sku_id) {
+  //               const { price, ...prodNoPrice } = prod
+  //               checkProductServerSpecialOffer.push({ ...prodNoPrice, price: sku.price_sale })
+  //               return
+  //             }
+  //           })
+  //         })
+  //       }
+  //       return checkProductServer.find((prod) => {
+  //         if (!prod.sku_id & prod.productId == spu.product_id) {
+  //           const { price, ...prodNoPrice } = prod
+  //           checkProductServerSpecialOffer.push({ ...prodNoPrice, price: spu.price_sale })
+  //           return
+  //         }
+  //       })
+  //     })
+  //   }
+  //   itemCheckout.priceApplySpecialOffer = checkProductServerSpecialOffer.reduce((acc, product) => {
+  //     return acc + (product.quantity * product.price)
+  //   }, 0)
+
+  //   if (shop_discounts.length > 0) {
+  //     const { discount = 0 } = await getDiscountAmount({
+  //       codeId: shop_discounts[0].codeId,
+  //       userId,
+  //       products: checkProductServerSpecialOffer
+  //     })
+  //     //tong discount 
+  //     checkout_oder.totalDiscount += discount
+  //     //neu tien giam gia >0
+  //     if (discount > 0) {
+
+  //       itemCheckout.priceApplyDiscount = checkoutPrice - discount
+  //     }
+  //   }
+  //   checkout_oder.totalSpecialOffer = itemCheckout.priceApplySpecialOffer
+  //   //tong thanh toan
+  //   checkout_oder.totalCheckout += (itemCheckout.priceApplySpecialOffer - checkout_oder.totalDiscount)
+  //   order_ids_new.push(itemCheckout)
+
+  //   return {
+  //     order_ids,
+  //     order_ids_new,
+  //     checkout_oder
+  //   }
+  // }
+ 
 }
+
 module.exports = CheckoutService;

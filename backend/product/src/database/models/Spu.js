@@ -39,9 +39,9 @@ const spuSchema = new Schema({
         }
     ]
     */
-    isDraft: { type: Boolean, default: true, index: true, select: false },
-    isPublished: { type: Boolean, default: false, index: true, select: false },
-    isDeleted: { type: Boolean, default: false, index: true, select: false }
+    isDraft: { type: Boolean, default: true, index: true, select: true },
+    isPublished: { type: Boolean, default: false, index: true, select: true },
+    isDeleted: { type: Boolean, default: false, index: true, select: true }
 },
     {
         collection: COLLECTION_NAME,

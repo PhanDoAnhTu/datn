@@ -38,10 +38,10 @@ export const PRODUCT_CATEGORIES = [
 ];
 
 export const PRODUCT_MANAGEMENT_OPTIONS = [
-  { value: "all", label: "All" },
-  { value: "isPublished", label: "Published" },
-  { value: "isDraft", label: "Drafts" },
-  { value: "isDeleted", label: "Trash" },
+  { value: "all", label: "Tất cả" },
+  { value: "isPublished", label: "Đang hoạt động" },
+  { value: "isDraft", label: "Bản nháp" },
+  { value: "isDeleted", label: "Thùng rác" },
 ];
 
 export const PRODUCT_SELECT_OPTIONS = [
