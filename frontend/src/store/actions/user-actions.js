@@ -3,8 +3,15 @@ import { Action } from '../actions'
 
 
 export const SetAuthToken = async (tokens) => {
-
-  tokens ? localStorage.setItem("tokens", JSON.stringify(tokens)) : localStorage.clear();
+  if (tokens) {
+    localStorage.setItem("tokens", JSON.stringify(tokens))
+  } else {
+    localStorage.removeItem('tokens')
+    localStorage.removeItem('userInfo')
+    localStorage.removeItem('cart_products')
+    localStorage.removeItem('favorites')
+    localStorage.removeItem('selected_list_from_cart')
+  }
 
 }
 
@@ -21,7 +28,6 @@ export const onSignup = ({ customer_email, customer_password, customer_name }) =
   } catch (err) {
     console.log(err)
     // return err.response.data
-
   }
 
 };
@@ -70,8 +76,8 @@ export const onLoginWithGoogle = ({ userId, provider }) => async (dispatch) => {
     const response = await PostData('/social-authentication/google/login-success', {
       userId, provider
     });
-    const tokens = await response.data.metaData.tokens
-    console.log("tokens", tokens)
+    const tokens = await response.data?.metaData?.tokens
+    console.log("tokens", tokens,response)
     await SetAuthToken(tokens);
     return dispatch({ type: Action.LOGIN_WITH_GOOGLE, payload: response.data });
 
@@ -100,7 +106,8 @@ export const onViewProfile = () => async (dispatch) => {
 
 export const onLogout = () => async (dispatch) => {
   try {
-    const response = await PostData('/user/v1/customer/logout', {});
+    const response = await PostData('/user/v1/customer/logout');
+    SetAuthToken(null)
     return dispatch({ type: Action.LOGOUT, payload: response.data });
   } catch (err) {
     console.log(err)

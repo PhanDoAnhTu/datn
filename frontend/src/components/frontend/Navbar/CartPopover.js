@@ -23,6 +23,7 @@ import {
 } from '../../../utils';
 import { NumericFormat } from 'react-number-format';
 // import { getCartFromLocalStorage } from '../../../utils';
+import { toast } from 'react-toastify';
 
 export default function CartPopover({ Button }) {
     const navigate = useNavigate();
@@ -147,13 +148,18 @@ export default function CartPopover({ Button }) {
         dispatch(getCart({ userId: userInfo._id }));
     };
     const OpenCart = async () => {
-        await dispatch(getCart({ userId: userInfo._id }));
-        dispatch(specialOfferToday());
-        cancelAllFromCart();
-        setSelectedProductFromCart(getSelectedListFromCart);
-        setprice_total(0);
-        setOpen(true);
-    };
+        if (userInfo) {
+            await dispatch(getCart({ userId: userInfo?._id }));
+            dispatch(specialOfferToday());
+            cancelAllFromCart();
+            setSelectedProductFromCart(getSelectedListFromCart);
+            setprice_total(0);
+            setOpen(true);
+        } else {
+            toast.info("Vui lòng đăng nhập rồi giỏ hàng")
+            navigate('/dang-nhap')
+        }
+    }
     // useEffect(() => {
     //     if (userInfo) {
     //         dispatch(getCart({ userId: userInfo._id }));
@@ -208,7 +214,7 @@ export default function CartPopover({ Button }) {
                                     <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
                                         <div className="flex h-full flex-col overflow-y-scroll bg-stone-100  shadow-xl transition-all duration-200 ease-out dark:bg-zinc-950">
                                             {cart &&
-                                            cart?.cart_products?.length !==
+                                                cart?.cart_products?.length !==
                                                 0 ? (
                                                 <>
                                                     <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
@@ -249,9 +255,9 @@ export default function CartPopover({ Button }) {
                                                             <Dialog.Title className="font-small text-sm text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                                 Chọn tất cả
                                                                 {selectedProductFromCart.length ==
-                                                                cart
-                                                                    ?.cart_products
-                                                                    ?.length ? (
+                                                                    cart
+                                                                        ?.cart_products
+                                                                        ?.length ? (
                                                                     <input
                                                                         checked={
                                                                             true

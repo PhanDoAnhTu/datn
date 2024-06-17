@@ -21,12 +21,14 @@ export default function UserPopover() {
     const logoutHandler = async (close) => {
         try {
             dispatch(onLogout());
+            window.location.reload()
             toast.success('Đăng xuất thành công', {
                 className: 'black-background',
                 bodyClassName: 'grow-font-size',
                 progressClassName: 'fancy-progress-bar',
             });
             navigate('/dang-nhap');
+
             close();
         } catch (error) {
             console.error(error);
