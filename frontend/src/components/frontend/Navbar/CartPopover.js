@@ -118,7 +118,7 @@ export default function CartPopover({ Button }) {
             })
             );
         }
-        return dispatch(getCart({ userId: userInfo._id }));
+        dispatch(getCart({ userId: userInfo._id }));
     };
     const OpenCart = async () => {
         await dispatch(getCart({ userId: userInfo._id }));
@@ -128,12 +128,12 @@ export default function CartPopover({ Button }) {
         setprice_total(0)
         setOpen(true);
     };
-    useEffect(() => {
-        if (userInfo) {
-            dispatch(getCart({ userId: userInfo._id }));
-            dispatch(specialOfferToday());
-        }
-    }, [userInfo]);
+    // useEffect(() => {
+    //     if (userInfo) {
+    //         dispatch(getCart({ userId: userInfo._id }));
+    //         dispatch(specialOfferToday());
+    //     }
+    // }, [userInfo]);
     useEffect(() => {
         special_offer && setSpecial_offer_today(special_offer)
     }, [special_offer]);
