@@ -112,8 +112,8 @@ export default function ProductSingle({ product, reload }) {
                 </button>
             </div>
 
-            <div className="relative mt-2 flex w-full flex-col overflow-hidden">
-                <h3 className="text-md text-ellipsis font-bold leading-5 tracking-tight text-gray-700 dark:text-white">
+            <div className="relative mt-2 flex w-56 flex-col overflow-hidden">
+                <h3 className="text-md overflow-hidden text-ellipsis font-bold leading-5 tracking-tight text-gray-700 dark:text-white">
                     <Link
                         to={`/san-pham/${product.product_slug}-${product._id}`}
                         className="line-clamp-2"

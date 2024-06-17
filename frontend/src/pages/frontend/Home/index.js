@@ -18,24 +18,42 @@ export default function Home() {
     useEffect(() => {
         if (!all_products) dispatch(allProducts({}));
     }, [all_products]);
+
+    console.log(all_products);
     return (
         <div>
             <DocumentTitle title="Trang chủ" />
             <Banner />
             <div className="px-4 sm:px-6 lg:px-8">
                 {all_products ? (
-                    () => {
+                    (() => {
+                        const listSale =
+                            all_products[0]?.special_offer
+                                ?.special_offer_spu_list;
                         const newProducts = all_products
-                            .slice()
-                            .filter((item) => item.special_offer != null);
-                        return (
-                            <ProductList
-                                title={'Sản phẩm khuyến mại'}
-                                summary={'Dựt deal ngay kẻo lỡ'}
-                                products={newProducts}
-                            />
-                        );
-                    }
+                            ?.slice()
+                            .filter(
+                                (item) =>
+                                    item._id ===
+                                    listSale
+                                        ?.slice()
+                                        .find(
+                                            (subitem) =>
+                                                subitem.product_id === item._id
+                                        )?.product_id
+                            );
+                        if (newProducts?.length > 0) {
+                            return (
+                                <ProductList
+                                    title={'Sản phẩm khuyến mại'}
+                                    summary={'Dựt deal ngay kẻo lỡ'}
+                                    products={newProducts}
+                                />
+                            );
+                        } else {
+                            return '';
+                        }
+                    })()
                 ) : (
                     <></>
                 )}

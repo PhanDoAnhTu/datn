@@ -16,16 +16,17 @@ import { ADDITIONAL_OPTIONS, SELECT_OPTIONS } from "@constants/options";
 // import { PROMOTIONS_MANAGEMENT_COLUMN_DEFS } from "@constants/columnDefs";
 // import promotions_manangement from "@db/promotions_managements";
 import { useDispatch } from "react-redux";
-import { onGetAllSpecialOffer, onChangeStatusSpecialOfferById, removeSpecialOfferById } from "../../store/actions";
+import {
+  onGetAllSpecialOffer,
+  onChangeStatusSpecialOfferById,
+  removeSpecialOfferById,
+} from "../../store/actions";
 import { Link } from "react-router-dom";
 import { Switch } from "antd";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 
 // data placeholder
-
-
-
 
 const PromotionMangementTable = () => {
   const PROMOTIONS_MANAGEMENT_COLUMN_DEFS = [
@@ -50,16 +51,17 @@ const PromotionMangementTable = () => {
     {
       title: "Ngày bắt đầu - Ngày kêt thúc",
       dataIndex: "dateAdded",
-      render: (record) => (
+      render: (text, record) => (
         <div>
           <div className="font-bold text-header">
             Bắt đầu:{" "}
             {record &&
-              dayjs(record.special_offer_start_date).format("DD/MM/YYYY")}
+              dayjs(record?.special_offer_start_date).format("DD/MM/YYYY")}
           </div>
           <div className="font-bold text-header">
             Kết thúc:{" "}
-            {record && dayjs(record.special_offer_end_date).format("DD/MM/YYYY")}
+            {record &&
+              dayjs(record?.special_offer_end_date).format("DD/MM/YYYY")}
           </div>
         </div>
       ),
@@ -68,14 +70,14 @@ const PromotionMangementTable = () => {
     {
       title: "Hoạt động",
       dataIndex: "status",
-      render: (record) => (
+      render: (text, record) => (
         <div>
           <Switch
             checkedChildren={"ON"}
             unCheckedChildren={"OFF"}
-            onChange={(e) => handleChangeStatus(e, record._id)}
+            onChange={(e) => handleChangeStatus(e, record?._id)}
             loading={false}
-            checked={record.special_offer_is_active}
+            checked={record?.special_offer_is_active}
           />
         </div>
       ),
@@ -89,7 +91,10 @@ const PromotionMangementTable = () => {
             <Link className="btn info-btn" to={"/test"}>
               <i className="icon icon-circle-info-solid text-lg" />
             </Link>
-            <Link className="btn info-btn" onClick={() => onRemovePromotion(record._id)}>
+            <Link
+              className="btn info-btn"
+              onClick={() => onRemovePromotion(record._id)}
+            >
               <i className="icon icon-trash-regular text-lg hover:text-red" />
             </Link>
           </div>
@@ -99,7 +104,7 @@ const PromotionMangementTable = () => {
   ];
 
   const { width } = useWindowSize();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const defaultSort = {
     sortBy: ADDITIONAL_OPTIONS[0],
     sortOrder: SELECT_OPTIONS[0],
@@ -113,22 +118,29 @@ const PromotionMangementTable = () => {
 
   // console.log("data", data)
   const fetchDataPromotionManagement = async () => {
-    const responsePromotion = await dispatch(onGetAllSpecialOffer())
+    const responsePromotion = await dispatch(onGetAllSpecialOffer());
     if (responsePromotion) {
-      setData(responsePromotion.payload.metaData)
+      setData(responsePromotion.payload.metaData);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchDataPromotionManagement()
-  }, [isLoad])
+    fetchDataPromotionManagement();
+  }, [isLoad]);
 
   const handleChangeStatus = async (e, promotion_id) => {
     const id = toast.loading("Vui lòng đợi...");
-    const changeStatus = await dispatch(onChangeStatusSpecialOfferById({ special_offer_id: promotion_id, special_offer_is_active: e }))
+    const changeStatus = await dispatch(
+      onChangeStatusSpecialOfferById({
+        special_offer_id: promotion_id,
+        special_offer_is_active: e,
+      })
+    );
     if (changeStatus?.payload?.status === (200 || 201)) {
       toast.update(id, {
-        render: `Chương trình giảm giá đã được ${e === false ? "tắt" : "áp dụng"}`,
+        render: `Chương trình giảm giá đã được ${
+          e === false ? "tắt" : "áp dụng"
+        }`,
         type: "success",
         isLoading: false,
         closeOnClick: true,
@@ -143,12 +155,17 @@ const PromotionMangementTable = () => {
         autoClose: 3000,
       });
     }
-    setIsLoad(!isLoad)
-  }
+    setIsLoad(!isLoad);
+  };
   const onRemovePromotion = async (special_offer_id) => {
     const id = toast.loading("Vui lòng đợi...");
-    const changeStatus = await dispatch(removeSpecialOfferById({ special_offer_id: special_offer_id }))
-    if (changeStatus?.payload?.status === (200 || 201) & changeStatus?.payload?.metaData?.deletedCount === 1) {
+    const changeStatus = await dispatch(
+      removeSpecialOfferById({ special_offer_id: special_offer_id })
+    );
+    if (
+      (changeStatus?.payload?.status === (200 || 201)) &
+      (changeStatus?.payload?.metaData?.deletedCount === 1)
+    ) {
       toast.update(id, {
         render: `Đã xóa chương trình giảm giá này`,
         type: "success",
@@ -165,8 +182,8 @@ const PromotionMangementTable = () => {
         autoClose: 3000,
       });
     }
-    setIsLoad(!isLoad)
-  }
+    setIsLoad(!isLoad);
+  };
   const getQty = (category) => {
     if (category === "all") return data.length;
     return data.filter(
@@ -193,8 +210,8 @@ const PromotionMangementTable = () => {
                 : -1
               : a.special_offer_name.toLowerCase() <
                 b.special_offer_name.toLowerCase()
-                ? 1
-                : -1
+              ? 1
+              : -1
           )
       );
     }
@@ -210,8 +227,8 @@ const PromotionMangementTable = () => {
                 : -1
               : new Date(a.special_offer_start_date) >
                 new Date(b.special_offer_start_date)
-                ? 1
-                : -1
+              ? 1
+              : -1
           )
       );
     }
@@ -227,8 +244,8 @@ const PromotionMangementTable = () => {
                 : -1
               : new Date(a.special_offer_end_date) >
                 new Date(b.special_offer_end_date)
-                ? 1
-                : -1
+              ? 1
+              : -1
           )
       );
     }
