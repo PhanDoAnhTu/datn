@@ -20,7 +20,7 @@ export default function Profile() {
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col items-baseline justify-between pb-7 pt-24">
                 <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
-                    My account
+                    Hồ sơ của tôi
                 </h1>
             </div>
             <section className="mb-10 flex max-sm:flex-col max-sm:space-y-2 sm:space-x-3">

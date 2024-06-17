@@ -27,16 +27,18 @@ export default function Register() {
         e.preventDefault();
 
         if (password !== confirmPassword) {
-            toast.error('Passwords do not match');
+            toast.error('Mật khẩu không trùng');
         } else {
             try {
-                await dispatch(onSignup({
-                    customer_email: email,
-                    customer_password: password,
-                    customer_name: username,
-                }))
+                await dispatch(
+                    onSignup({
+                        customer_email: email,
+                        customer_password: password,
+                        customer_name: username,
+                    })
+                );
                 navigate(redirect);
-                toast.success('User successfully registered');
+                toast.success('Người dùng đăng ký thành công');
             } catch (err) {
                 console.log(err);
                 toast.error(err?.data?.message || err);
@@ -49,7 +51,7 @@ export default function Register() {
                 <div className="self-center bg-zinc-900/50 pb-12 max-sm:w-full max-sm:px-12 sm:w-3/6">
                     <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 dark:text-white ">
-                            Sign up to get more benefits
+                            Đăng ký ngay để nhận những lợi ích
                         </h2>
                     </div>
 
@@ -100,7 +102,7 @@ export default function Register() {
                                             setPassword(e.target.value)
                                         }
                                         autoComplete="current-password"
-                                        placeholder="Password"
+                                        placeholder="Mật khẩu"
                                         required
                                         className="block w-full border-b-2 border-l-0 border-r-0 border-t-0 bg-transparent py-1.5 pl-0 text-gray-900 shadow-sm outline-none ring-0 transition duration-200 ease-out placeholder:font-semibold placeholder:text-gray-300 focus:border-magenta-500 focus:ring-0 sm:text-sm sm:leading-6 dark:border-white dark:text-white"
                                     />
@@ -115,7 +117,7 @@ export default function Register() {
                                             setConfirmPassword(e.target.value)
                                         }
                                         autoComplete="current-password"
-                                        placeholder="Re-password"
+                                        placeholder="Nhập lại mật khẩu"
                                         required
                                         className="block w-full border-b-2 border-l-0 border-r-0 border-t-0 bg-transparent py-1.5 pl-0 text-gray-900 shadow-sm outline-none ring-0 transition duration-200 ease-out placeholder:font-semibold placeholder:text-gray-300 focus:border-magenta-500 focus:ring-0 sm:text-sm sm:leading-6 dark:border-white dark:text-white"
                                     />
@@ -128,18 +130,19 @@ export default function Register() {
                                     type="submit"
                                     className="flex w-full justify-center rounded-md bg-magenta-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm transition duration-200 ease-out hover:bg-magenta-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 >
-                                    {/* {isLoading ? 'Registering...' : 'Register'} */}Register
+                                    {/* {isLoading ? 'Registering...' : 'Register'} */}
+                                    Đăng ký
                                 </button>
                             </div>
                         </form>
 
                         <p className="mt-10 text-center text-sm text-gray-500 dark:text-stone-200">
-                            Already a member?{' '}
+                            Đã là thành viên?{' '}
                             <Link
-                                to="/login"
+                                to="/dang-nhap"
                                 className="font-bold leading-6 text-magenta-500 hover:text-magenta-600"
                             >
-                                Sign in now
+                                Đăng nhập
                             </Link>
                         </p>
                     </div>

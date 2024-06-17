@@ -1,5 +1,4 @@
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
-import { ReactComponent as MastercardCard } from '../../../assets/frontend/svg/MastercardCard.svg';
 import ButtonWithBorder from '../../../components/frontend/ButtonWithBorder';
 // import { products } from '../../../test/products';
 import { Link } from 'react-router-dom';
@@ -133,7 +132,7 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                 <div>
                     <div className="h-fit bg-zinc-900 p-10 text-white">
                         <div className="flow-root">
-                            <ul className="checkout -my-2 h-60 divide-gray-200 overflow-y-scroll transition-colors duration-200 ease-out dark:divide-stone-700">
+                            <ul className="checkout -my-2 divide-gray-200 overflow-y-scroll transition-colors duration-200 ease-out dark:divide-stone-700">
                                 {selectedProductFromCart &&
                                     selectedProductFromCart.map(
                                         (product, index) => (
@@ -233,9 +232,8 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                         </h1>
                                     ) : (
                                         <div className="text-md flex space-x-2 text-white">
-                                            <MastercardCard className="h-8 w-8" />
                                             <span className="text-white">
-                                                Thẻ kết thúc bằng 9276
+                                                Thanh toán bằng {paymentMethod}
                                             </span>
                                         </div>
                                     )}

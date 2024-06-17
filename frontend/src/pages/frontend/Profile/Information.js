@@ -1,9 +1,11 @@
 import { Dialog, Tab, Transition } from '@headlessui/react';
 import GenderSelection from '../../../components/frontend/GenderSelection';
 import { Fragment, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function Information() {
     const [isEditable, setIsEditable] = useState(false);
+    const { userInfo } = useSelector((state) => state.userReducer);
     const [username, setUsername] = useState('');
     const [fullname, setFullName] = useState('');
     const [email, setEmail] = useState('');
@@ -13,18 +15,13 @@ export default function Information() {
     const [password, setPassword] = useState('');
     const [oldpassword, setOldPassword] = useState('');
     const [repassword, setRepassword] = useState('');
-    const testData = {
-        username: 'test123',
-        fullname: 'le van test',
-        email: 'test@gmail.com',
-        gender: 0,
-    };
+
     useEffect(() => {
         if (isEditable === false) {
-            setFullName(testData.fullname);
-            setUsername(testData.username);
-            setGender(testData.gender);
-            setEmail(testData.email);
+            setFullName(userInfo?.customer_name);
+            setUsername(userInfo?.customer_name);
+            setGender(0);
+            setEmail(userInfo?.customer_email);
         }
     }, [isEditable]);
     function closeModal() {
@@ -73,7 +70,7 @@ export default function Information() {
                 <div className="relative">
                     <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-white">
                         <img
-                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRMbfFvbkrmVCeAM4G90s0UinjMAG9e2J2066q5byaqQ&s"
+                            src={userInfo?.customer_avatar}
                             alt=""
                             className="object-cover object-center"
                         />
@@ -203,7 +200,9 @@ export default function Information() {
                         <input
                             type="text"
                             disabled={!isEditable}
-                            value={!isEditable ? testData.username : username}
+                            value={
+                                !isEditable ? userInfo?.customer_name : username
+                            }
                             onChange={(e) => setUsername(e.target.value)}
                             className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-white outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white"
                         />
@@ -214,7 +213,9 @@ export default function Information() {
                         </span>
                         <input
                             type="text"
-                            value={!isEditable ? testData.fullname : fullname}
+                            value={
+                                !isEditable ? userInfo?.customer_name : fullname
+                            }
                             onChange={(e) => setFullName(e.target.value)}
                             disabled={!isEditable}
                             className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-white outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white"
@@ -226,7 +227,7 @@ export default function Information() {
                             Giới tính
                         </span>
                         <GenderSelection
-                            selectedGender={testData.gender}
+                            selectedGender={0}
                             isEditable={isEditable}
                             setGender={setGender}
                             gender={gender}
@@ -238,7 +239,11 @@ export default function Information() {
                         </span>
                         <input
                             type="text"
-                            value={!isEditable ? testData.fullname : fullname}
+                            value={
+                                !isEditable
+                                    ? userInfo?.customer_phone
+                                    : fullname
+                            }
                             onChange={(e) => setFullName(e.target.value)}
                             disabled={!isEditable}
                             className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-white outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white"
