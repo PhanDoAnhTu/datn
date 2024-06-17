@@ -61,6 +61,7 @@ router.get('/callback', (req, res, next) => {
 
 router.post('/login-success', async (req, res) => {
   const { userId, provider } = req.body
+  console.log(userId,provider)
   const user = await RPCRequest("CUSTOMER_RPC", {
     type: "LOGIN_WITH_SOCIAL",
     data: {

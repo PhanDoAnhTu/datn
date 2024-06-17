@@ -13,3 +13,16 @@ export const getAllDiscount = (data) => async (dispatch) => {
         // return err.response.data
     }
 };
+
+export const discountAmount = (data) => async (dispatch) => {
+    try {
+        const response = await PostData('/discount/v1/discountAmount', data);
+        return dispatch({
+            type: Action.DISCOUNT_AMOUNT,
+            payload: response.data,
+        });
+    } catch (err) {
+        console.error(err);
+        // return err.response.data
+    }
+};

@@ -29,36 +29,59 @@ export default function Login() {
 
     const submitHandler = async (e) => {
         e.preventDefault();
+        const id = toast.loading("Đang kiểm tra thông tin...")
         try {
             const dataLogin = await dispatch(
                 onLogin({ customer_email: email, customer_password: password })
             );
             // console.log(dataLogin)
-            dataLogin && navigate(redirect);
-            toast.success('User successfully login');
+            if (dataLogin?.payload?.status === (200 || 201)) {
+                navigate(redirect);
+                toast.update(id, {
+                    render: "Đăng nhập thành công",
+                    type: "success",
+                    isLoading: false,
+                    closeOnClick: true,
+                    autoClose: 3000,
+                });
+            } else {
+                toast.update(id, {
+                    render: "Đăng nhập không thành công",
+                    type: "error",
+                    isLoading: false,
+                    closeOnClick: true,
+                    autoClose: 3000,
+                });
+            }
+
         } catch (err) {
-            toast.error('Login not successfully');
+            toast.update(id, {
+                render: "Đăng nhập không thành công",
+                type: "error",
+                isLoading: false,
+                closeOnClick: true,
+                autoClose: 3000,
+            });
         }
     };
     const LoginWithFacabook = async () => {
         try {
-            // const res = await dispatch(onLoginWithFacebook())
+            toast.loading("Vui lòng chờ...")
             window.open(
                 `http://localhost:5000/api/social-authentication/facebook`,
                 '_self'
             );
-            toast.success('Đăng nhập bằng facebook thành công');
         } catch (err) {
             toast.error(err?.data?.message || err);
         }
     };
     const LoginWithGoogle = async () => {
         try {
+            toast.loading("Vui lòng chờ...")
             window.open(
                 `http://localhost:5000/api/social-authentication/google`,
                 '_self'
             );
-            toast.success('Đăng nhập bằng google thành công');
         } catch (err) {
             toast.error(err?.data?.message || err);
         }
