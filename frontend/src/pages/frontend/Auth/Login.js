@@ -134,7 +134,7 @@ export default function Login() {
                         <p className="mt-10 text-center text-sm text-gray-500 dark:text-stone-200">
                             Chưa là thành viên?{' '}
                             <Link
-                                to="/register"
+                                to="/dang-ky"
                                 className="font-bold leading-6 text-magenta-500 hover:text-magenta-600"
                             >
                                 Đăng ký ngay

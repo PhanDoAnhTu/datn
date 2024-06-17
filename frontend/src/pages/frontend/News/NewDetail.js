@@ -28,17 +28,17 @@ export default function NewDetail() {
                 </span>
             </button>
             <div className="bg-white dark:bg-zinc-900/70">
-                <div className="relative h-full w-full overflow-hidden max-sm:aspect-h-6 max-sm:aspect-w-16">
+                <div className="relative h-96 w-full overflow-hidden max-sm:aspect-h-6 max-sm:aspect-w-16">
                     <img
                         src={current_post?.post.post_image}
                         className="h-full w-full object-cover object-center"
                     />
                 </div>
                 <div className="flex flex-col space-y-2 p-2 md:p-5">
-                    <div className="flex h-full w-full justify-start text-wrap text-lg font-extrabold tracking-wide text-white  md:text-3xl lg:text-4xl">
+                    <div className="flex h-full w-full justify-start text-wrap text-lg font-extrabold tracking-wide text-gray-900 md:text-3xl lg:text-4xl dark:text-white">
                         {current_post?.post.post_name}
                     </div>
-                    <div className="md:text-md flex h-full w-full justify-start text-wrap text-sm font-extrabold tracking-wide text-white">
+                    <div className="md:text-md flex h-full w-full justify-start text-wrap text-sm font-extrabold tracking-wide text-gray-900 dark:text-white">
                         Ngày đăng:{' '}
                         {moment(current_post?.post.createdAt)
                             .locale('vi')
@@ -46,12 +46,12 @@ export default function NewDetail() {
                     </div>
                 </div>
 
-                <div className="p-2 text-justify leading-7 tracking-wide text-zinc-200 md:p-5">
+                <div className="p-2 text-justify leading-7 tracking-wide text-gray-900 md:p-5 dark:text-zinc-200">
                     {current_post?.post.post_content}
                 </div>
             </div>
             <div className="pt-7">
-                <span className="text-2xl font-bold uppercase text-white lg:text-3xl">
+                <span className="text-2xl font-bold uppercase text-gray-900 lg:text-3xl dark:text-white">
                     Bài viết cùng chủ đề
                 </span>
                 <div className="mt-3 grid gap-x-4 gap-y-4 text-white md:grid-cols-3">
