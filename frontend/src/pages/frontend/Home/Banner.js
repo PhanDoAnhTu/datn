@@ -6,7 +6,10 @@ import { useEffect } from 'react';
 import { getSliderByActive } from '../../../store/actions/slider-actions';
 export default function Banner() {
     const ExecuteScripta = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({
+            top: 10000,
+            behavior: "smooth",
+        });
     };
     const dispatch = useDispatch();
     const { slider } = useSelector((state) => state.sliderReducer);

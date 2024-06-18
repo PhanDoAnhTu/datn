@@ -8,7 +8,7 @@ const qs = require("qs");
 dotEnv.config();
 
 router.post("/", async (req, res) => {
-  const { orderInfo, amount } = req.body;
+  const { order_trackingNumber, orderInfo, amount } = req.body;
   const embed_data = {
     redirecturl: "http://localhost:3000/kiem-tra-thanh-toan",
   };
@@ -24,7 +24,7 @@ router.post("/", async (req, res) => {
     embed_data: JSON.stringify(embed_data),
     amount: amount,
     expire_duration_seconds: 300,
-    description: `OUTRUNNER - Thanh toán cho đơn hàng #${transID}`,
+    description: `OUTRUNNER - Thanh toán cho đơn hàng #${order_trackingNumber}`,
     bank_code: "",
     callback_url:
       "https://9499-115-78-13-240.ngrok-free.app/api/payment/zalopay/callback",

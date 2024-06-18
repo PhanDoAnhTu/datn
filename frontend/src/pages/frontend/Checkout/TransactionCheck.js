@@ -7,6 +7,7 @@ import {
     checkOrderByZaloPay,
 } from '../../../store/actions/payment-actions.js';
 import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 
 export default function TransactionCheck() {
     const searchParams = new URLSearchParams(window.location.search);
@@ -67,6 +68,12 @@ export default function TransactionCheck() {
             setTimeout(() => {
                 navigate('/');
             }, 2000);
+        }
+        if (isLoading === false) {
+            setTimeout(() => {
+                navigate('/');
+                toast.error("Thanh toán thất bại")
+            }, 5000);
         }
     }, [isLoading]);
 

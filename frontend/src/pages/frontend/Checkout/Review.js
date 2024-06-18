@@ -1,41 +1,107 @@
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 import ButtonWithBorder from '../../../components/frontend/ButtonWithBorder';
 // import { products } from '../../../test/products';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { paymentByMoMo, paymentByZaloPay } from '../../../store/actions';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getSelectedListFromCart } from '../../../utils';
 import { useEffect, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
+import { getCartFromLocalStorage } from '../../../utils/index'
+import { createOrder } from '../../../store/actions/order-actions';
+import { toast } from 'react-toastify';
+const _ = require("lodash");
 
-export default function Review({ step, setStep, information, paymentMethod }) {
+
+export default function Review({ step, setStep, information, discounts, paymentMethod }) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { userInfo } = useSelector((state) => state.userReducer);
 
     const [selectedProductFromCart] = useState(getSelectedListFromCart);
     const [price_total, setprice_total] = useState(0);
+    const createNewOrder = async () => {
+        const id = toast.loading("Vui lòng chờ...")
+
+        const newOrder = await dispatch(createOrder({
+            cartId: getCartFromLocalStorage?._id,
+            userId: userInfo._id,
+            order_shipping: {
+                ship_to: {
+                    phone: information.phonenumber,
+                    email: information.email,
+                    name: information.fullname,
+                    address: information.address
+                }
+            },
+            user_payment: {
+                payment_method: paymentMethod
+
+            },
+            order_ids: {
+                shop_discounts: discounts,
+                item_products: selectedProductFromCart.map((item) => _.pick(item, ["productId", "sku_id", "price", "quantity"]))
+            }
+        }))
+        if (newOrder?.payload?.status === (200 || 201)) {
+            toast.update(id, {
+                render: "Đang xử lý đơn hàng",
+                type: "info",
+                isLoading: false,
+                closeOnClick: true,
+                autoClose: 2000,
+            });
+            return newOrder?.payload?.metaData
+        } else {
+            toast.update(id, {
+                render: "Tạo đơn hàng không thành công",
+                type: "error",
+                isLoading: false,
+                closeOnClick: true,
+                autoClose: 3000,
+            });
+            return null
+        }
+    }
+
 
     const handlePlaceOrder = async () => {
         if (paymentMethod === 'COD') {
-            alert('successfully');
+            const onCreate = await createNewOrder()
+            if (onCreate) {
+                navigate('/khoi-tao-don-hang')
+            }
             return;
         }
         if (paymentMethod === 'MOMO') {
-            const result = await dispatch(
-                paymentByMoMo({
-                    orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
-                    amount: price_total,
-                })
-            );
-            result && window.location.replace(result.payload.payUrl);
+            const onCreate = await createNewOrder()
+            if (onCreate) {
+                const result = await dispatch(
+                    paymentByMoMo({
+                        orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
+                        amount: price_total,
+                        order_trackingNumber: onCreate?.order_trackingNumber
+                    })
+                );
+                result && window.location.replace(result.payload.payUrl);
+            }
+            return;
+
         }
         if (paymentMethod === 'ZALOPAY') {
-            const result = await dispatch(
-                paymentByZaloPay({
-                    orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
-                    amount: price_total,
-                })
-            );
-            result && window.location.replace(result.payload.order_url);
+            const onCreate = await createNewOrder()
+            if (onCreate) {
+                const result = await dispatch(
+                    paymentByZaloPay({
+                        orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
+                        amount: price_total,
+                        order_trackingNumber: onCreate?.order_trackingNumber
+
+                    })
+                );
+                result && window.location.replace(result.payload.order_url);
+            }
+
         }
     };
 
@@ -196,10 +262,10 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                                                             {
                                                                                 option
                                                                                     .options[
-                                                                                    product
-                                                                                        .product_variation[
-                                                                                        index
-                                                                                    ]
+                                                                                product
+                                                                                    .product_variation[
+                                                                                index
+                                                                                ]
                                                                                 ]
                                                                             }
                                                                         </p>
@@ -263,7 +329,7 @@ export default function Review({ step, setStep, information, paymentMethod }) {
                                     <div className="flex justify-between pb-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                         <h3>Giảm giá</h3>
                                         <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                            
+
                                             <NumericFormat
                                                 value={information.price_discount_amount}
                                                 displayType="text"

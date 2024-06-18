@@ -42,6 +42,7 @@ const TransactionCheck = lazy(
     () => import('../pages/frontend/Checkout/TransactionCheck.js')
 );
 const PageNotFound = lazy(() => import('../pages/frontend/PageNotFound.js'));
+const CreateOrderSuccess = lazy(() => import('../pages/frontend/Checkout/Create_order_successful.js'));
 
 import {
     Navigate,
@@ -74,19 +75,26 @@ const router = createBrowserRouter(
                 path="/kiem-tra-dang-nhap/:userId/:provider"
                 element={<LoginSuccessSocial />}
             />
-            <Route path="/thanh-toan/:page?" element={<Checkout />} />
 
             <Route path="/" element={<PrivateRoute />}>
+
                 <Route path="/trang-ca-nhan/:page?" element={<Profile />} />
 
                 <Route
                     path="/chi-tiet-don-hang/:orderId"
                     element={<OrderDetail />}
                 />
+                <Route path="/thanh-toan/:page?" element={<Checkout />} />
+
                 <Route
                     path="/kiem-tra-thanh-toan"
                     element={<TransactionCheck />}
                 />
+                <Route
+                    path="/khoi-tao-don-hang"
+                    element={<CreateOrderSuccess />}
+                />
+
             </Route>
             <Route path="*" element={<Navigate to="/404" />} />
             <Route path="/404" element={<PageNotFound />} />

@@ -193,7 +193,7 @@ module.exports.RPCObserver = async (RPC_QUEUE_NAME, service) => {
       if (msg.content) {
         // DB Operation
         const payload = JSON.parse(msg.content.toString());
-        console.log(payload,"sss")
+        console.log(payload, "sss")
         const response = await service.serverRPCRequest(payload);
         channel.sendToQueue(
           msg.properties.replyTo,
@@ -256,3 +256,18 @@ module.exports.RPCRequest = async (RPC_QUEUE_NAME, requestPayload) => {
   const uuid = uuid4(); // correlationId
   return await requestData(RPC_QUEUE_NAME, requestPayload, uuid);
 };
+
+module.exports.get_old_day_of_time = (numberDay, date) => {
+  let msD = date.getTime();
+  return new Date(Math.ceil(msD - (24 * 60 * 60 * 1000 * numberDay)))
+};
+
+
+module.exports.count_element_in_array = (array, x) => {
+  let count = 0;
+  for (let i = 0; i < array.length; i++) {
+    if (array[i] == x)
+      count++;
+  }
+  return count
+}

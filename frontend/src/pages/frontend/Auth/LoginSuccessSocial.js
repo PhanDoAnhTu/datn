@@ -9,20 +9,21 @@ const LoginSuccessSocial = () => {
   const { userId, provider } = useParams()
 
   const dispatch = useDispatch()
+
   const callApiLogin = async () => {
-    if (userId) {
+    
+    if (userId && provider) {
       if (provider === 'facebook') {
         const facebook = await dispatch(onLoginWithFacebook({ userId, provider }))
         if (facebook?.payload?.metaData?.customer) {
           toast.success("Đăng nhập bằng facebook thành công")
         } else {
           toast.error("Đăng nhập bằng facebook không thành công")
-
         }
       }
       if (provider === 'google') {
         const google = await dispatch(onLoginWithGoogle({ userId, provider }))
-        console.log("aaaa",google)
+        console.log("aaaa", google)
         if (google?.payload?.metaData?.customer) {
           toast.success("Đăng nhập bằng google thành công")
         } else {
@@ -42,7 +43,7 @@ const LoginSuccessSocial = () => {
   //   }
   // }, [])
 
-  return userInfo ? <Navigate to="/" /> : <Navigate to="/dang-nhap" replace={true} />;
+  return userInfo ? <Navigate to="/" /> : <Navigate to="/dang-nhap" />;
 };
 
 export default LoginSuccessSocial;

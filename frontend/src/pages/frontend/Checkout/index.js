@@ -35,10 +35,11 @@ export default function Checkout() {
     const [paymentMethod, setPaymentMethod] = useState('COD');
     const [selectedProductFromCart] = useState(getSelectedListFromCart);
     const [price, setPrice] = useState(0);
+    const [discounts, setDiscounts] = useState([]);
+
     const [price_discount_amount, setPrice_discount_amount] = useState(0);
     const [price_total, setprice_total] = useState(0);
     // const [dataOrder, setDataOrder] = useState(null)
-
 
     // eslint-disable-next-line no-unused-vars
     const [selectedDiscount, setSelectedDiscount] = useState(null);
@@ -52,28 +53,29 @@ export default function Checkout() {
             phonenumber === '' ||
             address === ''
         ) {
-           toast.error("Vui lòng nhập đầy đủ tông tin giao hàng.")
+            toast.error("Vui lòng nhập đầy đủ tông tin giao hàng.")
             return;
         }
         setStep(step + 1);
     };
-    const onSelectedDiscount = async (discount_code) => {
-        setSelectedDiscount(discount_code)
-        console.log(discount_code, "code")
-        if (discount_code) {
+    const onSelectedDiscount = async (selected_discount) => {
+        setSelectedDiscount(selected_discount)
+        // console.log(selected_discount, "code")
+        if (selected_discount?.discount_code) {
             const applyDiscount = await dispatch(discountAmount({
                 userId: userInfo._id,
-                codeId: discount_code,
+                codeId: selected_discount.discount_code,
                 products: selectedProductFromCart
             }))
             if (applyDiscount?.payload.status === (200 || 201)) {
-                const { totalCheckout, discount } = applyDiscount.payload.metaData
+                const { totalCheckout = price, discount = 0 } = applyDiscount.payload.metaData
                 setprice_total(totalCheckout)
                 setPrice_discount_amount(discount)
-
+                setDiscounts([{discountId:selected_discount?._id,codeId:selected_discount?.discount_code}])
             }
-            console.log("applyDiscount", applyDiscount)
+            // console.log("applyDiscount", applyDiscount)
         } else {
+            setDiscounts([])
             setprice_total(price)
             setPrice_discount_amount(0)
         }
@@ -90,8 +92,8 @@ export default function Checkout() {
     useEffect(() => {
         setprice_total(price)
     }, [price]);
-    console.log('test1:', discount);
-    console.log('currentDiscount', selectedDiscount);
+    // console.log('test1:', discount);
+    // console.log('currentDiscount', selectedDiscount);
 
     return (
         <div className="overflow-hidden pb-7 pt-10 md:pt-24">
@@ -226,7 +228,7 @@ export default function Checkout() {
                                                                                 item
                                                                             ) =>
                                                                                 item.discount_code ===
-                                                                                selectedDiscount
+                                                                                selectedDiscount.discount_code
                                                                         )
                                                                         .discount_code
                                                                     } | ${discount
@@ -236,7 +238,7 @@ export default function Checkout() {
                                                                                 item
                                                                             ) =>
                                                                                 item.discount_code ===
-                                                                                selectedDiscount
+                                                                                selectedDiscount.discount_code
                                                                         )
                                                                         .discount_description
                                                                     }`}
@@ -309,7 +311,7 @@ export default function Checkout() {
                                                                                     }`
                                                                                 }
                                                                                 value={
-                                                                                    item.discount_code
+                                                                                    item
                                                                                 }
                                                                             >
                                                                                 {({
@@ -536,6 +538,7 @@ export default function Checkout() {
 
                     setStep={setStep}
                     step={step}
+                    discounts={discounts}
                     information={{ email, fullname, phonenumber, address, price_discount_amount, price_total }}
                     paymentMethod={paymentMethod}
                 />

@@ -82,6 +82,12 @@ class spuController {
       metaData: await SpuService.productFromCart(req.body)
     }).send(res)
   }
+  findProductBestSelling = async (req, res, next) => {
+    new successResponse.SuccessResponse({
+      message: 'findProductBestSelling success',
+      metaData: await SpuService.findProductBestSelling(req.body)
+    }).send(res)
+  }
 }
 
 module.exports = new spuController;

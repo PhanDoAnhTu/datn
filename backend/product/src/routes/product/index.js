@@ -18,5 +18,6 @@ router.post("/spu/findProductsByCategory", asynchandler(productController.findPr
 router.post("/spu/findProductDetail", asynchandler(productController.findProductDetail));
 router.post("/spu/productFromCart", asynchandler(productController.productFromCart));
 router.post("/spu/AllProductsOption", asynchandler(productController.AllProductsOption));
+router.post("/spu/findProductBestSelling", asynchandler(productController.findProductBestSelling));
 
 module.exports = router;

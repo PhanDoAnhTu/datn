@@ -68,7 +68,6 @@ export default function Category() {
     const [selectedBrands, setSelectedBrands] = useState([]);
     const [selectedAttributes, setSelectedAttributes] = useState([]);
     const [selectedSort, setSelectedSort] = useState('createdAt');
-
     useEffect(() => {
         setSelectedBrands([]);
         setSelectedAttributes([]);
@@ -98,6 +97,7 @@ export default function Category() {
                     )
             );
         }
+
         if (
             category1 !== undefined &&
             category2 !== undefined &&
@@ -111,11 +111,11 @@ export default function Category() {
                             category?.find(
                                 (item) =>
                                     item.parent_id ===
-                                        category?.find(
-                                            (subitem) =>
-                                                subitem.category_slug ===
-                                                category1
-                                        )?._id &&
+                                    category?.find(
+                                        (subitem) =>
+                                            subitem.category_slug ===
+                                            category1
+                                    )?._id &&
                                     item.category_slug === category2
                             )?._id
                         )
@@ -137,23 +137,23 @@ export default function Category() {
                                 .find(
                                     (item) =>
                                         item.parent_id ===
-                                            category
-                                                ?.slice()
-                                                .find(
-                                                    (subitem) =>
-                                                        subitem.parent_id ===
-                                                            category
-                                                                ?.slice()
-                                                                .find(
-                                                                    (
-                                                                        subsubitem
-                                                                    ) =>
-                                                                        subsubitem.category_slug ===
-                                                                        category1
-                                                                )?._id &&
-                                                        subitem.category_slug ===
-                                                            category2
-                                                )?._id &&
+                                        category
+                                            ?.slice()
+                                            .find(
+                                                (subitem) =>
+                                                    subitem.parent_id ===
+                                                    category
+                                                        ?.slice()
+                                                        .find(
+                                                            (
+                                                                subsubitem
+                                                            ) =>
+                                                                subsubitem.category_slug ===
+                                                                category1
+                                                        )?._id &&
+                                                    subitem.category_slug ===
+                                                    category2
+                                            )?._id &&
                                         item.category_slug === category3
                                 )?._id
                         )
@@ -184,12 +184,12 @@ export default function Category() {
                                         ? -1
                                         : 1
                                     : selectedSort === 'priceHighToLow'
-                                      ? a.product_price > b.product_price
-                                          ? -1
-                                          : 1
-                                      : selectedSort === 'createdAt'
-                                        ? 1
-                                        : -1
+                                        ? a.product_price > b.product_price
+                                            ? -1
+                                            : 1
+                                        : selectedSort === 'createdAt'
+                                            ? 1
+                                            : -1
                             )
                     );
                 }
@@ -215,12 +215,12 @@ export default function Category() {
                                         ? -1
                                         : 1
                                     : selectedSort === 'priceHighToLow'
-                                      ? a.product_price > b.product_price
-                                          ? -1
-                                          : 1
-                                      : selectedSort === 'createdAt'
-                                        ? 1
-                                        : -1
+                                        ? a.product_price > b.product_price
+                                            ? -1
+                                            : 1
+                                        : selectedSort === 'createdAt'
+                                            ? 1
+                                            : -1
                             )
                     );
                 }
@@ -237,11 +237,11 @@ export default function Category() {
                                     category?.find(
                                         (item) =>
                                             item.parent_id ===
-                                                category?.find(
-                                                    (subitem) =>
-                                                        subitem.category_slug ===
-                                                        category1
-                                                )?._id &&
+                                            category?.find(
+                                                (subitem) =>
+                                                    subitem.category_slug ===
+                                                    category1
+                                            )?._id &&
                                             item.category_slug === category2
                                     )?._id
                                 )
@@ -252,12 +252,12 @@ export default function Category() {
                                         ? -1
                                         : 1
                                     : selectedSort === 'priceHighToLow'
-                                      ? a.product_price > b.product_price
-                                          ? -1
-                                          : 1
-                                      : selectedSort === 'createdAt'
-                                        ? 1
-                                        : -1
+                                        ? a.product_price > b.product_price
+                                            ? -1
+                                            : 1
+                                        : selectedSort === 'createdAt'
+                                            ? 1
+                                            : -1
                             )
                     );
                 }
@@ -276,24 +276,24 @@ export default function Category() {
                                         .find(
                                             (item) =>
                                                 item.parent_id ===
-                                                    category
-                                                        ?.slice()
-                                                        .find(
-                                                            (subitem) =>
-                                                                subitem.parent_id ===
-                                                                    category
-                                                                        ?.slice()
-                                                                        .find(
-                                                                            (
-                                                                                subsubitem
-                                                                            ) =>
-                                                                                subsubitem.category_slug ===
-                                                                                category1
-                                                                        )
-                                                                        ?._id &&
-                                                                subitem.category_slug ===
-                                                                    category2
-                                                        )?._id &&
+                                                category
+                                                    ?.slice()
+                                                    .find(
+                                                        (subitem) =>
+                                                            subitem.parent_id ===
+                                                            category
+                                                                ?.slice()
+                                                                .find(
+                                                                    (
+                                                                        subsubitem
+                                                                    ) =>
+                                                                        subsubitem.category_slug ===
+                                                                        category1
+                                                                )
+                                                                ?._id &&
+                                                            subitem.category_slug ===
+                                                            category2
+                                                    )?._id &&
                                                 item.category_slug === category3
                                         )?._id
                                 )
@@ -304,12 +304,12 @@ export default function Category() {
                                         ? -1
                                         : 1
                                     : selectedSort === 'priceHighToLow'
-                                      ? a.product_price > b.product_price
-                                          ? -1
-                                          : 1
-                                      : selectedSort === 'createdAt'
-                                        ? 1
-                                        : -1
+                                        ? a.product_price > b.product_price
+                                            ? -1
+                                            : 1
+                                        : selectedSort === 'createdAt'
+                                            ? 1
+                                            : -1
                             )
                     );
                 }
@@ -332,12 +332,12 @@ export default function Category() {
                                     ? -1
                                     : 1
                                 : selectedSort === 'priceHighToLow'
-                                  ? a.product_price < b.product_price
-                                      ? -1
-                                      : 1
-                                  : selectedSort === 'createdAt'
-                                    ? 1
-                                    : -1
+                                    ? a.product_price < b.product_price
+                                        ? -1
+                                        : 1
+                                    : selectedSort === 'createdAt'
+                                        ? 1
+                                        : -1
                         )
                 );
             }
@@ -363,12 +363,12 @@ export default function Category() {
                                     ? -1
                                     : 1
                                 : selectedSort === 'priceHighToLow'
-                                  ? a.product_price < b.product_price
-                                      ? -1
-                                      : 1
-                                  : selectedSort === 'createdAt'
-                                    ? 1
-                                    : -1
+                                    ? a.product_price < b.product_price
+                                        ? -1
+                                        : 1
+                                    : selectedSort === 'createdAt'
+                                        ? 1
+                                        : -1
                         )
                 );
             } else {
@@ -384,12 +384,12 @@ export default function Category() {
                                     ? -1
                                     : 1
                                 : selectedSort === 'priceHighToLow'
-                                  ? a.product_price < b.product_price
-                                      ? -1
-                                      : 1
-                                  : selectedSort === 'createdAt'
-                                    ? 1
-                                    : -1
+                                    ? a.product_price < b.product_price
+                                        ? -1
+                                        : 1
+                                    : selectedSort === 'createdAt'
+                                        ? 1
+                                        : -1
                         )
                 );
             }
@@ -414,12 +414,12 @@ export default function Category() {
                                         ? -1
                                         : 1
                                     : selectedSort === 'priceHighToLow'
-                                      ? a.product_price > b.product_price
-                                          ? -1
-                                          : 1
-                                      : selectedSort === 'createdAt'
-                                        ? 1
-                                        : -1
+                                        ? a.product_price > b.product_price
+                                            ? -1
+                                            : 1
+                                        : selectedSort === 'createdAt'
+                                            ? 1
+                                            : -1
                             )
                     );
                 }
@@ -445,12 +445,12 @@ export default function Category() {
                                         ? -1
                                         : 1
                                     : selectedSort === 'priceHighToLow'
-                                      ? a.product_price > b.product_price
-                                          ? -1
-                                          : 1
-                                      : selectedSort === 'createdAt'
-                                        ? 1
-                                        : -1
+                                        ? a.product_price > b.product_price
+                                            ? -1
+                                            : 1
+                                        : selectedSort === 'createdAt'
+                                            ? 1
+                                            : -1
                             )
                     );
                 }
@@ -467,11 +467,11 @@ export default function Category() {
                                     category?.find(
                                         (item) =>
                                             item.parent_id ===
-                                                category?.find(
-                                                    (subitem) =>
-                                                        subitem.category_slug ===
-                                                        category1
-                                                )?._id &&
+                                            category?.find(
+                                                (subitem) =>
+                                                    subitem.category_slug ===
+                                                    category1
+                                            )?._id &&
                                             item.category_slug === category2
                                     )?._id
                                 )
@@ -482,12 +482,12 @@ export default function Category() {
                                         ? -1
                                         : 1
                                     : selectedSort === 'priceHighToLow'
-                                      ? a.product_price > b.product_price
-                                          ? -1
-                                          : 1
-                                      : selectedSort === 'createdAt'
-                                        ? 1
-                                        : -1
+                                        ? a.product_price > b.product_price
+                                            ? -1
+                                            : 1
+                                        : selectedSort === 'createdAt'
+                                            ? 1
+                                            : -1
                             )
                     );
                 }
@@ -506,24 +506,24 @@ export default function Category() {
                                         .find(
                                             (item) =>
                                                 item.parent_id ===
-                                                    category
-                                                        ?.slice()
-                                                        .find(
-                                                            (subitem) =>
-                                                                subitem.parent_id ===
-                                                                    category
-                                                                        ?.slice()
-                                                                        .find(
-                                                                            (
-                                                                                subsubitem
-                                                                            ) =>
-                                                                                subsubitem.category_slug ===
-                                                                                category1
-                                                                        )
-                                                                        ?._id &&
-                                                                subitem.category_slug ===
-                                                                    category2
-                                                        )?._id &&
+                                                category
+                                                    ?.slice()
+                                                    .find(
+                                                        (subitem) =>
+                                                            subitem.parent_id ===
+                                                            category
+                                                                ?.slice()
+                                                                .find(
+                                                                    (
+                                                                        subsubitem
+                                                                    ) =>
+                                                                        subsubitem.category_slug ===
+                                                                        category1
+                                                                )
+                                                                ?._id &&
+                                                            subitem.category_slug ===
+                                                            category2
+                                                    )?._id &&
                                                 item.category_slug === category3
                                         )?._id
                                 )
@@ -534,12 +534,12 @@ export default function Category() {
                                         ? -1
                                         : 1
                                     : selectedSort === 'priceHighToLow'
-                                      ? a.product_price > b.product_price
-                                          ? -1
-                                          : 1
-                                      : selectedSort === 'createdAt'
-                                        ? 1
-                                        : -1
+                                        ? a.product_price > b.product_price
+                                            ? -1
+                                            : 1
+                                        : selectedSort === 'createdAt'
+                                            ? 1
+                                            : -1
                             )
                     );
                 }
@@ -556,12 +556,12 @@ export default function Category() {
                                     ? -1
                                     : 1
                                 : selectedSort === 'priceHighToLow'
-                                  ? a.product_price < b.product_price
-                                      ? -1
-                                      : 1
-                                  : selectedSort === 'createdAt'
-                                    ? 1
-                                    : -1
+                                    ? a.product_price < b.product_price
+                                        ? -1
+                                        : 1
+                                    : selectedSort === 'createdAt'
+                                        ? 1
+                                        : -1
                         )
                 );
             }
@@ -586,12 +586,12 @@ export default function Category() {
                                     ? -1
                                     : 1
                                 : selectedSort === 'priceHighToLow'
-                                  ? a.product_price < b.product_price
-                                      ? -1
-                                      : 1
-                                  : selectedSort === 'createdAt'
-                                    ? 1
-                                    : -1
+                                    ? a.product_price < b.product_price
+                                        ? -1
+                                        : 1
+                                    : selectedSort === 'createdAt'
+                                        ? 1
+                                        : -1
                         )
                 );
             } else {
@@ -613,12 +613,12 @@ export default function Category() {
                                     ? -1
                                     : 1
                                 : selectedSort === 'priceHighToLow'
-                                  ? a.product_price < b.product_price
-                                      ? -1
-                                      : 1
-                                  : selectedSort === 'createdAt'
-                                    ? 1
-                                    : -1
+                                    ? a.product_price < b.product_price
+                                        ? -1
+                                        : 1
+                                    : selectedSort === 'createdAt'
+                                        ? 1
+                                        : -1
                         )
                 );
             }
@@ -690,31 +690,31 @@ export default function Category() {
                                         <h3 className="sr-only">Categories</h3>
                                         <ul className="px-2 py-3 font-medium text-gray-900">
                                             {category1 === undefined &&
-                                            category2 === undefined &&
-                                            category3 === undefined
+                                                category2 === undefined &&
+                                                category3 === undefined
                                                 ? category
-                                                      ?.slice()
-                                                      .filter(
-                                                          (item) =>
-                                                              item.parent_id ===
-                                                              null
-                                                      )
-                                                      .map((item) => (
-                                                          <li key={item._id}>
-                                                              <Link
-                                                                  to={`/san-pham-theo-danh-muc/${item.category_slug}`}
-                                                                  className={`block px-2 py-3 ${category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
-                                                              >
-                                                                  {
-                                                                      item.category_name
-                                                                  }
-                                                              </Link>
-                                                          </li>
-                                                      ))
+                                                    ?.slice()
+                                                    .filter(
+                                                        (item) =>
+                                                            item.parent_id ===
+                                                            null
+                                                    )
+                                                    .map((item) => (
+                                                        <li key={item._id}>
+                                                            <Link
+                                                                to={`/san-pham-theo-danh-muc/${item.category_slug}`}
+                                                                className={`block px-2 py-3 ${category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                                            >
+                                                                {
+                                                                    item.category_name
+                                                                }
+                                                            </Link>
+                                                        </li>
+                                                    ))
                                                 : category1 !== undefined &&
                                                     category2 === undefined &&
                                                     category3 === undefined
-                                                  ? category
+                                                    ? category
                                                         ?.slice()
                                                         .filter(
                                                             (item) =>
@@ -741,89 +741,89 @@ export default function Category() {
                                                                 </Link>
                                                             </li>
                                                         ))
-                                                  : category1 !== undefined &&
-                                                      category2 !== undefined &&
-                                                      category3 === undefined
-                                                    ? category
-                                                          ?.slice()
-                                                          .filter(
-                                                              (item) =>
-                                                                  item.parent_id ===
-                                                                  category
-                                                                      ?.slice()
-                                                                      .find(
-                                                                          (
-                                                                              item
-                                                                          ) =>
-                                                                              item.parent_id ===
-                                                                                  category
-                                                                                      ?.slice()
-                                                                                      .find(
-                                                                                          (
-                                                                                              item
-                                                                                          ) =>
-                                                                                              item.category_slug ===
-                                                                                              category1
-                                                                                      )
-                                                                                      ?._id &&
-                                                                              item.category_slug ===
-                                                                                  category2
-                                                                      )?._id
-                                                          )
-                                                          .map((item) => (
-                                                              <li
-                                                                  key={item._id}
-                                                              >
-                                                                  <Link
-                                                                      to={`/san-pham-theo-danh-muc/${category1}/${category2}/${item.category_slug}`}
-                                                                      className={`block px-2 py-3 ${category3 !== undefined && category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
-                                                                  >
-                                                                      {
-                                                                          item.category_name
-                                                                      }
-                                                                  </Link>
-                                                              </li>
-                                                          ))
-                                                    : category
-                                                          ?.slice()
-                                                          .filter(
-                                                              (item) =>
-                                                                  item.parent_id ===
-                                                                  category
-                                                                      ?.slice()
-                                                                      .find(
-                                                                          (
-                                                                              item
-                                                                          ) =>
-                                                                              item.parent_id ===
-                                                                                  category
-                                                                                      ?.slice()
-                                                                                      .find(
-                                                                                          (
-                                                                                              item
-                                                                                          ) =>
-                                                                                              item.category_slug ===
-                                                                                              category1
-                                                                                      )
-                                                                                      ?._id &&
-                                                                              item.category_slug ===
-                                                                                  category2
-                                                                      )?._id
-                                                          )
-                                                          .map((item) => (
-                                                              <li
-                                                                  key={item._id}
-                                                              >
-                                                                  <Link
-                                                                      to={`/san-pham-theo-danh-muc/${category1}/${category2}/${item.category_slug}`}
-                                                                      className={`block px-2 py-3 ${category3 !== undefined && category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
-                                                                  >
-                                                                      {
-                                                                          item.category_name
-                                                                      }
-                                                                  </Link>
-                                                              </li>
-                                                          ))}
+                                                    : category1 !== undefined &&
+                                                        category2 !== undefined &&
+                                                        category3 === undefined
+                                                        ? category
+                                                            ?.slice()
+                                                            .filter(
+                                                                (item) =>
+                                                                    item.parent_id ===
+                                                                    category
+                                                                        ?.slice()
+                                                                        .find(
+                                                                            (
+                                                                                item
+                                                                            ) =>
+                                                                                item.parent_id ===
+                                                                                category
+                                                                                    ?.slice()
+                                                                                    .find(
+                                                                                        (
+                                                                                            item
+                                                                                        ) =>
+                                                                                            item.category_slug ===
+                                                                                            category1
+                                                                                    )
+                                                                                    ?._id &&
+                                                                                item.category_slug ===
+                                                                                category2
+                                                                        )?._id
+                                                            )
+                                                            .map((item) => (
+                                                                <li
+                                                                    key={item._id}
+                                                                >
+                                                                    <Link
+                                                                        to={`/san-pham-theo-danh-muc/${category1}/${category2}/${item.category_slug}`}
+                                                                        className={`block px-2 py-3 ${category3 !== undefined && category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                                                    >
+                                                                        {
+                                                                            item.category_name
+                                                                        }
+                                                                    </Link>
+                                                                </li>
+                                                            ))
+                                                        : category
+                                                            ?.slice()
+                                                            .filter(
+                                                                (item) =>
+                                                                    item.parent_id ===
+                                                                    category
+                                                                        ?.slice()
+                                                                        .find(
+                                                                            (
+                                                                                item
+                                                                            ) =>
+                                                                                item.parent_id ===
+                                                                                category
+                                                                                    ?.slice()
+                                                                                    .find(
+                                                                                        (
+                                                                                            item
+                                                                                        ) =>
+                                                                                            item.category_slug ===
+                                                                                            category1
+                                                                                    )
+                                                                                    ?._id &&
+                                                                                item.category_slug ===
+                                                                                category2
+                                                                        )?._id
+                                                            )
+                                                            .map((item) => (
+                                                                <li
+                                                                    key={item._id}
+                                                                >
+                                                                    <Link
+                                                                        to={`/san-pham-theo-danh-muc/${category1}/${category2}/${item.category_slug}`}
+                                                                        className={`block px-2 py-3 ${category3 !== undefined && category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                                                    >
+                                                                        {
+                                                                            item.category_name
+                                                                        }
+                                                                    </Link>
+                                                                </li>
+                                                            ))}
                                         </ul>
                                         {brand && (
                                             <Disclosure
@@ -890,11 +890,11 @@ export default function Category() {
                                                                                             (
                                                                                                 prevState
                                                                                             ) => [
-                                                                                                ...prevState,
-                                                                                                e
-                                                                                                    .target
-                                                                                                    .value,
-                                                                                            ]
+                                                                                                    ...prevState,
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .value,
+                                                                                                ]
                                                                                         );
                                                                                     } else {
                                                                                         setSelectedBrands(
@@ -920,7 +920,7 @@ export default function Category() {
                                                                                             og ===
                                                                                             item._id
                                                                                     ) !==
-                                                                                    -1
+                                                                                        -1
                                                                                         ? true
                                                                                         : false
                                                                                 }
@@ -1013,11 +1013,11 @@ export default function Category() {
                                                                                                 (
                                                                                                     prevState
                                                                                                 ) => [
-                                                                                                    ...prevState,
-                                                                                                    e
-                                                                                                        .target
-                                                                                                        .value,
-                                                                                                ]
+                                                                                                        ...prevState,
+                                                                                                        e
+                                                                                                            .target
+                                                                                                            .value,
+                                                                                                    ]
                                                                                             );
                                                                                         } else {
                                                                                             setSelectedAttributes(
@@ -1043,7 +1043,7 @@ export default function Category() {
                                                                                                 og ===
                                                                                                 subitem._id
                                                                                         ) !==
-                                                                                        -1
+                                                                                            -1
                                                                                             ? true
                                                                                             : false
                                                                                     }
@@ -1079,52 +1079,52 @@ export default function Category() {
                         <div>
                             <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
                                 {category1 === undefined &&
-                                category2 === undefined &&
-                                category3 === undefined
+                                    category2 === undefined &&
+                                    category3 === undefined
                                     ? 'Danh mục'
                                     : category1 !== undefined &&
                                         category2 === undefined &&
                                         category3 === undefined
-                                      ? category
+                                        ? category
                                             ?.slice()
                                             .find(
                                                 (item) =>
                                                     item.category_slug ===
                                                     category1
                                             )?.category_name
-                                      : category1 !== undefined &&
-                                          category2 !== undefined &&
-                                          category3 === undefined
-                                        ? category
-                                              ?.slice()
-                                              .find(
-                                                  (item) =>
-                                                      item.parent_id ===
-                                                          category
-                                                              ?.slice()
-                                                              .find(
-                                                                  (item) =>
-                                                                      item.category_slug ===
-                                                                      category1
-                                                              )?._id &&
-                                                      item.category_slug ===
-                                                          category2
-                                              )?.category_name
-                                        : category
-                                              ?.slice()
-                                              .find(
-                                                  (item) =>
-                                                      item.parent_id ===
-                                                          category
-                                                              ?.slice()
-                                                              .find(
-                                                                  (item) =>
-                                                                      item.category_slug ===
-                                                                      category1
-                                                              )?._id &&
-                                                      item.category_slug ===
-                                                          category2
-                                              )?.category_name}
+                                        : category1 !== undefined &&
+                                            category2 !== undefined &&
+                                            category3 === undefined
+                                            ? category
+                                                ?.slice()
+                                                .find(
+                                                    (item) =>
+                                                        item.parent_id ===
+                                                        category
+                                                            ?.slice()
+                                                            .find(
+                                                                (item) =>
+                                                                    item.category_slug ===
+                                                                    category1
+                                                            )?._id &&
+                                                        item.category_slug ===
+                                                        category2
+                                                )?.category_name
+                                            : category
+                                                ?.slice()
+                                                .find(
+                                                    (item) =>
+                                                        item.parent_id ===
+                                                        category
+                                                            ?.slice()
+                                                            .find(
+                                                                (item) =>
+                                                                    item.category_slug ===
+                                                                    category1
+                                                            )?._id &&
+                                                        item.category_slug ===
+                                                        category2
+                                                )?.category_name}
                             </h1>
                         </div>
 
@@ -1231,27 +1231,27 @@ export default function Category() {
                                 <h3 className="sr-only">Categories</h3>
                                 <ul className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900 dark:text-white">
                                     {category1 === undefined &&
-                                    category2 === undefined &&
-                                    category3 === undefined
+                                        category2 === undefined &&
+                                        category3 === undefined
                                         ? category
-                                              ?.slice()
-                                              .filter(
-                                                  (item) =>
-                                                      item.parent_id === null
-                                              )
-                                              .map((item) => (
-                                                  <li key={item._id}>
-                                                      <Link
-                                                          to={`/san-pham-theo-danh-muc/${item.category_slug}`}
-                                                      >
-                                                          {item.category_name}
-                                                      </Link>
-                                                  </li>
-                                              ))
+                                            ?.slice()
+                                            .filter(
+                                                (item) =>
+                                                    item.parent_id === null
+                                            )
+                                            .map((item) => (
+                                                <li key={item._id}>
+                                                    <Link
+                                                        to={`/san-pham-theo-danh-muc/${item.category_slug}`}
+                                                    >
+                                                        {item.category_name}
+                                                    </Link>
+                                                </li>
+                                            ))
                                         : category1 !== undefined &&
                                             category2 === undefined &&
                                             category3 === undefined
-                                          ? category
+                                            ? category
                                                 ?.slice()
                                                 .filter(
                                                     (item) =>
@@ -1273,81 +1273,81 @@ export default function Category() {
                                                         </Link>
                                                     </li>
                                                 ))
-                                          : category1 !== undefined &&
-                                              category2 !== undefined &&
-                                              category3 === undefined
-                                            ? category
-                                                  ?.slice()
-                                                  .filter(
-                                                      (item) =>
-                                                          item.parent_id ===
-                                                          category
-                                                              ?.slice()
-                                                              .find(
-                                                                  (item) =>
-                                                                      item.parent_id ===
-                                                                          category
-                                                                              ?.slice()
-                                                                              .find(
-                                                                                  (
-                                                                                      item
-                                                                                  ) =>
-                                                                                      item.category_slug ===
-                                                                                      category1
-                                                                              )
-                                                                              ?._id &&
-                                                                      item.category_slug ===
-                                                                          category2
-                                                              )?._id
-                                                  )
-                                                  .map((item) => (
-                                                      <li key={item._id}>
-                                                          <Link
-                                                              to={`/san-pham-theo-danh-muc/${category1}/${category2}/${item.category_slug}`}
-                                                              className={`${category3 !== undefined && category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
-                                                          >
-                                                              {
-                                                                  item.category_name
-                                                              }
-                                                          </Link>
-                                                      </li>
-                                                  ))
-                                            : category
-                                                  ?.slice()
-                                                  .filter(
-                                                      (item) =>
-                                                          item.parent_id ===
-                                                          category
-                                                              ?.slice()
-                                                              .find(
-                                                                  (item) =>
-                                                                      item.parent_id ===
-                                                                          category
-                                                                              ?.slice()
-                                                                              .find(
-                                                                                  (
-                                                                                      item
-                                                                                  ) =>
-                                                                                      item.category_slug ===
-                                                                                      category1
-                                                                              )
-                                                                              ?._id &&
-                                                                      item.category_slug ===
-                                                                          category2
-                                                              )?._id
-                                                  )
-                                                  .map((item) => (
-                                                      <li key={item._id}>
-                                                          <Link
-                                                              to={`/san-pham-theo-danh-muc/${category1}/${category2}/${item.category_slug}`}
-                                                              className={`${category3 !== undefined && category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
-                                                          >
-                                                              {
-                                                                  item.category_name
-                                                              }
-                                                          </Link>
-                                                      </li>
-                                                  ))}
+                                            : category1 !== undefined &&
+                                                category2 !== undefined &&
+                                                category3 === undefined
+                                                ? category
+                                                    ?.slice()
+                                                    .filter(
+                                                        (item) =>
+                                                            item.parent_id ===
+                                                            category
+                                                                ?.slice()
+                                                                .find(
+                                                                    (item) =>
+                                                                        item.parent_id ===
+                                                                        category
+                                                                            ?.slice()
+                                                                            .find(
+                                                                                (
+                                                                                    item
+                                                                                ) =>
+                                                                                    item.category_slug ===
+                                                                                    category1
+                                                                            )
+                                                                            ?._id &&
+                                                                        item.category_slug ===
+                                                                        category2
+                                                                )?._id
+                                                    )
+                                                    .map((item) => (
+                                                        <li key={item._id}>
+                                                            <Link
+                                                                to={`/san-pham-theo-danh-muc/${category1}/${category2}/${item.category_slug}`}
+                                                                className={`${category3 !== undefined && category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                                            >
+                                                                {
+                                                                    item.category_name
+                                                                }
+                                                            </Link>
+                                                        </li>
+                                                    ))
+                                                : category
+                                                    ?.slice()
+                                                    .filter(
+                                                        (item) =>
+                                                            item.parent_id ===
+                                                            category
+                                                                ?.slice()
+                                                                .find(
+                                                                    (item) =>
+                                                                        item.parent_id ===
+                                                                        category
+                                                                            ?.slice()
+                                                                            .find(
+                                                                                (
+                                                                                    item
+                                                                                ) =>
+                                                                                    item.category_slug ===
+                                                                                    category1
+                                                                            )
+                                                                            ?._id &&
+                                                                        item.category_slug ===
+                                                                        category2
+                                                                )?._id
+                                                    )
+                                                    .map((item) => (
+                                                        <li key={item._id}>
+                                                            <Link
+                                                                to={`/san-pham-theo-danh-muc/${category1}/${category2}/${item.category_slug}`}
+                                                                className={`${category3 !== undefined && category3 === item.category_slug ? ' pointer-events-none text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                                            >
+                                                                {
+                                                                    item.category_name
+                                                                }
+                                                            </Link>
+                                                        </li>
+                                                    ))}
                                 </ul>
                                 {brand && (
                                     <Disclosure
@@ -1408,11 +1408,11 @@ export default function Category() {
                                                                                     (
                                                                                         prevState
                                                                                     ) => [
-                                                                                        ...prevState,
-                                                                                        e
-                                                                                            .target
-                                                                                            .value,
-                                                                                    ]
+                                                                                            ...prevState,
+                                                                                            e
+                                                                                                .target
+                                                                                                .value,
+                                                                                        ]
                                                                                 );
                                                                             } else {
                                                                                 setSelectedBrands(
@@ -1441,7 +1441,7 @@ export default function Category() {
                                                                                     og ===
                                                                                     item._id
                                                                             ) !==
-                                                                            -1
+                                                                                -1
                                                                                 ? true
                                                                                 : false
                                                                         }
@@ -1532,11 +1532,11 @@ export default function Category() {
                                                                                         (
                                                                                             prevState
                                                                                         ) => [
-                                                                                            ...prevState,
-                                                                                            e
-                                                                                                .target
-                                                                                                .value,
-                                                                                        ]
+                                                                                                ...prevState,
+                                                                                                e
+                                                                                                    .target
+                                                                                                    .value,
+                                                                                            ]
                                                                                     );
                                                                                 } else {
                                                                                     setSelectedAttributes(
@@ -1565,7 +1565,7 @@ export default function Category() {
                                                                                         og ===
                                                                                         subitem._id
                                                                                 ) !==
-                                                                                -1
+                                                                                    -1
                                                                                     ? true
                                                                                     : false
                                                                             }
@@ -1598,7 +1598,7 @@ export default function Category() {
                                 >
                                     {!isListView ? (
                                         pagedProducts &&
-                                        pagedProducts.length !== 0 ? (
+                                            pagedProducts.length !== 0 ? (
                                             pagedProducts?.map(
                                                 (product, index) => (
                                                     <ProductSingle
@@ -1613,7 +1613,7 @@ export default function Category() {
                                             </div>
                                         )
                                     ) : pagedProducts &&
-                                      pagedProducts.length !== 0 ? (
+                                        pagedProducts.length !== 0 ? (
                                         pagedProducts?.map((product, index) => (
                                             <ProductSingleList
                                                 product={product}
@@ -1628,14 +1628,14 @@ export default function Category() {
                                 </div>
                                 <div className="col-span-3 pt-5">
                                     {filteredProduct &&
-                                    filteredProduct?.length > 8 ? (
+                                        filteredProduct?.length > 8 ? (
                                         <Pagination
                                             className="col-span-3"
                                             data={Array.from(
                                                 {
                                                     length: Math.ceil(
                                                         filteredProduct?.length /
-                                                            8
+                                                        8
                                                     ),
                                                 },
                                                 (_, index) => index + 1

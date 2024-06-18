@@ -27,6 +27,7 @@ export default function CartPopoverItem({
     const [selected, setSelected] = useState(null);
     const [selected_sku, setSelected_sku] = useState(null);
     const [_quantity, setQuantity] = useState(null);
+
     //sale
     const [sku_sale, setSku_sale] = useState(null);
     const [price, setPrice] = useState(0);
@@ -38,21 +39,24 @@ export default function CartPopoverItem({
 
     const productItemApi = async () => {
         const respon = await dispatch(
-            productById({ spu_id: product.productId })
+            productById({ spu_id: product?.productId })
         );
         if (respon) {
             setProductItem(respon.payload.metaData);
-            setSelected_old(
-                respon.payload.metaData.sku_list.find(
-                    (item) => item._id.toString() === product.sku_id.toString()
-                ).sku_tier_idx
-            );
-            setSelected(
-                respon.payload.metaData.sku_list.find(
-                    (item) => item._id.toString() === product.sku_id.toString()
-                ).sku_tier_idx
-            );
-            setPrice(respon.payload.metaData.spu_info.product_price);
+            if(respon.payload.metaData?.sku_list?.length>0){
+                setSelected_old(
+                    respon.payload.metaData?.sku_list?.find(
+                        (item) => item._id.toString() === product.sku_id.toString()
+                    ).sku_tier_idx
+                );
+                setSelected(
+                    respon.payload.metaData.sku_list.find(
+                        (item) => item._id.toString() === product.sku_id.toString()
+                    ).sku_tier_idx
+                );
+            }
+           
+            setPrice(respon.payload.metaData?.spu_info?.product_price);
         }
     };
 

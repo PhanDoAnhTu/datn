@@ -143,7 +143,6 @@ module.exports.SubscribeMessage = async (channel, service) => {
   );
 };
 module.exports.RPCObserver = async (RPC_QUEUE_NAME, service) => {
-  console.log("ss")
   const channel = await getChannel();
   await channel.assertQueue(RPC_QUEUE_NAME, {
     durable: false,
@@ -210,7 +209,6 @@ const requestData = async (RPC_QUEUE_NAME, requestPayload, uuid) => {
     });
   } catch (error) {
     console.log(error);
-    return "error";
   }
 };
 

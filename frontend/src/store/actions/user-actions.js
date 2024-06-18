@@ -8,7 +8,7 @@ export const SetAuthToken = async (tokens) => {
   } else {
     localStorage.removeItem('tokens')
     localStorage.removeItem('userInfo')
-    localStorage.removeItem('cart_products')
+    localStorage.removeItem('cart')
     localStorage.removeItem('favorites')
     localStorage.removeItem('selected_list_from_cart')
   }
@@ -77,7 +77,7 @@ export const onLoginWithGoogle = ({ userId, provider }) => async (dispatch) => {
       userId, provider
     });
     const tokens = await response.data?.metaData?.tokens
-    console.log("tokens", tokens,response)
+    console.log("tokens", tokens, response)
     await SetAuthToken(tokens);
     return dispatch({ type: Action.LOGIN_WITH_GOOGLE, payload: response.data });
 
@@ -107,7 +107,7 @@ export const onViewProfile = () => async (dispatch) => {
 export const onLogout = () => async (dispatch) => {
   try {
     const response = await PostData('/user/v1/customer/logout');
-    SetAuthToken(null)
+    await SetAuthToken(null)
     return dispatch({ type: Action.LOGOUT, payload: response.data });
   } catch (err) {
     console.log(err)

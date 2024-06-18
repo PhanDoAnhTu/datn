@@ -13,26 +13,26 @@ const UserReducer = (state = initialState, action) => {
             localStorage.setItem("userInfo", JSON.stringify(action.payload.metaData.customer));
             return {
                 ...state,
-                userInfo: action.payload
+                userInfo: action.payload.metaData.customer
             }
         case Action.LOGIN_WITH_GOOGLE:
             localStorage.setItem("userInfo", JSON.stringify(action.payload.metaData.customer));
             return {
                 ...state,
-                userInfo: action.payload
+                userInfo: action.payload.metaData.customer
             }
         case Action.LOGIN:
             localStorage.setItem("userInfo", JSON.stringify(action.payload.metaData.customer));
             return {
                 ...state,
-                userInfo: action.payload
+                userInfo: action.payload.metaData.customer
             }
         case Action.LOGOUT:
+            
             return {
                 ...state,
                 userInfo: null
             }
-
         default:
             return state;
     }

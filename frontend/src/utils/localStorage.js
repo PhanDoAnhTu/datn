@@ -25,29 +25,11 @@ export const getFavoritesFromLocalStorage = () => {
 
 
 ////////cart
-export const addCartItemToLocalStorage = (product) => {
-  const cart_products = getCartFromLocalStorage();
-  if (!cart_products.some((product_item) => product_item.sku_id.toString() === product.sku_id.toString())) {
-    cart_products.push(product);
-    localStorage.setItem("cart_products", JSON.stringify(cart_products));
-  }
-};
-
-export const removeCartItemFromLocalStorage = (product) => {
-  const cart_products = getCartFromLocalStorage();
-  const updateCart_products = cart_products.filter(
-    (product_item) => product_item.sku_id.toString() !== product.sku_id.toString()
-  );
-  localStorage.setItem("cart_products", JSON.stringify(updateCart_products));
-};
-
-// Retrive favorites from a localStorage
 export const getCartFromLocalStorage = () => {
-  const cart_productsJSON = localStorage.getItem("cart_products");
-  return cart_productsJSON ? JSON.parse(cart_productsJSON) : [];
+  const cart_productsJSON = localStorage.getItem("cart");
+  return cart_productsJSON ? JSON.parse(cart_productsJSON) : null;
 };
 
-///checked from cart
 //checkSkuFromCart
 export const checkSkuFromCart = (sku) => {
   const selected_list = getSelectedListFromCart();
@@ -119,7 +101,7 @@ export const changeSkuIdFromCart = (sku, cart_products) => {
     );
     const sku_new_in_cart = cart_products.find(({ sku_id }) => sku_id == sku.sku_id)
     const sku_new_in_selected_sku = update_selected_list.find(({ sku_id }) => sku_id == sku.sku_id)
-    console.log("cart_products", sku_new_in_cart, sku_new_in_selected_sku)
+    // console.log("cart_products", sku_new_in_cart, sku_new_in_selected_sku)
 
     if (sku_new_in_cart && !sku_new_in_selected_sku) {
       update_selected_list.push({
@@ -128,7 +110,7 @@ export const changeSkuIdFromCart = (sku, cart_products) => {
         product_slug_id: sku.product_slug_id,
         product_variation: sku.product_variation,
         product_image: sku.product_image,
-        product_option:sku.product_option
+        product_option: sku.product_option
       })
       localStorage.setItem("selected_list_from_cart", JSON.stringify(update_selected_list));
       return
@@ -142,7 +124,7 @@ export const changeSkuIdFromCart = (sku, cart_products) => {
         product_slug_id: sku.product_slug_id,
         product_variation: sku.product_variation,
         product_image: sku.product_image,
-        product_option:sku.product_option
+        product_option: sku.product_option
 
 
       })
@@ -154,7 +136,7 @@ export const changeSkuIdFromCart = (sku, cart_products) => {
       product_slug_id: sku.product_slug_id,
       product_variation: sku.product_variation,
       product_image: sku.product_image,
-      product_option:sku.product_option
+      product_option: sku.product_option
 
     })
     localStorage.setItem("selected_list_from_cart", JSON.stringify(update_selected_list));

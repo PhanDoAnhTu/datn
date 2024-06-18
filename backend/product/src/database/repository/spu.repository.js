@@ -33,7 +33,7 @@ const publishProduct = async ({ product_id }) => {
   foundProduct.isDraft = false;
   foundProduct.isPublished = true;
 
-  console.log(foundProduct);
+  // console.log(foundProduct);
 
   const { modifiedCount } = await foundProduct.updateOne(foundProduct);
   return modifiedCount;
@@ -47,13 +47,12 @@ const unPublishProduct = async ({ product_id }) => {
   foundProduct.isDraft = true;
   foundProduct.isPublished = false;
 
-  console.log(foundProduct);
+  // console.log(foundProduct);
 
   const { modifiedCount } = await foundProduct.updateOne(foundProduct);
   return modifiedCount;
 };
 const getAllProductsByfilter = async ({ limit, sort, page, filter }) => {
-  // const { isPublished } = filter
 
   const skip = (page - 1) * limit;
   const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };

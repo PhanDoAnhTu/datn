@@ -2,82 +2,184 @@
 const { errorResponse } = require("../core");
 // const { acquireLock, releaseLock } = require('./redis.service')
 const { OrderModel } = require("../database/models");
-const { RPCRequest } = require("../utils");
+const { RPCRequest, get_old_day_of_time } = require("../utils");
 const { v4: uuidv4 } = require("uuid");
 
 class CheckoutService {
+
   async checkoutReview({ cartId, userId, order_ids }) {
-    /////check cart
-    // const foundCart = await RPCRequest("CART_RPC", {
-    //     type: "GET_CART_BY_ID",
-    //     data: {
-    //         cartId: cartId
-    //     }
-    // })
+
+    // const foundCart = await findCartById(cartId)
+
     // if (!foundCart) {
-    //     throw new errorResponse.BadRequestError('cart does not exists!')
+    //     throw new BadRequestError('cart does not exists!')
     // }
     const checkout_oder = {
       totalPrice: 0,
-      feeShip: 0, //phi ship
-      totalDiscount: 0, //tong discount
-      totalCheckout: 0, //tong thanh toan
-    },
-      order_ids_new = {
-        itemCheckout: {},
-      };
-    const { shop_discounts = [], item_products = [] } = order_ids;
+      feeShip: 0,//phi ship
+      totalSpecialOffer: 0,//tong discount
+      totalDiscount: 0,//tong discount
+      totalCheckout: 0,//tong thanh toan
+    }
 
-    console.log("item_products:  ", item_products);
+    const { shop_discounts = [], item_products = [] } = order_ids
+
+    console.log("item_products:  ", item_products)
     //checkout product available
-    // const checkProductServer = await RPCRequest("SPU_RPC", {
-    //     type: "CHECK_PRODUCT_BY_SERVER",
-    //     data: {
-    //         products: item_products
-    //     }
-    // })
-    // console.log('checkProductServer', checkProductServer)
-    // if (!checkProductServer[0]) throw new errorResponse.BadRequestError('order wrong')
-    //tong don hang
-    const checkoutPrice = item_products.reduce((acc, product) => {
-      return acc + product.quantity * product.price;
-    }, 0);
-    //tong tien truoc khi xuly
-    checkout_oder.totalPrice = +checkoutPrice;
 
+    const checkProductServer = await RPCRequest("SPU_RPC", {
+      type: "CHECK_PRODUCT_BY_SERVER",
+      data: {
+        products: item_products
+      }
+    })
+    console.log('checkProductServer', checkProductServer)
+    if (!checkProductServer[0]) throw new errorResponse.BadRequestError('order wrong')
+    //tong don hang
+
+    const checkoutPrice = checkProductServer.reduce((acc, product) => {
+      return acc + (product.quantity * product.price)
+    }, 0)
+    //tong tien truoc khi xuly
+    checkout_oder.totalPrice = + checkoutPrice
     const itemCheckout = {
-      shop_discounts, //hmmmm
-      priceRaw: checkoutPrice, //tien truoc khi giam gia
+      shop_discounts,//hmmmm
+      priceRaw: checkoutPrice,//tien truoc khi giam gia
+      priceApplySpecialOffer: checkoutPrice,
       priceApplyDiscount: checkoutPrice,
-      item_products: item_products, //checkProductServer
-    };
+      item_products: checkProductServer
+    }
+    let checkProductServerSpecialOffer = []
+    const checkDateNow = await RPCRequest("SPECIAL_OFFER_RPC", {
+      type: "FIND_SPECIAL_OFFER_BY_DATE",
+      data: {
+        special_offer_is_active: true,
+        date: Date.now(),
+      },
+    });
+    if (checkDateNow) {
+      checkDateNow.special_offer_spu_list?.map((spu) => {
+        if (spu.sku_list.length > 0) {
+          return spu.sku_list.map((sku) => {
+            return checkProductServer.find((prod) => {
+              if (prod.sku_id == sku.sku_id) {
+                const { price, ...prodNoPrice } = prod
+                checkProductServerSpecialOffer.push({ ...prodNoPrice, price: sku.price_sale })
+                return
+              }
+            })
+          })
+        }
+        return checkProductServer.find((prod) => {
+          if (!prod.sku_id & prod.productId == spu.product_id) {
+            const { price, ...prodNoPrice } = prod
+            checkProductServerSpecialOffer.push({ ...prodNoPrice, price: spu.price_sale })
+            return
+          }
+        })
+      })
+    }
+    itemCheckout.priceApplySpecialOffer = checkProductServerSpecialOffer.reduce((acc, product) => {
+      return acc + (product.quantity * product.price)
+    }, 0)
+
     if (shop_discounts.length > 0) {
       const { discount = 0 } = await RPCRequest("DISCOUNT_RPC", {
         type: "GET_DISCOUNT_AMOUNT",
         data: {
           codeId: shop_discounts[0].codeId,
           userId,
-          products: item_products,
+          products: checkProductServerSpecialOffer,
         },
       });
-
-      //tong discount
-      checkout_oder.totalDiscount += discount;
+      //tong discount 
+      checkout_oder.totalDiscount += discount
       //neu tien giam gia >0
       if (discount > 0) {
-        itemCheckout.priceApplyDiscount = checkoutPrice - discount;
+
+        itemCheckout.priceApplyDiscount = checkoutPrice - discount
       }
     }
+    checkout_oder.totalSpecialOffer = itemCheckout.priceApplySpecialOffer
     //tong thanh toan
-    checkout_oder.totalCheckout += itemCheckout.priceApplyDiscount;
-    order_ids_new.itemCheckout = itemCheckout;
+    checkout_oder.totalCheckout += (itemCheckout.priceApplySpecialOffer - checkout_oder.totalDiscount)
+    // order_ids_new.push(itemCheckout)
 
     return {
       order_ids,
-      order_ids_new,
-      checkout_oder,
-    };
+      order_ids_new: itemCheckout,
+      checkout_oder
+    }
   }
+
+  // async checkoutReview({ cartId, userId, order_ids }) {
+  //   /////check cart
+  //   // const foundCart = await RPCRequest("CART_RPC", {
+  //   //     type: "GET_CART_BY_ID",
+  //   //     data: {
+  //   //         cartId: cartId
+  //   //     }
+  //   // })
+  //   // if (!foundCart) {
+  //   //     throw new errorResponse.BadRequestError('cart does not exists!')
+  //   // }
+  //   const checkout_oder = {
+  //     totalPrice: 0,
+  //     feeShip: 0, //phi ship
+  //     totalDiscount: 0, //tong discount
+  //     totalCheckout: 0, //tong thanh toan
+  //   }
+  //   const { shop_discounts = [], item_products = [] } = order_ids;
+
+  //   console.log("item_products:  ", item_products);
+  //   //checkout product available
+  //   // const checkProductServer = await RPCRequest("SPU_RPC", {
+  //   //     type: "CHECK_PRODUCT_BY_SERVER",
+  //   //     data: {
+  //   //         products: item_products
+  //   //     }
+  //   // })
+  //   // console.log('checkProductServer', checkProductServer)
+  //   // if (!checkProductServer[0]) throw new errorResponse.BadRequestError('order wrong')
+  //   //tong don hang
+  //   const checkoutPrice = item_products.reduce((acc, product) => {
+  //     return acc + product.quantity * product.price;
+  //   }, 0);
+  //   //tong tien truoc khi xuly
+  //   checkout_oder.totalPrice = +checkoutPrice;
+
+  //   const itemCheckout = {
+  //     shop_discounts, //hmmmm
+  //     priceRaw: checkoutPrice, //tien truoc khi giam gia
+  //     priceApplyDiscount: checkoutPrice,
+  //     item_products: item_products, //checkProductServer
+  //   };
+  //   if (shop_discounts.length > 0) {
+  //     const { discount = 0 } = await RPCRequest("DISCOUNT_RPC", {
+  //       type: "GET_DISCOUNT_AMOUNT",
+  //       data: {
+  //         codeId: shop_discounts[0].codeId,
+  //         userId,
+  //         products: item_products,
+  //       },
+  //     });
+
+  //     //tong discount
+  //     checkout_oder.totalDiscount += discount;
+  //     //neu tien giam gia >0
+  //     if (discount > 0) {
+  //       itemCheckout.priceApplyDiscount = checkoutPrice - discount;
+  //     }
+  //   }
+  //   //tong thanh toan
+  //   checkout_oder.totalCheckout += itemCheckout.priceApplyDiscount;
+
+  //   return {
+  //     order_ids,
+  //     order_ids_new: itemCheckout,
+  //     checkout_oder,
+  //   };
+  // }
 
   async orderByUser({
     order_ids,
@@ -111,7 +213,7 @@ class CheckoutService {
     // if (acquireProduct.includes(false)) {
     //     throw new errorResponse.BadRequestError('mot so sp da duoc cap nhat ...')
     // }
-    const order_trackingNumber = `#${uuidv4()}`;
+    const order_trackingNumber = `${uuidv4()}`;
 
     const newOrder = await OrderModel.create({
       order_userId: userId,
@@ -127,6 +229,9 @@ class CheckoutService {
     // }
     return newOrder;
   }
+
+
+
   async changeStatusOrderByOrderId({ order_id, order_status }) {
     if (
       ["pending", "confirmed", "shipped", "cancelled"].includes(order_status) ==
@@ -167,97 +272,43 @@ class CheckoutService {
     return foundOrder;
   }
 
-  // static async checkoutReview({ cartId, userId, order_ids }) {
 
-  //   // const foundCart = await findCartById(cartId)
 
-  //   // if (!foundCart) {
-  //   //     throw new BadRequestError('cart does not exists!')
-  //   // }
-  //   const checkout_oder = {
-  //     totalPrice: 0,
-  //     feeShip: 0,//phi ship
-  //     totalSpecialOffer: 0,//tong discount
-  //     totalDiscount: 0,//tong discount
-  //     totalCheckout: 0,//tong thanh toan
-  //   }, order_ids_new = []
+  async findOrderByStatus({ order_status }) {
+    const foundOrder = await OrderModel.find({ order_status });
+    return foundOrder;
+  }
+  async findOrderByStatusAndAroundDay({ order_status, numberDay }) {
+    let today = new Date();
+    let old_day = get_old_day_of_time(numberDay, today)
+    const foundOrder = await OrderModel.find({
+      order_status, modifiedOn: {
+        $lte: old_day
+      }
+    });
+    return foundOrder;
+  }
 
-  //   const { shop_discounts = [], item_products = [] } = order_ids
+  async getAllOrder() {
+    const foundOrder = await OrderModel.find();
+    return foundOrder;
+  }
 
-  //   console.log("item_products:  ", item_products)
-  //   //checkout product available
 
-  //   const checkProductServer = await checkProductByServer(item_products)
-  //   console.log('checkProductServer', checkProductServer)
-  //   if (!checkProductServer[0]) throw new BadRequestError('order wrong')
-  //   //tong don hang
+  async serverRPCRequest(payload) {
+    const { type, data } = payload;
+    const { order_status, numberDay } = data;
+    switch (type) {
+      case "FIND_ORDER_BY_STATUS":
+        return this.findOrderByStatus({ order_status });
+      case "FIND_ORDER_BY_STATUS_AND_AROUND_DAY":
+        return this.findOrderByStatus({ order_status, numberDay });
 
-  //   const checkoutPrice = checkProductServer.reduce((acc, product) => {
-  //     return acc + (product.quantity * product.price)
-  //   }, 0)
-  //   //tong tien truoc khi xuly
-  //   checkout_oder.totalPrice = + checkoutPrice
-  //   const itemCheckout = {
-  //     shop_discounts,//hmmmm
-  //     priceRaw: checkoutPrice,//tien truoc khi giam gia
-  //     priceApplySpecialOffer: checkoutPrice,
-  //     priceApplyDiscount: checkoutPrice,
-  //     item_products: checkProductServer
-  //   }
-  //   let checkProductServerSpecialOffer = []
-  //   const checkDateNow = await findSpecialOfferBetweenStartDateAndEndByDate({})
-  //   if (checkDateNow) {
-  //     checkDateNow.special_offer_spu_list?.map((spu) => {
-  //       if (spu.sku_list.length > 0) {
-  //         return spu.sku_list.map((sku) => {
-  //           return checkProductServer.find((prod) => {
-  //             if (prod.sku_id == sku.sku_id) {
-  //               const { price, ...prodNoPrice } = prod
-  //               checkProductServerSpecialOffer.push({ ...prodNoPrice, price: sku.price_sale })
-  //               return
-  //             }
-  //           })
-  //         })
-  //       }
-  //       return checkProductServer.find((prod) => {
-  //         if (!prod.sku_id & prod.productId == spu.product_id) {
-  //           const { price, ...prodNoPrice } = prod
-  //           checkProductServerSpecialOffer.push({ ...prodNoPrice, price: spu.price_sale })
-  //           return
-  //         }
-  //       })
-  //     })
-  //   }
-  //   itemCheckout.priceApplySpecialOffer = checkProductServerSpecialOffer.reduce((acc, product) => {
-  //     return acc + (product.quantity * product.price)
-  //   }, 0)
+      default:
+        break;
+    }
+  };
 
-  //   if (shop_discounts.length > 0) {
-  //     const { discount = 0 } = await getDiscountAmount({
-  //       codeId: shop_discounts[0].codeId,
-  //       userId,
-  //       products: checkProductServerSpecialOffer
-  //     })
-  //     //tong discount 
-  //     checkout_oder.totalDiscount += discount
-  //     //neu tien giam gia >0
-  //     if (discount > 0) {
-
-  //       itemCheckout.priceApplyDiscount = checkoutPrice - discount
-  //     }
-  //   }
-  //   checkout_oder.totalSpecialOffer = itemCheckout.priceApplySpecialOffer
-  //   //tong thanh toan
-  //   checkout_oder.totalCheckout += (itemCheckout.priceApplySpecialOffer - checkout_oder.totalDiscount)
-  //   order_ids_new.push(itemCheckout)
-
-  //   return {
-  //     order_ids,
-  //     order_ids_new,
-  //     checkout_oder
-  //   }
-  // }
- 
 }
 
 module.exports = CheckoutService;

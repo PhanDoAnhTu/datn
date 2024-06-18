@@ -180,7 +180,6 @@ module.exports.SubscribeMessage = async (channel, service) => {
   );
 };
 module.exports.RPCObserver = async (RPC_QUEUE_NAME, service) => {
-  console.log("ss")
   const channel = await getChannel();
   await channel.assertQueue(RPC_QUEUE_NAME, {
     durable: false,
@@ -254,4 +253,10 @@ const requestData = async (RPC_QUEUE_NAME, requestPayload, uuid) => {
 module.exports.RPCRequest = async (RPC_QUEUE_NAME, requestPayload) => {
   const uuid = uuid4(); // correlationId
   return await requestData(RPC_QUEUE_NAME, requestPayload, uuid);
+};
+
+
+module.exports.get_old_day_of_time = (numberDay, date) => {
+  let msD = date.getTime();
+  return new Date(Math.ceil(msD - (24 * 60 * 60 * 1000 * numberDay)))
 };

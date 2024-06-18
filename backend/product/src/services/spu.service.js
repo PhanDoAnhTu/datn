@@ -6,7 +6,7 @@ const { newSku, allSkuBySpuId, oneSku } = require("./sku.Service");
 const { spuRepository } = require("../database");
 const _ = require("lodash");
 const { Types } = require("mongoose");
-const { RPCRequest } = require("../utils");
+const { RPCRequest, get_old_day_of_time, count_element_in_array } = require("../utils");
 const BrandService = require("./brand.service");
 const AttributeService = require("./attribute.service");
 const { getCommentByproductId } = require("./comment.service");
@@ -114,7 +114,7 @@ const PublishProduct = async ({ product_id }) => {
     _id: Types.ObjectId(product_id),
   });
   if (!spuFound) throw new errorResponse.NotFoundRequestError("spu not found");
-  console.log(product_id);
+  // console.log(product_id);
   return await spuRepository.publishProduct({ product_id });
 };
 
@@ -136,7 +136,6 @@ const AllProducts = async ({ sort = "ctime", isPublished = true }) => {
     all_Products: [],
   };
   let brand_list = [];
-  let special_offer = [];
   let sku_list = [];
   let product_review = [];
   for (let index = 0; index < all_Products.length; index++) {
@@ -153,21 +152,18 @@ const AllProducts = async ({ sort = "ctime", isPublished = true }) => {
       isPublished: true,
     });
     product_review.push(review);
-    const specialoffer = await RPCRequest("SPECIAL_OFFER_RPC", {
-      type: "FIND_SPECIAL_OFFER_BY_DATE",
-      data: {
-        special_offer_is_active: true,
-        date: Date.now()
-      },
-    });
-    special_offer.push(specialoffer);
   }
-
+  const specialoffer = await RPCRequest("SPECIAL_OFFER_RPC", {
+    type: "FIND_SPECIAL_OFFER_BY_DATE",
+    data: {
+      special_offer_is_active: true,
+    },
+  });
   product_list.all_Products = await all_Products.map((product, index) => {
     return {
       ...product,
       brand: brand_list[index],
-      special_offer: special_offer[index],
+      special_offer: specialoffer,
       sku_list: sku_list[index],
       product_review: product_review[index],
     };
@@ -192,7 +188,6 @@ const getAllProductsByfilter = async ({
     all_Products: [],
   };
   let brand_list = [];
-  let special_offer = [];
   let sku_list = [];
   let product_review = [];
   for (let index = 0; index < all_Products.length; index++) {
@@ -218,12 +213,11 @@ const getAllProductsByfilter = async ({
       date: Date.now()
     },
   });
-  special_offer.push(specialoffer);
   product_list.all_Products = await all_Products.map((product, index) => {
     return {
       ...product,
       brand: brand_list[index],
-      special_offer: special_offer[index],
+      special_offer: specialoffer,
       sku_list: sku_list[index],
       product_review: product_review[index],
     };
@@ -324,10 +318,10 @@ const findProductDetail = async ({ spu_id, isPublished = true }) => {
       isPublished: true,
     });
     product.special_offer = await RPCRequest("SPECIAL_OFFER_RPC", {
-      type: "FIND_SPECIAL_OFFER_BY_DATE",
+      type: "FIND_SPECIAL_OFFER_TODAY_BY_ID",
       data: {
-        special_offer_is_active: true,
-        date: Date.now()
+        spu_id: spu_info._id.toString(),
+        special_offer_is_active: true
       },
     });
     const categories = await RPCRequest("CATEGORY_RPC", {
@@ -408,42 +402,52 @@ const AllProductsOption = async ({ sort = "ctime", isPublished = true }) => {
 
   return product_list.all_Products;
 };
-// const products_checkout = async ({ spu_id_list, isPublished = true, products_checkout = [] }) => {
-//     try {
-//         const spu = await SpuModel.find({
-//             _id: {
-//                 $in: spu_id_list
-//             },
-//             isPublished
-//         })
-//         if (spu.length == 0) throw new errorResponse.NotFoundRequestError('spu not found')
-//         let products = []
-//         let brand_list = []
-//         let sku_list = []
-//         let price = []
-//         for (let index = 0; index < spu.length; index++) {
-//             const brand = await new BrandService().findBrandById({ brand_id: spu[index].product_brand })
-//             brand_list.push(brand)
-//             const skulist = await allSkuBySpuId({ product_id: spu[index]._id })
-//             sku_list.push(skulist)
-//         }
-//         const special_offer = await RPCRequest("SPECIAL_OFFER_RPC", {
-//             type: "FIND_SPECIAL_OFFER_BY_DATE",
-//             data: {
-//                 special_offer_is_active: true,
-//             }
-//         })
 
-//         products = await spu.map((product, index) => {
-//             return { ...product, brand: brand_list[index], special_offer: special_offer, sku_list: sku_list[index] }
-//         })
 
-//         return products
 
-//     } catch (error) {
-//         return null
-//     }
-// }
+const findProductBestSelling = async ({
+  limit = 50,
+  sort = "ctime",
+  page = 1,
+  isPublished = true }) => {
+  const ordersBySuccessful = await RPCRequest("ORDER_RPC", {
+    type: "FIND_ORDER_BY_STATUS_AND_AROUND_DAY",
+    data: {
+      order_status: "successful",
+      numberDay: 30
+    }
+  })
+  // console.log("ordersBySuccessful", ordersBySuccessful)
+  let listIdProduct = []
+  if (ordersBySuccessful.length > 0) {
+    ordersBySuccessful.forEach((order) => {
+      order.order_product.item_products.forEach((prod) => {
+        listIdProduct.push(prod.productId)
+      })
+    })
+  }
+  // console.log("listIdProduct", listIdProduct)
+
+  const sortArr = listIdProduct.sort((a, b) => count_element_in_array(listIdProduct, b) - count_element_in_array(listIdProduct, a))
+  // console.log("sortArr", sortArr)
+
+  const skip = (page - 1) * limit;
+  const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
+  const products = await SpuModel.find({
+    _id: {
+      $in: sortArr
+    },
+    isPublished
+  }).limit(limit).sort(sortBy).skip(skip)
+
+  return products
+
+
+
+
+};
+
+
 
 const checkProductById = async ({ productId }) => {
   return await spuRepository.getProductById({ productId });
@@ -452,10 +456,13 @@ const checkProductById = async ({ productId }) => {
 // const checkProductByServer = async ({ products }) => {
 //   return await spuRepository.checkProductByServer({ products });
 // };
-const checkProductByServer = async (products) => {
+const checkProductByServer = async ({ products }) => {
+
   return await Promise.all(products.map(async product => {
     if (product.sku_id) {
       const foundSku = await oneSku({ product_id: product.productId, sku_id: product.sku_id })
+      // console.log("foundSku",foundSku)
+
       if (foundSku) {
         return {
           price: foundSku.sku_price,
@@ -475,7 +482,6 @@ const checkProductByServer = async (products) => {
         }
       }
     }
-
 
   }))
 }
@@ -532,5 +538,6 @@ module.exports = {
   findProductsByCategory,
   findProductDetail,
   productFromCart,
-  AllProductsOption
+  AllProductsOption,
+  findProductBestSelling
 };

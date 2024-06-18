@@ -2,6 +2,7 @@
 const { Types } = require('mongoose')
 const { SkuModel } = require('../database/models')
 const _ = require('lodash')
+const { errorResponse } = require('../core')
 
 
 const newSku = async ({
@@ -13,10 +14,10 @@ const newSku = async ({
             return { ...skuNoImage, product_id: spu_id }
 
         })
-         console.log("convert_sku_list",convert_sku_list)
+        //  console.log("convert_sku_list",convert_sku_list)
 
         const skus = await SkuModel.create(convert_sku_list)
-        console.log("skus///////////////////////////////////////////////",skus)
+        // console.log("skus///////////////////////////////////////////////",skus)
 
         return skus
 
@@ -27,12 +28,9 @@ const newSku = async ({
 
 const oneSku = async ({ sku_id, product_id }) => {
     try {
-        const sku = await SkuModel.findOne({ sku_id, product_id }).lean()
-        // if(sku){
-
-        // }
-        console.log(sku)
-        return _.omit(sku, ['__v', 'updateAt', 'createAt', 'isDeleted'])
+        const sku = await SkuModel.findOne({ _id: Types.ObjectId(sku_id), product_id: Types.ObjectId(product_id) }).lean()
+        if (!sku) throw new errorResponse.NotFoundRequestError("sku not found")
+        return _.omit(sku, ['__v'])
 
     } catch (error) {
         return null
@@ -42,7 +40,7 @@ const oneSku = async ({ sku_id, product_id }) => {
 const allSkuBySpuId = async ({ product_id }) => {
     try {
         const skus = await SkuModel.find({ product_id: Types.ObjectId(product_id) }).lean()
-        console.log(skus)
+        // console.log(skus)
         return skus
 
     } catch (error) {

@@ -6,7 +6,7 @@ const dotEnv = require("dotenv");
 dotEnv.config();
 
 router.post("/", async (req, res) => {
-  const { orderInfo, amount } = req.body;
+  const { order_trackingNumber, orderInfo, amount } = req.body;
   //https://developers.momo.vn/#/docs/en/aiov2/?id=payment-method
   //parameters
   var partnerCode = "MOMO";
@@ -15,7 +15,7 @@ router.post("/", async (req, res) => {
     "https://7bd6-112-197-100-135.ngrok-free.app/api/payment/momo/callback";
   var requestType = "payWithMethod";
   var orderExpireTime = 5;
-  var orderId = partnerCode + new Date().getTime();
+  var orderId = order_trackingNumber ? order_trackingNumber : (partnerCode + new Date().getTime());
   var requestId = orderId;
   var extraData = "";
   var orderGroupId = "";

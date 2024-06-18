@@ -30,9 +30,7 @@ export default function ProductDetail() {
     const navigate = useNavigate();
     const { product_slug_id } = useParams();
     const dispatch = useDispatch();
-
     const product_id = product_slug_id.split('-').pop();
-
     const { userInfo } = useSelector((state) => state.userReducer);
     // const { product_detail } = useSelector((state) => state.productReducer);
     const [favories_products, setfavoriesProduct] = useState(
@@ -42,6 +40,7 @@ export default function ProductDetail() {
     const [variations, setVariations] = useState([]);
     const [selectedVariation, setSelectedVariation] = useState(null);
     const [price, setPrice] = useState('');
+    // const [priceDefault, setPrice] = useState('');
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [stock, setStock] = useState(null);
@@ -114,8 +113,8 @@ export default function ProductDetail() {
                 setProductImages(product_image_list?.payload.metaData);
             } else {
                 setProductImages(
-                    responseProductDetail.payload.metaData?.product_detail
-                        .product_thumb
+                    [responseProductDetail.payload.metaData?.product_detail
+                        .product_thumb]
                 );
                 setPrice(
                     responseProductDetail.payload.metaData?.product_detail
@@ -129,16 +128,17 @@ export default function ProductDetail() {
             setRelated_products(
                 responseProductDetail.payload.metaData?.related_products
             );
-            setRating_score_avg(
-                responseProductDetail.payload.metaData?.product_review.reduce(
-                    (partialSum, a) => partialSum + a.rating_score,
-                    0
-                ) /
-                    responseProductDetail.payload.metaData?.product_review
-                        .length
-            );
+            if (responseProductDetail.payload.metaData?.product_review.length == 0) {
+                setRating_score_avg(0);
+
+            } else {
+                setRating_score_avg(
+                    responseProductDetail.payload.metaData?.product_review.reduce(
+                        (partialSum, a) => partialSum + a?.rating_score, 0) / responseProductDetail.payload.metaData?.product_review?.length
+                );
+            }
             setSpicial_offer(
-                responseProductDetail.payload.metaData?.special_offer?.special_offer_spu_list.find(
+                responseProductDetail.payload.metaData?.special_offer?.special_offer_spu_list?.find(
                     (spu) => spu.product_id == product_id
                 )
             );
@@ -188,9 +188,9 @@ export default function ProductDetail() {
             ) {
                 setSelectedImage(
                     product_images &&
-                        product_images.find(
-                            (item) => item.sku_id === selected_sku._id
-                        )
+                    product_images.find(
+                        (item) => item.sku_id === selected_sku._id
+                    )
                 );
             }
 
@@ -349,7 +349,7 @@ export default function ProductDetail() {
                     <div className="flex flex-col-reverse lg:col-span-2 lg:h-square lg:flex-row lg:space-x-5 lg:border-r lg:border-gray-200 lg:pr-8 dark:lg:border-stone-700">
                         <div className="no-scrollbar flex w-full flex-row overflow-hidden max-lg:mt-3 max-lg:space-x-3 max-lg:overflow-x-scroll max-lg:pb-1 lg:w-44 lg:flex-col lg:space-y-3 lg:overflow-y-scroll">
                             {product_images &&
-                                product_images?.map((item, index) => (
+                                product_images?.length > 0 ? product_images?.map((item, index) => (
                                     <button
                                         onClick={() => HandleImageChoose(item)}
                                         key={index}
@@ -361,7 +361,7 @@ export default function ProductDetail() {
                                             className="h-full w-full object-fill object-center"
                                         />
                                     </button>
-                                ))}
+                                )) : <></>}
                         </div>
                         <div className="h-9/10 w-full bg-gray-200 sm:overflow-hidden sm:rounded-lg">
                             <img
@@ -379,7 +379,7 @@ export default function ProductDetail() {
                         </h1>
                         <p className="mt-6 text-3xl tracking-tight text-gray-900 dark:text-gray-200">
                             {sale_sku &&
-                            sale_sku?.sku_id == selected_sku?._id ? (
+                                sale_sku?.sku_id == selected_sku?._id ? (
                                 <NumericFormat
                                     value={sale_sku.price_sale}
                                     displayType="text"
@@ -402,7 +402,7 @@ export default function ProductDetail() {
                             {sale_sku &&
                                 sale_sku?.sku_id == selected_sku?._id && (
                                     <span className="rounded-full bg-red-100 px-5 py-2 text-xs font-medium  text-red-800 dark:bg-red-900 dark:text-red-300">
-                                        Giảm đến{sale_sku.percentage}%
+                                        Giảm đến {sale_sku.percentage}%
                                     </span>
                                 )}
                         </p>
