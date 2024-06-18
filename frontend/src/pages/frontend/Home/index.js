@@ -14,12 +14,13 @@ import ProductList from '../../../components/frontend/ProductList';
 export default function Home() {
     const dispatch = useDispatch();
     const { all_products } = useSelector((state) => state.productReducer);
-    console.log(all_products);
+    const { category } = useSelector((state) => state.categoryReducer);
+
     useEffect(() => {
         if (!all_products) dispatch(allProducts({}));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [all_products]);
 
-    console.log(all_products);
     return (
         <div>
             <DocumentTitle title="Trang chủ" />
@@ -69,6 +70,39 @@ export default function Home() {
                 ) : (
                     <></>
                 )}
+            </div>
+            <div className="px-4 sm:px-6 lg:px-8">
+                {all_products
+                    ? (() => {
+                          // eslint-disable-next-line no-unused-vars
+                          const newProducts = all_products
+                              ?.slice()
+                              .filter((item) =>
+                                  item.product_category.some((UUID) =>
+                                      category
+                                          ?.slice()
+                                          .filter(
+                                              (item) =>
+                                                  item.category_slug ===
+                                                  'ao-thun'
+                                          )
+                                          ?.map((item) => {
+                                              return item._id;
+                                          })
+                                          .includes(UUID)
+                                  )
+                              );
+                          return (
+                              <ProductList
+                                  title={'Áo thun'}
+                                  summary={
+                                      'Những chiếc áo thun không ngại thời gian'
+                                  }
+                                  products={newProducts}
+                              />
+                          );
+                      })()
+                    : ''}
             </div>
 
             <Blog />

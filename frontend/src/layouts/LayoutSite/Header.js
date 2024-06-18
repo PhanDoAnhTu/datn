@@ -14,7 +14,6 @@ export default function Header() {
     useEffect(() => {
         if (!category) dispatch(getAllCategory());
         if (!navbar) dispatch(findMenuByPosition({ menu_position: 'navbar' }));
-        console.log(navbar);
     }, [category, navbar]);
 
     return (
