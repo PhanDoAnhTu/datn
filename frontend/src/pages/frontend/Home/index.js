@@ -10,12 +10,22 @@ import { useEffect } from 'react';
 import { allProducts } from '../../../store/actions';
 import DocumentTitle from '../../../components/frontend/DocumentTitle';
 import ProductList from '../../../components/frontend/ProductList';
+import { getSliderByActive } from '../../../store/actions/slider-actions';
 
 export default function Home() {
     const dispatch = useDispatch();
     const { all_products } = useSelector((state) => state.productReducer);
     const { category } = useSelector((state) => state.categoryReducer);
-
+    const { slider } = useSelector((state) => state.sliderReducer);
+    useEffect(() => {
+        if (!slider)
+            dispatch(
+                getSliderByActive({
+                    slider_is_active: true,
+                })
+            );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [slider]);
     useEffect(() => {
         if (!all_products) dispatch(allProducts({}));
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -24,7 +34,14 @@ export default function Home() {
     return (
         <div>
             <DocumentTitle title="Trang chủ" />
-            <Banner />
+            <Banner
+                slider={(() => {
+                    const fetchedSlider = slider
+                        ?.slice()
+                        .filter((item) => item.slider_position === 'banner');
+                    return fetchedSlider;
+                })()}
+            />
             <div className="px-4 sm:px-6 lg:px-8">
                 {all_products ? (
                     (() => {
@@ -59,7 +76,23 @@ export default function Home() {
                     <></>
                 )}
             </div>
-            <CategorySection />
+            <div className="mx-auto grid max-w-screen-2xl gap-4 px-4 py-8 max-sm:grid-rows-2 sm:px-6 sm:py-8 md:grid-cols-2 lg:gap-8 lg:px-8 ">
+                {(() => {
+                    const fetchedSlider = slider
+                        ?.slice()
+                        .filter(
+                            (item) =>
+                                item.slider_position === 'body' &&
+                                (item.slider_link ===
+                                    '/san-pham-theo-danh-muc/nam' ||
+                                    item.slider_link ===
+                                        '/san-pham-theo-danh-muc/nu')
+                        );
+                    return fetchedSlider?.map((item) => (
+                        <CategorySection item={item} key={item._id} />
+                    ));
+                })()}
+            </div>
             <div className="px-4 sm:px-6 lg:px-8">
                 {all_products ? (
                     <ProductList
@@ -70,6 +103,24 @@ export default function Home() {
                 ) : (
                     <></>
                 )}
+            </div>
+
+            <div className="mx-auto grid max-w-screen-2xl gap-4 px-4 py-8 max-sm:grid-rows-2 sm:px-6 sm:py-8 md:grid-cols-2 lg:gap-8 lg:px-8 ">
+                {(() => {
+                    const fetchedSlider = slider
+                        ?.slice()
+                        .filter(
+                            (item) =>
+                                item.slider_position === 'body' &&
+                                (item.slider_link ===
+                                    '/san-pham-theo-danh-muc/nu/trang-suc-and-phu-kien/mu-and-mu-len' ||
+                                    item.slider_link ===
+                                        '/san-pham-theo-danh-muc/nu/thoi-trang/quan-djui')
+                        );
+                    return fetchedSlider?.map((item) => (
+                        <CategorySection item={item} key={item._id} />
+                    ));
+                })()}
             </div>
             <div className="px-4 sm:px-6 lg:px-8">
                 {all_products
@@ -104,7 +155,7 @@ export default function Home() {
                       })()
                     : ''}
             </div>
-
+            <PromoSection />
             <Blog />
             <Subscribe />
         </div>

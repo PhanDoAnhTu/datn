@@ -44,11 +44,11 @@ export default function Search() {
                 <input
                     defaultValue={keyword}
                     ref={searchRef}
-                    className="w-full border-2 border-white bg-transparent text-lg text-gray-900 outline-none ring-0 transition duration-500 ease-out focus:border-magenta-500 focus:bg-zinc-900/50 focus:ring-0 dark:text-white"
+                    className="w-full border-2 border-gray-900 bg-transparent text-lg text-gray-900 outline-none ring-0 transition duration-500 ease-out focus:border-magenta-500 focus:bg-gray-400/50 focus:ring-0 dark:border-white dark:text-white dark:focus:bg-zinc-900/50"
                 />
                 <button
                     type="submit"
-                    className="rounded-md px-1 text-sm text-white transition duration-500 ease-out hover:text-magenta-500"
+                    className="rounded-md px-1 text-sm text-gray-900 transition duration-500 ease-out hover:text-magenta-500 dark:text-white"
                 >
                     <MagnifyingGlassIcon
                         className="h-10 w-10"

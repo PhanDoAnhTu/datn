@@ -25,7 +25,7 @@ export default function UserPopover() {
                 className: 'black-background',
                 bodyClassName: 'grow-font-size',
                 progressClassName: 'fancy-progress-bar',
-                autoClose: 2000
+                autoClose: 2000,
             });
 
             close();
@@ -40,7 +40,7 @@ export default function UserPopover() {
                 {({ open, close }) => (
                     <>
                         <Popover.Button
-                            className={`${open ? ' dark:text-gray-500' : 'text-gray-500 dark:text-white'}
+                            className={`${open ? ' dark:text-gray-700' : 'text-gray-700 dark:text-white'}
                 group inline-flex items-center py-2 font-medium transition-colors duration-200 ease-out hover:text-gray-900 focus:outline-none dark:hover:text-gray-500`}
                         >
                             <UserIcon className="h-6 w-6" aria-hidden="true" />
@@ -65,7 +65,9 @@ export default function UserPopover() {
                                                     </div>
 
                                                     <p className="text-md text-center font-bold text-gray-500 dark:text-white">
-                                                        {userInfo?.customer_name}
+                                                        {
+                                                            userInfo?.customer_name
+                                                        }
                                                     </p>
                                                 </div>
                                                 <div className="flex flex-col space-y-2">
@@ -119,7 +121,9 @@ export default function UserPopover() {
                                                     <button
                                                         onClick={() => {
                                                             close();
-                                                            navigate('/dang-nhap');
+                                                            navigate(
+                                                                '/dang-nhap'
+                                                            );
                                                         }}
                                                         className="group flex h-12 w-full items-center justify-center overflow-hidden rounded-md"
                                                     >
@@ -136,7 +140,9 @@ export default function UserPopover() {
                                                     <button
                                                         onClick={() => {
                                                             close();
-                                                            navigate('/dang-ky');
+                                                            navigate(
+                                                                '/dang-ky'
+                                                            );
                                                         }}
                                                         className="group flex h-12 w-full items-center  justify-center overflow-hidden rounded-md "
                                                     >
@@ -152,7 +158,6 @@ export default function UserPopover() {
                                                 </div>
                                             </>
                                         )}
-
                                     </div>
                                 </div>
                             </Popover.Panel>

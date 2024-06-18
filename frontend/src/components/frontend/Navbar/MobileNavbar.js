@@ -1,12 +1,17 @@
 import { Dialog, Tab, Transition } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
-import { Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Fragment, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import classNames from '../../../helpers/classNames';
 import { useSelector } from 'react-redux';
 
 export default function MobileNavbar({ category, navbar, open, setOpen }) {
+    const navigate = useNavigate();
     const { all_products } = useSelector((state) => state.productReducer);
+    const [search, setSearch] = useState('');
+    const handleSearch = () => {
+        navigate('/tim-kiem-san-pham/' + search);
+    };
     return (
         <Transition.Root show={open} as={Fragment}>
             <Dialog
@@ -54,7 +59,26 @@ export default function MobileNavbar({ category, navbar, open, setOpen }) {
 
                             {/* Links */}
                             <Tab.Group as="div" className="mt-2">
-                                <input type="text" className="w-full" />
+                                <div className="flex w-full space-x-2 px-5">
+                                    <input
+                                        placeholder="Tìm kiếm"
+                                        value={search}
+                                        onChange={(e) =>
+                                            setSearch(e.target.value)
+                                        }
+                                        className="w-full border-2 border-gray-900 bg-transparent text-lg text-gray-900 outline-none ring-0 transition duration-500 ease-out placeholder:text-gray-700 focus:border-magenta-500 focus:bg-zinc-900/50 focus:ring-0 dark:border-white dark:text-white dark:placeholder:text-gray-400"
+                                    />
+                                    <button
+                                        type="submit"
+                                        onClick={handleSearch}
+                                        className="rounded-md px-1 text-sm text-gray-900 transition duration-500 ease-out hover:text-magenta-500 dark:text-white"
+                                    >
+                                        <MagnifyingGlassIcon
+                                            className="h-7 w-7"
+                                            aria-hidden="true"
+                                        />
+                                    </button>
+                                </div>
                                 <div className="border-b border-gray-200 transition-colors duration-200 ease-out dark:border-stone-700">
                                     <Tab.List className="-mb-px flex space-x-8 px-4">
                                         {category

@@ -63,7 +63,7 @@ export default function ProductList({ title, summary, products }) {
                         <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                             {title}
                         </h2>
-                        <h3 className="text-sm text-gray-300 lg:text-lg">
+                        <h3 className="text-sm text-gray-500 lg:text-lg dark:text-gray-300">
                             {summary}
                         </h3>
                     </div>
