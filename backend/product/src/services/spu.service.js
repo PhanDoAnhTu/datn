@@ -407,7 +407,6 @@ const AllProductsOption = async ({ sort = "ctime", isPublished = true }) => {
 
 const findProductBestSelling = async ({
   limit = 50,
-  sort = "ctime",
   page = 1,
   isPublished = true }) => {
   const ordersBySuccessful = await RPCRequest("ORDER_RPC", {
@@ -432,13 +431,12 @@ const findProductBestSelling = async ({
   // console.log("sortArr", sortArr)
 
   const skip = (page - 1) * limit;
-  const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
   const products = await SpuModel.find({
     _id: {
       $in: sortArr
     },
     isPublished
-  }).limit(limit).sort(sortBy).skip(skip)
+  }).limit(limit).skip(skip)
 
   return products
 
