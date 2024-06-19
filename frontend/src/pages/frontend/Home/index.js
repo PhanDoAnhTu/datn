@@ -11,12 +11,14 @@ import { allProducts } from '../../../store/actions';
 import DocumentTitle from '../../../components/frontend/DocumentTitle';
 import ProductList from '../../../components/frontend/ProductList';
 import { getSliderByActive } from '../../../store/actions/slider-actions';
+import { findListBrand } from '../../../store/actions/brand-actions';
 
 export default function Home() {
     const dispatch = useDispatch();
     const { all_products } = useSelector((state) => state.productReducer);
     const { category } = useSelector((state) => state.categoryReducer);
     const { slider } = useSelector((state) => state.sliderReducer);
+    const { brand } = useSelector((state) => state.brandReducer);
     useEffect(() => {
         if (!slider)
             dispatch(
@@ -26,6 +28,10 @@ export default function Home() {
             );
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [slider]);
+    useEffect(() => {
+        if (!brand) dispatch(findListBrand());
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [brand]);
     useEffect(() => {
         if (!all_products) dispatch(allProducts({}));
         // eslint-disable-next-line react-hooks/exhaustive-deps

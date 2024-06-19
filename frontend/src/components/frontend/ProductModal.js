@@ -1,36 +1,35 @@
 import { useEffect, useState } from 'react';
-import { MinusIcon, PlusIcon, StarIcon } from '@heroicons/react/20/solid';
-import { RadioGroup } from '@headlessui/react';
-import classNames from '../../../helpers/classNames';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import HeartSlashIcon from '../../../assets/HeartSlashIcon.js';
-import ProductList from '../../../components/frontend/ProductList';
-// import { products } from '../../../test/products';
-import {
-    listImageByProductId,
-    addToCart,
-    removeFromWishList,
-    addToWishList,
-    onProductDetail,
-} from '../../../store/actions';
-import { useDispatch, useSelector } from 'react-redux';
-import { NumericFormat } from 'react-number-format';
-
-import { toast } from 'react-toastify';
-
 import {
     addFavoriteToLocalStorage,
     getFavoritesFromLocalStorage,
     removeFavoriteFromLocalStorage,
-} from '../../../utils';
-import HeartIcon from '../../../assets/HeartIcon.js';
+} from '../../utils';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
+import {
+    addToCart,
+    addToWishList,
+    listImageByProductId,
+    onProductDetail,
+    removeFromWishList,
+} from '../../store/actions';
+import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
+import { NumericFormat } from 'react-number-format';
+import { MinusIcon, PlusIcon, StarIcon } from '@heroicons/react/24/solid';
+import classNames from '../../helpers/classNames';
+import { RadioGroup } from '@headlessui/react';
+import HeartSlashIcon from '../../assets/HeartSlashIcon';
+import HeartIcon from '../../assets/HeartIcon';
+import { useProductDetail } from '../../ProductModalContext';
 
-const reviews = { to: '#', average: 4, totalCount: 117 };
-export default function ProductDetail() {
+export default function ProductModal() {
+    const reviews = { to: '#', average: 4, totalCount: 117 };
     const navigate = useNavigate();
-    const { product_slug_id } = useParams();
+    // eslint-disable-next-line no-unused-vars
+    const { isModalOpen, product_id, openModal, closeModal } =
+        useProductDetail();
     const dispatch = useDispatch();
-    const product_id = product_slug_id.split('-').pop();
     const { userInfo } = useSelector((state) => state.userReducer);
     // const { product_detail } = useSelector((state) => state.productReducer);
     const [favories_products, setfavoriesProduct] = useState(
@@ -42,12 +41,10 @@ export default function ProductDetail() {
     const [price, setPrice] = useState('');
     // const [priceDefault, setPrice] = useState('');
     const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
     const [stock, setStock] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [product_detail, setProductDetail] = useState(null);
     const [sku_list, setSkuList] = useState(null);
-    const [product_categories, setProductCategories] = useState([]);
 
     const [product_images, setProductImages] = useState(null);
     const [selected_sku, setSelectedSku] = useState(null);
@@ -57,7 +54,6 @@ export default function ProductDetail() {
     const [review, setReview] = useState([]);
     const [rating_score_avg, setRating_score_avg] = useState(0);
 
-    const [related_products, setRelated_products] = useState([]);
     // const [comment, setComment] = useState([]);
 
     const getProductDetail = async (product_id) => {
@@ -72,10 +68,6 @@ export default function ProductDetail() {
             setName(
                 responseProductDetail?.payload.metaData?.product_detail
                     .product_name
-            );
-            setDescription(
-                responseProductDetail?.payload.metaData?.product_detail
-                    ?.product_description
             );
 
             if (
@@ -121,13 +113,8 @@ export default function ProductDetail() {
                         .product_price
                 );
             }
-            setProductCategories(
-                responseProductDetail.payload.metaData?.product_categories
-            );
             setReview(responseProductDetail.payload.metaData?.product_review);
-            setRelated_products(
-                responseProductDetail.payload.metaData?.related_products
-            );
+
             if (
                 responseProductDetail.payload.metaData?.product_review.length ==
                 0
@@ -153,7 +140,7 @@ export default function ProductDetail() {
     /////////////////////////////
     useEffect(() => {
         getProductDetail(product_id);
-    }, [product_slug_id]);
+    }, [product_id]);
 
     useEffect(() => {
         special_offer?.sku_list.map((sku) => {
@@ -213,10 +200,6 @@ export default function ProductDetail() {
             console.log('special_offer', special_offer);
         }
     }, [selected_sku]);
-
-    const HandleImageChoose = (e) => {
-        setSelectedImage(e);
-    };
 
     ////////////quantity
     const handleDecrement = async (quantity) => {
@@ -290,88 +273,11 @@ export default function ProductDetail() {
     console.log(selectedImage);
 
     return (
-        <div className="bg-transparent pt-10 md:pt-20">
+        <div className="bg-transparent">
             <div className="pt-6">
-                <nav aria-label="Breadcrumb">
-                    <ol className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-                        <li>
-                            <div className="flex items-center">
-                                <Link
-                                    to="/"
-                                    className="mr-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                                >
-                                    Trang chủ
-                                </Link>
-                                <svg
-                                    width={16}
-                                    height={20}
-                                    viewBox="0 0 16 20"
-                                    fill="currentColor"
-                                    aria-hidden="true"
-                                    className="h-5 w-4 text-gray-300"
-                                >
-                                    <path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" />
-                                </svg>
-                            </div>
-                        </li>
-                        {product_categories.length > 0 &&
-                            product_categories.map((breadcrumb) => (
-                                <li key={breadcrumb._id}>
-                                    <div className="flex items-center">
-                                        <Link
-                                            to={`/san-pham-theo-danh-muc/${breadcrumb.category_slug}`}
-                                            className="mr-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                                        >
-                                            {breadcrumb.category_name}
-                                        </Link>
-                                        <svg
-                                            width={16}
-                                            height={20}
-                                            viewBox="0 0 16 20"
-                                            fill="currentColor"
-                                            aria-hidden="true"
-                                            className="h-5 w-4 text-gray-300"
-                                        >
-                                            <path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" />
-                                        </svg>
-                                    </div>
-                                </li>
-                            ))}
-                        {product_detail && (
-                            <li className="text-sm">
-                                <Link
-                                    to={`/san-pham/${product_detail.product_slug}-${product_detail._id}`}
-                                    aria-current="page"
-                                    className="font-medium text-gray-500 transition duration-200 ease-out hover:text-gray-600 dark:text-white dark:hover:text-gray-300"
-                                >
-                                    {product_detail.product_name}
-                                </Link>
-                            </li>
-                        )}
-                    </ol>
-                </nav>
                 {/* Product info */}
                 <div className="mx-auto max-w-2xl px-4 pb-16 pt-10 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pt-16">
                     <div className="flex flex-col-reverse lg:col-span-2 lg:h-square lg:flex-row lg:space-x-5 lg:border-r lg:border-gray-200 lg:pr-8 dark:lg:border-stone-700">
-                        <div className="no-scrollbar flex w-full flex-row overflow-hidden max-lg:mt-3 max-lg:space-x-3 max-lg:overflow-x-scroll max-lg:pb-1 lg:w-44 lg:flex-col lg:space-y-3 lg:overflow-y-scroll">
-                            {product_images && product_images?.length > 0 ? (
-                                product_images?.map((item, index) => (
-                                    <button
-                                        onClick={() => HandleImageChoose(item)}
-                                        key={index}
-                                        className="h-24 w-24 flex-shrink-0  bg-gray-200 sm:overflow-hidden sm:rounded-lg lg:h-36 lg:w-full"
-                                    >
-                                        <img
-                                            src={item.thumb_url}
-                                            alt={item.thumb_url}
-                                            className="h-full w-full object-fill object-center"
-                                        />
-                                    </button>
-                                ))
-                            ) : (
-                                <></>
-                            )}
-                        </div>
                         <div className="h-9/10 w-full bg-gray-200 sm:overflow-hidden sm:rounded-lg">
                             <img
                                 src={selectedImage && selectedImage.thumb_url}
@@ -453,7 +359,7 @@ export default function ProductDetail() {
                                     to={reviews.to}
                                     className="ml-3 text-sm font-medium text-xanthous-500 hover:text-xanthous-600"
                                 >
-                                    {review.length} đánh giá
+                                    {review?.length} đánh giá
                                 </Link>
                             </div>
                         </div>
@@ -682,67 +588,6 @@ export default function ProductDetail() {
                                         ))}
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="mx-auto max-w-2xl space-y-4 px-4 pb-16 pt-10 sm:px-6 lg:max-w-7xl lg:px-8 lg:pb-24 lg:pt-16">
-                    <h1 className="border-b border-stone-500 py-5 text-4xl font-bold dark:text-white">
-                        Mô tả sản phẩm
-                    </h1>
-                    <p className="text-justify dark:text-white">
-                        {description}
-                    </p>
-                    <ProductList
-                        title={'Sản phẩm liên quan'}
-                        products={related_products}
-                        summary={
-                            'Những sản phẩm cùng danh mục mà bạn có thể quan tâm'
-                        }
-                    />
-                    <h1 className="border-b border-stone-500 pb-5 text-4xl font-bold dark:text-white">
-                        Đánh giá về sản phẩm
-                    </h1>
-                    <div className="space-y-5">
-                        <div className="grid gap-5">
-                            {[0, 1, 2].map((index) => (
-                                <div
-                                    key={`review-${index}`}
-                                    className="grid gap-2 overflow-hidden rounded-md bg-zinc-400 p-4 shadow-inner shadow-gray-400 dark:bg-zinc-800"
-                                >
-                                    <div className="text-lg font-bold text-gray-900 dark:text-white">
-                                        Title goes here
-                                    </div>
-                                    <div className="flex">
-                                        {[1, 2, 3, 4, 5].map((rating) => (
-                                            <StarIcon
-                                                key={rating}
-                                                className={classNames(
-                                                    rating_score_avg >= rating
-                                                        ? 'text-xanthous-500'
-                                                        : 'text-gray-200',
-                                                    'h-5 w-5 flex-shrink-0'
-                                                )}
-                                                aria-hidden="true"
-                                            />
-                                        ))}
-                                    </div>
-                                    <div className="leading-5 text-gray-900 dark:text-white">
-                                        Lorem ipsum dolor sit amet consectetur,
-                                        adipisicing elit. Nam debitis sed amet
-                                        nesciunt aliquid itaque numquam facilis
-                                        assumenda voluptatum expedita! Alias
-                                        sapiente dicta aliquam quam error?
-                                        Commodi neque sapiente officia? Iure
-                                        neque fugit est illo quaerat minima
-                                        tenetur aut porro odio, quo iusto
-                                        possimus id totam fuga magni.
-                                        Repudiandae, at quia! Obcaecati vitae
-                                        quo accusamus ipsa illum architecto. Sit
-                                        hic ab obcaecati repellendus
-                                        consequuntur.
-                                    </div>
-                                </div>
-                            ))}
                         </div>
                     </div>
                 </div>

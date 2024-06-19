@@ -7,13 +7,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getSelectedListFromCart } from '../../../utils';
 import { useEffect, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
-import { getCartFromLocalStorage } from '../../../utils/index'
+import { getCartFromLocalStorage } from '../../../utils/index';
 import { createOrder } from '../../../store/actions/order-actions';
 import { toast } from 'react-toastify';
-const _ = require("lodash");
+const _ = require('lodash');
 
-
-export default function Review({ step, setStep, information, discounts, paymentMethod }) {
+export default function Review({
+    step,
+    setStep,
+    information,
+    discounts,
+    paymentMethod,
+}) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.userReducer);
@@ -21,87 +26,91 @@ export default function Review({ step, setStep, information, discounts, paymentM
     const [selectedProductFromCart] = useState(getSelectedListFromCart);
     const [price_total, setprice_total] = useState(0);
     const createNewOrder = async () => {
-        const id = toast.loading("Vui lòng chờ...")
+        const id = toast.loading('Vui lòng chờ...');
 
-        const newOrder = await dispatch(createOrder({
-            cartId: getCartFromLocalStorage?._id,
-            userId: userInfo._id,
-            order_shipping: {
-                ship_to: {
-                    phone: information.phonenumber,
-                    email: information.email,
-                    name: information.fullname,
-                    address: information.address
-                }
-            },
-            user_payment: {
-                payment_method: paymentMethod
-
-            },
-            order_ids: {
-                shop_discounts: discounts,
-                item_products: selectedProductFromCart.map((item) => _.pick(item, ["productId", "sku_id", "price", "quantity"]))
-            }
-        }))
+        const newOrder = await dispatch(
+            createOrder({
+                cartId: getCartFromLocalStorage?._id,
+                userId: userInfo._id,
+                order_shipping: {
+                    ship_to: {
+                        phone: information.phonenumber,
+                        email: information.email,
+                        name: information.fullname,
+                        address: information.address,
+                    },
+                },
+                user_payment: {
+                    payment_method: paymentMethod,
+                },
+                order_ids: {
+                    shop_discounts: discounts,
+                    item_products: selectedProductFromCart.map((item) =>
+                        _.pick(item, [
+                            'productId',
+                            'sku_id',
+                            'price',
+                            'quantity',
+                        ])
+                    ),
+                },
+            })
+        );
         if (newOrder?.payload?.status === (200 || 201)) {
             toast.update(id, {
-                render: "Đang xử lý đơn hàng",
-                type: "info",
+                render: 'Đang xử lý đơn hàng',
+                type: 'info',
                 isLoading: false,
                 closeOnClick: true,
                 autoClose: 2000,
             });
-            return newOrder?.payload?.metaData
+            return newOrder?.payload?.metaData;
         } else {
             toast.update(id, {
-                render: "Tạo đơn hàng không thành công",
-                type: "error",
+                render: 'Tạo đơn hàng không thành công',
+                type: 'error',
                 isLoading: false,
                 closeOnClick: true,
                 autoClose: 3000,
             });
-            return null
+            return null;
         }
-    }
-
+    };
 
     const handlePlaceOrder = async () => {
         if (paymentMethod === 'COD') {
-            const onCreate = await createNewOrder()
+            const onCreate = await createNewOrder();
             if (onCreate) {
-                navigate('/khoi-tao-don-hang')
+                navigate('/khoi-tao-don-hang');
             }
             return;
         }
         if (paymentMethod === 'MOMO') {
-            const onCreate = await createNewOrder()
+            const onCreate = await createNewOrder();
             if (onCreate) {
                 const result = await dispatch(
                     paymentByMoMo({
                         orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
                         amount: price_total,
-                        order_trackingNumber: onCreate?.order_trackingNumber
+                        order_trackingNumber: onCreate?.order_trackingNumber,
                     })
                 );
                 result && window.location.replace(result.payload.payUrl);
             }
             return;
-
         }
         if (paymentMethod === 'ZALOPAY') {
-            const onCreate = await createNewOrder()
+            const onCreate = await createNewOrder();
             if (onCreate) {
                 const result = await dispatch(
                     paymentByZaloPay({
                         orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
                         amount: price_total,
-                        order_trackingNumber: onCreate?.order_trackingNumber
-
+                        order_trackingNumber: onCreate?.order_trackingNumber,
                     })
                 );
                 result && window.location.replace(result.payload.order_url);
             }
-
         }
     };
 
@@ -121,20 +130,20 @@ export default function Review({ step, setStep, information, discounts, paymentM
         >
             <button
                 onClick={() => setStep(step - 1)}
-                className="mb-6 flex items-center"
+                className="mb-6 flex items-center text-gray-900 dark:text-white"
             >
-                <ChevronLeftIcon className="h-6 w-6 text-white" />
-                <span className="text-lg font-bold text-white">Quay lại</span>
+                <ChevronLeftIcon className="h-6 w-6" />
+                <span className="text-lg font-bold">Quay lại</span>
             </button>
             <div className="grid md:gap-16">
                 <div>
-                    <div className="h-fit bg-zinc-900/100 p-10">
-                        <h1 className="text-lg font-bold text-white">
+                    <div className="h-fit bg-white p-10 dark:bg-zinc-900/100">
+                        <h1 className="text-lg font-bold text-gray-900 dark:text-white">
                             Thông tin giao hàng
                         </h1>
                         <div className="space-y-4 pt-4">
                             <div className="flex flex-col">
-                                <span className="text-sm text-white">
+                                <span className="text-sm text-gray-900 dark:text-white">
                                     Email
                                 </span>
                                 <input
@@ -144,12 +153,12 @@ export default function Review({ step, setStep, information, discounts, paymentM
                                     disabled
                                     autoComplete="0"
                                     placeholder="example@gmail.com"
-                                    className="border-b-2 border-l-0 border-r-0 border-t-0 border-white bg-transparent pl-0 text-white placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0 disabled:border-zinc-400 disabled:text-zinc-400"
+                                    className="border-b-2 border-l-0 border-r-0 border-t-0 border-gray-900 bg-transparent pl-0 text-gray-900 placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0 disabled:border-zinc-400 disabled:text-zinc-400 dark:border-white dark:text-white"
                                 />
                             </div>
                             <div className="flex max-sm:flex-col max-sm:space-y-3 sm:space-x-3">
                                 <div className="flex flex-col sm:w-1/2">
-                                    <span className="text-sm text-white">
+                                    <span className="text-sm text-gray-900 dark:text-white">
                                         Tên người nhận
                                     </span>
                                     <input
@@ -159,11 +168,11 @@ export default function Review({ step, setStep, information, discounts, paymentM
                                         disabled
                                         autoComplete="0"
                                         placeholder="E.g. Jonhan Strauss"
-                                        className="border-b-2 border-l-0 border-r-0 border-t-0 border-white bg-transparent pl-0 text-white placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0 disabled:border-zinc-400 disabled:text-zinc-400"
+                                        className="border-b-2 border-l-0 border-r-0 border-t-0 border-gray-900 bg-transparent pl-0 text-gray-900 placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0 disabled:border-zinc-400 disabled:text-zinc-400 dark:border-white dark:text-white"
                                     />
                                 </div>
                                 <div className="flex flex-col sm:w-1/2">
-                                    <span className="text-sm text-white">
+                                    <span className="text-sm text-gray-900 dark:text-white">
                                         Số điện thoại
                                     </span>
                                     <input
@@ -173,13 +182,13 @@ export default function Review({ step, setStep, information, discounts, paymentM
                                         value={information.phonenumber}
                                         autoComplete="0"
                                         placeholder="E.g. 0123456789"
-                                        className="border-b-2 border-l-0 border-r-0 border-t-0 border-white bg-transparent pl-0 text-white placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0 disabled:border-zinc-400 disabled:text-zinc-400"
+                                        className="border-b-2 border-l-0 border-r-0 border-t-0 border-white bg-transparent pl-0 text-gray-900 placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0 disabled:border-zinc-400 disabled:text-zinc-400 dark:text-white"
                                     />
                                 </div>
                             </div>
 
                             <div className="flex flex-col">
-                                <span className="text-sm text-white">
+                                <span className="text-sm text-gray-900 dark:text-white">
                                     Địa chỉ nhận hàng
                                 </span>
                                 <input
@@ -196,7 +205,7 @@ export default function Review({ step, setStep, information, discounts, paymentM
                     </div>
                 </div>
                 <div>
-                    <div className="h-fit bg-zinc-900 p-10 text-white">
+                    <div className="h-fit bg-white p-10 text-gray-900 dark:bg-zinc-900 dark:text-white">
                         <div className="flow-root">
                             <ul className="checkout -my-2 divide-gray-200 overflow-y-scroll transition-colors duration-200 ease-out dark:divide-stone-700">
                                 {selectedProductFromCart &&
@@ -262,10 +271,10 @@ export default function Review({ step, setStep, information, discounts, paymentM
                                                                             {
                                                                                 option
                                                                                     .options[
-                                                                                product
-                                                                                    .product_variation[
-                                                                                index
-                                                                                ]
+                                                                                    product
+                                                                                        .product_variation[
+                                                                                        index
+                                                                                    ]
                                                                                 ]
                                                                             }
                                                                         </p>
@@ -329,9 +338,10 @@ export default function Review({ step, setStep, information, discounts, paymentM
                                     <div className="flex justify-between pb-3 text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                         <h3>Giảm giá</h3>
                                         <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-
                                             <NumericFormat
-                                                value={information.price_discount_amount}
+                                                value={
+                                                    information.price_discount_amount
+                                                }
                                                 displayType="text"
                                                 thousandSeparator={true}
                                                 decimalScale={0}

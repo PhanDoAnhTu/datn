@@ -14,7 +14,10 @@ import {
 import { NumericFormat } from 'react-number-format';
 import { Listbox, Transition } from '@headlessui/react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllDiscount, discountAmount } from '../../../store/actions/discount-actions';
+import {
+    getAllDiscount,
+    discountAmount,
+} from '../../../store/actions/discount-actions';
 import { toast } from 'react-toastify';
 
 export default function Checkout() {
@@ -53,33 +56,41 @@ export default function Checkout() {
             phonenumber === '' ||
             address === ''
         ) {
-            toast.error("Vui lòng nhập đầy đủ tông tin giao hàng.")
+            toast.error('Vui lòng nhập đầy đủ tông tin giao hàng.');
             return;
         }
         setStep(step + 1);
     };
     const onSelectedDiscount = async (selected_discount) => {
-        setSelectedDiscount(selected_discount)
+        setSelectedDiscount(selected_discount);
         // console.log(selected_discount, "code")
         if (selected_discount?.discount_code) {
-            const applyDiscount = await dispatch(discountAmount({
-                userId: userInfo._id,
-                codeId: selected_discount.discount_code,
-                products: selectedProductFromCart
-            }))
+            const applyDiscount = await dispatch(
+                discountAmount({
+                    userId: userInfo._id,
+                    codeId: selected_discount.discount_code,
+                    products: selectedProductFromCart,
+                })
+            );
             if (applyDiscount?.payload.status === (200 || 201)) {
-                const { totalCheckout = price, discount = 0 } = applyDiscount.payload.metaData
-                setprice_total(totalCheckout)
-                setPrice_discount_amount(discount)
-                setDiscounts([{discountId:selected_discount?._id,codeId:selected_discount?.discount_code}])
+                const { totalCheckout = price, discount = 0 } =
+                    applyDiscount.payload.metaData;
+                setprice_total(totalCheckout);
+                setPrice_discount_amount(discount);
+                setDiscounts([
+                    {
+                        discountId: selected_discount?._id,
+                        codeId: selected_discount?.discount_code,
+                    },
+                ]);
             }
             // console.log("applyDiscount", applyDiscount)
         } else {
-            setDiscounts([])
-            setprice_total(price)
-            setPrice_discount_amount(0)
+            setDiscounts([]);
+            setprice_total(price);
+            setPrice_discount_amount(0);
         }
-    }
+    };
     useEffect(() => {
         setPrice(
             selectedProductFromCart?.reduce(
@@ -90,24 +101,28 @@ export default function Checkout() {
         );
     }, [selectedProductFromCart]);
     useEffect(() => {
-        setprice_total(price)
+        setprice_total(price);
     }, [price]);
     // console.log('test1:', discount);
     // console.log('currentDiscount', selectedDiscount);
 
     return (
         <div className="overflow-hidden pb-7 pt-10 md:pt-24">
-            <StepCount step={step} />
-            <Link to={`/`} className="mb-6 ml-20 flex items-center">
-                <ChevronLeftIcon className="h-6 w-6 text-white" />
-                <span className="text-lg font-bold text-white">Quay lại trang chủ</span>
+            <Link
+                to={`/`}
+                className="mb-6 ml-20 flex items-center text-gray-900 dark:text-white"
+            >
+                <ChevronLeftIcon className="h-6 w-6" />
+                <span className="text-lg font-bold">Quay lại trang chủ</span>
             </Link>
+            <StepCount step={step} />
+
             <div
                 className={`flex ${step === 2 ? '-translate-x-full' : step === 3 ? '-translate-x-2full' : ''} transition duration-500 ease-out`}
             >
                 <div className="w-screen flex-shrink-0 px-1 md:px-32">
                     <div className="grid gap-16 sm:px-4 xl:grid-cols-2">
-                        <div className="h-fit bg-zinc-900 p-10 text-white">
+                        <div className="h-fit bg-white p-10 text-white dark:bg-zinc-900">
                             <div className="flow-root">
                                 <ul className="-my-6 divide-gray-200 transition-colors duration-200 ease-out dark:divide-stone-700">
                                     {selectedProductFromCart &&
@@ -175,10 +190,10 @@ export default function Checkout() {
                                                                                 {
                                                                                     option
                                                                                         .options[
-                                                                                    product
-                                                                                        .product_variation[
-                                                                                    index
-                                                                                    ]
+                                                                                        product
+                                                                                            .product_variation[
+                                                                                            index
+                                                                                        ]
                                                                                     ]
                                                                                 }
                                                                             </p>
@@ -212,36 +227,37 @@ export default function Checkout() {
                                                     value={selectedDiscount}
                                                     onChange={(e) =>
                                                         onSelectedDiscount(e)
-
                                                     }
                                                 >
                                                     <div className="relative mt-1 ">
-                                                        <Listbox.Button className="relative w-full cursor-default py-2 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-magenta-300 ui-disabled:brightness-50 sm:text-sm ">
+                                                        <Listbox.Button className="relative w-full cursor-default py-2 pl-5 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-magenta-300 ui-disabled:brightness-50 sm:text-sm ">
                                                             <span className="block truncate font-semibold text-gray-900 dark:text-white">
                                                                 {selectedDiscount ==
-                                                                    null
+                                                                null
                                                                     ? 'Mã giảm giá'
-                                                                    : `${discount
-                                                                        ?.slice()
-                                                                        .find(
-                                                                            (
-                                                                                item
-                                                                            ) =>
-                                                                                item.discount_code ===
-                                                                                selectedDiscount.discount_code
-                                                                        )
-                                                                        .discount_code
-                                                                    } | ${discount
-                                                                        ?.slice()
-                                                                        .find(
-                                                                            (
-                                                                                item
-                                                                            ) =>
-                                                                                item.discount_code ===
-                                                                                selectedDiscount.discount_code
-                                                                        )
-                                                                        .discount_description
-                                                                    }`}
+                                                                    : `${
+                                                                          discount
+                                                                              ?.slice()
+                                                                              .find(
+                                                                                  (
+                                                                                      item
+                                                                                  ) =>
+                                                                                      item.discount_code ===
+                                                                                      selectedDiscount.discount_code
+                                                                              )
+                                                                              .discount_code
+                                                                      } | ${
+                                                                          discount
+                                                                              ?.slice()
+                                                                              .find(
+                                                                                  (
+                                                                                      item
+                                                                                  ) =>
+                                                                                      item.discount_code ===
+                                                                                      selectedDiscount.discount_code
+                                                                              )
+                                                                              .discount_description
+                                                                      }`}
                                                             </span>
                                                             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                                                 <ChevronUpIcon
@@ -256,14 +272,15 @@ export default function Checkout() {
                                                             leaveFrom="opacity-100"
                                                             leaveTo="opacity-0"
                                                         >
-                                                            <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto bg-zinc-900 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm dark:bg-white">
+                                                            <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto  bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
                                                                 <Listbox.Option
                                                                     className={({
                                                                         active,
                                                                     }) =>
-                                                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${active
-                                                                            ? 'bg-magenta-900    text-zinc-700'
-                                                                            : 'text-gray-900'
+                                                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                                                            active
+                                                                                ? 'bg-magenta-900    text-zinc-700'
+                                                                                : 'text-gray-900'
                                                                         }`
                                                                     }
                                                                     value={null}
@@ -273,10 +290,11 @@ export default function Checkout() {
                                                                     }) => (
                                                                         <>
                                                                             <span
-                                                                                className={`block truncate ${selected
-                                                                                    ? 'font-medium'
-                                                                                    : 'font-normal'
-                                                                                    }`}
+                                                                                className={`block truncate ${
+                                                                                    selected
+                                                                                        ? 'font-medium'
+                                                                                        : 'font-normal'
+                                                                                }`}
                                                                             >
                                                                                 Không
                                                                                 áp
@@ -305,9 +323,10 @@ export default function Checkout() {
                                                                                 className={({
                                                                                     active,
                                                                                 }) =>
-                                                                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${active
-                                                                                        ? 'bg-magenta-900    text-zinc-700'
-                                                                                        : 'text-gray-900'
+                                                                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                                                                        active
+                                                                                            ? 'bg-magenta-900    text-zinc-700'
+                                                                                            : 'text-gray-900'
                                                                                     }`
                                                                                 }
                                                                                 value={
@@ -319,30 +338,33 @@ export default function Checkout() {
                                                                                 }) => (
                                                                                     <>
                                                                                         <span
-                                                                                            className={`block truncate ${selected
-                                                                                                ? 'font-medium'
-                                                                                                : 'font-normal'
-                                                                                                }`}
+                                                                                            className={`block truncate ${
+                                                                                                selected
+                                                                                                    ? 'font-medium'
+                                                                                                    : 'font-normal'
+                                                                                            }`}
                                                                                         >
                                                                                             {
                                                                                                 item.discount_code
                                                                                             }
                                                                                         </span>
                                                                                         <span
-                                                                                            className={`block truncate ${selected
-                                                                                                ? 'font-medium'
-                                                                                                : 'font-normal'
-                                                                                                }`}
+                                                                                            className={`block truncate ${
+                                                                                                selected
+                                                                                                    ? 'font-medium'
+                                                                                                    : 'font-normal'
+                                                                                            }`}
                                                                                         >
                                                                                             {
                                                                                                 item.discount_description
                                                                                             }
                                                                                         </span>
                                                                                         <span
-                                                                                            className={`block truncate ${selected
-                                                                                                ? 'font-medium'
-                                                                                                : 'font-normal'
-                                                                                                }`}
+                                                                                            className={`block truncate ${
+                                                                                                selected
+                                                                                                    ? 'font-medium'
+                                                                                                    : 'font-normal'
+                                                                                            }`}
                                                                                         >
                                                                                             Giá
                                                                                             trị
@@ -407,7 +429,9 @@ export default function Checkout() {
                                             <h3>Giảm giá</h3>
                                             <p className="text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                 <NumericFormat
-                                                    value={price_discount_amount}
+                                                    value={
+                                                        price_discount_amount
+                                                    }
                                                     displayType="text"
                                                     thousandSeparator={true}
                                                     decimalScale={0}
@@ -436,9 +460,9 @@ export default function Checkout() {
                             </div>
                         </div>
                         <div>
-                            <div className="h-fit bg-zinc-900/100 p-10">
+                            <div className="h-fit bg-white p-10 dark:bg-zinc-900">
                                 <div className="flex space-x-4">
-                                    <h1 className="text-lg font-bold text-white">
+                                    <h1 className="text-lg font-bold text-gray-900 dark:text-white">
                                         Thông tin giao hàng
                                     </h1>
                                     {/* <button className="bg-white px-2 py-2 text-xs font-bold text-black transition duration-500 ease-out hover:bg-magenta-500 hover:text-white">
@@ -447,7 +471,7 @@ export default function Checkout() {
                                 </div>
                                 <div className="space-y-4 pt-4">
                                     <div className="flex flex-col">
-                                        <span className="text-sm text-white">
+                                        <span className="text-sm text-gray-900 dark:text-white">
                                             Email
                                         </span>
                                         <input
@@ -459,12 +483,12 @@ export default function Checkout() {
                                             }
                                             autoComplete="0"
                                             placeholder="example@gmail.com"
-                                            className="border-b-2 border-l-0 border-r-0 border-t-0 border-white bg-transparent pl-0 text-white placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0"
+                                            className="border-b-2 border-l-0 border-r-0 border-t-0 border-gray-900 bg-transparent pl-0 text-gray-900 placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0 dark:border-white dark:text-white"
                                         />
                                     </div>
                                     <div className="flex max-sm:flex-col max-sm:space-y-3 sm:space-x-3">
                                         <div className="flex flex-col sm:w-1/2">
-                                            <span className="text-sm text-white">
+                                            <span className="text-sm text-gray-900 dark:text-white">
                                                 Tên người nhận
                                             </span>
                                             <input
@@ -476,11 +500,11 @@ export default function Checkout() {
                                                 }
                                                 autoComplete="0"
                                                 placeholder="E.g. Jonhan Strauss"
-                                                className="border-b-2 border-l-0 border-r-0 border-t-0 border-white bg-transparent pl-0 text-white placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0"
+                                                className="border-b-2 border-l-0 border-r-0 border-t-0 border-gray-900 bg-transparent pl-0 text-gray-900 placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0 dark:border-white dark:text-white"
                                             />
                                         </div>
                                         <div className="flex flex-col sm:w-1/2">
-                                            <span className="text-sm text-white">
+                                            <span className="text-sm text-gray-900 dark:text-white">
                                                 Số điện thoại
                                             </span>
                                             <input
@@ -494,13 +518,13 @@ export default function Checkout() {
                                                 }
                                                 autoComplete="0"
                                                 placeholder="E.g. 0123456789"
-                                                className="border-b-2 border-l-0 border-r-0 border-t-0 border-white bg-transparent pl-0 text-white placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0"
+                                                className="border-b-2 border-l-0 border-r-0 border-t-0 border-gray-900 bg-transparent pl-0 text-gray-900 placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0 dark:border-white dark:text-white"
                                             />
                                         </div>
                                     </div>
 
                                     <div className="flex flex-col">
-                                        <span className="text-sm text-white">
+                                        <span className="text-sm text-gray-900 dark:text-white">
                                             Địa chỉ giao hàng
                                         </span>
                                         <input
@@ -512,7 +536,7 @@ export default function Checkout() {
                                             }
                                             autoComplete="0"
                                             placeholder="E.g. 1000 Test street, block b, TP HCM"
-                                            className="border-b-2 border-l-0 border-r-0 border-t-0 border-white bg-transparent pl-0 text-white placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0"
+                                            className="border-b-2 border-l-0 border-r-0 border-t-0 border-gray-900 bg-transparent pl-0 text-gray-900 placeholder:text-zinc-400 focus:border-magenta-500 focus:placeholder-transparent focus:ring-0 dark:border-white dark:text-white"
                                         />
                                     </div>
                                 </div>
@@ -535,11 +559,17 @@ export default function Checkout() {
                     setPaymentMethod={setPaymentMethod}
                 />
                 <Review
-
                     setStep={setStep}
                     step={step}
                     discounts={discounts}
-                    information={{ email, fullname, phonenumber, address, price_discount_amount, price_total }}
+                    information={{
+                        email,
+                        fullname,
+                        phonenumber,
+                        address,
+                        price_discount_amount,
+                        price_total,
+                    }}
                     paymentMethod={paymentMethod}
                 />
             </div>

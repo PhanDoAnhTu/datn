@@ -13,15 +13,20 @@ import { StarIcon } from '@heroicons/react/20/solid';
 import classNames from '../../helpers/classNames';
 import { useNavigate } from 'react-router';
 import { NumericFormat } from 'react-number-format';
+import { useProductDetail } from '../../ProductModalContext';
 const reviews = { to: '#', average: 4, totalCount: 117 };
 
 export default function ProductSingleList({ product, reload }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.userReducer);
+    const { brand } = useSelector((state) => state.brandReducer);
     const [favories_products, setfavoriesProduct] = useState(
         getFavoritesFromLocalStorage()
     );
+    // eslint-disable-next-line no-unused-vars
+    const { isModalOpen, product_id, openModal, closeModal } =
+        useProductDetail();
 
     const HandleRemoveFromWishList = async ({ userId, productId }) => {
         await dispatch(
@@ -52,7 +57,7 @@ export default function ProductSingleList({ product, reload }) {
     return (
         <div
             key={product._id}
-            className="flex w-full items-center rounded-md bg-zinc-800 shadow-inner shadow-zinc-600 max-sm:flex-col "
+            className="flex w-full items-center rounded-md bg-zinc-800 p-4 shadow-inner shadow-zinc-600 max-sm:flex-col "
         >
             <div
                 className="h-fit overflow-hidden  rounded-md max-sm:m-2 md:w-40"
@@ -72,7 +77,17 @@ export default function ProductSingleList({ product, reload }) {
                             <h1 className="truncate text-wrap text-sm font-bold max-sm:w-36 md:text-xl">
                                 {product.product_name}
                             </h1>
-                            <div className="text-md text-gray-300">Brand</div>
+                            <div className="text-md text-gray-300">
+                                {
+                                    brand
+                                        ?.slice()
+                                        .find(
+                                            (item) =>
+                                                product.product_brand ===
+                                                item._id
+                                        ).brand_name
+                                }
+                            </div>
                         </div>
                         <div className="flex flex-col items-end">
                             <span className="text-sm font-bold md:text-2xl">
@@ -113,8 +128,17 @@ export default function ProductSingleList({ product, reload }) {
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 py-2">
-                        <button className="rounded-md border-2 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                        <button
+                            onClick={() => openModal(product._id)}
+                            className="rounded-md border-2 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-xl:hidden max-sm:text-xs xl:block"
+                        >
                             Thêm vào giỏ hàng
+                        </button>
+                        <button
+                            onClick={() => openModal(product._id)}
+                            className="rounded-md border-2 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-xl:block max-sm:text-xs xl:hidden"
+                        >
+                            Xem chi tiết
                         </button>
                         {userInfo ? (
                             favories_products.some(

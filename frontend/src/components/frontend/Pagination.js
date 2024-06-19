@@ -1,30 +1,42 @@
+/* eslint-disable no-unused-vars */
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { Link } from 'react-router-dom';
 
 // eslint-disable-next-line no-unused-vars
-export default function Pagination({ data, currentPage, setCurrentPage }) {
+export default function Pagination({
+    data,
+    currentPage,
+    setCurrentPage,
+    currentViewData,
+    totalData,
+}) {
     return (
-        <div className="flex items-center justify-between border-t border-gray-200  px-4 py-3 sm:px-6">
+        <div className="flex items-center justify-between border-t border-gray-300  px-4 py-3 sm:px-6">
             <div className="flex flex-1 justify-between sm:hidden">
                 <Link
                     to="#"
-                    className="relative inline-flex items-center border-2 border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-magenta-500 hover:text-magenta-500 dark:text-white"
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    className={`relative ${currentPage === 1 ? 'pointer-events-none' : ''} inline-flex items-center border-2 border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-magenta-500 hover:text-magenta-500 dark:text-white`}
                 >
-                    Previous
+                    <span className="sr-only">Previous</span>
+                    <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
                 </Link>
                 <Link
                     to="#"
-                    className="relative ml-3 inline-flex items-center border-2 border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-magenta-500 hover:text-magenta-500 dark:text-white"
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    className={`relative ml-3 inline-flex ${currentPage >= data?.length ? 'pointer-events-none' : ''} items-center border-2 border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-magenta-500 hover:text-magenta-500 dark:text-white`}
                 >
-                    Next
+                    <span className="sr-only">Next</span>
+                    <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
                 </Link>
             </div>
             <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                 <div>
                     <p className="text-sm text-gray-700 dark:text-stone-200">
-                        Showing <span className="font-medium">1</span> to{' '}
-                        <span className="font-medium">10</span> of{' '}
-                        <span className="font-medium">97</span> results
+                        Đang xem{' '}
+                        <span className="font-medium">{currentViewData}</span>{' '}
+                        trong <span className="font-medium">{totalData}</span>{' '}
+                        sản phẩm
                     </p>
                 </div>
                 <div>
@@ -50,7 +62,7 @@ export default function Pagination({ data, currentPage, setCurrentPage }) {
                                     key={index}
                                     to="#"
                                     onClick={() => setCurrentPage(item)}
-                                    className={`${currentPage === item ? 'pointer-events-none relative z-10 inline-flex items-center bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-900  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-xanthous-600' : 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50  focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700'}`}
+                                    className={`${currentPage === item ? 'pointer-events-none relative z-10 inline-flex items-center bg-white px-4 py-2 text-sm font-semibold text-gray-900 brightness-50  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-xanthous-600' : 'relative inline-flex items-center bg-white px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:brightness-90  focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700'}`}
                                 >
                                     {item}
                                 </Link>

@@ -302,7 +302,6 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                                 </button>
                             }
                         />
-
                         <button
                             onClick={() => toggleDarkMode()}
                             className={`p-2 text-gray-700 outline-none transition-colors duration-200 ease-out hover:text-gray-900 dark:text-white dark:hover:text-gray-500`}

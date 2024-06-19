@@ -45,14 +45,14 @@ export default function Blog() {
                                         className="absolute left-0 top-0 max-h-screen max-w-full object-cover object-center brightness-75 transition duration-500 ease-out group-hover:brightness-50"
                                     />
                                     <div className="z-10 flex items-center gap-x-4 text-xs">
-                                        <time className="text-gray-500 dark:text-stone-300">
+                                        <time className="text-gray-300 dark:text-stone-300">
                                             {moment()
                                                 .locale('vi')
                                                 .format('DD MMMM YYYY')}
                                         </time>
                                     </div>
                                     <div className="group relative transition duration-500 ease-out">
-                                        <p className="mt-5 line-clamp-3 text-justify text-sm leading-6 text-gray-600 opacity-0 group-hover:opacity-100 dark:text-gray-100">
+                                        <p className="mt-5 line-clamp-3 text-justify text-sm leading-6 text-gray-300 opacity-0 group-hover:opacity-100 dark:text-gray-100">
                                             {item.post_short_description}
                                         </p>
                                         <h3 className="mt-3 text-xl font-semibold leading-6 text-white transition duration-200 ease-out">

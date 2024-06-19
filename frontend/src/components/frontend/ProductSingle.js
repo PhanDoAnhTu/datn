@@ -16,13 +16,18 @@ import {
 } from '../../utils';
 import { useState } from 'react';
 import classNames from '../../helpers/classNames';
+import { ShoppingBagIcon } from '@heroicons/react/24/solid';
+import { useProductDetail } from '../../ProductModalContext';
 const reviews = { to: '#', average: 4, totalCount: 117 };
 
 export default function ProductSingle({ product, reload }) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
+    // eslint-disable-next-line no-unused-vars
+    const { isModalOpen, product_id, openModal, closeModal } =
+        useProductDetail();
     const { userInfo } = useSelector((state) => state.userReducer);
+    const { brand } = useSelector((state) => state.brandReducer);
     const [favories_products, setfavoriesProduct] = useState(
         getFavoritesFromLocalStorage
     );
@@ -66,6 +71,13 @@ export default function ProductSingle({ product, reload }) {
             </div>
 
             <div className="absolute top-0 z-10 hidden w-full items-center justify-center space-x-3 pt-32 xl:flex">
+                {/* nut them san pham */}
+                <button
+                    onClick={() => openModal(product._id)}
+                    className="group-hover:delay-50 z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-xanthous-500 group-hover:-translate-y-10 group-hover:opacity-100 max-lg:hidden"
+                >
+                    <ShoppingBagIcon className="h-6 w-6" />
+                </button>
                 {product &&
                     (userInfo ? (
                         favories_products.some(
@@ -100,6 +112,7 @@ export default function ProductSingle({ product, reload }) {
                             <HeartIcon className="h-6 w-6" />
                         </button>
                     ))}
+
                 <button
                     onClick={() =>
                         navigate(
@@ -122,6 +135,12 @@ export default function ProductSingle({ product, reload }) {
                         {product.product_name}
                     </Link>
                 </h3>
+                {
+                    brand
+                        ?.slice()
+                        .find((item) => product.product_brand === item._id)
+                        .brand_name
+                }
             </div>
             <div className="flex items-center">
                 {[0, 1, 2, 3, 4].map((rating) => (
