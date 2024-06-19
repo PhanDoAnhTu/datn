@@ -1,7 +1,9 @@
 import {
     Bars3Icon,
     MagnifyingGlassIcon,
+    MoonIcon,
     ShoppingBagIcon,
+    SunIcon,
 } from '@heroicons/react/24/outline';
 import { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -14,6 +16,7 @@ import CartPopover from './CartPopover';
 import UserPopover from './UserPopover';
 import Logo from '../../../assets/Logo';
 import { useSelector } from 'react-redux';
+import { useTheme } from '../../../ThemeContext';
 
 export default function PCNavbar({ category, navbar, setOpen }) {
     ////////////////
@@ -32,28 +35,7 @@ export default function PCNavbar({ category, navbar, setOpen }) {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
-
-    const [isDarkMode, setIsDarkMode] = useState(false);
-
-    useEffect(() => {
-        const darkModeMediaQuery = window.matchMedia(
-            '(prefers-color-scheme: dark)'
-        );
-
-        const handleDarkModeChange = (event) => {
-            setIsDarkMode(event.matches);
-        };
-
-        darkModeMediaQuery.addEventListener('change', handleDarkModeChange);
-        setIsDarkMode(darkModeMediaQuery.matches);
-
-        return () => {
-            darkModeMediaQuery.removeEventListener(
-                'change',
-                handleDarkModeChange
-            );
-        };
-    }, []);
+    const { darkMode, toggleDarkMode } = useTheme();
 
     return (
         <nav
@@ -79,7 +61,7 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                     <div className="ml-4 flex basis-1/2 lg:ml-0">
                         <Link to="/" className="flex outline-none">
                             <span className="sr-only">Your Company</span>
-                            {isDarkMode ? (
+                            {darkMode ? (
                                 <LightLogo
                                     className={`z-10 h-12 w-12 transition duration-500 ease-in-out ${scrollY < 350 ? 'scale-100' : 'lg:translate-x-7 lg:scale-125'}`}
                                 />
@@ -310,7 +292,7 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                         <SearchBar
                             Button={
                                 <button
-                                    className={`p-2 text-gray-500 outline-none transition-colors duration-200 ease-out hover:text-gray-900 dark:text-white dark:hover:text-gray-500`}
+                                    className={`p-2 text-gray-700 outline-none transition-colors duration-200 ease-out hover:text-gray-900 dark:text-white dark:hover:text-gray-500`}
                                 >
                                     <span className="sr-only">Search</span>
                                     <MagnifyingGlassIcon
@@ -321,6 +303,23 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                             }
                         />
 
+                        <button
+                            onClick={() => toggleDarkMode()}
+                            className={`p-2 text-gray-700 outline-none transition-colors duration-200 ease-out hover:text-gray-900 dark:text-white dark:hover:text-gray-500`}
+                        >
+                            {darkMode && (
+                                <SunIcon
+                                    className="h-6 w-6"
+                                    aria-hidden="true"
+                                />
+                            )}
+                            {!darkMode && (
+                                <MoonIcon
+                                    className="h-6 w-6"
+                                    aria-hidden="true"
+                                />
+                            )}
+                        </button>
                         <UserPopover />
 
                         {/* Cart */}
@@ -328,7 +327,7 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                             Button={
                                 <button className="group -m-2 flex items-center p-2">
                                     <ShoppingBagIcon
-                                        className={`h-6 w-6 flex-shrink-0 text-gray-500 transition-colors duration-200 ease-out group-hover:text-gray-800 dark:text-white dark:group-hover:text-gray-500`}
+                                        className={`h-6 w-6 flex-shrink-0 text-gray-700 transition-colors duration-200 ease-out group-hover:text-gray-800 dark:text-white dark:group-hover:text-gray-500`}
                                         aria-hidden="true"
                                     />
                                     <span className="ml-2 text-sm font-medium text-gray-700 transition-colors duration-200 ease-out group-hover:text-gray-800 dark:text-gray-100 dark:group-hover:text-gray-500">

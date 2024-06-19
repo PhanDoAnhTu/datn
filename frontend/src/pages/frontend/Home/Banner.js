@@ -1,22 +1,14 @@
 import { Link } from 'react-router-dom';
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
-import { getSliderByActive } from '../../../store/actions/slider-actions';
-export default function Banner() {
+export default function Banner({ slider }) {
     const ExecuteScripta = () => {
         window.scrollTo({
             top: 10000,
-            behavior: "smooth",
+            behavior: 'smooth',
         });
     };
-    const dispatch = useDispatch();
-    const { slider } = useSelector((state) => state.sliderReducer);
-    useEffect(() => {
-        if (!slider) dispatch(getSliderByActive({ slider_is_active: true }));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [slider]);
+
     return (
         <div>
             <Carousel
@@ -41,10 +33,10 @@ export default function Banner() {
                             />
                             <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                                 <div className="p-1 sm:max-w-lg">
-                                    <h1 className="text-left text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl dark:text-white">
+                                    <h1 className="text-left text-4xl font-bold tracking-tight text-white sm:text-6xl">
                                         {item.slider_summary}
                                     </h1>
-                                    <p className="mt-4 text-left text-xl text-gray-500 dark:text-gray-300">
+                                    <p className="mt-4 text-left text-xl text-gray-300">
                                         {item.slider_description}
                                     </p>
                                 </div>

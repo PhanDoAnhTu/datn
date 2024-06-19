@@ -11,7 +11,6 @@ export default function Blog() {
     const { all_posts } = useSelector((state) => state.postReducer);
     useEffect(() => {
         if (!all_posts) dispatch(getListPosts({ isPublished: true }));
-        console.log(all_posts);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [all_posts]);
     return (

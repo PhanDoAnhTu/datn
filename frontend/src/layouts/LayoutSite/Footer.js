@@ -1,38 +1,18 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ReactComponent as LightLogo } from '../../assets/lightlogo.svg';
 import { ReactComponent as DarkLogo } from '../../assets/darklogo.svg';
 import Logo from '../../assets/Logo';
+import { useTheme } from '../../ThemeContext';
 
 export default function Footer() {
-    const [isDarkMode, setIsDarkMode] = useState(false);
-
-    useEffect(() => {
-        const darkModeMediaQuery = window.matchMedia(
-            '(prefers-color-scheme: dark)'
-        );
-
-        const handleDarkModeChange = (event) => {
-            setIsDarkMode(event.matches);
-        };
-
-        darkModeMediaQuery.addEventListener('change', handleDarkModeChange);
-        setIsDarkMode(darkModeMediaQuery.matches);
-
-        return () => {
-            darkModeMediaQuery.removeEventListener(
-                'change',
-                handleDarkModeChange
-            );
-        };
-    }, []);
+    const { darkMode } = useTheme();
     return (
         <footer className="border-t border-stone-100 bg-white dark:border-stone-700 dark:bg-neutral-900">
-            <div className="mx-auto max-w-screen-xl space-y-8 px-4 py-16 sm:px-6 lg:space-y-15 lg:px-8">
+            <div className="lg:space-y-15 mx-auto max-w-screen-xl space-y-8 px-4 py-16 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                     <div>
                         <Link className="flex w-fit outline-none">
-                            {isDarkMode ? (
+                            {darkMode ? (
                                 <LightLogo className="w-20" />
                             ) : (
                                 <DarkLogo className="w-20" />

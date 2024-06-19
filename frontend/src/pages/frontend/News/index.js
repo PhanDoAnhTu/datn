@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Dialog, Transition } from '@headlessui/react';
 import { FunnelIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { Fragment, useEffect, useState } from 'react';
@@ -5,10 +6,7 @@ import { Link } from 'react-router-dom';
 import Pagination from '../../../components/frontend/Pagination';
 import { useDispatch, useSelector } from 'react-redux';
 import { getListTopic } from '../../../store/actions/topic-actions';
-import {
-    getListPosts,
-    getListPostsByTopicId,
-} from '../../../store/actions/post-actions';
+import { getListPosts } from '../../../store/actions/post-actions';
 import moment from 'moment';
 import 'moment/locale/vi';
 
@@ -17,21 +15,40 @@ export default function News() {
     const [selectedTopic, setSelectedTopic] = useState('all');
     const dispatch = useDispatch();
     const { topic } = useSelector((state) => state.topicReducer);
-    const { post, all_posts } = useSelector((state) => state.postReducer);
+    const { all_posts } = useSelector((state) => state.postReducer);
+    const [posts, setPosts] = useState(null);
+    const limit = 6;
+    const [page, setPage] = useState(1);
+    const [current_posts, setCurrentPosts] = useState(null);
     useEffect(() => {
         if (!topic) dispatch(getListTopic());
-        console.log(topic);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [topic]);
     useEffect(() => {
+        dispatch(getListPosts({ isPublished: true }));
+    }, []);
+    useEffect(() => {
+        setPage(1);
         if (selectedTopic === 'all') {
-            dispatch(getListPosts({ isPublished: true }));
-            console.log(post);
+            setPosts(all_posts?.slice());
         } else {
-            dispatch(getListPostsByTopicId({ topic_id: selectedTopic }));
-            console.log('post', post);
+            const filteredPosts = all_posts
+                ?.slice()
+                .filter(
+                    (item) =>
+                        item.topic_id ===
+                        topic
+                            ?.slice()
+                            .find((item) => item._id === selectedTopic)._id
+                );
+            setPosts(filteredPosts);
         }
-    }, [selectedTopic]);
+    }, [all_posts, selectedTopic]);
+    useEffect(() => {
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        setCurrentPosts(posts?.slice(startIndex, endIndex));
+    }, [posts, page]);
     return (
         <div>
             <div>
@@ -206,81 +223,64 @@ export default function News() {
                             {/* Product grid */}
                             <div className="col-span-3 grid grid-rows-1">
                                 <div className="col-span-3 grid gap-x-4 gap-y-4 md:grid-cols-2">
-                                    {selectedTopic === 'all'
-                                        ? all_posts?.map((item, index) => (
-                                              <Link
-                                                  to={`/bai-viet/${item.post_slug}`}
-                                                  key={index}
-                                                  className={`all-ease group relative flex h-56 w-full snap-start flex-col justify-between overflow-hidden rounded-md p-3 shadow-md transition duration-200`}
-                                              >
-                                                  <img
-                                                      src={item.post_image}
-                                                      className="absolute left-0 top-0 max-h-screen max-w-full object-cover object-center brightness-75 transition duration-500 ease-out group-hover:brightness-50"
-                                                  />
-                                                  <div className="z-10 flex items-center gap-x-4 text-xs">
-                                                      <time className="text-gray-500 dark:text-stone-300">
-                                                          {moment(
-                                                              item.createdAt
-                                                          )
-                                                              .locale('vi')
-                                                              .format(
-                                                                  'DD MMMM YYYY'
-                                                              )}
-                                                      </time>
-                                                  </div>
-                                                  <div className="group relative transition duration-500 ease-out">
-                                                      <p className="mt-5 line-clamp-3 text-justify text-sm leading-6 text-gray-600 opacity-0 group-hover:opacity-100 dark:text-gray-100">
-                                                          {
-                                                              item.post_short_description
-                                                          }
-                                                      </p>
-                                                      <h3 className="mt-3 text-xl font-semibold leading-6 text-white transition duration-200 ease-out">
-                                                          <div>
-                                                              <span className="absolute inset-0" />
-                                                              {item.post_title}
-                                                          </div>
-                                                      </h3>
-                                                  </div>
-                                              </Link>
-                                          ))
-                                        : post?.map((item, index) => (
-                                              <Link
-                                                  to={'/new/d/1'}
-                                                  key={index}
-                                                  className={`all-ease group relative flex h-56 w-full snap-start flex-col justify-between overflow-hidden rounded-md p-3 shadow-md transition duration-200`}
-                                              >
-                                                  <img
-                                                      src={item.post_image}
-                                                      className="absolute left-0 top-0 max-h-screen max-w-full object-cover object-center brightness-75 transition duration-500 ease-out group-hover:brightness-50"
-                                                  />
-                                                  <div className="z-10 flex items-center gap-x-4 text-xs">
-                                                      <time className="text-gray-500 dark:text-stone-300">
-                                                          {moment()
-                                                              .locale('vi')
-                                                              .format(
-                                                                  'DD MMMM YYYY'
-                                                              )}
-                                                      </time>
-                                                  </div>
-                                                  <div className="group relative transition duration-500 ease-out">
-                                                      <p className="mt-5 line-clamp-3 text-justify text-sm leading-6 text-gray-600 opacity-0 group-hover:opacity-100 dark:text-gray-100">
-                                                          {
-                                                              item.post_short_description
-                                                          }
-                                                      </p>
-                                                      <h3 className="mt-3 text-xl font-semibold leading-6 text-white transition duration-200 ease-out">
-                                                          <div>
-                                                              <span className="absolute inset-0" />
-                                                              {item.post_title}
-                                                          </div>
-                                                      </h3>
-                                                  </div>
-                                              </Link>
-                                          ))}
+                                    {all_posts && current_posts?.length > 0 ? (
+                                        current_posts?.map((item, index) => (
+                                            <Link
+                                                to={`/bai-viet/${item.post_slug}`}
+                                                key={index}
+                                                className={`all-ease group relative flex h-56 w-full snap-start flex-col justify-between overflow-hidden rounded-md p-3 shadow-md transition duration-200`}
+                                            >
+                                                <img
+                                                    src={item.post_image}
+                                                    className="absolute left-0 top-0 max-h-screen max-w-full object-cover object-center brightness-75 transition duration-500 ease-out group-hover:brightness-50"
+                                                />
+                                                <div className="z-10 flex items-center gap-x-4 text-xs">
+                                                    <time className="text-gray-500 dark:text-stone-300">
+                                                        {moment(item.createdAt)
+                                                            .locale('vi')
+                                                            .format(
+                                                                'DD MMMM YYYY'
+                                                            )}
+                                                    </time>
+                                                </div>
+                                                <div className="group relative transition duration-500 ease-out">
+                                                    <p className="mt-5 line-clamp-3 text-justify text-sm leading-6 text-gray-600 opacity-0 group-hover:opacity-100 dark:text-gray-100">
+                                                        {
+                                                            item.post_short_description
+                                                        }
+                                                    </p>
+                                                    <h3 className="mt-3 text-xl font-semibold leading-6 text-white transition duration-200 ease-out">
+                                                        <div>
+                                                            <span className="absolute inset-0" />
+                                                            {item.post_title}
+                                                        </div>
+                                                    </h3>
+                                                </div>
+                                            </Link>
+                                        ))
+                                    ) : (
+                                        <div>khong co j het</div>
+                                    )}
                                 </div>
-                                <div className="col-span-3 pt-5">
-                                    <Pagination className="col-span-3" />
-                                </div>
+                                {posts && posts?.length > 6 ? (
+                                    <div className="col-span-3 pt-5">
+                                        <Pagination
+                                            className="col-span-3"
+                                            currentPage={page}
+                                            setCurrentPage={setPage}
+                                            data={Array.from(
+                                                {
+                                                    length: Math.ceil(
+                                                        posts?.length / limit
+                                                    ),
+                                                },
+                                                (_, index) => index + 1
+                                            )}
+                                        />
+                                    </div>
+                                ) : (
+                                    ''
+                                )}
                             </div>
                         </div>
                     </section>
