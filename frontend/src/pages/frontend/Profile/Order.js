@@ -44,7 +44,7 @@ export default function Order() {
         }
     }
     return (
-        <Tab.Panel className={'p-3 px-7'}>
+        <Tab.Panel className={'px-7 pt-4 text-gray-900 dark:text-white'}>
             <div className="mb-4">
                 <div className="grid gap-y-3 divide-y">
                     {orders && orders.length !== 0 ? (

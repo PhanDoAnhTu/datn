@@ -62,7 +62,7 @@ export default function Search() {
                         <ProductSingle key={index} product={product} />
                     ))
                 ) : (
-                    <div className="col-span-full pb-24 text-center align-middle text-xl font-bold tracking-wide text-gray-900 dark:text-white">
+                    <div className="col-span-full pb-44 text-center align-middle text-xl font-bold tracking-wide text-gray-900 dark:text-white">
                         Không có sản phẩm khớp với thông tin tìm kiếm!
                     </div>
                 )}

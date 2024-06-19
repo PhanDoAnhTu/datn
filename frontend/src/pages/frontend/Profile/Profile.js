@@ -25,25 +25,33 @@ export default function Profile() {
             </div>
             <section className="mb-10 flex max-sm:flex-col max-sm:space-y-2 sm:space-x-3">
                 <Tab.Group>
-                    <Tab.List className="no-scrollbar flex h-fit divide-stone-600 bg-stone-900/50 max-sm:flex-row max-sm:overflow-x-scroll sm:w-1/4 sm:flex-col sm:overflow-hidden">
+                    <Tab.List className="no-scrollbar flex h-fit divide-stone-600 rounded-md bg-white shadow-md max-sm:flex-row max-sm:overflow-x-scroll sm:w-1/4 sm:flex-col sm:overflow-hidden dark:bg-zinc-900 dark:shadow-inner dark:shadow-white/25">
                         <ProfileTabItem
-                            Icon={<UserIcon className="h-6 w-6" />}
+                            Icon={
+                                <UserIcon className="h-6 w-6 text-gray-900 dark:text-white" />
+                            }
                             Title={'Thông tin'}
                         />
                         <ProfileTabItem
-                            Icon={<ShoppingBagIcon className="h-6 w-6" />}
+                            Icon={
+                                <ShoppingBagIcon className="h-6 w-6 text-gray-900 dark:text-white" />
+                            }
                             Title={'Đơn hàng'}
                         />
                         <ProfileTabItem
-                            Icon={<HeartIcon className="h-6 w-6" />}
+                            Icon={
+                                <HeartIcon className="h-6 w-6 text-gray-900 dark:text-white" />
+                            }
                             Title={'Yêu thích'}
                         />
                         <ProfileTabItem
-                            Icon={<HomeIcon className="h-6 w-6" />}
+                            Icon={
+                                <HomeIcon className="h-6 w-6 text-gray-900 dark:text-white" />
+                            }
                             Title={'Địa chỉ'}
                         />
                     </Tab.List>
-                    <Tab.Panels className="h-fit flex-1 bg-stone-900/30 dark:bg-stone-900/50">
+                    <Tab.Panels className="h-fit flex-1 rounded-md bg-white shadow-md dark:bg-zinc-900 dark:shadow-inner dark:shadow-white/25">
                         <Information />
                         <Order />
                         <Favorites />

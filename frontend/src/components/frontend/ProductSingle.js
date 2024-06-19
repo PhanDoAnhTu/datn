@@ -135,12 +135,14 @@ export default function ProductSingle({ product, reload }) {
                         {product.product_name}
                     </Link>
                 </h3>
-                {
-                    brand
-                        ?.slice()
-                        .find((item) => product?.product_brand === item._id)
-                        ?.brand_name
-                }
+                <span className="text-gray-500 dark:text-gray-200">
+                    {
+                        brand
+                            ?.slice()
+                            .find((item) => product.product_brand === item._id)
+                            .brand_name
+                    }
+                </span>
             </div>
             <div className="flex items-center">
                 {[0, 1, 2, 3, 4].map((rating) => (

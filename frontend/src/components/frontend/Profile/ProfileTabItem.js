@@ -7,10 +7,8 @@ export default function ProfileTabItem({ Title, Icon }) {
         <Tab
             className={({ selected }) =>
                 classNames(
-                    'group relative flex w-full items-center py-4 pl-4 pr-2 text-sm font-medium leading-5 outline-none transition duration-500 ease-out',
-                    selected
-                        ? 'pointer-events-none shadow'
-                        : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'
+                    'group relative flex w-full items-center py-4 pl-4 pr-2 text-sm font-medium leading-5 text-gray-900 outline-none transition duration-500 ease-out dark:text-white',
+                    selected ? 'pointer-events-none shadow' : ''
                 )
             }
         >
