@@ -19,7 +19,7 @@ export default function Favorites() {
     const { all_products } = useSelector((state) => state.productReducer);
 
     useEffect(() => {
-        !all_products && dispatch(allProducts({ limit: 20, page: 1 }));
+        !all_products && dispatch(allProducts({ limit: 20, page: 1 })); ////options
         userInfo &&
             (!wish_list
                 ? dispatch(

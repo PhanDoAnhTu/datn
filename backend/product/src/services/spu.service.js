@@ -1,7 +1,7 @@
 "use strict";
 const { errorResponse } = require("../core");
 const { SpuModel, Spu_AttributeModel } = require("../database/models");
-const { addImageBySkuList, addImageBySpuId } = require("./gallery.service");
+const { addImageBySkuList, addImageBySpuId, ListImageByProductId } = require("./gallery.service");
 const { newSku, allSkuBySpuId, oneSku } = require("./sku.Service");
 const { spuRepository } = require("../database");
 const _ = require("lodash");
@@ -138,6 +138,8 @@ const AllProducts = async ({ sort = "ctime", isPublished = true }) => {
   let brand_list = [];
   let sku_list = [];
   let product_review = [];
+  let product_images = [];
+
   for (let index = 0; index < all_Products.length; index++) {
     const brand = await new BrandService().findBrandById({
       brand_id: all_Products[index].product_brand,
@@ -152,6 +154,8 @@ const AllProducts = async ({ sort = "ctime", isPublished = true }) => {
       isPublished: true,
     });
     product_review.push(review);
+   const productImages = await ListImageByProductId({ product_id: all_Products[index]._id })
+   product_images.push(productImages)
   }
   const specialoffer = await RPCRequest("SPECIAL_OFFER_RPC", {
     type: "FIND_SPECIAL_OFFER_BY_DATE",
@@ -166,6 +170,7 @@ const AllProducts = async ({ sort = "ctime", isPublished = true }) => {
       special_offer: specialoffer,
       sku_list: sku_list[index],
       product_review: product_review[index],
+      product_images: product_images[index]
     };
   });
 
@@ -190,6 +195,8 @@ const getAllProductsByfilter = async ({
   let brand_list = [];
   let sku_list = [];
   let product_review = [];
+  let product_images = [];
+
   for (let index = 0; index < all_Products.length; index++) {
     const brand = await new BrandService().findBrandById({
       brand_id: all_Products[index].product_brand,
@@ -204,6 +211,9 @@ const getAllProductsByfilter = async ({
       isPublished: true,
     });
     product_review.push(review);
+    const productImages = await ListImageByProductId({ product_id: all_Products[index]._id })
+    product_images.push(productImages)
+
 
   }
   const specialoffer = await RPCRequest("SPECIAL_OFFER_RPC", {
@@ -220,6 +230,8 @@ const getAllProductsByfilter = async ({
       special_offer: specialoffer,
       sku_list: sku_list[index],
       product_review: product_review[index],
+      product_images: product_images[index]
+
     };
   });
 
@@ -244,6 +256,8 @@ const findProductsByCategory = async ({
   let brand_list = [];
   let sku_list = [];
   let product_review = [];
+  let product_images = [];
+
   for (let index = 0; index < productsByCategory.length; index++) {
     const brand = await new BrandService().findBrandById({
       brand_id: productsByCategory[index].product_brand,
@@ -258,6 +272,8 @@ const findProductsByCategory = async ({
       isPublished: true,
     });
     product_review.push(review);
+    const  productImages = await ListImageByProductId({ product_id: productsByCategory[index]._id })
+    product_images.push(productImages)
   }
   const special_offer = await RPCRequest("SPECIAL_OFFER_RPC", {
     type: "FIND_SPECIAL_OFFER_BY_DATE",
@@ -274,6 +290,8 @@ const findProductsByCategory = async ({
         special_offer: special_offer,
         sku_list: sku_list[index],
         product_review: product_review[index],
+        product_images: product_images[index]
+
       };
     }
   );
