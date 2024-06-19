@@ -79,7 +79,7 @@ export default function Information() {
                 <div className="flex flex-col justify-center space-y-1 max-sm:items-center">
                     <button
                         onClick={() => setOpen(true)}
-                        className="w-fit border-2 border-white px-10 py-2 font-bold text-white transition duration-200 ease-out hover:border-magenta-500 hover:text-magenta-500"
+                        className="w-fit rounded-md border-2 border-magenta-500 bg-magenta-500 px-10 py-2 font-bold text-white transition duration-200 ease-out hover:-translate-y-0.5"
                     >
                         Thay đổi
                     </button>
@@ -170,19 +170,11 @@ export default function Information() {
                             </div>
                         </Dialog>
                     </Transition.Root>
-                    <div className="flex flex-col">
-                        <span className="text-white">
-                            Kích thước tối đa: 5MB
-                        </span>
-                        <span className="text-white">
-                            Định dạng: .jpg, .jpeg, .png
-                        </span>
-                    </div>
                 </div>
             </div>
             <div className="grid grid-cols-1 gap-4">
                 <div className="flex flex-col -space-y-1">
-                    <span className="w-fit border-white pr-1 text-white">
+                    <span className="w-fit border-white pr-1 text-gray-900 dark:text-white">
                         Email
                     </span>
                     <input
@@ -194,7 +186,7 @@ export default function Information() {
                 </div>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="flex flex-col -space-y-1">
-                        <span className="w-fit  border-white pr-1 text-white">
+                        <span className="w-fit  border-white pr-1 text-gray-900 dark:text-white">
                             Tên người dùng
                         </span>
                         <input
@@ -208,7 +200,7 @@ export default function Information() {
                         />
                     </div>
                     <div className="flex flex-col -space-y-1">
-                        <span className="w-fit  border-white pr-1 text-white">
+                        <span className="w-fit  border-white pr-1 text-gray-900 dark:text-white">
                             Họ và tên
                         </span>
                         <input
@@ -223,7 +215,7 @@ export default function Information() {
                     </div>
 
                     <div className="flex flex-col -space-y-1">
-                        <span className="w-fit  border-white pr-1 text-white">
+                        <span className="w-fit  border-white pr-1 text-gray-900 dark:text-white">
                             Giới tính
                         </span>
                         <GenderSelection
@@ -234,7 +226,7 @@ export default function Information() {
                         />
                     </div>
                     <div className="flex flex-col -space-y-1">
-                        <span className="w-fit border-white pr-1 text-white">
+                        <span className="w-fit border-white pr-1 text-gray-900 dark:text-white">
                             Số điện thoại
                         </span>
                         <input
@@ -257,7 +249,7 @@ export default function Information() {
                     <>
                         <button
                             onClick={openModal}
-                            className="border-2 border-white px-5 py-1 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500"
+                            className="rounded-md border-2 border-gray-900 px-5 py-1 text-gray-900 transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 dark:border-white dark:text-white"
                         >
                             Đổi mật khẩu
                         </button>
@@ -453,7 +445,7 @@ export default function Information() {
                         </Transition>
                         <button
                             onClick={() => setIsEditable(true)}
-                            className="border-2 border-white px-5 py-1 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500"
+                            className="rounded-md border-2 border-gray-900 px-5 py-1 text-gray-900 transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 dark:border-white dark:text-white"
                         >
                             Chỉnh sửa
                         </button>
@@ -462,13 +454,13 @@ export default function Information() {
                     <>
                         <button
                             onClick={() => setIsEditable(false)}
-                            className="border-2 border-white px-5 py-1 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500"
+                            className="rounded-md border-2 border-gray-900 px-5 py-1 text-gray-900 transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 dark:border-white dark:text-white"
                         >
                             Hủy
                         </button>
                         <button
                             onClick={() => setIsEditable(false)}
-                            className="border-2 border-white px-5 py-1 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500"
+                            className="rounded-md border-2 border-gray-900 px-5 py-1 text-gray-900 transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 dark:border-white dark:text-white"
                         >
                             Lưu thay đổi
                         </button>

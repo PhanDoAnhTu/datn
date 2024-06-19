@@ -279,7 +279,7 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                                 <Link
                                     key={item._id}
                                     to={item.menu_path}
-                                    className="flex w-12 items-center text-sm font-medium text-gray-700 transition-colors duration-200 ease-out hover:text-gray-800 dark:text-gray-100 dark:hover:text-magenta-500"
+                                    className="flex w-12 items-center text-sm font-medium text-gray-700 transition-colors duration-200 ease-out hover:text-magenta-500 dark:text-gray-100"
                                 >
                                     {item.menu_label}
                                 </Link>

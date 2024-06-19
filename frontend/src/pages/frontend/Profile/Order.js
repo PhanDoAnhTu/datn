@@ -28,7 +28,7 @@ export default function Order() {
         fetchData();
     }, [userInfo]);
     return (
-        <Tab.Panel className={'p-3 px-7'}>
+        <Tab.Panel className={'px-7 pt-4 text-gray-900 dark:text-white'}>
             <div className="mb-4">
                 <div className="grid gap-y-3 divide-y">
                     {orders && orders.length !== 0 ? (
@@ -42,7 +42,7 @@ export default function Order() {
                                         </div>
                                     </div>
                                     <div className="flex flex-1 flex-col px-2">
-                                        <div className="text-md flex justify-end space-x-2 py-1 text-white">
+                                        <div className="text-md flex justify-end space-x-2 py-1">
                                             <span className="border-r-2 pr-2">
                                                 {item.createdOn}
                                             </span>
@@ -74,7 +74,7 @@ export default function Order() {
                             );
                         })
                     ) : (
-                        <div className="font-bold text-white">
+                        <div className="font-bold">
                             Hiện không có thông tin để hiển thị!
                         </div>
                     )}

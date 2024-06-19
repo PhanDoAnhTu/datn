@@ -56,8 +56,8 @@ export default function Favorites() {
     };
 
     return (
-        <Tab.Panel className={'p-3 px-7'}>
-            <div className="mb-4 grid gap-y-4">
+        <Tab.Panel className={'px-7 pt-4'}>
+            <div className="mb-4 grid">
                 <div className="flex justify-end">
                     {wish_list && wish_list.wish_list_products?.length !== 0 ? (
                         <>
@@ -105,7 +105,7 @@ export default function Favorites() {
                             })
                     )
                 ) : (
-                    <div className="text-lg font-bold text-gray-900 dark:text-white">
+                    <div className="text-md font-bold text-gray-900 dark:text-white">
                         Hiện không có thông tin để hiển thị!
                     </div>
                 )}

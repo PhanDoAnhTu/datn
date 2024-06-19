@@ -23,7 +23,7 @@ export default function Payment({
             </button>
             <div className="grid gap-16 xl:grid-cols-2">
                 <div>
-                    <div className="h-fit bg-white p-10 dark:bg-zinc-900">
+                    <div className="h-fit rounded-md bg-white p-10 shadow-md dark:bg-zinc-900 dark:shadow-inner dark:shadow-white/25">
                         <h1 className="text-lg font-bold text-gray-900 dark:text-white">
                             Thông tin giao hàng
                         </h1>
@@ -91,7 +91,7 @@ export default function Payment({
                     </div>
                 </div>
                 <div>
-                    <div className="h-fit bg-white p-10 dark:bg-zinc-900">
+                    <div className="h-fit rounded-md bg-white p-10 shadow-md dark:bg-zinc-900 dark:shadow-inner dark:shadow-white/25">
                         <h1 className="text-lg font-bold text-gray-900 dark:text-white">
                             Phương thức thanh toán
                         </h1>

@@ -147,7 +147,7 @@ export default function Footer() {
                     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:col-span-2 lg:grid-cols-4">
                         <div>
                             <p className="font-medium text-gray-900 dark:text-white">
-                                Services
+                                Dịch vụ
                             </p>
 
                             <ul className="mt-6 space-y-4 text-sm">
@@ -165,7 +165,7 @@ export default function Footer() {
                                         to="#"
                                         className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
                                     >
-                                        Company Review
+                                        Công ty
                                     </Link>
                                 </li>
 
@@ -174,25 +174,7 @@ export default function Footer() {
                                         to="#"
                                         className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
                                     >
-                                        Accounts Review
-                                    </Link>
-                                </li>
-
-                                <li>
-                                    <Link
-                                        to="#"
-                                        className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
-                                    >
-                                        HR Consulting
-                                    </Link>
-                                </li>
-
-                                <li>
-                                    <Link
-                                        to="#"
-                                        className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
-                                    >
-                                        SEO Optimisation
+                                        Tài khoản
                                     </Link>
                                 </li>
                             </ul>
@@ -200,7 +182,7 @@ export default function Footer() {
 
                         <div>
                             <p className="font-medium text-gray-900 dark:text-white">
-                                Company
+                                Công ty
                             </p>
 
                             <ul className="mt-6 space-y-4 text-sm">
@@ -209,7 +191,7 @@ export default function Footer() {
                                         to="#"
                                         className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
                                     >
-                                        About
+                                        Về chúng tôi
                                     </Link>
                                 </li>
 
@@ -218,7 +200,7 @@ export default function Footer() {
                                         to="#"
                                         className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
                                     >
-                                        Meet the Team
+                                        Liên hệ với team
                                     </Link>
                                 </li>
 
@@ -227,7 +209,7 @@ export default function Footer() {
                                         to="#"
                                         className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
                                     >
-                                        Accounts Review
+                                        Review tài khoản
                                     </Link>
                                 </li>
                             </ul>
@@ -235,7 +217,7 @@ export default function Footer() {
 
                         <div>
                             <p className="font-medium text-gray-900 dark:text-white">
-                                Helpful Links
+                                Đường dẫn khác
                             </p>
 
                             <ul className="mt-6 space-y-4 text-sm">
@@ -244,7 +226,7 @@ export default function Footer() {
                                         to="#"
                                         className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
                                     >
-                                        Contact
+                                        Liên hệ
                                     </Link>
                                 </li>
 
@@ -262,7 +244,7 @@ export default function Footer() {
                                         to="#"
                                         className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
                                     >
-                                        Live Chat
+                                        Chat trực tiếp
                                     </Link>
                                 </li>
                             </ul>
@@ -270,7 +252,7 @@ export default function Footer() {
 
                         <div>
                             <p className="font-medium text-gray-900 dark:text-white">
-                                Legal
+                                Pháp lý
                             </p>
 
                             <ul className="mt-6 space-y-4 text-sm">
@@ -279,7 +261,7 @@ export default function Footer() {
                                         to="#"
                                         className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
                                     >
-                                        Accessibility
+                                        Truy cập
                                     </Link>
                                 </li>
 
@@ -288,7 +270,7 @@ export default function Footer() {
                                         to="#"
                                         className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
                                     >
-                                        Returns Policy
+                                        Chính sách hoàn trả
                                     </Link>
                                 </li>
 
@@ -297,16 +279,7 @@ export default function Footer() {
                                         to="#"
                                         className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
                                     >
-                                        Refund Policy
-                                    </Link>
-                                </li>
-
-                                <li>
-                                    <Link
-                                        to="#"
-                                        className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
-                                    >
-                                        Hiring Statistics
+                                        Chính sách hoàn tiền
                                     </Link>
                                 </li>
                             </ul>
@@ -315,7 +288,7 @@ export default function Footer() {
                 </div>
 
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                    &copy; 2024. Outrunner. All rights reserved.
+                    &copy; 2024. Outrunner. Bản quyền.
                 </p>
             </div>
         </footer>

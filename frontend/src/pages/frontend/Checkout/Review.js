@@ -137,7 +137,7 @@ export default function Review({
             </button>
             <div className="grid md:gap-16">
                 <div>
-                    <div className="h-fit bg-white p-10 dark:bg-zinc-900/100">
+                    <div className="h-fit rounded-md bg-white p-10 shadow-md dark:bg-zinc-900/100 dark:shadow-inner dark:shadow-white/25">
                         <h1 className="text-lg font-bold text-gray-900 dark:text-white">
                             Thông tin giao hàng
                         </h1>
@@ -205,7 +205,7 @@ export default function Review({
                     </div>
                 </div>
                 <div>
-                    <div className="h-fit bg-white p-10 text-gray-900 dark:bg-zinc-900 dark:text-white">
+                    <div className="h-fit rounded-md bg-white p-10 text-gray-900 shadow-md dark:bg-zinc-900 dark:text-white dark:shadow-inner dark:shadow-white/25">
                         <div className="flow-root">
                             <ul className="checkout -my-2 divide-gray-200 overflow-y-scroll transition-colors duration-200 ease-out dark:divide-stone-700">
                                 {selectedProductFromCart &&
@@ -297,17 +297,17 @@ export default function Review({
                         </div>
                         <div className="mt-6 flex py-4">
                             <div className="flex flex-1 flex-col">
-                                <div className="flex justify-end space-x-5">
-                                    <h1 className="text-md font-bold text-white">
+                                <div className="flex justify-end space-x-5 text-gray-900 dark:text-white">
+                                    <h1 className="text-md font-bold">
                                         Phương thức thanh toán:
                                     </h1>
                                     {paymentMethod === 'COD' ? (
-                                        <h1 className="text-md font-bold text-white">
+                                        <h1 className="text-md font-bold">
                                             Thanh toán khi nhận hàng
                                         </h1>
                                     ) : (
-                                        <div className="text-md flex space-x-2 text-white">
-                                            <span className="text-white">
+                                        <div className="text-md flex space-x-2">
+                                            <span>
                                                 Thanh toán bằng {paymentMethod}
                                             </span>
                                         </div>

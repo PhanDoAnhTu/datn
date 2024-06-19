@@ -2,7 +2,7 @@ export default function ButtonWithBorder({ Title, HandleClick, className }) {
     return (
         <button
             onClick={HandleClick}
-            className={`border-2 border-gray-900 text-gray-900 transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 dark:border-white dark:text-white ${className}`}
+            className={`rounded-md border-2 border-magenta-500 bg-magenta-500 text-white shadow-md ring-magenta-500 transition duration-500 ease-out hover:border-magenta-500 ${className}`}
         >
             {Title}
         </button>
