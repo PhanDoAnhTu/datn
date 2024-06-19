@@ -16,6 +16,7 @@ module.exports = async (app, channel) => {
     app.use('/v1/rbac', require('./rbac'))
     app.use('/v1/profile', require('./profile'))
     app.use('/v1/template', require('./template'))
+    app.use('/v1/address', require('./address'))
 
 }
 

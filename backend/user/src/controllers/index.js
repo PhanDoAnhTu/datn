@@ -6,5 +6,6 @@ module.exports = {
     templateController: require('./template.controller'),
     customerController: require('./customer.controller'),
     staffController: require('./staff.controller'),
+    addressController: require('./address.controller'),
 
 }

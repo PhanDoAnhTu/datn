@@ -1,16 +1,28 @@
 import { Tab } from '@headlessui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { addresses } from '../../../test/addresses';
+import { getAddressByCustomerId } from '../../../store/actions';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function Address() {
-    const [address, setAddress] = useState(0);
+    const dispatch = useDispatch()
+    const { userInfo } = useSelector((state) => state.userReducer);
+    const [address, setAddress] = useState(null);
+    const fetchDataAddress = async () => {
+        const resultAddress = await dispatch(getAddressByCustomerId({ customer_id: userInfo._id }))
+        setAddress(resultAddress?.payload?.metaData)
+    }
+    useEffect(() => {
+        fetchDataAddress()
+    }, [])
+
     return (
         <Tab.Panel className="p-3">
             <div className="grid grid-cols-2 gap-2">
                 {addresses.map((item, index) => (
                     <div
                         className="flex items-center bg-zinc-800/60 px-3 py-2"
-                        onClick={() => setAddress(parseInt(item.id))}
+                        onClick={() => setAddress(item)}
                         key={index}
                     >
                         <div className="flex flex-1 flex-col text-white">
@@ -23,8 +35,8 @@ export default function Address() {
                         <div className="flex h-full items-center">
                             <input
                                 type="radio"
-                                value={item.id}
-                                checked={address === item.id}
+                                value={item._id}
+                                checked={address?._id === item._id}
                                 className="border-0 p-3 transition duration-500 ease-out checked:bg-xanthous-500 checked:text-xanthous-400 focus:ring-xanthous-400"
                             />
                         </div>
@@ -34,9 +46,6 @@ export default function Address() {
             <div className="mt-4 flex justify-end space-x-2 border-t-2 border-white pt-2">
                 <button className="border-2 border-white px-2 py-1 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500">
                     Thêm địa chỉ mới
-                </button>
-                <button className="border-2 border-white px-2 py-1 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500">
-                    Chọn làm địa chỉ mặc định
                 </button>
             </div>
         </Tab.Panel>

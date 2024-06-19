@@ -85,3 +85,15 @@ export const listImageByProductId = (product_id) => async (dispatch) => {
 
   }
 };
+
+export const findProductbestSelling = (data) => async (dispatch) => {
+  try {
+    const response = await PostData('/product/v1/spu/findProductBestSelling', data);
+    console.log('response:', response)
+    return dispatch({ type: Action.PRODUCT_BEST_SELLING, payload: response.data });
+
+  } catch (err) {
+    console.log(err)
+
+  }
+};

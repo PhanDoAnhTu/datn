@@ -138,8 +138,8 @@ export default function ProductSingle({ product, reload }) {
                 {
                     brand
                         ?.slice()
-                        .find((item) => product.product_brand === item._id)
-                        .brand_name
+                        .find((item) => product?.product_brand === item._id)
+                        ?.brand_name
                 }
             </div>
             <div className="flex items-center">

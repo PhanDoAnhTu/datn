@@ -1,7 +1,7 @@
 "use strict";
 
 
-const {addressRepository} = require('../database');
+const { addressRepository } = require('../database');
 
 class AddressService {
 
@@ -9,15 +9,38 @@ class AddressService {
         this.repository = new addressRepository();
     }
 
-    async AddNewAddress(_id, userInputs) {
+    async CreateAddress({ customer_id, phone_number, street, postalCode, city, country }) {
 
-        const { street, postalCode, city, country, phone_number } = userInputs;
+        const profile = await CustomerModel.findOne({ customer_id: customer_id });
 
-        const addressResult = await this.repository.CreateAddress({ _id, street, postalCode, city, country, phone_number })
+        if (!profile) return null
 
-        return FormateData(addressResult);
+        const newAddress = await AddressModel.create({
+            customer_id,
+            phone_number,
+            street,
+            postalCode,
+            city,
+            country
+        })
+        return newAddress
     }
+    async getAddressByCustomerId({ customer_id }) {
+
+        const Addresses = await AddressModel.find({ customer_id: customer_id });
+
+        return Addresses
+    }
+    async removeAddress({ customer_id, address_id }) {
+
+        const address = await AddressModel.findOne({ customer_id: customer_id, _id: address_id });
+
+        if (!address) return null
+
+        return await AddressModel.deleteOne({ _id: address._id })
+    }
+
 
 }
 
-module.exports =  AddressService;
+module.exports = AddressService;

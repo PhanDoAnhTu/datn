@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { findOrderByUserId } from '../../../store/actions/order-actions';
+import { NumericFormat } from 'react-number-format';
 
 export default function Order() {
     // eslint-disable-next-line no-unused-vars
@@ -27,6 +28,21 @@ export default function Order() {
         };
         fetchData();
     }, [userInfo]);
+    const statusOrder = (item) => {
+        switch (item.order_status) {
+
+            case 'confirmed':
+                return 'Đã xác nhận'
+            case 'shipped':
+                return 'Đang giao'
+            case 'cancelled':
+                return 'Đã hủy'
+            case 'successful':
+                return 'Đã nhận'
+            default:
+                return 'Chờ xác nhận'
+        }
+    }
     return (
         <Tab.Panel className={'p-3 px-7'}>
             <div className="mb-4">
@@ -34,31 +50,35 @@ export default function Order() {
                     {orders && orders.length !== 0 ? (
                         orders?.map((item) => {
                             return (
-                                <div className="flex py-4 pt-6 " key={item._id}>
-                                    <div className="flex space-x-2">
+                                <div className="flex py-4 " key={item._id}>
+                                    <div className="flex  flex-col justify-around">
                                         <div className="text-gray-900 dark:text-white">
-                                            Mã đơn hàng:{' '}
-                                            {item.order_trackingNumber}
+                                            <p className='font-bold'> Mã đơn hàng:{'  #'}{item.order_trackingNumber}</p>
                                         </div>
+                                        <div className=" text-gray-900 dark:text-white">
+                                            Địa chỉ nhận: {item?.order_shipping.ship_to.address}
+                                        </div>
+                                        <div className=" text-gray-900 dark:text-white">
+                                            Tổng tiền thanh toán: <NumericFormat
+                                                value={item?.order_checkout?.totalCheckout}
+                                                displayType={'text'}
+                                                thousandSeparator={true}
+                                                decimalScale={0}
+                                                id="price"
+                                                suffix={'đ'}
+                                            />
+                                        </div>
+
                                     </div>
-                                    <div className="flex flex-1 flex-col px-2">
-                                        <div className="text-md flex justify-end space-x-2 py-1 text-white">
+
+                                    <div className="flex flex-1 flex-col justify-around">
+                                        <div className="text-md flex justify-end space-x-2 text-white">
                                             <span className="border-r-2 pr-2">
                                                 {item.createdOn}
                                             </span>
                                             <span className="font-bold text-green-400">
-                                                {() => {
-                                                    switch (item.order_status) {
-                                                        case 'confirmed':
-                                                            return 'Đã xác nhận';
-                                                        case 'shipped':
-                                                            return 'Đã hoàn thành';
-                                                        case 'cancelled':
-                                                            return 'Đã hủy';
-                                                        default:
-                                                            return 'Chờ xác nhận';
-                                                    }
-                                                }}
+                                                {statusOrder(item)}
+
                                             </span>
                                         </div>
                                         <div className="mt-5 flex justify-end">
@@ -75,7 +95,7 @@ export default function Order() {
                         })
                     ) : (
                         <div className="font-bold text-white">
-                            Hiện không có thông tin để hiển thị!
+                            Hiện không có hóa đơn để hiển thị!
                         </div>
                     )}
                 </div>
