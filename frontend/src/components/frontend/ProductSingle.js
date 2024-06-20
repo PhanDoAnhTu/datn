@@ -63,9 +63,9 @@ export default function ProductSingle({ product, reload }) {
     return (
         <div
             key={product._id}
-            className="group relative h-fit w-fit max-w-full py-2"
+            className="group relative h-fit w-fit max-w-full"
         >
-            <div className="h-56 w-56 max-w-full snap-start overflow-hidden rounded-md bg-gray-200 shadow-md transition-all duration-200 ease-out group-hover:opacity-75 lg:h-56 lg:w-56">
+            <div className="h-56 w-56 max-w-full snap-start overflow-hidden rounded-md bg-gray-200 shadow-lg transition-all duration-200 ease-out group-hover:opacity-75 lg:h-56 lg:w-56">
                 <img
                     src={product.product_thumb}
                     alt={product.product_slug}

@@ -7,7 +7,7 @@ import Blog from './Blog';
 import Subscribe from '../../../components/frontend/home/Subscribe';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { allProducts } from '../../../store/actions';
+import { allProducts, findProductbestSelling } from '../../../store/actions';
 import DocumentTitle from '../../../components/frontend/DocumentTitle';
 import ProductList from '../../../components/frontend/ProductList';
 import { getSliderByActive } from '../../../store/actions/slider-actions';
@@ -18,16 +18,14 @@ export default function Home() {
     const { all_products } = useSelector((state) => state.productReducer);
     const { category } = useSelector((state) => state.categoryReducer);
     const { slider } = useSelector((state) => state.sliderReducer);
+    const { product_best_selling } = useSelector((state) => state.productReducer);
 
 
     const fetchData = async () => {
         dispatch(allProducts());
         // dispatch(findListBrand());
-        dispatch(
-            getSliderByActive({
-                slider_is_active: true,
-            })
-        );
+        dispatch(getSliderByActive({ slider_is_active: true, }));
+        dispatch(findProductbestSelling());
     }
 
     useEffect(() => {
@@ -38,7 +36,6 @@ export default function Home() {
                 fetchData()
             }, 3000)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -102,6 +99,17 @@ export default function Home() {
                         <CategorySection item={item} key={item._id} />
                     ));
                 })()}
+            </div>
+            <div className="px-4 sm:px-6 lg:px-8">
+                {product_best_selling ? (
+                    <ProductList
+                        title={'Sản phẩm bán chạy'}
+                        summary={'Sản phảm hot hit'}
+                        products={product_best_selling?.slice(0, 10)}
+                    />
+                ) : (
+                    <></>
+                )}
             </div>
             <div className="px-4 sm:px-6 lg:px-8">
                 {all_products ? (
