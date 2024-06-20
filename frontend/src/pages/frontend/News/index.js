@@ -104,7 +104,7 @@ export default function News() {
                                     </div>
 
                                     {/* Filters */}
-                                    <form className="mt-4 border-t border-gray-200">
+                                    <form className="mt-4 border-t border-gray-200 ">
                                         <h3 className="sr-only">Categories</h3>
                                         <ul className="px-2 py-3 font-medium text-gray-900">
                                             <li>
@@ -155,7 +155,7 @@ export default function News() {
                 </Transition.Root>
 
                 <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
+                    <div className="flex items-baseline justify-between border-b border-gray-300 pb-6 pt-24">
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
                             Tin tức
                         </h1>
@@ -184,7 +184,7 @@ export default function News() {
 
                         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
                             {/* Filters */}
-                            <form className="hidden lg:block">
+                            <form className="hidden h-fit rounded-md bg-white p-4 shadow-md lg:block dark:bg-zinc-800">
                                 <h3 className="sr-only">Categories</h3>
                                 <ul className="space-y-4 pb-6 text-sm font-medium text-gray-900 dark:text-white">
                                     <li>
@@ -232,10 +232,10 @@ export default function News() {
                                             >
                                                 <img
                                                     src={item.post_image}
-                                                    className="absolute left-0 top-0 max-h-screen max-w-full object-cover object-center brightness-75 transition duration-500 ease-out group-hover:brightness-50"
+                                                    className="absolute left-0 top-0 h-full w-full object-cover object-center brightness-75 transition duration-500 ease-out group-hover:brightness-50"
                                                 />
                                                 <div className="z-10 flex items-center gap-x-4 text-xs">
-                                                    <time className="text-gray-500 dark:text-stone-300">
+                                                    <time className="text-stone-300">
                                                         {moment(item.createdAt)
                                                             .locale('vi')
                                                             .format(
@@ -244,7 +244,7 @@ export default function News() {
                                                     </time>
                                                 </div>
                                                 <div className="group relative transition duration-500 ease-out">
-                                                    <p className="mt-5 line-clamp-3 text-justify text-sm leading-6 text-gray-600 opacity-0 group-hover:opacity-100 dark:text-gray-100">
+                                                    <p className="mt-5 line-clamp-3 text-justify text-sm leading-6 text-gray-100 opacity-0 group-hover:opacity-100">
                                                         {
                                                             item.post_short_description
                                                         }

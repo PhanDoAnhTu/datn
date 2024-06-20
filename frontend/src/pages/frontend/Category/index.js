@@ -1228,7 +1228,7 @@ export default function Category() {
 
                         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
                             {/* Filters */}
-                            <form className="hidden lg:block">
+                            <form className="hidden h-fit rounded-md bg-white p-4 shadow-md lg:block dark:bg-zinc-800">
                                 <h3 className="sr-only">Categories</h3>
                                 <ul className="space-y-4 border-b border-gray-300 pb-6 text-sm font-medium text-gray-900 dark:text-white">
                                     {category1 === undefined &&

@@ -1,5 +1,4 @@
 import { Tab } from '@headlessui/react';
-import Pagination from '../../../components/frontend/Pagination';
 import ProductSingleList from '../../../components/frontend/ProductSingleList';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -63,7 +62,7 @@ export default function Favorites() {
                         <>
                             <button
                                 onClick={() => handleReload()}
-                                className="ml-3 border-2 border-white px-3  py-2 font-semibold text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs"
+                                className="ml-3 rounded-md border-2 border-gray-900 px-3 py-2 font-semibold text-gray-900 shadow-md transition duration-500 ease-out hover:bg-gray-900 hover:text-white max-sm:text-xs dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-gray-900"
                             >
                                 Làm mới
                             </button>
@@ -74,7 +73,7 @@ export default function Favorites() {
                                             userId: userInfo._id,
                                         })
                                     }
-                                    className="ml-3 border-2 border-magenta-500 px-3  py-2 font-semibold text-magenta-500 transition duration-500 ease-out hover:border-rose-500 hover:text-rose-500 max-sm:text-xs"
+                                    className="ml-3 rounded-md border-2 border-rose-500 px-3 py-2 font-semibold text-rose-500 shadow-md transition duration-500 ease-out hover:border-rose-500 hover:bg-rose-500 hover:text-white max-sm:text-xs"
                                 >
                                     Xóa danh sách yêu thích
                                 </button>
@@ -86,35 +85,32 @@ export default function Favorites() {
                 </div>
 
                 {wish_list && wish_list.wish_list_products?.length > 0 ? (
-                    wish_list.wish_list_products.map(
-                        (product_id) =>
-                            all_products &&
-                            all_products.map((product, index) => {
-                                if (
-                                    product._id.toString() ===
-                                    product_id.toString()
-                                ) {
-                                    return (
-                                        <ProductSingleList
-                                            product={product}
-                                            key={index}
-                                            reload={handleReload}
-                                        />
-                                    );
-                                }
-                            })
-                    )
+                    <div className="mt-4 grid gap-2">
+                        {wish_list.wish_list_products.map(
+                            (product_id) =>
+                                all_products &&
+                                all_products.map((product, index) => {
+                                    if (
+                                        product._id.toString() ===
+                                        product_id.toString()
+                                    ) {
+                                        return (
+                                            <ProductSingleList
+                                                product={product}
+                                                key={index}
+                                                reload={handleReload}
+                                            />
+                                        );
+                                    }
+                                })
+                        )}
+                    </div>
                 ) : (
                     <div className="text-md font-bold text-gray-900 dark:text-white">
                         Hiện không có thông tin để hiển thị!
                     </div>
                 )}
             </div>
-            {wish_list && wish_list.wish_list_products?.length !== 0 ? (
-                <Pagination />
-            ) : (
-                ''
-            )}
         </Tab.Panel>
     );
 }

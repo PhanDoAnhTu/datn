@@ -42,7 +42,7 @@ export default function Blog() {
                                 >
                                     <img
                                         src={item.post_image}
-                                        className="absolute left-0 top-0 max-h-screen max-w-full object-cover object-center brightness-75 transition duration-500 ease-out group-hover:brightness-50"
+                                        className="absolute left-0 top-0 h-full w-full object-cover object-center brightness-75 transition duration-500 ease-out group-hover:brightness-50"
                                     />
                                     <div className="z-10 flex items-center gap-x-4 text-xs">
                                         <time className="text-gray-300 dark:text-stone-300">

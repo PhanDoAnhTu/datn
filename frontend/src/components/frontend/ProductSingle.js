@@ -62,7 +62,7 @@ export default function ProductSingle({ product, reload }) {
             key={product._id}
             className="group relative h-fit w-fit max-w-full py-2"
         >
-            <div className="h-56 w-56 max-w-full snap-start overflow-hidden rounded-md bg-gray-200 transition-all duration-200 ease-out group-hover:opacity-75 lg:h-56 lg:w-56">
+            <div className="h-56 w-56 max-w-full snap-start overflow-hidden rounded-md bg-gray-200 shadow-md transition-all duration-200 ease-out group-hover:opacity-75 lg:h-56 lg:w-56">
                 <img
                     src={product.product_thumb}
                     alt={product.product_slug}
@@ -74,7 +74,7 @@ export default function ProductSingle({ product, reload }) {
                 {/* nut them san pham */}
                 <button
                     onClick={() => openModal(product._id)}
-                    className="group-hover:delay-50 z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-xanthous-500 group-hover:-translate-y-10 group-hover:opacity-100 max-lg:hidden"
+                    className="group-hover:delay-50 z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 shadow-md transition duration-200 ease-out hover:bg-gray-300 hover:text-xanthous-500 group-hover:-translate-y-10 group-hover:opacity-100 max-lg:hidden"
                 >
                     <ShoppingBagIcon className="h-6 w-6" />
                 </button>
@@ -90,7 +90,7 @@ export default function ProductSingle({ product, reload }) {
                                         productId: product._id,
                                     })
                                 }
-                                className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-red-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 "
+                                className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-red-500 opacity-0 shadow-md transition duration-200 ease-out hover:bg-gray-300 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 "
                             >
                                 <HeartIcon className="h-6 w-6" />
                             </button>
@@ -102,13 +102,13 @@ export default function ProductSingle({ product, reload }) {
                                         productId: product._id,
                                     })
                                 }
-                                className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-red-500 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 "
+                                className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 shadow-md transition duration-200 ease-out hover:bg-gray-300 hover:text-red-500 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 "
                             >
                                 <HeartIcon className="h-6 w-6" />
                             </button>
                         )
                     ) : (
-                        <button className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 transition duration-200 ease-out hover:bg-gray-300 hover:text-red-500 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 ">
+                        <button className="z-10 block translate-y-4 rounded-lg bg-white p-3 text-gray-500 opacity-0 shadow-md transition duration-200 ease-out hover:bg-gray-300 hover:text-red-500 group-hover:-translate-y-10 group-hover:opacity-100 group-hover:delay-100 ">
                             <HeartIcon className="h-6 w-6" />
                         </button>
                     ))}
@@ -125,7 +125,7 @@ export default function ProductSingle({ product, reload }) {
                 </button>
             </div>
 
-            <div className="relative mt-2 flex w-56 flex-col overflow-hidden">
+            <div className="relative mt-2 flex w-44 flex-col overflow-hidden">
                 <h3 className="text-md overflow-hidden text-ellipsis font-bold leading-5 tracking-tight text-gray-700 dark:text-white">
                     <Link
                         to={`/san-pham/${product.product_slug}-${product._id}`}

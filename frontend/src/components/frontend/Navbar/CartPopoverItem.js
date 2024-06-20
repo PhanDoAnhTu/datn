@@ -43,19 +43,21 @@ export default function CartPopoverItem({
         );
         if (respon) {
             setProductItem(respon.payload.metaData);
-            if(respon.payload.metaData?.sku_list?.length>0){
+            if (respon.payload.metaData?.sku_list?.length > 0) {
                 setSelected_old(
                     respon.payload.metaData?.sku_list?.find(
-                        (item) => item._id.toString() === product.sku_id.toString()
+                        (item) =>
+                            item._id.toString() === product.sku_id.toString()
                     ).sku_tier_idx
                 );
                 setSelected(
                     respon.payload.metaData.sku_list.find(
-                        (item) => item._id.toString() === product.sku_id.toString()
+                        (item) =>
+                            item._id.toString() === product.sku_id.toString()
                     ).sku_tier_idx
                 );
             }
-           
+
             setPrice(respon.payload.metaData?.spu_info?.product_price);
         }
     };
@@ -249,7 +251,7 @@ export default function CartPopoverItem({
                                         })
                                     }
                                     type="checkbox"
-                                    className="border-0 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
+                                    className="border-0 px-2 py-2 shadow-sm checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
                                 />
                             )
                         ) : (
@@ -282,14 +284,14 @@ export default function CartPopoverItem({
                                         })
                                     }
                                     type="checkbox"
-                                    className="border-0 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
+                                    className="border-0 px-2 py-2 shadow-sm checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
                                 />
                             )
                         )
                     ) : (
                         <input
                             type="checkbox"
-                            className="border-0 px-2 py-2 checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
+                            className="border-0 px-2 py-2 shadow-sm checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
                         />
                     )}
                 </div>
@@ -494,7 +496,7 @@ export default function CartPopoverItem({
                 <div className="mt-3 flex flex-1 items-center justify-between text-sm">
                     <div className="items-center text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
                         <div
-                            className="inline-flex w-1/2 space-x-3 rounded-md shadow-sm"
+                            className="inline-flex w-1/2 space-x-3 rounded-md"
                             role="group"
                         >
                             <button
@@ -529,7 +531,7 @@ export default function CartPopoverItem({
                                                 ?.product_variations,
                                     });
                                 }}
-                                className=" border-gray-900 bg-transparent px-2 text-sm font-medium text-gray-900 transition duration-300 ease-out hover:bg-magenta-500 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:border-magenta-500  dark:hover:text-white dark:focus:border-magenta-400 dark:focus:bg-magenta-400"
+                                className=" border-gray-900 bg-transparent px-2 text-sm font-medium text-gray-900 transition duration-300 ease-out hover:bg-magenta-500 hover:text-white hover:shadow-md focus:z-10 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:border-magenta-500  dark:hover:text-white dark:focus:border-magenta-400 dark:focus:bg-magenta-400"
                             >
                                 <MinusIcon className="h-5 w-5 text-gray-900 dark:text-white" />
                             </button>
@@ -540,7 +542,7 @@ export default function CartPopoverItem({
                                 {_quantity && _quantity}
                             </div>
                             <button
-                                className="bg- border-gray-900 bg-transparent px-2 text-sm font-medium text-gray-900 transition duration-300 ease-out hover:bg-magenta-500 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:border-magenta-500  dark:hover:text-white dark:focus:border-magenta-400 dark:focus:bg-magenta-400"
+                                className="bg- border-gray-900 bg-transparent px-2 text-sm font-medium text-gray-900 transition duration-300 ease-out hover:bg-magenta-500 hover:text-white hover:shadow-md focus:z-10 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:border-magenta-500  dark:hover:text-white dark:focus:border-magenta-400 dark:focus:bg-magenta-400"
                                 onClick={() => {
                                     updateCart('updateItemQuantity', {
                                         productId: product.productId,
