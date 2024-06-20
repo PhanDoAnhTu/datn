@@ -52,7 +52,7 @@ export default function NewDetail() {
             </div>
             <div className="pt-7">
                 <span className="text-2xl font-bold uppercase text-gray-900 lg:text-3xl dark:text-white">
-                    Bài viết cùng chủ đề
+                    Tin tức cùng chủ đề
                 </span>
                 <div className="mt-3 grid gap-x-4 gap-y-4 text-white md:grid-cols-3">
                     {current_post?.related_posts
