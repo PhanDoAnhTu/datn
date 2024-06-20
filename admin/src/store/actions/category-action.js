@@ -14,4 +14,15 @@ export const findAllCategory = (data) => async (dispatch) => {
     }
 };
 
+export const createCategory = (data) => async (dispatch) => {
+    try {
+        const response = await PostData('/category/v1/create', data);
+        console.log('response:', response)
+        return dispatch({ type: Action.CATEGORY_CREATE, payload: response.data });
+
+    } catch (err) {
+        console.log(err)
+
+    }
+};
 

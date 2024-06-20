@@ -32,14 +32,14 @@ export default function ProductDetail() {
     const dispatch = useDispatch();
     const product_id = product_slug_id.split('-').pop();
     const { userInfo } = useSelector((state) => state.userReducer);
-    // const { product_detail } = useSelector((state) => state.productReducer);
     const [favories_products, setfavoriesProduct] = useState(
         getFavoritesFromLocalStorage()
     );
 
     const [variations, setVariations] = useState([]);
     const [selectedVariation, setSelectedVariation] = useState(null);
-    const [price, setPrice] = useState('');
+    const [price, setPrice] = useState(0);
+
     // const [priceDefault, setPrice] = useState('');
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -52,7 +52,7 @@ export default function ProductDetail() {
     const [product_images, setProductImages] = useState(null);
     const [selected_sku, setSelectedSku] = useState(null);
     const [special_offer, setSpicial_offer] = useState(null);
-    const [sale_sku, setSale_sku] = useState(null);
+    const [sale, setSale] = useState(null);
     const [quantity, setQuantity] = useState(1);
     const [review, setReview] = useState([]);
     const [rating_score_avg, setRating_score_avg] = useState(0);
@@ -135,12 +135,12 @@ export default function ProductDetail() {
                 setRating_score_avg(0);
             } else {
                 setRating_score_avg(
-                    responseProductDetail.payload.metaData?.product_review.reduce(
+                    responseProductDetail.payload.metaData?.product_review?.reduce(
                         (partialSum, a) => partialSum + a?.rating_score,
                         0
                     ) /
-                        responseProductDetail.payload.metaData?.product_review
-                            ?.length
+                    responseProductDetail.payload.metaData?.product_review
+                        ?.length
                 );
             }
             setSpicial_offer(
@@ -156,12 +156,23 @@ export default function ProductDetail() {
     }, [product_slug_id]);
 
     useEffect(() => {
-        special_offer?.sku_list.map((sku) => {
-            if (sku.sku_tier_idx.toString() == selectedVariation.toString()) {
-                setSale_sku(sku);
-                return;
+        if (
+            special_offer
+        ) {
+            setSale(special_offer);
+            if (special_offer?.sku_list?.length > 0) {
+                special_offer?.sku_list.map((sku) => {
+                    if (
+                        sku.sku_tier_idx.toString() == selectedVariation.toString()
+                    ) {
+                        setSale(sku);
+                        return;
+                    }
+                });
             }
-        });
+        }
+
+
     }, [special_offer]);
     /////////selected variation
     const handleVariationChange = (value, variationOrder) => {
@@ -187,29 +198,35 @@ export default function ProductDetail() {
             setPrice(selected_sku.sku_price);
             setStock(selected_sku.sku_stock);
             if (
-                product_images &&
-                product_images.find(
-                    (item) => item.sku_id === selected_sku._id
-                ) !== undefined
+                product_images?.find(
+                    (item) => item?.sku_id === selected_sku?._id
+                )
             ) {
                 setSelectedImage(
-                    product_images &&
-                        product_images.find(
-                            (item) => item.sku_id === selected_sku._id
-                        )
+                    product_images?.find(
+                        (item) => item?.sku_id === selected_sku?._id
+                    )
                 );
             }
 
-            special_offer?.sku_list.map((sku) => {
-                if (
-                    sku.sku_tier_idx.toString() == selectedVariation.toString()
-                ) {
-                    setSale_sku(sku);
-                    return;
+            if (
+                special_offer
+            ) {
+                setSale(special_offer);
+                if (special_offer?.sku_list?.length > 0) {
+                    special_offer?.sku_list.map((sku) => {
+                        if (
+                            sku.sku_tier_idx.toString() == selectedVariation.toString()
+                        ) {
+                            setSale(sku);
+                            return;
+                        }
+                    });
                 }
-            });
+            }
+
             console.log('filteredSKU', selected_sku);
-            console.log('pricesale', sale_sku);
+            console.log('pricesale', sale);
             console.log('special_offer', special_offer);
         }
     }, [selected_sku]);
@@ -387,10 +404,9 @@ export default function ProductDetail() {
                             {name}
                         </h1>
                         <p className="mt-6 text-3xl tracking-tight text-gray-900 dark:text-gray-200">
-                            {sale_sku &&
-                            sale_sku?.sku_id == selected_sku?._id ? (
+                            {sale ? (
                                 <NumericFormat
-                                    value={sale_sku.price_sale}
+                                    value={sale.price_sale}
                                     displayType="text"
                                     thousandSeparator={true}
                                     decimalScale={0}
@@ -408,15 +424,14 @@ export default function ProductDetail() {
                                 />
                             )}
                             &emsp;
-                            {sale_sku &&
-                                sale_sku?.sku_id == selected_sku?._id && (
-                                    <span className="rounded-full bg-red-100 px-5 py-2 text-xs font-medium  text-red-800 dark:bg-red-900 dark:text-red-300">
-                                        Giảm đến{' '}
-                                        {sale_sku.percentage?.toFixed(1)}%
-                                    </span>
-                                )}
+                            {sale && (
+                                <span className="rounded-full bg-red-100 px-5 py-2 text-xs font-medium  text-red-800 dark:bg-red-900 dark:text-red-300">
+                                    Giảm đến{' '}
+                                    {sale.percentage?.toFixed(1)}%
+                                </span>
+                            )}
                         </p>
-                        {sale_sku && sale_sku?.sku_id == selected_sku?._id && (
+                        {sale && (
                             <p className="text-2xl tracking-tight text-gray-900 line-through decoration-rose-700 dark:text-gray-200">
                                 <NumericFormat
                                     value={price}

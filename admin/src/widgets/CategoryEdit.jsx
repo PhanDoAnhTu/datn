@@ -10,13 +10,30 @@ import { useForm, Controller } from "react-hook-form";
 
 // utils
 import classNames from "classnames";
-import categories_management from "@db/categories_management";
+// import categories_management from "@db/categories_management";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { createCategory, findAllCategory } from "../store/actions";
 
 const CategoryEdit = ({ item }) => {
-  const categories = categories_management.map((item) => ({
-    value: item._id,
-    label: item.category_name,
-  }));
+  const dispatch = useDispatch()
+  const [categories_management, setCategoriesManagement] = useState([])
+  const [categories_options, setCategories_options] = useState([])
+
+  const fetchDataCategory = async () => {
+    const allCategory = await dispatch(findAllCategory())
+    setCategoriesManagement(allCategory?.payload?.metaData)
+  }
+  useEffect(() => {
+    fetchDataCategory()
+  }, [])
+  useEffect(() => {
+    setCategories_options(categories_management?.map((item) => ({
+      value: item._id,
+      label: item.category_name,
+    })))
+  }, [categories_management])
+
   const productDescription = `Ut tortor ex, pellentesque nec volutpat vel, congue eu nibh. Sed posuere ipsum ut ornare ultrices. Aliquam condimentum ultricies lacinia. Aenean ac dolor mauris. Curabitur cursus mi ac urna vestibulum consectetur. Praesent vulputate eleifend ipsum at ultrices. Proin sed elementum diam, in ullamcorper risus`;
 
   const defaultValues = {
@@ -24,11 +41,11 @@ const CategoryEdit = ({ item }) => {
     description: item ? item.category_description : productDescription,
     categoryName: item ? item.category_name : "",
     category: item
-      ? categories[
-          categories_management.findIndex(
-            (category) => category._id === item.category_parent_id
-          )
-        ]
+      ? categories_options[
+      categories_management.findIndex(
+        (category) => category._id === item.category_parent_id
+      )
+      ]
       : { value: null, label: "Không có" },
   };
   const {
@@ -110,7 +127,7 @@ const CategoryEdit = ({ item }) => {
                     placeholder="Chọn danh mục"
                     options={[
                       { value: null, label: "Không có" },
-                      ...categories,
+                      ...categories_options,
                     ]}
                     value={field.value}
                     onChange={(value) => field.onChange(value)}

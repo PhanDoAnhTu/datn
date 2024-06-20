@@ -14,3 +14,13 @@ export const findAllBrand = (data) => async (dispatch) => {
 };
 
 
+export const createBrand = (data) => async (dispatch) => {
+    try {
+        const response = await PostData('/product/v1/brand/create', data);
+        console.log('response:', response)
+        return dispatch({ type: Action.CREATE_BRAND, payload: response.data });
+
+    } catch (err) {
+        console.log(err)
+    }
+};

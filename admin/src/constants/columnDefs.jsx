@@ -486,7 +486,7 @@ export const CATEGORIES_MANAGEMENT_COLUMN_DEFS = [
 
   {
     title: "Danh mục cha",
-    dataIndex: "category_parent_id",
+    dataIndex: "parent_id",
     render: (category_parent_id) => {
       if (category_parent_id) {
         return (
@@ -671,7 +671,7 @@ export const BRANDS_MANAGEMENT_COLUMN_DEFS = [
         <i className="icon-image-regular text-[26px]" />
       </div>
     ),
-    dataIndex: "image",
+    dataIndex: "brand_image",
     width: 45,
     render: (image) => (
       <div className="img-wrapper w-[45px] h-[45px] flex items-center justify-center">
@@ -680,19 +680,25 @@ export const BRANDS_MANAGEMENT_COLUMN_DEFS = [
     ),
   },
   {
-    title: "Tên",
-    dataIndex: "label",
+    title: "Tên thương hiệu",
+    dataIndex: "brand_name",
     render: (label) => (
       <span className="inline-block h6 !text-sm max-w-[150px]">{label}</span>
     ),
   },
   {
     title: "Ngày tạo",
-    dataIndex: "dateAdded",
+    dataIndex: "createdAt",
     render: (date) => (
       <div>
         <span className="font-bold text-header">
-          {date && dayjs(date).format("DD/MM/YYYY")}
+        {date && dayjs(date).format("hh:mm DD/MM/YYYY")
+            ? dayjs().diff(dayjs(date), "minute") < 60
+              ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
+              : dayjs().diff(dayjs(date), "hour") < 24
+                ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+                : dayjs(date).format("hh:mmA DD/MM/YYYY")
+            : ""}
         </span>
       </div>
     ),
@@ -700,7 +706,7 @@ export const BRANDS_MANAGEMENT_COLUMN_DEFS = [
   },
   {
     title: "Ngày chỉnh sửa",
-    dataIndex: "dateModified",
+    dataIndex: "updatedAt",
     render: (date) => (
       <div>
         <span className="font-bold text-header">

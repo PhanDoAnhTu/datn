@@ -5,6 +5,7 @@ import StyledTable from "./styles";
 import Empty from "@components/Empty";
 import Pagination from "@ui/Pagination";
 import ProductManagementCollapseItem from "@components/ProductManagementCollapseItem";
+import { findAllCategory } from "../../store/actions";
 
 // hooks
 import { useState, useEffect } from "react";
@@ -20,7 +21,8 @@ import {
 import { CATEGORIES_MANAGEMENT_COLUMN_DEFS } from "@constants/columnDefs";
 
 // data placeholder
-import categories_management from "@db/categories_management";
+// import categories_management from "@db/categories_management";
+import { useDispatch } from "react-redux";
 
 const CategoryManagementTable = ({ searchQuery }) => {
   const { width } = useWindowSize();
@@ -32,13 +34,24 @@ const CategoryManagementTable = ({ searchQuery }) => {
     sortBy: ADDITIONAL_OPTIONS[0],
     sortOrder: SELECT_OPTIONS[0],
   };
-
-  const [data, setData] = useState(categories_management);
+  const dispatch = useDispatch()
+  const [categories_management, setCategories_management] = useState([])
+  const [data, setData] = useState([]);
   const [category, setCategory] = useState("all");
   const [sorts, setSorts] = useState(defaultSort);
   const [filters, setFilters] = useState(defaultFilters);
   const [activeCollapse, setActiveCollapse] = useState("");
-
+  
+  const fetchDataCategory = async () => {
+    const resultCat = await dispatch(findAllCategory())
+    setCategories_management(resultCat?.payload?.metaData)
+  }
+  useEffect(() => {
+    fetchDataCategory()
+  }, [])
+  useEffect(() => {
+    setData(categories_management)
+  }, [categories_management])
   const getQty = (category) => {
     if (category === "all") return data.length;
     return data.filter((product) => product.status === category).length;
@@ -61,8 +74,8 @@ const CategoryManagementTable = ({ searchQuery }) => {
                 ? 1
                 : -1
               : a.category_name.toLowerCase() < b.category_name.toLowerCase()
-              ? 1
-              : -1
+                ? 1
+                : -1
           )
       );
     }
@@ -76,8 +89,8 @@ const CategoryManagementTable = ({ searchQuery }) => {
                 ? 1
                 : -1
               : new Date(a.dateModified) > new Date(b.dateModified)
-              ? 1
-              : -1
+                ? 1
+                : -1
           )
       );
     }
@@ -91,8 +104,8 @@ const CategoryManagementTable = ({ searchQuery }) => {
                 ? 1
                 : -1
               : new Date(a.dateAdded) > new Date(b.dateAdded)
-              ? 1
-              : -1
+                ? 1
+                : -1
           )
       );
     }
@@ -159,7 +172,7 @@ const CategoryManagementTable = ({ searchQuery }) => {
       <div className="flex flex-wrap gap-2 mb-4">
         <span className="text-header">Danh mục:</span>
         <div>
-          {MANAGEMENT_OPTIONS.map((option, index) => (
+          {MANAGEMENT_OPTIONS?.map((option, index) => (
             <FilterItem
               key={`filter-${index}`}
               text={option.label}
@@ -175,7 +188,7 @@ const CategoryManagementTable = ({ searchQuery }) => {
         <Select
           options={[
             { value: null, label: "Không có" },
-            ...categories_management.map((item) => ({
+            ...categories_management?.map((item) => ({
               value: item._id,
               label: item.category_name,
             })),

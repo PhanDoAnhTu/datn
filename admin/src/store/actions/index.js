@@ -34,6 +34,9 @@ export const Action = {
 
   //category
   CATEGORY_ALL: "CATEGORY_ALL",
+  CATEGORY_CREATE: "CATEGORY_CREATE",
+
+
   //spicial-offer
   SPICIAL_OFFER_BY_PRODUCT: "SPICIAL_OFFER_BY_PRODUCT",
   CREATE_SPECIAL_OFFER: "CREATE_SPECIAL_OFFER",
@@ -47,6 +50,8 @@ export const Action = {
   //brand
 
   ALL_BRAND: "ALL_BRAND",
+  CREATE_BRAND: "CREATE_BRAND",
+
   //discount
 
   ADD_DISCOUNT: "ADD_DISCOUNT",

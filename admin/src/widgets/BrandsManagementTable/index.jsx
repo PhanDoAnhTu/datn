@@ -19,21 +19,35 @@ import {
 } from "@constants/options";
 import { BRANDS_MANAGEMENT_COLUMN_DEFS } from "@constants/columnDefs";
 import brands_managements from "@db/brands_managements";
+import { useDispatch } from "react-redux";
+import { findAllBrand } from "../../store/actions";
 
 // data placeholder
 
 const BrandManagementTable = ({ searchQuery }) => {
   const { width } = useWindowSize();
-
+  const dispatch = useDispatch()
   const defaultSort = {
     sortBy: ADDITIONAL_OPTIONS[0],
     sortOrder: SELECT_OPTIONS[0],
   };
 
+
+
+
+
   const [data, setData] = useState(brands_managements);
   const [category, setCategory] = useState("all");
   const [sorts, setSorts] = useState(defaultSort);
   const [activeCollapse, setActiveCollapse] = useState("");
+
+  const fetchDatabrand = async () => {
+    const allBrand = await dispatch(findAllBrand())
+    setData(allBrand?.payload?.metaData)
+  }
+  useEffect(() => {
+    fetchDatabrand()
+  }, [])
 
   const getQty = (category) => {
     if (category === "all") return data.length;
@@ -57,8 +71,8 @@ const BrandManagementTable = ({ searchQuery }) => {
                 ? 1
                 : -1
               : a.label.toLowerCase() < b.label.toLowerCase()
-              ? 1
-              : -1
+                ? 1
+                : -1
           )
       );
     }
@@ -72,8 +86,8 @@ const BrandManagementTable = ({ searchQuery }) => {
                 ? 1
                 : -1
               : new Date(a.dateModified) > new Date(b.dateModified)
-              ? 1
-              : -1
+                ? 1
+                : -1
           )
       );
     }
@@ -87,8 +101,8 @@ const BrandManagementTable = ({ searchQuery }) => {
                 ? 1
                 : -1
               : new Date(a.dateAdded) > new Date(b.dateAdded)
-              ? 1
-              : -1
+                ? 1
+                : -1
           )
       );
     }
