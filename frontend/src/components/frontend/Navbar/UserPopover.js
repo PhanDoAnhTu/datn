@@ -21,6 +21,8 @@ export default function UserPopover() {
     const logoutHandler = async (close) => {
         try {
             await dispatch(onLogout());
+
+            window.location.replace('/');
             toast.success('Đăng xuất thành công', {
                 className: 'black-background',
                 bodyClassName: 'grow-font-size',
@@ -29,7 +31,6 @@ export default function UserPopover() {
             });
 
             close();
-            navigate('/');
         } catch (error) {
             console.error(error);
         }

@@ -7,7 +7,7 @@ import Blog from './Blog';
 import Subscribe from '../../../components/frontend/home/Subscribe';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { allProducts } from '../../../store/actions';
+import { allProducts, findProductbestSelling } from '../../../store/actions';
 import DocumentTitle from '../../../components/frontend/DocumentTitle';
 import ProductList from '../../../components/frontend/ProductList';
 import { getSliderByActive } from '../../../store/actions/slider-actions';
@@ -19,6 +19,9 @@ export default function Home() {
     const { category } = useSelector((state) => state.categoryReducer);
     const { slider } = useSelector((state) => state.sliderReducer);
     const { brand } = useSelector((state) => state.brandReducer);
+    const { product_best_selling } = useSelector(
+        (state) => state.productReducer
+    );
     useEffect(() => {
         if (!slider)
             dispatch(
@@ -29,6 +32,12 @@ export default function Home() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [slider]);
     useEffect(() => {
+        if (!product_best_selling) {
+            dispatch(findProductbestSelling());
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [product_best_selling]);
+    useEffect(() => {
         if (!brand) dispatch(findListBrand());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [brand]);
@@ -36,7 +45,6 @@ export default function Home() {
         if (!all_products) dispatch(allProducts({}));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [all_products]);
-
     return (
         <div>
             <DocumentTitle title="Trang chủ" />
@@ -98,6 +106,17 @@ export default function Home() {
                         <CategorySection item={item} key={item._id} />
                     ));
                 })()}
+            </div>
+            <div className="px-4 sm:px-6 lg:px-8">
+                {product_best_selling ? (
+                    <ProductList
+                        title={'Sản phẩm bán chạy'}
+                        summary={'Sản phảm hot hit'}
+                        products={product_best_selling?.slice(0, 10)}
+                    />
+                ) : (
+                    <></>
+                )}
             </div>
             <div className="px-4 sm:px-6 lg:px-8">
                 {all_products ? (
@@ -200,7 +219,7 @@ export default function Home() {
                                   summary={
                                       'Người bạn đồng hành không thể thiếu trên mọi nẽo đường'
                                   }
-                                  products={newProducts}
+                                  products={newProducts?.slice(0, 10)}
                               />
                           );
                       })()

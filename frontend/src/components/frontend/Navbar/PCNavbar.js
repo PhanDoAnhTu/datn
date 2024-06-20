@@ -155,7 +155,7 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                                                                                                         }
                                                                                                         className="group relative text-base sm:text-sm"
                                                                                                     >
-                                                                                                        <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 transition-opacity duration-300 ease-out group-hover:opacity-75">
+                                                                                                        <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 shadow-md transition-opacity duration-300 ease-out group-hover:opacity-75">
                                                                                                             <img
                                                                                                                 src={
                                                                                                                     item.product_thumb
@@ -163,7 +163,7 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                                                                                                                 alt={
                                                                                                                     item.product_name
                                                                                                                 }
-                                                                                                                className="object-cover object-center"
+                                                                                                                className="object-cover object-center "
                                                                                                             />
                                                                                                         </div>
 
@@ -219,6 +219,9 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                                                                                             >
                                                                                                 <Link
                                                                                                     id={`${subitem.category_name}-heading`}
+                                                                                                    onClick={async () => {
+                                                                                                        close();
+                                                                                                    }}
                                                                                                     to={`/san-pham-theo-danh-muc/${item.category_slug}/${subitem.category_slug}`}
                                                                                                     className="font-medium text-magenta-600 transition duration-300 ease-out hover:text-magenta-400"
                                                                                                 >

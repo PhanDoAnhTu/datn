@@ -1,27 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useTheme } from '../ThemeContext';
 
 export default function Loading({ className }) {
-    const [isDarkMode, setIsDarkMode] = useState(false);
-
-    useEffect(() => {
-        const darkModeMediaQuery = window.matchMedia(
-            '(prefers-color-scheme: dark)'
-        );
-
-        const handleDarkModeChange = (event) => {
-            setIsDarkMode(event.matches);
-        };
-
-        darkModeMediaQuery.addEventListener('change', handleDarkModeChange);
-        setIsDarkMode(darkModeMediaQuery.matches);
-
-        return () => {
-            darkModeMediaQuery.removeEventListener(
-                'change',
-                handleDarkModeChange
-            );
-        };
-    }, []);
+    const { darkMode } = useTheme();
     return (
         <svg
             className={className}
@@ -36,7 +16,7 @@ export default function Loading({ className }) {
             xmlSpace="preserve"
         >
             <path
-                fill={isDarkMode ? '#fff' : '#000'}
+                fill={darkMode ? '#fff' : '#000'}
                 d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"
             >
                 <animateTransform

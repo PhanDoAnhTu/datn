@@ -29,7 +29,7 @@ export default function Login() {
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        const id = toast.loading("Đang kiểm tra thông tin...")
+        const id = toast.loading('Đang kiểm tra thông tin...');
         try {
             const dataLogin = await dispatch(
                 onLogin({ customer_email: email, customer_password: password })
@@ -38,26 +38,25 @@ export default function Login() {
             if (dataLogin?.payload?.status === (200 || 201)) {
                 navigate(redirect);
                 toast.update(id, {
-                    render: "Đăng nhập thành công",
-                    type: "success",
+                    render: 'Đăng nhập thành công',
+                    type: 'success',
                     isLoading: false,
                     closeOnClick: true,
                     autoClose: 3000,
                 });
             } else {
                 toast.update(id, {
-                    render: "Đăng nhập không thành công",
-                    type: "error",
+                    render: 'Đăng nhập không thành công',
+                    type: 'error',
                     isLoading: false,
                     closeOnClick: true,
                     autoClose: 3000,
                 });
             }
-
         } catch (err) {
             toast.update(id, {
-                render: "Đăng nhập không thành công",
-                type: "error",
+                render: 'Đăng nhập không thành công',
+                type: 'error',
                 isLoading: false,
                 closeOnClick: true,
                 autoClose: 3000,
@@ -66,7 +65,7 @@ export default function Login() {
     };
     const LoginWithFacabook = async () => {
         try {
-            toast.loading("Vui lòng chờ...")
+            toast.loading('Vui lòng chờ...');
             window.open(
                 `http://localhost:5000/api/social-authentication/facebook`,
                 '_self'
@@ -77,7 +76,7 @@ export default function Login() {
     };
     const LoginWithGoogle = async () => {
         try {
-            toast.loading("Vui lòng chờ...")
+            toast.loading('Vui lòng chờ...');
             window.open(
                 `http://localhost:5000/api/social-authentication/google`,
                 '_self'
@@ -90,7 +89,7 @@ export default function Login() {
     return (
         <>
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-32 md:py-64 md:pt-32 lg:px-8 ">
-                <div className="self-center bg-zinc-900/50 pb-12 max-sm:w-full max-sm:px-12 sm:w-3/6">
+                <div className="self-center rounded-md bg-white/75 pb-12 shadow-md max-sm:w-full max-sm:px-12 sm:w-3/6 dark:bg-zinc-800">
                     <div className="sm:mx-auto sm:w-full sm:max-w-screen-xl">
                         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 max-sm:text-xl dark:text-white">
                             Đăng nhập vào tài khoản của bạn

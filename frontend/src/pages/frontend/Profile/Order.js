@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { findOrderByUserId } from '../../../store/actions/order-actions';
 import { NumericFormat } from 'react-number-format';
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 
 export default function Order() {
     // eslint-disable-next-line no-unused-vars
@@ -85,14 +85,28 @@ export default function Order() {
                                     <div className="flex flex-1 flex-col justify-around">
                                         <div className="text-md flex justify-end space-x-2 text-gray-900 dark:text-white">
                                             <span className="border-r-2 pr-2 ">
-                                                {item.createdOn && dayjs(item.createdOn).format("hh:mm DD/MM/YYYY")
-                                                    ? dayjs().diff(dayjs(item.createdOn), "minute") < 60
-                                                        ? `${dayjs().diff(dayjs(item.createdOn), "minute")} phút trước`
-                                                        : dayjs().diff(dayjs(item.createdOn), "hour") < 24
-                                                            ? `${dayjs().diff(dayjs(item.createdOn), "hour")} giờ trước`
-                                                            : dayjs(item.createdOn).format("hh:mmA DD/MM/YYYY")
-                                                    : ""}
-
+                                                {item.createdOn &&
+                                                dayjs(item.createdOn).format(
+                                                    'hh:mm DD/MM/YYYY'
+                                                )
+                                                    ? dayjs().diff(
+                                                          dayjs(item.createdOn),
+                                                          'minute'
+                                                      ) < 60
+                                                        ? `${dayjs().diff(dayjs(item.createdOn), 'minute')} phút trước`
+                                                        : dayjs().diff(
+                                                                dayjs(
+                                                                    item.createdOn
+                                                                ),
+                                                                'hour'
+                                                            ) < 24
+                                                          ? `${dayjs().diff(dayjs(item.createdOn), 'hour')} giờ trước`
+                                                          : dayjs(
+                                                                item.createdOn
+                                                            ).format(
+                                                                'hh:mmA DD/MM/YYYY'
+                                                            )
+                                                    : ''}
                                             </span>
                                             <span className="font-bold text-green-400">
                                                 {statusOrder(item)}
@@ -101,7 +115,7 @@ export default function Order() {
                                         <div className="mt-5 flex justify-end">
                                             <Link
                                                 to={`/chi-tiet-don-hang/${item.order_trackingNumber}`}
-                                                className="border-2 border-white px-5 py-1 text-white transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500"
+                                                className="rounded-md border-2 border-magenta-500 bg-magenta-500 px-5 py-1 text-white shadow-md transition duration-500 ease-out hover:-translate-y-0.5 hover:border-magenta-500"
                                             >
                                                 Xem chi tiết
                                             </Link>

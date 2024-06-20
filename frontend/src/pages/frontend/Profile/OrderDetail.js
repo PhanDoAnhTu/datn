@@ -116,9 +116,6 @@ export default function OrderDetail() {
                             <span className="text-sm font-bold text-gray-900 max-sm:text-xs dark:text-white">
                                 Đơn đã đặt
                             </span>
-                            <span className="text-sm font-bold text-zinc-400 max-sm:text-xs">
-                                day here
-                            </span>
                         </div>
                         <div className="flex flex-col items-center space-y-1">
                             <div
@@ -131,9 +128,6 @@ export default function OrderDetail() {
                             <span className="text-sm font-bold text-gray-900 max-sm:text-xs dark:text-white">
                                 Đã xác nhận
                             </span>
-                            <span className="text-sm font-bold text-zinc-400 max-sm:text-xs">
-                                day here
-                            </span>
                         </div>
                         <div className="flex flex-col items-center space-y-1">
                             <div
@@ -145,9 +139,6 @@ export default function OrderDetail() {
                             </div>
                             <span className="text-sm font-bold text-gray-900 max-sm:text-xs dark:text-white">
                                 Đã nhận hàng
-                            </span>
-                            <span className="text-sm font-bold text-zinc-400 max-sm:text-xs">
-                                day here
                             </span>
                         </div>
                     </div>
@@ -212,7 +203,7 @@ export default function OrderDetail() {
                                     leaveFrom="opacity-100"
                                     leaveTo="opacity-0"
                                 >
-                                    <div className="fixed inset-0 bg-zinc-900 bg-opacity-75 transition-opacity" />
+                                    <div className="fixed inset-0 bg-zinc-800 bg-opacity-75 shadow-md transition-opacity" />
                                 </Transition.Child>
 
                                 <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -306,7 +297,7 @@ export default function OrderDetail() {
                                                                                                                 bun
                                                                                                                 thiu
                                                                                                             </h1>
-                                                                                                            <div className="text-md text-gray-300">
+                                                                                                            <div className="text-md text-gray-500 dark:text-gray-200">
                                                                                                                 Brand
                                                                                                             </div>
                                                                                                         </div>
@@ -442,7 +433,7 @@ export default function OrderDetail() {
                                                         <>
                                                             <button
                                                                 type="button"
-                                                                className="inline-flex w-full justify-center px-3 py-2 text-sm font-semibold text-white shadow-sm outline-none ring-2 ring-inset ring-white transition duration-500 ease-out hover:bg-magenta-500 hover:text-gray-900 hover:ring-magenta-500 sm:ml-3 sm:w-auto"
+                                                                className="inline-flex w-full justify-center px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm outline-none ring-2 ring-inset ring-gray-900 transition  duration-500 ease-out hover:bg-magenta-500 hover:text-gray-900 hover:ring-magenta-500 sm:ml-3 sm:w-auto dark:text-white dark:ring-white"
                                                                 onClick={() => {
                                                                     if (
                                                                         open ===
@@ -475,7 +466,7 @@ export default function OrderDetail() {
                                                             </button>
                                                             <button
                                                                 type="button"
-                                                                className="mt-3 inline-flex w-full justify-center px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm outline-none ring-2 ring-inset ring-white transition  duration-500 ease-out hover:bg-rose-500 hover:text-zinc-900 hover:ring-rose-500 sm:mt-0 sm:w-auto dark:text-white"
+                                                                className="mt-3 inline-flex w-full justify-center px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm outline-none ring-2 ring-inset ring-gray-900  transition duration-500  ease-out hover:bg-rose-500 hover:text-zinc-900 hover:ring-rose-500 sm:mt-0 sm:w-auto dark:text-white dark:ring-white"
                                                                 onClick={() => {
                                                                     setOpen('');
                                                                     setCancelContent(
@@ -501,7 +492,7 @@ export default function OrderDetail() {
                         </Transition.Root>
                     </div>
 
-                    <div className="mt-2 grid rounded-md bg-zinc-500 p-4 shadow-inner shadow-zinc-800 md:grid-cols-2 dark:bg-zinc-800 dark:shadow-zinc-500">
+                    <div className="mt-2 grid rounded-md bg-zinc-200 p-4 text-gray-900 shadow-md shadow-zinc-500 md:grid-cols-2 dark:bg-zinc-800 dark:text-white dark:shadow-inner dark:shadow-zinc-500">
                         {currentOrder.order_ids.item_products.map((item) => (
                             <div key={item.productId}>
                                 <div className="flex w-full overflow-hidden border-b-2 border-zinc-600 p-4 sm:space-x-2">
@@ -513,7 +504,7 @@ export default function OrderDetail() {
                                             className="object-contain object-center"
                                         />
                                     </div>
-                                    <div className="flex flex-1 text-white">
+                                    <div className="flex flex-1">
                                         <div className="flex flex-1 flex-col space-y-1 overflow-hidden px-2">
                                             <div className="flex">
                                                 <div className="flex-1">
@@ -522,7 +513,7 @@ export default function OrderDetail() {
                                                         ngay mai an banh mi cong
                                                         bun thiu
                                                     </h1>
-                                                    <div className="text-md text-gray-300">
+                                                    <div className="text-md text-gray-500 dark:text-gray-300">
                                                         Brand
                                                     </div>
                                                 </div>
