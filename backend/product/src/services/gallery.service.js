@@ -26,7 +26,7 @@ const addImageBySpuId = async ({ spu_id, thumb_url = null, public_id = null }) =
 const ListImageByProductId = async ({ product_id }) => {
     const image = await GalleryModel.find({
         spu_id: product_id
-    })
+    }).lean()
     return image
 }
 

@@ -58,12 +58,11 @@ class SpecialOfferService {
     }
     async findSpecialOfferBetweenStartDateAndEndByDate({ special_offer_is_active = true, date = Date.now() }) {
         let now = new Date(date);
-        console.log(now)
         const special = await SpecialOfferModel.findOne({
             special_offer_is_active,
             special_offer_start_date: { $lte: now },
             special_offer_end_date: { $gte: now }
-        })
+        }).lean()
         return special
     }
     async updateStatusById({ special_offer_is_active, special_offer_id }) {
@@ -87,7 +86,7 @@ class SpecialOfferService {
             'special_offer_spu_list.product_id': {
                 $in: spu_id_list
             }
-        })
+        }).lean()
         return special
     }
     async getAllSpecialOffer() {
@@ -128,8 +127,8 @@ class SpecialOfferService {
         switch (type) {
             case "FIND_SPECIAL_OFFER_BY_DATE":
                 return this.findSpecialOfferBetweenStartDateAndEndByDate({ date, special_offer_is_active })
-            case "FIND_SPECIAL_OFFER_TODAY_BY_ID_LIST":
-                return this.findSpecialOfferTodayBySpuIdList({ spu_id_list, special_offer_is_active })
+            // case "FIND_SPECIAL_OFFER_TODAY_BY_ID_LIST":
+            //     return this.findSpecialOfferTodayBySpuIdList({ spu_id_list, special_offer_is_active })
             case "FIND_SPECIAL_OFFER_TODAY_BY_ID":
                 return this.findSpecialOfferBySpuId({ spu_id, special_offer_is_active })
                 

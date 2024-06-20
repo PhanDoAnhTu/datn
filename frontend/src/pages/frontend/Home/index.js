@@ -11,40 +11,33 @@ import { allProducts, findProductbestSelling } from '../../../store/actions';
 import DocumentTitle from '../../../components/frontend/DocumentTitle';
 import ProductList from '../../../components/frontend/ProductList';
 import { getSliderByActive } from '../../../store/actions/slider-actions';
-import { findListBrand } from '../../../store/actions/brand-actions';
+// import { findListBrand } from '../../../store/actions/brand-actions';
 
 export default function Home() {
     const dispatch = useDispatch();
     const { all_products } = useSelector((state) => state.productReducer);
     const { category } = useSelector((state) => state.categoryReducer);
     const { slider } = useSelector((state) => state.sliderReducer);
-    const { brand } = useSelector((state) => state.brandReducer);
-    const { product_best_selling } = useSelector(
-        (state) => state.productReducer
-    );
+    const { product_best_selling } = useSelector((state) => state.productReducer);
+
+
+    const fetchData = async () => {
+        dispatch(allProducts());
+        // dispatch(findListBrand());
+        dispatch(getSliderByActive({ slider_is_active: true, }));
+        dispatch(findProductbestSelling());
+    }
+
     useEffect(() => {
-        if (!slider)
-            dispatch(
-                getSliderByActive({
-                    slider_is_active: true,
-                })
-            );
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [slider]);
-    useEffect(() => {
-        if (!product_best_selling) {
-            dispatch(findProductbestSelling());
+        try {
+            fetchData()
+        } catch (error) {
+            setTimeout(() => {
+                fetchData()
+            }, 3000)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [product_best_selling]);
-    useEffect(() => {
-        if (!brand) dispatch(findListBrand());
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [brand]);
-    useEffect(() => {
-        if (!all_products) dispatch(allProducts({}));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [all_products]);
+    }, []);
+
     return (
         <div>
             <DocumentTitle title="Trang chủ" />
@@ -52,7 +45,7 @@ export default function Home() {
                 slider={(() => {
                     const fetchedSlider = slider
                         ?.slice()
-                        .filter((item) => item.slider_position === 'banner');
+                        ?.filter((item) => item.slider_position === 'banner');
                     return fetchedSlider;
                 })()}
             />
@@ -64,14 +57,14 @@ export default function Home() {
                                 ?.special_offer_spu_list;
                         const newProducts = all_products
                             ?.slice()
-                            .filter(
+                            ?.filter(
                                 (item) =>
                                     item._id ===
                                     listSale
                                         ?.slice()
-                                        .find(
+                                        ?.find(
                                             (subitem) =>
-                                                subitem.product_id === item._id
+                                                subitem?.product_id === item._id
                                         )?.product_id
                             );
                         if (newProducts?.length > 0) {
@@ -94,13 +87,13 @@ export default function Home() {
                 {(() => {
                     const fetchedSlider = slider
                         ?.slice()
-                        .filter(
+                        ?.filter(
                             (item) =>
-                                item.slider_position === 'body' &&
-                                (item.slider_link ===
+                                item?.slider_position === 'body' &&
+                                (item?.slider_link ===
                                     '/san-pham-theo-danh-muc/nam' ||
-                                    item.slider_link ===
-                                        '/san-pham-theo-danh-muc/nu')
+                                    item?.slider_link ===
+                                    '/san-pham-theo-danh-muc/nu')
                         );
                     return fetchedSlider?.map((item) => (
                         <CategorySection item={item} key={item._id} />
@@ -134,13 +127,13 @@ export default function Home() {
                 {(() => {
                     const fetchedSlider = slider
                         ?.slice()
-                        .filter(
+                        ?.filter(
                             (item) =>
-                                item.slider_position === 'body' &&
-                                (item.slider_link ===
+                                item?.slider_position === 'body' &&
+                                (item?.slider_link ===
                                     '/san-pham-theo-danh-muc/nu/trang-suc-and-phu-kien/mu-and-mu-len' ||
-                                    item.slider_link ===
-                                        '/san-pham-theo-danh-muc/nu/thoi-trang/quan-djui')
+                                    item?.slider_link ===
+                                    '/san-pham-theo-danh-muc/nu/thoi-trang/quan-djui')
                         );
                     return fetchedSlider?.map((item) => (
                         <CategorySection item={item} key={item._id} />
@@ -150,79 +143,79 @@ export default function Home() {
             <div className="px-4 sm:px-6 lg:px-8">
                 {all_products
                     ? (() => {
-                          // eslint-disable-next-line no-unused-vars
-                          const newProducts = all_products
-                              ?.slice()
-                              .filter((item) =>
-                                  item.product_category.some((UUID) =>
-                                      category
-                                          ?.slice()
-                                          .filter(
-                                              (item) =>
-                                                  item.category_slug ===
-                                                  'ao-thun'
-                                          )
-                                          ?.map((item) => {
-                                              return item._id;
-                                          })
-                                          .includes(UUID)
-                                  )
-                              );
-                          return (
-                              <ProductList
-                                  title={'Áo thun'}
-                                  summary={
-                                      'Những chiếc áo thun không ngại thời gian'
-                                  }
-                                  products={newProducts}
-                              />
-                          );
-                      })()
+                        // eslint-disable-next-line no-unused-vars
+                        const newProducts = all_products
+                            ?.slice()
+                            ?.filter((item) =>
+                                item?.product_category?.some((UUID) =>
+                                    category
+                                        ?.slice()
+                                        ?.filter(
+                                            (item) =>
+                                                item?.category_slug ===
+                                                'ao-thun'
+                                        )
+                                        ?.map((item) => {
+                                            return item?._id;
+                                        })
+                                        ?.includes(UUID)
+                                )
+                            );
+                        return (
+                            <ProductList
+                                title={'Áo thun'}
+                                summary={
+                                    'Những chiếc áo thun không ngại thời gian'
+                                }
+                                products={newProducts}
+                            />
+                        );
+                    })()
                     : ''}
             </div>
             {(() => {
                 const filterdCategory = category
                     ?.slice()
-                    .find((item) => item.category_image?.length > 0);
+                    ?.find((item) => item.category_image?.length > 0);
                 return <PromoSection category={filterdCategory} />;
             })()}
             <div className="px-4 sm:px-6 lg:px-8">
                 {all_products
                     ? (() => {
-                          // eslint-disable-next-line no-unused-vars
-                          const newProducts = all_products
-                              ?.slice()
-                              .filter((item) =>
-                                  item.product_category.some((UUID) =>
-                                      category
-                                          ?.slice()
-                                          .filter(
-                                              (item) =>
-                                                  item.parent_id ===
-                                                  category
-                                                      ?.slice()
-                                                      .find(
-                                                          (item) =>
-                                                              item.category_slug ===
-                                                              'balo'
-                                                      )._id
-                                          )
-                                          ?.map((item) => {
-                                              return item._id;
-                                          })
-                                          .includes(UUID)
-                                  )
-                              );
-                          return (
-                              <ProductList
-                                  title={'Balo'}
-                                  summary={
-                                      'Người bạn đồng hành không thể thiếu trên mọi nẽo đường'
-                                  }
-                                  products={newProducts?.slice(0, 10)}
-                              />
-                          );
-                      })()
+                        // eslint-disable-next-line no-unused-vars
+                        const newProducts = all_products
+                            ?.slice()
+                            .filter((item) =>
+                                item?.product_category?.some((UUID) =>
+                                    category
+                                        ?.slice()
+                                        ?.filter(
+                                            (item) =>
+                                                item?.parent_id ===
+                                                category
+                                                    ?.slice()
+                                                    ?.find(
+                                                        (item) =>
+                                                            item?.category_slug ===
+                                                            'balo'
+                                                    )?._id
+                                        )
+                                        ?.map((item) => {
+                                            return item?._id;
+                                        })
+                                        ?.includes(UUID)
+                                )
+                            );
+                        return (
+                            <ProductList
+                                title={'Balo'}
+                                summary={
+                                    'Người bạn đồng hành không thể thiếu trên mọi nẽo đường'
+                                }
+                                products={newProducts}
+                            />
+                        );
+                    })()
                     : ''}
             </div>
 

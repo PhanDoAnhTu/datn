@@ -26,46 +26,48 @@ import HeartIcon from '../../../assets/HeartIcon.js';
 
 const reviews = { to: '#', average: 4, totalCount: 117 };
 export default function ProductDetail() {
-    const navigate = useNavigate();
-    const { product_slug_id } = useParams();
-    const dispatch = useDispatch();
-    const product_id = product_slug_id.split('-').pop();
     const { userInfo } = useSelector((state) => state.userReducer);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const { product_slug_id } = useParams();
+    const product_id = product_slug_id.split('-').pop();
+
     const [favories_products, setfavoriesProduct] = useState(
         getFavoritesFromLocalStorage()
     );
 
     const [variations, setVariations] = useState([]);
     const [selectedVariation, setSelectedVariation] = useState(null);
-    const [price, setPrice] = useState(0);
 
-    // const [priceDefault, setPrice] = useState('');
+    const [price, setPrice] = useState(0);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [stock, setStock] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
+
     const [product_detail, setProductDetail] = useState(null);
     const [sku_list, setSkuList] = useState(null);
     const [product_categories, setProductCategories] = useState([]);
-
-    const [product_images, setProductImages] = useState(null);
+    const [product_images, setProductImages] = useState([]);
     const [selected_sku, setSelectedSku] = useState(null);
     const [special_offer, setSpicial_offer] = useState(null);
     const [sale, setSale] = useState(null);
     const [quantity, setQuantity] = useState(1);
     const [review, setReview] = useState([]);
     const [rating_score_avg, setRating_score_avg] = useState(0);
-
     const [related_products, setRelated_products] = useState([]);
     // const [comment, setComment] = useState([]);
 
     const getProductDetail = async (product_id) => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         const responseProductDetail = await dispatch(
             onProductDetail({ spu_id: product_id })
         );
 
         if (responseProductDetail) {
-            const resultProduct = responseProductDetail.payload.metaData;
+            const resultProduct =
+                await responseProductDetail?.payload?.metaData;
             // console.log('responseProductDetail.', responseProductDetail);
             setProductDetail(resultProduct.product_detail);
             setName(resultProduct.product_detail.product_name);
@@ -74,36 +76,27 @@ export default function ProductDetail() {
             if (resultProduct.product_detail?.product_variations.length > 0) {
                 setVariations(resultProduct.product_detail?.product_variations);
                 setSelectedVariation(resultProduct.sku_list[0]?.sku_tier_idx);
-            }
-            if (resultProduct.sku_list.length > 0) {
                 setSkuList(resultProduct.sku_list);
                 setSelectedSku(resultProduct.sku_list[0]);
                 setPrice(resultProduct.sku_list[0]?.sku_price);
                 setStock(resultProduct.sku_list[0].sku_stock);
-                // const product_image_list = await dispatch(
-                //     listImageByProductId(
-                //         resultProduct.product_detail
-                //             ._id
-                //     )
-                // );
-                // setProductImages(product_image_list?.payload.metaData);
-                setProductImages(resultProduct?.product_images);
             } else {
-                setProductImages([resultProduct.product_detail.product_thumb]);
                 setPrice(resultProduct.product_detail.product_price);
             }
+            setProductImages(resultProduct?.product_images);
+
             setProductCategories(resultProduct.product_categories);
             setReview(resultProduct.product_review);
             setRelated_products(resultProduct.related_products);
-            if (resultProduct.product_review.length == 0) {
-                setRating_score_avg(0);
-            } else {
+            if (resultProduct?.product_review?.length > 0) {
                 setRating_score_avg(
                     resultProduct.product_review?.reduce(
                         (partialSum, a) => partialSum + a?.rating_score,
                         0
                     ) / resultProduct.product_review?.length
                 );
+            } else {
+                setRating_score_avg(0);
             }
             setSpicial_offer(
                 resultProduct.special_offer?.special_offer_spu_list?.find(
@@ -115,11 +108,10 @@ export default function ProductDetail() {
     /////////////////////////////
     useEffect(() => {
         getProductDetail(product_id);
-    }, [product_slug_id]);
+    }, [product_id]);
 
     useEffect(() => {
         if (special_offer) {
-            setSale(special_offer);
             if (special_offer?.sku_list?.length > 0) {
                 special_offer?.sku_list.map((sku) => {
                     if (
@@ -130,6 +122,8 @@ export default function ProductDetail() {
                         return;
                     }
                 });
+            } else {
+                setSale(special_offer);
             }
         }
     }, [special_offer]);
@@ -141,17 +135,19 @@ export default function ProductDetail() {
             return newArray;
         });
     };
+
     useEffect(() => {
         if (selectedVariation) {
             setSelectedSku(
                 sku_list.find(
                     (sku) =>
-                        sku.sku_tier_idx.toString() ==
-                        selectedVariation.toString()
+                        sku.sku_tier_idx?.toString() ==
+                        selectedVariation?.toString()
                 )
             );
         }
     }, [selectedVariation]);
+
     useEffect(() => {
         if (selected_sku) {
             setPrice(selected_sku.sku_price);
@@ -167,19 +163,19 @@ export default function ProductDetail() {
                     )
                 );
             }
-
             if (special_offer) {
-                setSale(special_offer);
                 if (special_offer?.sku_list?.length > 0) {
                     special_offer?.sku_list.map((sku) => {
                         if (
-                            sku.sku_tier_idx.toString() ==
-                            selectedVariation.toString()
+                            sku?.sku_tier_idx?.toString() ==
+                            selectedVariation?.toString()
                         ) {
                             setSale(sku);
                             return;
                         }
                     });
+                } else {
+                    setSale(special_offer);
                 }
             }
 

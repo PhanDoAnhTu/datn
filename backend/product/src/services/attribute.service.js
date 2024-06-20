@@ -109,7 +109,7 @@ class AttributeService {
         try {
             let product_attributes = []
             for (let i = 0; i < attribute_id_list.length; i++) {
-                const attribute = await AttributeModel.findOne({ _id: attribute_id_list[i] })
+                const attribute = await AttributeModel.findOne({ _id: attribute_id_list[i] }).lean()
                 if (!attribute) throw new errorResponse.NotFoundRequestError('attribute not found')
                 const attributes_value = await allAttributeValue({ attribute_id: attribute_id_list[i] })
 
@@ -129,10 +129,10 @@ class AttributeService {
         try {
             const attribute_id_list = await product_attributes.flatMap((attribute) => attribute.attribute_id)
             const attribute_value_id_list = await product_attributes.flatMap((attribute) => attribute.attribute_value)
-            console.log('attribute_id_list', attribute_id_list)
-            console.log('attribute_value_id_list', attribute_value_id_list)
+            // console.log('attribute_id_list', attribute_id_list)
+            // console.log('attribute_value_id_list', attribute_value_id_list)
             const product_attribute = await this.findAttributeByIdList({ attribute_id_list, attribute_value_id_list })
-            console.log("product_attributes", product_attribute)
+            // console.log("product_attributes", product_attribute)
 
             return product_attribute
         }
