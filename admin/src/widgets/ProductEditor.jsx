@@ -503,7 +503,7 @@ const ProductEditor = () => {
     try {
       const list_image = new FormData();
 
-      if (sKUList.length > 1 || sKUList[0].image != null) {
+      if (sKUList.length > 1 || sKUList[0]?.image != null) {
         sKUList.forEach((item) => {
           if (item.image != null) {
             list_image.append("files", item.image[0]);
