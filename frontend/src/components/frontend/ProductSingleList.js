@@ -57,7 +57,7 @@ export default function ProductSingleList({ product, reload }) {
     return (
         <div
             key={product._id}
-            className="flex w-full items-center rounded-md bg-zinc-800 p-4 shadow-inner shadow-zinc-600 max-sm:flex-col "
+            className="flex w-full items-center rounded-md bg-white p-4 shadow-md max-sm:flex-col dark:bg-zinc-800"
         >
             <div
                 className="h-fit overflow-hidden  rounded-md max-sm:m-2 md:w-40"
@@ -70,14 +70,14 @@ export default function ProductSingleList({ product, reload }) {
                     className="object-contain object-center"
                 />
             </div>
-            <div className="flex flex-1 px-2 text-white max-sm:w-full max-sm:px-2 max-sm:py-2">
+            <div className="flex flex-1 px-2 text-gray-700 max-sm:w-full max-sm:px-2 max-sm:py-2 dark:text-white">
                 <div className="flex flex-1 flex-col space-y-1 overflow-hidden">
                     <div className="flex justify-between">
                         <div>
                             <h1 className="truncate text-wrap text-sm font-bold max-sm:w-36 md:text-xl">
                                 {product.product_name}
                             </h1>
-                            <div className="text-md text-gray-300">
+                            <div className="text-md text-gray-500 dark:text-gray-300">
                                 {
                                     brand
                                         ?.slice()
@@ -130,13 +130,13 @@ export default function ProductSingleList({ product, reload }) {
                     <div className="grid grid-cols-2 gap-3 py-2">
                         <button
                             onClick={() => openModal(product._id)}
-                            className="rounded-md border-2 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-xl:hidden max-sm:text-xs xl:block"
+                            className="rounded-md border-2 border-gray-900 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-xl:hidden max-sm:text-xs xl:block dark:border-white"
                         >
                             Thêm vào giỏ hàng
                         </button>
                         <button
                             onClick={() => openModal(product._id)}
-                            className="rounded-md border-2 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-xl:block max-sm:text-xs xl:hidden"
+                            className="rounded-md border-2 border-gray-900 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-xl:block max-sm:text-xs xl:hidden dark:border-white"
                         >
                             Xem chi tiết
                         </button>
@@ -151,7 +151,7 @@ export default function ProductSingleList({ product, reload }) {
                                             productId: product._id,
                                         })
                                     }
-                                    className="rounded-md border-2 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs"
+                                    className="rounded-md border-2 border-gray-900 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs dark:border-white"
                                 >
                                     Bỏ thích
                                 </button>
@@ -163,13 +163,13 @@ export default function ProductSingleList({ product, reload }) {
                                             productId: product._id,
                                         })
                                     }
-                                    className="rounded-md border-2 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs"
+                                    className="rounded-md border-2 border-gray-900 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs dark:border-white"
                                 >
                                     Thêm vào yêu thích
                                 </button>
                             )
                         ) : (
-                            <button className="rounded-md  border-2 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs">
+                            <button className="rounded-md border-2 border-gray-900 px-2 py-2 font-semibold transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-xs dark:border-white">
                                 Thêm vào yêu thích
                             </button>
                         )}

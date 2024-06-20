@@ -23,7 +23,7 @@ export default function SearchBar({ Button }) {
         setOpen(false);
     };
     return (
-        <div className={`flex items-center px-1 lg:ml-4`}>
+        <div className={`flex items-center px-1 lg:ml-0`}>
             <button
                 className={classNames(
                     !open
@@ -46,7 +46,7 @@ export default function SearchBar({ Button }) {
                     placeholder="Nhập thông tin..."
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    className={`h-8 bg-transparent outline-none transition-all duration-200 ease-out placeholder:italic placeholder:text-gray-500 focus:border-xanthous-500 focus:ring-xanthous-500 max-lg:hidden dark:text-white dark:placeholder:text-gray-200 ${open ? 'pointer-events-auto w-44 border-b border-gray-900 delay-200 dark:border-white' : 'pointer-events-none w-0 border-none'} delay-200 duration-700 ease-in-out`}
+                    className={`h-8 bg-transparent outline-none transition-all duration-200 ease-out placeholder:italic placeholder:text-gray-500 focus:border-xanthous-500 focus:ring-xanthous-500 max-lg:hidden dark:text-white dark:placeholder:text-gray-200 ${open ? 'pointer-events-auto w-36 border-b border-gray-900 delay-200 dark:border-white' : 'pointer-events-none w-0 border-none'} delay-200 duration-700 ease-in-out`}
                 />
             </form>
 

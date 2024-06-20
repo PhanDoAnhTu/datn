@@ -40,7 +40,7 @@ export default function PCNavbar({ category, navbar, setOpen }) {
     return (
         <nav
             aria-label="Top"
-            className={`${scrollY > 299 ? 'lg:bg-white dark:bg-neutral-900' : 'lg:bg-white/50 lg:dark:bg-neutral-900/50'} lg:fixed  ${bgWhite ? 'duration-75 lg:fixed lg:bg-white/100  lg:dark:bg-neutral-900/100' : '  duration-200 lg:delay-100 '} bg-opacityy-50 left-0 right-0 top-0 z-20 mx-auto max-w-full  px-4 transition ease-in-out max-lg:bg-white sm:px-6 lg:px-8 dark:max-lg:bg-neutral-900`}
+            className={`${scrollY > 299 ? 'lg:bg-white dark:bg-neutral-900' : 'lg:bg-white/75 lg:dark:bg-neutral-900/75'} lg:fixed  ${bgWhite ? 'duration-75 lg:fixed lg:bg-white/100  lg:dark:bg-neutral-900/100' : '  duration-200 lg:delay-100 '} bg-opacityy-50 left-0 right-0 top-0 z-20 mx-auto max-w-full  px-4 transition ease-in-out max-lg:bg-white sm:px-6 lg:px-8 dark:max-lg:bg-neutral-900`}
         >
             <div className="border-b border-gray-200 transition duration-500 ease-in-out dark:border-gray-700">
                 <div className="flex h-16 items-center">
@@ -58,7 +58,7 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                     </button>
 
                     {/* Logo */}
-                    <div className="ml-4 flex basis-1/2 lg:ml-0">
+                    <div className="ml-4 flex basis-2/4 lg:ml-0">
                         <Link to="/" className="flex outline-none">
                             <span className="sr-only">Your Company</span>
                             {darkMode ? (
@@ -80,7 +80,7 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                     </div>
 
                     {/* Flyout menus */}
-                    <Popover.Group className="hidden lg:block lg:self-stretch">
+                    <Popover.Group className="hidden basis-2/5 lg:block lg:self-stretch">
                         <div className="flex h-full space-x-8">
                             {category?.map((item) => {
                                 if (item?.parent_id == null) {
@@ -130,7 +130,15 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                                                                         <div className="col-start-2 grid grid-cols-2 gap-x-8">
                                                                             {all_products &&
                                                                                 all_products
-                                                                                    .slice()
+                                                                                    ?.slice()
+                                                                                    .filter(
+                                                                                        (
+                                                                                            og
+                                                                                        ) =>
+                                                                                            og.product_category.includes(
+                                                                                                item._id
+                                                                                            )
+                                                                                    )
                                                                                     .map(
                                                                                         (
                                                                                             item,
@@ -212,7 +220,7 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                                                                                                 <Link
                                                                                                     id={`${subitem.category_name}-heading`}
                                                                                                     to={`/san-pham-theo-danh-muc/${item.category_slug}/${subitem.category_slug}`}
-                                                                                                    className="font-medium text-gray-500 transition duration-300 ease-out hover:text-magenta-400 dark:text-magenta-600"
+                                                                                                    className="font-medium text-magenta-600 transition duration-300 ease-out hover:text-magenta-400"
                                                                                                 >
                                                                                                     {
                                                                                                         subitem.category_name
@@ -287,7 +295,7 @@ export default function PCNavbar({ category, navbar, setOpen }) {
                         </div>
                     </Popover.Group>
 
-                    <div className="ml-auto flex basis-1/2  items-center justify-end">
+                    <div className="ml-auto flex basis-2/5  items-center justify-end">
                         {/* Search */}
                         <SearchBar
                             Button={
