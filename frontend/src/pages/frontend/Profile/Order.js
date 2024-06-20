@@ -30,19 +30,18 @@ export default function Order() {
     }, [userInfo]);
     const statusOrder = (item) => {
         switch (item.order_status) {
-
             case 'confirmed':
-                return 'Đã xác nhận'
+                return 'Đã xác nhận';
             case 'shipped':
-                return 'Đang giao'
+                return 'Đang giao';
             case 'cancelled':
-                return 'Đã hủy'
+                return 'Đã hủy';
             case 'successful':
-                return 'Đã nhận'
+                return 'Đã nhận';
             default:
-                return 'Chờ xác nhận'
+                return 'Chờ xác nhận';
         }
-    }
+    };
     return (
         <Tab.Panel className={'px-7 pt-4 text-gray-900 dark:text-white'}>
             <div className="mb-4">
@@ -53,14 +52,26 @@ export default function Order() {
                                 <div className="flex py-4 " key={item._id}>
                                     <div className="flex  flex-col justify-around">
                                         <div className="text-gray-900 dark:text-white">
-                                            <p className='font-bold'> Mã đơn hàng:{'  #'}{item.order_trackingNumber}</p>
+                                            <p className="font-bold">
+                                                {' '}
+                                                Mã đơn hàng:{'  #'}
+                                                {item.order_trackingNumber}
+                                            </p>
                                         </div>
                                         <div className=" text-gray-900 dark:text-white">
-                                            Địa chỉ nhận: {item?.order_shipping.ship_to.address}
+                                            Địa chỉ nhận:{' '}
+                                            {
+                                                item?.order_shipping.ship_to
+                                                    .address
+                                            }
                                         </div>
                                         <div className=" text-gray-900 dark:text-white">
-                                            Tổng tiền thanh toán: <NumericFormat
-                                                value={item?.order_checkout?.totalCheckout}
+                                            Tổng tiền thanh toán:{' '}
+                                            <NumericFormat
+                                                value={
+                                                    item?.order_checkout
+                                                        ?.totalCheckout
+                                                }
                                                 displayType={'text'}
                                                 thousandSeparator={true}
                                                 decimalScale={0}
@@ -68,7 +79,6 @@ export default function Order() {
                                                 suffix={'đ'}
                                             />
                                         </div>
-
                                     </div>
 
                                     <div className="flex flex-1 flex-col justify-around">
@@ -78,7 +88,6 @@ export default function Order() {
                                             </span>
                                             <span className="font-bold text-green-400">
                                                 {statusOrder(item)}
-
                                             </span>
                                         </div>
                                         <div className="mt-5 flex justify-end">
@@ -94,7 +103,7 @@ export default function Order() {
                             );
                         })
                     ) : (
-                        <div className="font-bold text-white">
+                        <div className="font-bold text-gray-900 dark:text-white">
                             Hiện không có hóa đơn để hiển thị!
                         </div>
                     )}

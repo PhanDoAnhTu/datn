@@ -112,7 +112,7 @@ export default function Payment({
                                 </div>
                             </div>
 
-                            <div>
+                            {/* <div>
                                 <div
                                     className="flex cursor-pointer justify-between text-gray-900 dark:text-white"
                                     onClick={() => setPaymentMethod('MOMO')}
@@ -126,7 +126,7 @@ export default function Payment({
                                         checked={paymentMethod === 'MOMO'}
                                     />
                                 </div>
-                            </div>
+                            </div> */}
                             <div>
                                 <div
                                     className="flex cursor-pointer justify-between text-gray-900 dark:text-white"
