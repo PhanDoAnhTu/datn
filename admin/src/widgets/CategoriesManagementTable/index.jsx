@@ -41,7 +41,7 @@ const CategoryManagementTable = ({ searchQuery }) => {
   const [sorts, setSorts] = useState(defaultSort);
   const [filters, setFilters] = useState(defaultFilters);
   const [activeCollapse, setActiveCollapse] = useState("");
-  
+
   const fetchDataCategory = async () => {
     const resultCat = await dispatch(findAllCategory())
     setCategories_management(resultCat?.payload?.metaData)

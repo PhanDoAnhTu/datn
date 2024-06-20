@@ -138,7 +138,7 @@ const AllProducts = async ({ sort = "ctime", isPublished = true }) => {
   let brand_list = [];
   let sku_list = [];
   let product_review = [];
-  let product_images = [];
+  // let product_images = [];
 
   for (let index = 0; index < all_Products.length; index++) {
     const brand = await new BrandService().findBrandById({
@@ -154,8 +154,8 @@ const AllProducts = async ({ sort = "ctime", isPublished = true }) => {
       isPublished: true,
     });
     product_review.push(review);
-   const productImages = await ListImageByProductId({ product_id: all_Products[index]._id })
-   product_images.push(productImages)
+  //  const productImages = await ListImageByProductId({ product_id: all_Products[index]._id })
+  //  product_images.push(productImages)
   }
   const specialoffer = await RPCRequest("SPECIAL_OFFER_RPC", {
     type: "FIND_SPECIAL_OFFER_BY_DATE",
@@ -170,7 +170,7 @@ const AllProducts = async ({ sort = "ctime", isPublished = true }) => {
       special_offer: specialoffer,
       sku_list: sku_list[index],
       product_review: product_review[index],
-      product_images: product_images[index]
+      // product_images: product_images[index]
     };
   });
 
@@ -195,7 +195,7 @@ const getAllProductsByfilter = async ({
   let brand_list = [];
   let sku_list = [];
   let product_review = [];
-  let product_images = [];
+  // let product_images = [];
 
   for (let index = 0; index < all_Products.length; index++) {
     const brand = await new BrandService().findBrandById({
@@ -211,8 +211,8 @@ const getAllProductsByfilter = async ({
       isPublished: true,
     });
     product_review.push(review);
-    const productImages = await ListImageByProductId({ product_id: all_Products[index]._id })
-    product_images.push(productImages)
+    // const productImages = await ListImageByProductId({ product_id: all_Products[index]._id })
+    // product_images.push(productImages)
 
 
   }
@@ -230,7 +230,7 @@ const getAllProductsByfilter = async ({
       special_offer: specialoffer,
       sku_list: sku_list[index],
       product_review: product_review[index],
-      product_images: product_images[index]
+      // product_images: product_images[index]
 
     };
   });
@@ -256,7 +256,7 @@ const findProductsByCategory = async ({
   let brand_list = [];
   let sku_list = [];
   let product_review = [];
-  let product_images = [];
+  // let product_images = [];
 
   for (let index = 0; index < productsByCategory.length; index++) {
     const brand = await new BrandService().findBrandById({
@@ -272,8 +272,8 @@ const findProductsByCategory = async ({
       isPublished: true,
     });
     product_review.push(review);
-    const  productImages = await ListImageByProductId({ product_id: productsByCategory[index]._id })
-    product_images.push(productImages)
+    // const  productImages = await ListImageByProductId({ product_id: productsByCategory[index]._id })
+    // product_images.push(productImages)
   }
   const special_offer = await RPCRequest("SPECIAL_OFFER_RPC", {
     type: "FIND_SPECIAL_OFFER_BY_DATE",
@@ -290,7 +290,7 @@ const findProductsByCategory = async ({
         special_offer: special_offer,
         sku_list: sku_list[index],
         product_review: product_review[index],
-        product_images: product_images[index]
+        // product_images: product_images[index]
 
       };
     }
@@ -311,6 +311,7 @@ const findProductDetail = async ({ spu_id, isPublished = true }) => {
       related_products: [],
       product_comment: [],
       product_review: [],
+      product_images:[]
     };
     product.product_detail = spu_info ? spu_info : {};
     product.sku_list = sku_list ? sku_list : [];
@@ -350,6 +351,7 @@ const findProductDetail = async ({ spu_id, isPublished = true }) => {
       },
     });
     product.product_categories = categories ? categories : [];
+    product.product_images= await ListImageByProductId({ product_id: spu_info._id })
 
     return product;
   } catch (error) {

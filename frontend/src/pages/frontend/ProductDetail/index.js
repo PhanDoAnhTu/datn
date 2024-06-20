@@ -7,7 +7,6 @@ import HeartSlashIcon from '../../../assets/HeartSlashIcon.js';
 import ProductList from '../../../components/frontend/ProductList';
 // import { products } from '../../../test/products';
 import {
-    listImageByProductId,
     addToCart,
     removeFromWishList,
     addToWishList,
@@ -64,87 +63,91 @@ export default function ProductDetail() {
         const responseProductDetail = await dispatch(
             onProductDetail({ spu_id: product_id })
         );
+
         if (responseProductDetail) {
-            console.log('responseProductDetail.', responseProductDetail);
+            const resultProduct = responseProductDetail.payload.metaData
+            // console.log('responseProductDetail.', responseProductDetail);
             setProductDetail(
-                responseProductDetail?.payload.metaData?.product_detail
+                resultProduct.product_detail
             );
             setName(
-                responseProductDetail?.payload.metaData?.product_detail
+                resultProduct.product_detail
                     .product_name
             );
             setDescription(
-                responseProductDetail?.payload.metaData?.product_detail
+                resultProduct.product_detail
                     ?.product_description
             );
 
             if (
-                responseProductDetail.payload.metaData?.product_detail
+                resultProduct.product_detail
                     ?.product_variations.length > 0
             ) {
                 setVariations(
-                    responseProductDetail.payload.metaData?.product_detail
+                    resultProduct.product_detail
                         ?.product_variations
                 );
                 setSelectedVariation(
-                    responseProductDetail.payload.metaData?.sku_list[0]
+                    resultProduct.sku_list[0]
                         ?.sku_tier_idx
                 );
             }
-            if (responseProductDetail.payload.metaData?.sku_list.length > 0) {
-                setSkuList(responseProductDetail.payload.metaData?.sku_list);
+            if (resultProduct.sku_list.length > 0) {
+                setSkuList(resultProduct.sku_list);
                 setSelectedSku(
-                    responseProductDetail.payload.metaData?.sku_list[0]
+                    resultProduct.sku_list[0]
                 );
                 setPrice(
-                    responseProductDetail.payload.metaData?.sku_list[0]
+                    resultProduct.sku_list[0]
                         ?.sku_price
                 );
                 setStock(
-                    responseProductDetail.payload.metaData?.sku_list[0]
+                    resultProduct.sku_list[0]
                         .sku_stock
                 );
-                const product_image_list = await dispatch(
-                    listImageByProductId(
-                        responseProductDetail.payload.metaData?.product_detail
-                            ._id
-                    )
-                );
-                setProductImages(product_image_list?.payload.metaData);
+                // const product_image_list = await dispatch(
+                //     listImageByProductId(
+                //         resultProduct.product_detail
+                //             ._id
+                //     )
+                // );
+                // setProductImages(product_image_list?.payload.metaData);
+                setProductImages(resultProduct?.product_images);
+
             } else {
                 setProductImages([
-                    responseProductDetail.payload.metaData?.product_detail
+                    resultProduct.product_detail
                         .product_thumb,
                 ]);
                 setPrice(
-                    responseProductDetail.payload.metaData?.product_detail
+                    resultProduct.product_detail
                         .product_price
                 );
             }
             setProductCategories(
-                responseProductDetail.payload.metaData?.product_categories
+                resultProduct.product_categories
             );
-            setReview(responseProductDetail.payload.metaData?.product_review);
+            setReview(resultProduct.product_review);
             setRelated_products(
-                responseProductDetail.payload.metaData?.related_products
+                resultProduct.related_products
             );
             if (
-                responseProductDetail.payload.metaData?.product_review.length ==
+                resultProduct.product_review.length ==
                 0
             ) {
                 setRating_score_avg(0);
             } else {
                 setRating_score_avg(
-                    responseProductDetail.payload.metaData?.product_review?.reduce(
+                    resultProduct.product_review?.reduce(
                         (partialSum, a) => partialSum + a?.rating_score,
                         0
                     ) /
-                    responseProductDetail.payload.metaData?.product_review
+                    resultProduct.product_review
                         ?.length
                 );
             }
             setSpicial_offer(
-                responseProductDetail.payload.metaData?.special_offer?.special_offer_spu_list?.find(
+                resultProduct.special_offer?.special_offer_spu_list?.find(
                     (spu) => spu.product_id == product_id
                 )
             );
@@ -225,9 +228,9 @@ export default function ProductDetail() {
                 }
             }
 
-            console.log('filteredSKU', selected_sku);
-            console.log('pricesale', sale);
-            console.log('special_offer', special_offer);
+            // console.log('filteredSKU', selected_sku);
+            // console.log('pricesale', sale);
+            // console.log('special_offer', special_offer);
         }
     }, [selected_sku]);
 

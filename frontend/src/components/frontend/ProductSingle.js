@@ -27,6 +27,9 @@ export default function ProductSingle({ product, reload }) {
     const { isModalOpen, product_id, openModal, closeModal } =
         useProductDetail();
     const { userInfo } = useSelector((state) => state.userReducer);
+    // const [price, setPrice] = useState(0);
+    // const [sale, setSale] = useState(null);
+
     const { brand } = useSelector((state) => state.brandReducer);
     const [favories_products, setfavoriesProduct] = useState(
         getFavoritesFromLocalStorage
