@@ -14,7 +14,7 @@ export default function Header() {
     useEffect(() => {
         if (!category) dispatch(getAllCategory());
         if (!navbar) dispatch(findMenuByPosition({ menu_position: 'navbar' }));
-    }, [category, navbar]);
+    }, []);
 
     return (
         <div className="bg-white">

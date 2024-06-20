@@ -45,7 +45,7 @@ class ReviewService {
         const list_review = await ReviewModel.find({
             isPublished,
             product_id
-        })
+        }).lean()
         return list_review
     }
 }

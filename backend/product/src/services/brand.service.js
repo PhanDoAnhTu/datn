@@ -32,7 +32,7 @@ class BrandService {
             const brand = await BrandModel.findOne({
                 isPublished,
                 _id: brand_id
-            })
+            }).lean()
             return brand
 
         } catch (error) {

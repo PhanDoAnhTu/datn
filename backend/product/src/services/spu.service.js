@@ -121,7 +121,7 @@ const PublishProduct = async ({ product_id }) => {
 const UnPublishProduct = async ({ product_id }) => {
   const spuFound = await SpuModel.findOne({
     _id: Types.ObjectId(product_id),
-  });
+  }).lean()
   if (!spuFound) throw new errorResponse.NotFoundRequestError("spu not found");
   return await spuRepository.unPublishProduct({ product_id });
 };
@@ -154,8 +154,8 @@ const AllProducts = async ({ sort = "ctime", isPublished = true }) => {
       isPublished: true,
     });
     product_review.push(review);
-  //  const productImages = await ListImageByProductId({ product_id: all_Products[index]._id })
-  //  product_images.push(productImages)
+    //  const productImages = await ListImageByProductId({ product_id: all_Products[index]._id })
+    //  product_images.push(productImages)
   }
   const specialoffer = await RPCRequest("SPECIAL_OFFER_RPC", {
     type: "FIND_SPECIAL_OFFER_BY_DATE",
@@ -303,7 +303,7 @@ const findProductDetail = async ({ spu_id, isPublished = true }) => {
     const { spu_info, sku_list } = await oneSpu({ spu_id, isPublished });
     let product = {
       product_detail: {},
-      special_offer: {},
+      special_offer: null,
       sku_list: [],
       product_brand: {},
       product_categories: [],
@@ -311,7 +311,7 @@ const findProductDetail = async ({ spu_id, isPublished = true }) => {
       related_products: [],
       product_comment: [],
       product_review: [],
-      product_images:[]
+      product_images: []
     };
     product.product_detail = spu_info ? spu_info : {};
     product.sku_list = sku_list ? sku_list : [];
@@ -330,19 +330,18 @@ const findProductDetail = async ({ spu_id, isPublished = true }) => {
       product_category: {
         $in: spu_info.product_category,
       },
-    });
+    }).lean()
     // product.product_comment = await getCommentByproductId({ productId: spu_info._id })
     product.product_review = await findReviewByProductId({
       product_id: spu_info._id,
       isPublished: true,
     });
-    product.special_offer = await RPCRequest("SPECIAL_OFFER_RPC", {
-      type: "FIND_SPECIAL_OFFER_TODAY_BY_ID",
+    const promotion = await RPCRequest("SPECIAL_OFFER_RPC", {
+      type: "FIND_SPECIAL_OFFER_BY_DATE",
       data: {
-        spu_id: spu_info._id.toString(),
-        special_offer_is_active: true
       },
     });
+    product.special_offer = promotion ? promotion : null
     const categories = await RPCRequest("CATEGORY_RPC", {
       type: "FIND_CATEGORY_BY_ID_LIST",
       data: {
@@ -351,7 +350,7 @@ const findProductDetail = async ({ spu_id, isPublished = true }) => {
       },
     });
     product.product_categories = categories ? categories : [];
-    product.product_images= await ListImageByProductId({ product_id: spu_info._id })
+    product.product_images = await ListImageByProductId({ product_id: spu_info._id })
 
     return product;
   } catch (error) {
