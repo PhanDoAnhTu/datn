@@ -228,8 +228,8 @@ class cartService {
         }).lean()
     }
 
-    async deleteToCartByCartIdAndUserId({ cartId, userId, cart_state = 'active' }) {
-        return await CartModel.deleteOne({ _id: Types.ObjectId(cartId), cart_userId: userId, cart_state: cart_state }).lean()
+    async deleteToCartByCartIdAndUserId({ userId, cart_state = 'active' }) {
+        return await CartModel.deleteOne({ cart_userId: userId, cart_state: cart_state }).lean()
     }
     async serverRPCRequest(payload) {
         const { type, data } = payload;

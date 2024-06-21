@@ -1,5 +1,6 @@
 'use strict'
 
+const { RPCRequest } = require("../../../user/src/utils")
 const { ReviewModel } = require("../database/models")
 
 class ReviewService {
@@ -10,7 +11,8 @@ class ReviewService {
         product_id,
         sku_id,
         rating_score,
-        rating_content }) {
+        rating_content,
+        images = [] }) {
 
         const review = await ReviewModel.create({
             isPublished,
@@ -19,7 +21,8 @@ class ReviewService {
             product_id,
             sku_id,
             rating_score,
-            rating_content
+            rating_content,
+            images
         })
         return review
     }
@@ -33,6 +36,7 @@ class ReviewService {
         return list_review
     }
     async findReviewById({ review_id, isPublished = true }) {
+
         const review = await ReviewModel.findOne({
             isPublished,
             _id: review_id
@@ -42,10 +46,22 @@ class ReviewService {
     }
 
     async findReviewByProductId({ product_id, isPublished = true }) {
-        const list_review = await ReviewModel.find({
+        let list_review = await ReviewModel.find({
             isPublished,
             product_id
         }).lean()
+
+        // const reviews = list_review.map(async (review) => {
+        //     const user = await RPCRequest("CUSTOMER_RPC", {
+        //         type: "FIND_CUSTOMER_BY_ID",
+        //         data: {
+        //             customer_id: review.customer_id,
+        //         },
+        //     });
+        //     return { ...review, user: user }
+        // })
+
+
         return list_review
     }
 }

@@ -58,6 +58,8 @@ const router = createBrowserRouter(
             <Route index={true} path="/" element={<Home />} />
             <Route path="/dang-nhap" element={<Login />} />
             <Route path="/dang-ky" element={<Register />} />
+            <Route path="/dang-ky-thanh-cong" element={<RegisterComplete />} />
+
             <Route
                 path="/san-pham-theo-danh-muc/:category1?/:category2?/:category3?"
                 element={<Category />}
@@ -81,7 +83,7 @@ const router = createBrowserRouter(
                 <Route path="/trang-ca-nhan/:page?" element={<Profile />} />
 
                 <Route
-                    path="/chi-tiet-don-hang/:orderId"
+                    path="/chi-tiet-don-hang/:orderTrackingId"
                     element={<OrderDetail />}
                 />
                 <Route path="/thanh-toan/:page?" element={<Checkout />} />
@@ -98,7 +100,6 @@ const router = createBrowserRouter(
             </Route>
             <Route path="*" element={<Navigate to="/404" />} />
             <Route path="/404" element={<PageNotFound />} />
-            <Route path="/dang-ky-thanh-cong" element={<RegisterComplete />} />
         </Route>
     )
 );

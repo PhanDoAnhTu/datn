@@ -199,10 +199,10 @@ export default function CartPopoverItem({
             checkbox('cancel', sku);
         }
     };
-    console.log('Selected', selected);
-    console.log('Selected_old', selected_old);
-    console.log('Selected_sku', selected_sku);
-    console.log('Selected_sku_old', selected_sku_old);
+    // console.log('Selected', selected);
+    // console.log('Selected_old', selected_old);
+    // console.log('Selected_sku', selected_sku);
+    // console.log('Selected_sku_old', selected_sku_old);
     return (
         <li key={product.productId} className="flex py-4">
             <div>

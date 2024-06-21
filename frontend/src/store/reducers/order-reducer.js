@@ -12,6 +12,11 @@ const OrderReducer = (state = initialState, action) => {
                 ...state,
                 order: action.payload.metaData,
             };
+        case Action.CURRENT_ORDER:
+            return {
+                ...state,
+                currentOrder: action.payload.metaData,
+            };
         default:
             return state;
     }

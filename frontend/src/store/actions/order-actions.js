@@ -65,4 +65,19 @@ export const createOrder = (data) => async (dispatch) => {
         // return err.response.data
     }
 };
+export const findOrderByTrackingNumber = (data) => async (dispatch) => {
+    try {
+        const response = await PostData(
+            '/order/v1/order/findOrderByTrackingNumber',
+            data
+        );
+        console.log('response:', response);
+        return dispatch({
+            type: Action.CURRENT_ORDER,
+            payload: response.data,
+        });
+    } catch (err) {
+        console.error(err);
+    }
+};
 

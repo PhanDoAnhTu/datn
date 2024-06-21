@@ -193,7 +193,7 @@ module.exports.RPCObserver = async (RPC_QUEUE_NAME, service) => {
       if (msg.content) {
         // DB Operation
         const payload = JSON.parse(msg.content.toString());
-        console.log(payload, "sss")
+        console.log(payload)
         const response = await service.serverRPCRequest(payload);
         channel.sendToQueue(
           msg.properties.replyTo,
@@ -206,7 +206,7 @@ module.exports.RPCObserver = async (RPC_QUEUE_NAME, service) => {
       }
     },
     {
-      noAck: false,
+      noAck: false
     }
   );
 };
@@ -242,7 +242,7 @@ const requestData = async (RPC_QUEUE_NAME, requestPayload, uuid) => {
           }
         },
         {
-          noAck: true,
+          noAck: false
         }
       );
     });

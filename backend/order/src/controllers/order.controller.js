@@ -32,6 +32,12 @@ class OrderController {
       metaData: await this.service.findOrderByUserId(req.body),
     }).send(res);
   };
+  findOrderByTrackingNumber = async (req, res, next) => {
+    return new successResponse.SuccessResponse({
+      message: "findOrderByTrackingNumber success",
+      metaData: await this.service.findOrderByTrackingNumber(req.body),
+    }).send(res);
+  };
 }
 
 module.exports = new OrderController();

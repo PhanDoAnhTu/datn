@@ -43,6 +43,7 @@ export default function TransactionCheck() {
     // &signature=bbb84ba6afe4144bf8d783c1591910bea0a38a873fc04ef9a8b85a57b80e4123
 
     useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
         if (status == null) {
             searchParams.get('orderId') &&
                 dispatch(

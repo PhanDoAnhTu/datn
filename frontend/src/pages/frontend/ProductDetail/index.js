@@ -5,7 +5,6 @@ import classNames from '../../../helpers/classNames';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import HeartSlashIcon from '../../../assets/HeartSlashIcon.js';
 import ProductList from '../../../components/frontend/ProductList';
-// import { products } from '../../../test/products';
 import {
     addToCart,
     removeFromWishList,
@@ -24,13 +23,12 @@ import {
 } from '../../../utils';
 import HeartIcon from '../../../assets/HeartIcon.js';
 
-const reviews = { to: '#', average: 4, totalCount: 117 };
 export default function ProductDetail() {
 
     const { userInfo } = useSelector((state) => state.userReducer);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
+    const { all_products } = useSelector((state) => state.productReducer);
     const { product_slug_id } = useParams();
     const product_id = product_slug_id.split('-').pop();
 
@@ -117,9 +115,10 @@ export default function ProductDetail() {
                 resultProduct.product_categories
             );
             setReview(resultProduct.product_review);
-            setRelated_products(
-                resultProduct.related_products
-            );
+            // setRelated_products(
+            //     resultProduct.related_products
+            // );
+            setRelated_products(all_products?.filter((prod) => prod?.product_category.includes(resultProduct.product_detail.product_category[0])))
             if (
                 resultProduct?.product_review?.length > 0
 
@@ -144,8 +143,15 @@ export default function ProductDetail() {
     };
     /////////////////////////////
     useEffect(() => {
-        getProductDetail(product_id);
+        try {
+            getProductDetail(product_id);
+        } catch (error) {
+            setTimeout(() => {
+                getProductDetail(product_id);
+            }, 2000)
+        }
     }, [product_id]);
+
 
     useEffect(() => {
         if (
@@ -460,7 +466,6 @@ export default function ProductDetail() {
                                 </div>
 
                                 <Link
-                                    to={reviews.to}
                                     className="ml-3 text-sm font-medium text-xanthous-500 hover:text-xanthous-600"
                                 >
                                     {review.length} đánh giá
@@ -713,21 +718,22 @@ export default function ProductDetail() {
                         Đánh giá về sản phẩm
                     </h1>
                     <div className="space-y-5">
+
                         <div className="grid gap-5">
-                            {[0, 1, 2].map((index) => (
+                            {review?.length > 0 && review.map((rv, index) => (
                                 <div
                                     key={`review-${index}`}
                                     className="grid gap-2 overflow-hidden rounded-md bg-zinc-400 p-4 shadow-inner shadow-gray-400 dark:bg-zinc-800"
                                 >
                                     <div className="text-lg font-bold text-gray-900 dark:text-white">
-                                        Title goes here
+                                        {rv.customer_id}
                                     </div>
                                     <div className="flex">
                                         {[1, 2, 3, 4, 5].map((rating) => (
                                             <StarIcon
                                                 key={rating}
                                                 className={classNames(
-                                                    rating_score_avg >= rating
+                                                    rv.rating_score >= rating
                                                         ? 'text-xanthous-500'
                                                         : 'text-gray-200',
                                                     'h-5 w-5 flex-shrink-0'
@@ -737,19 +743,7 @@ export default function ProductDetail() {
                                         ))}
                                     </div>
                                     <div className="leading-5 text-gray-900 dark:text-white">
-                                        Lorem ipsum dolor sit amet consectetur,
-                                        adipisicing elit. Nam debitis sed amet
-                                        nesciunt aliquid itaque numquam facilis
-                                        assumenda voluptatum expedita! Alias
-                                        sapiente dicta aliquam quam error?
-                                        Commodi neque sapiente officia? Iure
-                                        neque fugit est illo quaerat minima
-                                        tenetur aut porro odio, quo iusto
-                                        possimus id totam fuga magni.
-                                        Repudiandae, at quia! Obcaecati vitae
-                                        quo accusamus ipsa illum architecto. Sit
-                                        hic ab obcaecati repellendus
-                                        consequuntur.
+                                        {rv.rating_content}
                                     </div>
                                 </div>
                             ))}

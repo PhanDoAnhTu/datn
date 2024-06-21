@@ -4,12 +4,27 @@ import Loading from '../../../assets/Loading.js';
 
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { DeleteToCartItem } from '../../../store/actions/cart-actions.js';
+import { getSelectedListFromCart } from '../../../utils/localStorage.js';
 
 export default function CreateOrderSuccess() {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+    const dispatch = useDispatch()
+    const { userInfo } = useSelector((state) => state.userReducer)
+    const [selectedProductFromCart] = useState(getSelectedListFromCart);
 
+
+
+    const detetedItemCart = async () => {
+        for (let index = 0; index < selectedProductFromCart.length; index++) {
+            const item = selectedProductFromCart[index];
+            await dispatch(DeleteToCartItem({ userId: userInfo._id, productId: item.productId, sku_id: item.sku_id }))
+        }
+    }
     useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
         if (isLoading == false) {
             setTimeout(() => {
                 setIsLoading(true)
@@ -17,6 +32,7 @@ export default function CreateOrderSuccess() {
         }
         if (isLoading == true) {
             setTimeout(() => {
+                detetedItemCart()
                 toast.success("Tạo đơn hàng thành công")
                 navigate('/');
             }, 2000)

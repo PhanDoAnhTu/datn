@@ -14,11 +14,11 @@ import {
     getFavoritesFromLocalStorage,
     removeFavoriteFromLocalStorage,
 } from '../../utils';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import classNames from '../../helpers/classNames';
 import { ShoppingBagIcon } from '@heroicons/react/24/solid';
 import { useProductDetail } from '../../ProductModalContext';
-const reviews = { to: '#', average: 4, totalCount: 117 };
+// const reviews = { to: '#', average: 4, totalCount: 117 };
 
 export default function ProductSingle({ product, reload }) {
     const navigate = useNavigate();
@@ -26,11 +26,65 @@ export default function ProductSingle({ product, reload }) {
     // eslint-disable-next-line no-unused-vars
     const { isModalOpen, product_id, openModal, closeModal } =
         useProductDetail();
-    const { userInfo } = useSelector((state) => state.userReducer);
-    // const [price, setPrice] = useState(0);
-    // const [sale, setSale] = useState(null);
 
-    const { brand } = useSelector((state) => state.brandReducer);
+    const { userInfo } = useSelector((state) => state.userReducer);
+    const [price, setPrice] = useState(0);
+    const [sale, setSale] = useState(null);
+    const [brand, setBrand] = useState(null);
+    const [special_offer, setSpicial_offer] = useState(null);
+    const [review, setReview] = useState([]);
+    const [rating_score_avg, setRating_score_avg] = useState(0);
+
+
+
+    const loadData = async () => {
+        if (product?.sku_list?.length > 0) {
+            const price_sku_arr = product.sku_list.flatMap((sku) => sku.sku_price)
+            const min_price_sku = Math.min(...price_sku_arr)
+            setPrice(min_price_sku)
+        } else {
+            setPrice(product.product_price)
+        }
+        setSpicial_offer(
+            product?.special_offer?.special_offer_spu_list?.find(
+                (spu) => spu.product_id == product._id
+            )
+        );
+        setReview(product.product_review)
+        setBrand(product.product_brand)
+    }
+
+
+
+
+    useEffect(() => {
+        try {
+            loadData()
+        } catch (error) {
+            setTimeout(() => {
+                loadData()
+            }, 3000)
+        }
+    }, [])
+    useEffect(() => {
+        review?.length > 0 && setRating_score_avg(
+            review?.reduce(
+                (partialSum, a) => partialSum + a?.rating_score, 0) / review?.length
+        );
+    }, [review])
+    useEffect(() => {
+        if (special_offer?.sku_list?.length > 0) {
+            const price_sale_arr = special_offer?.sku_list?.flatMap((sku) => sku.price_sale);
+            const min_price = Math.min(...price_sale_arr)
+            setSale(special_offer?.sku_list?.find((sku) => sku.price_sale == min_price))
+        } else {
+            setSale(special_offer);
+        }
+    }, [special_offer])
+
+
+
+
     const [favories_products, setfavoriesProduct] = useState(
         getFavoritesFromLocalStorage
     );
@@ -140,10 +194,7 @@ export default function ProductSingle({ product, reload }) {
                 </h3>
                 <span className="text-gray-500 dark:text-gray-200">
                     {
-                        brand
-                            ?.slice()
-                            .find((item) => product?.product_brand === item._id)
-                            ?.brand_name
+                        brand?.brand_name
                     }
                 </span>
             </div>
@@ -152,7 +203,7 @@ export default function ProductSingle({ product, reload }) {
                     <StarIcon
                         key={rating}
                         className={classNames(
-                            reviews.average > rating
+                            rating_score_avg > rating
                                 ? 'text-xanthous-500'
                                 : 'text-gray-200',
                             'h-5 w-5 flex-shrink-0'
@@ -162,26 +213,43 @@ export default function ProductSingle({ product, reload }) {
                 ))}
             </div>
             <div className="flex flex-col ">
+
                 <p className="text-md font-medium text-gray-900 dark:text-white">
-                    <NumericFormat
-                        value={product.product_price}
-                        displayType={'text'}
-                        thousandSeparator={true}
-                        decimalScale={0}
-                        id="price"
-                        suffix={'đ'}
-                    />
+                    {sale ? (
+                        <NumericFormat
+                            value={sale.price_sale}
+                            displayType="text"
+                            thousandSeparator={true}
+                            decimalScale={0}
+                            id="price"
+                            suffix={'đ'}
+                        />
+                    ) : (
+                        <NumericFormat
+                            value={price}
+                            displayType="text"
+                            thousandSeparator={true}
+                            decimalScale={0}
+                            id="price"
+                            suffix={'đ'}
+                        />
+                    )}
+                    {/* &emsp; */}
                 </p>
-                {/* <p className="text-sm font-medium  text-gray-400/75 line-through decoration-red-700 ">
-                    <NumericFormat
-                        value={product.product_price}
-                        displayType={'text'}
-                        thousandSeparator={true}
-                        decimalScale={0}
-                        id="price"
-                        suffix={'đ'}
-                    />
-                </p> */}
+                {sale && (
+
+                    <p className="text-sm font-medium  text-gray-400/75 line-through decoration-red-700 ">
+                        <NumericFormat
+                            value={price}
+                            displayType={'text'}
+                            thousandSeparator={true}
+                            decimalScale={0}
+                            id="price"
+                            suffix={'đ'}
+                        />
+                    </p>
+                )
+                }
             </div>
         </div>
     );

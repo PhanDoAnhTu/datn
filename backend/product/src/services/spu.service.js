@@ -455,7 +455,7 @@ const findProductBestSelling = async ({
       $in: sortArr
     },
     isPublished
-  }).limit(limit).skip(skip)
+  }).limit(limit).skip(skip).lean()
 
   return products
 

@@ -167,7 +167,7 @@ module.exports.RPCObserver = async (RPC_QUEUE_NAME, service) => {
       }
     },
     {
-      noAck: false,
+      noAck: false
     }
   );
 };
@@ -203,7 +203,7 @@ const requestData = async (RPC_QUEUE_NAME, requestPayload, uuid) => {
           }
         },
         {
-          noAck: true,
+          noAck: false
         }
       );
     });

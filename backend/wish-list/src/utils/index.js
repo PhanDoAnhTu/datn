@@ -204,7 +204,7 @@ const requestData = async (RPC_QUEUE_NAME, requestPayload, uuid) => {
           }
         },
         {
-          noAck: true,
+          noAck: false,
         }
       );
     });

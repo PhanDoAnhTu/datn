@@ -82,13 +82,13 @@ export default function CartPopover({ Button }) {
         if (type === 'updateItemQuantity') {
             const { productId, sku_id = null, quantity, old_quantity } = data;
 
-            console.log(
-                'updateItemQuantity: ',
-                productId,
-                sku_id,
-                quantity,
-                old_quantity
-            );
+            // console.log(
+            //     'updateItemQuantity: ',
+            //     productId,
+            //     sku_id,
+            //     quantity,
+            //     old_quantity
+            // );
             await dispatch(
                 onUpdateQuantityFromCart({
                     userId: userInfo._id,
@@ -107,7 +107,7 @@ export default function CartPopover({ Button }) {
         if (type === 'updateItemSku') {
             const { productId, sku_id, sku_id_old } = data;
 
-            console.log('updateItemSku: ', productId, sku_id, sku_id_old);
+            // console.log('updateItemSku: ', productId, sku_id, sku_id_old);
             await dispatch(
                 onUpdateSkuFromCart({
                     userId: userInfo._id,
@@ -124,13 +124,13 @@ export default function CartPopover({ Button }) {
         if (type === 'updateItemSkuV2') {
             const { productId, sku_id, sku_id_old, quantity } = data;
 
-            console.log(
-                'updateItemSkuV2: ',
-                productId,
-                sku_id,
-                sku_id_old,
-                quantity
-            );
+            // console.log(
+            //     'updateItemSkuV2: ',
+            //     productId,
+            //     sku_id,
+            //     sku_id_old,
+            //     quantity
+            // );
             await dispatch(
                 onUpdateSkuFromCartV2({
                     userId: userInfo._id,

@@ -22,10 +22,10 @@ export default function Home() {
 
 
     const fetchData = async () => {
-        dispatch(allProducts());
+        !all_products && dispatch(allProducts({}));
         // dispatch(findListBrand());
-        dispatch(getSliderByActive({ slider_is_active: true, }));
-        dispatch(findProductbestSelling());
+        !slider && dispatch(getSliderByActive({ slider_is_active: true, }));
+        !product_best_selling && dispatch(findProductbestSelling({}));
     }
 
     useEffect(() => {
@@ -34,7 +34,7 @@ export default function Home() {
         } catch (error) {
             setTimeout(() => {
                 fetchData()
-            }, 3000)
+            }, 2000)
         }
     }, []);
 

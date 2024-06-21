@@ -17,14 +17,14 @@ class CheckoutService {
     const checkout_oder = {
       totalPrice: 0,
       feeShip: 0,//phi ship
-      totalSpecialOffer: 0,//tong discount
+      totalSpecialOffer: 0,//tong promotion
       totalDiscount: 0,//tong discount
       totalCheckout: 0,//tong thanh toan
     }
 
     const { shop_discounts = [], item_products = [] } = order_ids
 
-    console.log("item_products:  ", item_products)
+    // console.log("item_products:  ", item_products)
     //checkout product available
 
     const checkProductServer = await RPCRequest("SPU_RPC", {
@@ -33,7 +33,7 @@ class CheckoutService {
         products: item_products
       }
     })
-    console.log('checkProductServer', checkProductServer)
+    // console.log('checkProductServer', checkProductServer)
     if (!checkProductServer[0]) throw new errorResponse.BadRequestError('order wrong')
     //tong don hang
 
@@ -41,12 +41,12 @@ class CheckoutService {
       return acc + (product.quantity * product.price)
     }, 0)
     //tong tien truoc khi xuly
-    checkout_oder.totalPrice = + checkoutPrice
+    checkout_oder.totalPrice = checkoutPrice
     const itemCheckout = {
       shop_discounts,//hmmmm
       priceRaw: checkoutPrice,//tien truoc khi giam gia
       priceApplySpecialOffer: checkoutPrice,
-      priceApplyDiscount: checkoutPrice,
+      priceApplyPromotionAndDiscount: checkoutPrice,
       item_products: checkProductServer
     }
     let checkProductServerSpecialOffer = []
@@ -58,30 +58,39 @@ class CheckoutService {
       },
     });
     if (checkDateNow) {
-      checkDateNow.special_offer_spu_list?.map((spu) => {
-        if (spu.sku_list.length > 0) {
-          return spu.sku_list.map((sku) => {
-            return checkProductServer.find((prod) => {
-              if (prod.sku_id == sku.sku_id) {
+
+      checkProductServer.forEach((prod) => {
+
+        const spu_sale = checkDateNow.special_offer_spu_list.find((spu) => spu.product_id == prod.productId)
+        if (spu_sale) {
+          checkDateNow.special_offer_spu_list?.filter((spu_sale) => {
+            if (prod.sku_id === null) {
+              const { price, ...prodNoPrice } = prod
+              checkProductServerSpecialOffer.push({ ...prodNoPrice, price: spu_sale.price_sale })
+              return
+            }
+            if (prod.sku_id !== null && spu_sale.sku_list.length > 0) {
+              const sku_sale = spu_sale.sku_list.find((sku) => sku.sku_id == prod.sku_id)
+
+              if (sku_sale) {
                 const { price, ...prodNoPrice } = prod
-                checkProductServerSpecialOffer.push({ ...prodNoPrice, price: sku.price_sale })
+                checkProductServerSpecialOffer.push({ ...prodNoPrice, price: sku_sale.price_sale })
                 return
               }
-            })
+            }
           })
+        } else {
+          checkProductServerSpecialOffer.push(prod)
         }
-        return checkProductServer.find((prod) => {
-          if (!prod.sku_id & prod.productId == spu.product_id) {
-            const { price, ...prodNoPrice } = prod
-            checkProductServerSpecialOffer.push({ ...prodNoPrice, price: spu.price_sale })
-            return
-          }
-        })
+
+
       })
     }
+    // console.log("checkProductServerSpecialOffer",checkProductServerSpecialOffer)
     itemCheckout.priceApplySpecialOffer = checkProductServerSpecialOffer.reduce((acc, product) => {
       return acc + (product.quantity * product.price)
     }, 0)
+    checkout_oder.totalSpecialOffer = itemCheckout.priceRaw - itemCheckout.priceApplySpecialOffer
 
     if (shop_discounts.length > 0) {
       const { discount = 0 } = await RPCRequest("DISCOUNT_RPC", {
@@ -89,21 +98,18 @@ class CheckoutService {
         data: {
           codeId: shop_discounts[0].codeId,
           userId,
-          products: checkProductServerSpecialOffer,
+          products: checkProductServerSpecialOffer.length > 0 ? checkProductServerSpecialOffer : checkProductServer,
         },
       });
       //tong discount 
-      checkout_oder.totalDiscount += discount
+      checkout_oder.totalDiscount = discount
       //neu tien giam gia >0
-      if (discount > 0) {
+      itemCheckout.priceApplyPromotionAndDiscount = itemCheckout.priceRaw - checkout_oder.totalSpecialOffer - discount
 
-        itemCheckout.priceApplyDiscount = checkoutPrice - discount
-      }
     }
-    checkout_oder.totalSpecialOffer = itemCheckout.priceApplySpecialOffer
+
     //tong thanh toan
-    checkout_oder.totalCheckout += (itemCheckout.priceApplySpecialOffer - checkout_oder.totalDiscount)
-    // order_ids_new.push(itemCheckout)
+    checkout_oder.totalCheckout = checkout_oder.totalPrice - checkout_oder.totalSpecialOffer - checkout_oder.totalDiscount
 
     return {
       order_ids,
@@ -234,7 +240,7 @@ class CheckoutService {
 
   async changeStatusOrderByOrderId({ order_id, order_status }) {
     if (
-      ["pending", "confirmed", "shipped", "cancelled"].includes(order_status) ==
+      ["pending", "confirmed", "shipped", "cancelled", "successful", "review"].includes(order_status) ==
       false
     )
       throw new errorResponse.BadRequestError("status not exitsts");

@@ -5,6 +5,9 @@ export * from './spicial-offer-actions';
 export * from './wish-list-actions';
 export * from './payment-actions';
 export * from './category-actions';
+export * from './order-actions';
+export * from './review-actions';
+
 
 export const Action = {
     //auth
@@ -82,18 +85,14 @@ export const Action = {
     STATUS_ORDER: "STATUS_ORDER",
     CHECKOUT_REVIEW: "CHECKOUT_REVIEW",
     CREATE_ORDER: "CREATE_ORDER",
+    CURRENT_ORDER: "CURRENT_ORDER",
+
 
     //address
     ADD_ADDRESS: "ADD_ADDRESS",
     GET_ADDRESS: "GET_ADDRESS",
-    REMOVE_ADDRESS: "REMOVE_ADDRESS"
-    // PROFILE: "PROFILE",
-    // DISSMISS: "DISSMISS",
-
-    // LANDING_PRODUCTS: "LANDING_PRODUCTS",
-    // PRODUCT_DETAILS: "PRODUCT_DETAILS",
-
-    // ADDED_NEW_ADDRESS: "ADDED_NEW_ADDRESS",
-
-    // PLACE_ORDER: "PLACE_ORDER"
+    REMOVE_ADDRESS: "REMOVE_ADDRESS",
+    REVIEW_BY_PRODUCT:"REVIEW_BY_PRODUCT",
+    CREATE_REVIEW:"CREATE_REVIEW",
+    
 };

@@ -10,87 +10,109 @@ import {
 } from '@heroicons/react/24/solid';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
-import { useNavigate } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router';
+import { changeStatusOrderByOrderId, createReview, findOrderByTrackingNumber } from '../../../store/actions';
+import { toast } from 'react-toastify';
 
 export default function OrderDetail() {
     //Kiem tra neu userId cua currentOrder co bang voi user dang dang nhap hien tai khong
     //neu co thi cho xem, khong thi cho ve lai trang profile.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const currentOrder = {
-        cartId: '661f5aa782159dc99b8fb626',
-        userId: '664088b2a63b863a605da30e',
-        order_shipping: {
-            ship_to: {
-                phone: '00000000',
-                gmail: 'gmail',
-                name: 'anhtu',
-                address: 'ssssss',
-            },
-        },
-        user_payment: {},
-        order_ids: {
-            shop_discounts: [
-                {
-                    discountId: '665c9d0400a63805d8c252fb',
-                    codeId: 'tutu',
-                },
-            ],
-            item_products: [
-                {
-                    price: 200000,
-                    quantity: 2,
-                    sku_id: '66562ef484ce383484f8f076',
-                    productId: '66562ef484ce383484f8f074',
-                },
-                {
-                    price: 300000,
-                    quantity: 2,
-                    sku_id: '665637da84ce383484f8f13a',
-                    productId: '665637da84ce383484f8f138',
-                },
-            ],
-        },
-    };
+
+    const { orderTrackingId } = useParams()
+    const dispatch = useDispatch()
+    const { currentOrder } = useSelector((state) => state.orderReducer)
+
+    const [shipTo, setShipTo] = useState(null)
+    const [checkout, setCheckout] = useState(null)
+    const [payment, setPayment] = useState(null)
+    const [status, setStatus] = useState('');
+
+
+    const fetchDataOrder = async () => {
+        await dispatch(findOrderByTrackingNumber({ order_trackingNumber: orderTrackingId }))
+    }
+    useEffect(() => {
+        fetchDataOrder()
+    }, [])
+
     const navigate = useNavigate();
     const [generatedReview, setGeneratedReview] = useState([]);
     useEffect(() => {
-        setGeneratedReview(
-            currentOrder.order_ids.item_products.map((item) => {
-                return {
-                    productId: item.productId,
-                    orderId: '_ID CUA ORDER',
-                    customerId: currentOrder.userId,
-                    sKUId: item.sku_id,
-                    price: item.price,
-                    quantity: item.quantity,
-                    ratingScore: 0,
-                    ratingContent: '',
-                };
-            })
-        );
-    }, []);
-    console.log(generatedReview);
+        if (currentOrder) {
+
+            setStatus(currentOrder.order_status)
+            setShipTo(currentOrder.order_shipping?.ship_to)
+            setPayment(currentOrder.order_payment)
+            setCheckout(currentOrder.order_checkout)
+            setGeneratedReview(
+                currentOrder?.order_product?.item_products?.map((item) => {
+                    return {
+                        product_id: item.productId,
+                        order_id: currentOrder._id,
+                        customer_id: currentOrder.order_userId,
+                        sku_id: item.sku_id,
+                        price: item.price,
+                        quantity: item.quantity,
+                        rating_score: 0,
+                        rating_content: '',
+                        isPublished: true
+                    };
+                })
+            );
+        }
+
+    }, [currentOrder]);
+    // console.log(generatedReview);
     const handleReviewChange = (index, type, value) => {
         const slicedArray = generatedReview.slice();
         if (type === 'rating') {
-            if (slicedArray[index].ratingScore === value) {
-                slicedArray[index].ratingScore = 0;
-            } else {
-                slicedArray[index].ratingScore = value;
-            }
+
+            slicedArray[index].rating_score = value;
+
         }
         if (type === 'content') {
-            slicedArray[index].ratingContent = value;
+            slicedArray[index].rating_content = value;
         }
         setGeneratedReview(slicedArray);
     };
-    const status = 'delivered';
     let [open, setOpen] = useState('');
     const [cancelContent, setCancelContent] = useState('');
 
     const cancelButtonRef = useRef(null);
     // eslint-disable-next-line no-unused-vars
-    const handleReview = () => {};
+    const handleReview = async () => {
+        try {
+            generatedReview.forEach((item) => {
+                dispatch(createReview(item))
+            })
+
+            const changeStatus = await dispatch(changeStatusOrderByOrderId({ order_id: currentOrder?._id, order_status: "review" }))
+            if (changeStatus.payload.status == (200 || 201)) {
+                toast.success("Bạn đã ghi lại đánh giá")
+            } else {
+                toast.error("Cập nhật trạng thái đơn hàng không thành công")
+
+            }
+            setStatus("review")
+            setOpen("")
+        } catch (error) {
+            toast.error("Chưa thêm được đánh giá")
+        }
+
+    };
+    const changeStatusOrder = async (new_status) => {
+        const changeStatus = await dispatch(changeStatusOrderByOrderId({ order_id: currentOrder?._id, order_status: new_status }))
+        if (changeStatus.payload.status == (200 || 201)) {
+            toast.success("Cập nhật trạng thái đơn hàng thành công, Hãy để lại bình luận của bạn về những sản phẩm này")
+            setStatus(new_status)
+            setOpen("successful")
+        } else {
+            toast.error("Cập nhật trạng thái đơn hàng không thành công")
+
+        }
+    }
     return (
         <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 md:py-20 lg:px-8">
             <div className="py-4 text-white">
@@ -107,10 +129,10 @@ export default function OrderDetail() {
                     <div className="pointer-events-none my-6 flex w-full justify-center space-x-6 sm:space-x-10">
                         <div className="flex flex-col items-center space-y-1">
                             <div
-                                className={`border-b-2 ${status === 'pending' || status === 'confirmed' || status === 'delivered' ? 'border-magenta-500 text-magenta-500' : 'border-gray-900 dark:border-white'} px-6 py-4 text-xl font-bold text-white transition duration-500 ease-out max-sm:px-4 max-sm:py-2`}
+                                className={`border-b-2 ${status === 'pending' || status === 'confirmed' || status === 'successful' ? 'border-magenta-500 text-magenta-500' : 'border-gray-900 dark:border-white'} px-6 py-4 text-xl font-bold text-white transition duration-500 ease-out max-sm:px-4 max-sm:py-2`}
                             >
                                 <ArchiveBoxArrowDownIcon
-                                    className={`h-7 w-7 ${status === 'pending' || status === 'confirmed' || status === 'delivered' ? 'border-magenta-500 text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                    className={`h-7 w-7 ${status === 'pending' || status === 'confirmed' || status === 'successful' ? 'border-magenta-500 text-magenta-500' : 'text-gray-900 dark:text-white'}`}
                                 />
                             </div>
                             <span className="text-sm font-bold text-gray-900 max-sm:text-xs dark:text-white">
@@ -119,10 +141,10 @@ export default function OrderDetail() {
                         </div>
                         <div className="flex flex-col items-center space-y-1">
                             <div
-                                className={`border-b-2 ${status === 'confirmed' || status === 'delivered' ? 'border-magenta-500 text-magenta-500' : 'border-gray-900 dark:border-white'} px-6 py-4 text-xl font-bold text-white transition duration-500 ease-out max-sm:px-4 max-sm:py-2`}
+                                className={`border-b-2 ${status === 'confirmed' || status === 'successful' ? 'border-magenta-500 text-magenta-500' : 'border-gray-900 dark:border-white'} px-6 py-4 text-xl font-bold text-white transition duration-500 ease-out max-sm:px-4 max-sm:py-2`}
                             >
                                 <CheckBadgeIcon
-                                    className={`h-7 w-7  ${status === 'confirmed' || status === 'delivered' ? 'border-magenta-500 text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                    className={`h-7 w-7  ${status === 'confirmed' || status === 'successful' ? 'border-magenta-500 text-magenta-500' : 'text-gray-900 dark:text-white'}`}
                                 />
                             </div>
                             <span className="text-sm font-bold text-gray-900 max-sm:text-xs dark:text-white">
@@ -131,10 +153,10 @@ export default function OrderDetail() {
                         </div>
                         <div className="flex flex-col items-center space-y-1">
                             <div
-                                className={`border-b-2 ${status === 'delivered' ? 'border-magenta-500 text-magenta-500' : 'border-gray-900 dark:border-white'} px-6 py-4 text-xl font-bold text-white transition duration-500 ease-out max-sm:px-4 max-sm:py-2`}
+                                className={`border-b-2 ${status === 'successful' ? 'border-magenta-500 text-magenta-500' : 'border-gray-900 dark:border-white'} px-6 py-4 text-xl font-bold text-white transition duration-500 ease-out max-sm:px-4 max-sm:py-2`}
                             >
                                 <HandThumbUpIcon
-                                    className={`h-7 w-7 ${status === 'delivered' ? 'border-magenta-500 text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                    className={`h-7 w-7 ${status === 'successful' ? 'border-magenta-500 text-magenta-500' : 'text-gray-900 dark:text-white'}`}
                                 />
                             </div>
                             <span className="text-sm font-bold text-gray-900 max-sm:text-xs dark:text-white">
@@ -144,28 +166,43 @@ export default function OrderDetail() {
                     </div>
                     <div className="grid gap-5 py-5 sm:grid-cols-2">
                         <div className="flex flex-col text-gray-900 dark:text-white">
-                            <div>Nguyen Le Anh Long</div>
-                            <div>449 Kha Van Can</div>
-                            <div>0934649521</div>
+                            <div>{shipTo?.name}</div>
+                            <div>{shipTo?.address}</div>
+                            <div>{shipTo?.phone}</div>
+                            <div>{shipTo?.email}</div>
+
                         </div>
 
-                        {status !== 'delivered' ? (
-                            <div className="grid grid-cols-2 gap-x-4">
-                                <button
-                                    onClick={() => setOpen('delivered')}
-                                    className="flex items-center justify-center space-x-1 border-2 border-gray-900 py-3 font-bold text-gray-900 transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-sm dark:border-white dark:text-white"
-                                >
-                                    <span>Đã nhận hàng</span>
-                                    <HandThumbUpIcon className="h-7 w-7" />
-                                </button>
-                                <button
-                                    onClick={() => setOpen('cancelled')}
-                                    className="flex items-center justify-center space-x-1 border-2 border-gray-900 py-3 font-bold text-gray-900 transition duration-500 ease-out hover:border-rose-500 hover:text-rose-500 max-sm:text-sm dark:border-white dark:text-white"
-                                >
-                                    <span>Hủy đơn hàng</span>
-                                    <XCircleIcon className="h-7 w-7" />
-                                </button>
-                            </div>
+                        {status !== 'review' ? (
+                            status == "successful" ? (
+                                <div className="grid grid-cols-2 gap-x-4">
+                                    <div></div>
+                                    <button
+                                        onClick={() => setOpen('review')}
+                                        className="flex items-center justify-center space-x-1 border-2 border-gray-900 py-3 font-bold text-gray-900 transition duration-500 ease-out hover:border-xanthous-500 hover:text-xanthous-500 max-sm:text-sm dark:border-white dark:text-white"
+                                    >
+                                        <span>Đánh giá</span>
+                                        <SparklesIcon className="h-7 w-7" />
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-2 gap-x-4">
+                                    <button
+                                        onClick={() => setOpen('successful')}
+                                        className="flex items-center justify-center space-x-1 border-2 border-gray-900 py-3 font-bold text-gray-900 transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 max-sm:text-sm dark:border-white dark:text-white"
+                                    >
+                                        <span>Đã nhận hàng</span>
+                                        <HandThumbUpIcon className="h-7 w-7" />
+                                    </button>
+                                    <button
+                                        onClick={() => setOpen('cancelled')}
+                                        className="flex items-center justify-center space-x-1 border-2 border-gray-900 py-3 font-bold text-gray-900 transition duration-500 ease-out hover:border-rose-500 hover:text-rose-500 max-sm:text-sm dark:border-white dark:text-white"
+                                    >
+                                        <span>Hủy đơn hàng</span>
+                                        <XCircleIcon className="h-7 w-7" />
+                                    </button>
+                                </div>
+                            )
                         ) : (
                             <div className="grid grid-cols-2 gap-x-4">
                                 <div></div>
@@ -173,7 +210,7 @@ export default function OrderDetail() {
                                     onClick={() => setOpen('review')}
                                     className="flex items-center justify-center space-x-1 border-2 border-gray-900 py-3 font-bold text-gray-900 transition duration-500 ease-out hover:border-xanthous-500 hover:text-xanthous-500 max-sm:text-sm dark:border-white dark:text-white"
                                 >
-                                    <span>Đánh giá</span>
+                                    <span>Xem lại đánh giá</span>
                                     <SparklesIcon className="h-7 w-7" />
                                 </button>
                             </div>
@@ -181,8 +218,8 @@ export default function OrderDetail() {
                         <Transition.Root
                             show={
                                 open === 'review' ||
-                                open === 'cancelled' ||
-                                open === 'delivered'
+                                    open === 'cancelled' ||
+                                    open === 'successful'
                                     ? true
                                     : false
                             }
@@ -195,6 +232,7 @@ export default function OrderDetail() {
                                 onClose={() => null}
                             >
                                 <Transition.Child
+
                                     as={Fragment}
                                     enter="ease-out duration-300"
                                     enterFrom="opacity-0"
@@ -226,19 +264,19 @@ export default function OrderDetail() {
                                                                 className="text-base font-semibold leading-6 text-gray-900 dark:text-white"
                                                             >
                                                                 {open ===
-                                                                'cancelled'
+                                                                    'cancelled'
                                                                     ? 'Bạn có muốn hủy đơn hàng?'
                                                                     : open ===
-                                                                        'delivered'
-                                                                      ? 'Bạn có muốn xác nhận đã nhận hàng?'
-                                                                      : open ===
-                                                                          'review'
-                                                                        ? 'Đánh giá đơn hàng'
-                                                                        : ''}
+                                                                        'successful'
+                                                                        ? 'Bạn có muốn xác nhận đã nhận hàng?'
+                                                                        : open ===
+                                                                            'review'
+                                                                            ? 'Đánh giá đơn hàng'
+                                                                            : ''}
                                                             </Dialog.Title>
                                                             <div className="mt-2 text-gray-900 dark:text-white">
                                                                 {open ===
-                                                                'cancelled' ? (
+                                                                    'cancelled' ? (
                                                                     <input
                                                                         type="text"
                                                                         value={
@@ -257,10 +295,10 @@ export default function OrderDetail() {
                                                                         className="w-full border-b-2 border-l-0 border-r-0 border-t-0 border-gray-900 bg-transparent pl-0 text-gray-900 transition duration-300 ease-out focus:border-magenta-500 focus:ring-0 dark:border-white dark:text-white dark:placeholder:text-gray-400"
                                                                     />
                                                                 ) : open ===
-                                                                  'delivered' ? (
+                                                                    'successful' ? (
                                                                     'Bạn chỉ bấm xác nhận khi bạn đã nhận được sản phẩm và chắc chắn hài lòng.'
                                                                 ) : open ===
-                                                                  'review' ? (
+                                                                    'review' ? (
                                                                     <div className="no-scrollbar grid h-96 gap-2 overflow-y-scroll">
                                                                         {generatedReview.map(
                                                                             (
@@ -283,19 +321,7 @@ export default function OrderDetail() {
                                                                                                     <div className="flex">
                                                                                                         <div className="flex-1">
                                                                                                             <h1 className="line-clamp-2 truncate text-wrap text-sm font-bold max-sm:w-36 md:text-xl">
-                                                                                                                anh
-                                                                                                                long
-                                                                                                                sieu
-                                                                                                                dep
-                                                                                                                trai,
-                                                                                                                ngay
-                                                                                                                mai
-                                                                                                                an
-                                                                                                                banh
-                                                                                                                mi
-                                                                                                                cong
-                                                                                                                bun
-                                                                                                                thiu
+                                                                                                                Sản phẩm {index}
                                                                                                             </h1>
                                                                                                             <div className="text-md text-gray-500 dark:text-gray-200">
                                                                                                                 Brand
@@ -428,8 +454,8 @@ export default function OrderDetail() {
                                                 </div>
                                                 <div className="bg-gray-50 px-4  py-3 sm:flex sm:flex-row-reverse sm:px-6 dark:bg-zinc-800">
                                                     {open === 'review' ||
-                                                    open === 'cancelled' ||
-                                                    open === 'delivered' ? (
+                                                        open === 'cancelled' ||
+                                                        open === 'successful' ? (
                                                         <>
                                                             <button
                                                                 type="button"
@@ -446,19 +472,14 @@ export default function OrderDetail() {
                                                                         open ===
                                                                         'cancelled'
                                                                     ) {
-                                                                        alert(
-                                                                            'chay ham thay doi trang thai don hang o day'
-                                                                        );
+
                                                                         return;
                                                                     }
                                                                     if (
                                                                         open ===
-                                                                        'delivered'
+                                                                        'successful'
                                                                     ) {
-                                                                        alert(
-                                                                            'chay ham thay doi trang thai don hang o day'
-                                                                        );
-                                                                        return;
+                                                                        changeStatusOrder("successful")
                                                                     }
                                                                 }}
                                                             >
@@ -493,7 +514,7 @@ export default function OrderDetail() {
                     </div>
 
                     <div className="mt-2 grid rounded-md bg-zinc-200 p-4 text-gray-900 shadow-md shadow-zinc-500 md:grid-cols-2 dark:bg-zinc-800 dark:text-white dark:shadow-inner dark:shadow-zinc-500">
-                        {currentOrder.order_ids.item_products.map((item) => (
+                        {currentOrder?.order_product?.item_products?.map((item) => (
                             <div key={item.productId}>
                                 <div className="flex w-full overflow-hidden border-b-2 border-zinc-600 p-4 sm:space-x-2">
                                     <div className="h-fit w-32 overflow-hidden rounded-md">
@@ -543,16 +564,21 @@ export default function OrderDetail() {
                             <div className="grid justify-end font-bold"></div>
                             <div className="grid grid-cols-2 font-bold">
                                 <span className="md:text-lg">Tạm tính</span>
-                                <span className="md:text-lg">100.000.000đ</span>
+                                <span className="md:text-lg">{checkout?.totalPrice}</span>
                                 <span className="md:text-lg">Giá giảm</span>
-                                <span className="md:text-lg">0đ</span>
-                                <span className="md:text-lg">Tổng</span>
-                                <span className="md:text-lg">100.000.000đ</span>
+                                <span className="md:text-lg">{checkout?.totalSpecialOffer}đ</span>
+                                <span className="md:text-lg">Mã giảm</span>
+                                <span className="md:text-lg">{checkout?.totalDiscount}đ</span>
+                                <span className="md:text-lg">Tổng thanh toán</span>
+                                <span className="md:text-lg">{checkout?.totalCheckout}đ</span>
+                                <span className="md:text-lg">Phương thức thanh toán</span>
+                                <span className="md:text-lg">{payment?.payment_method}</span>
+
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
+                </div >
+            </div >
+        </div >
     );
 }
