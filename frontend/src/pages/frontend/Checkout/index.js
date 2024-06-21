@@ -19,6 +19,7 @@ import {
     discountAmount,
 } from '../../../store/actions/discount-actions';
 import { toast } from 'react-toastify';
+import dayjs from 'dayjs';
 
 export default function Checkout() {
     const dispatch = useDispatch();
@@ -83,6 +84,8 @@ export default function Checkout() {
                         codeId: selected_discount?.discount_code,
                     },
                 ]);
+            } else {
+                toast.error('Mã giảm giá đã hết hạn hoặc số lượng dùng đã hết');
             }
             // console.log("applyDiscount", applyDiscount)
         } else {
@@ -320,6 +323,24 @@ export default function Checkout() {
                                                                                 key={
                                                                                     item.discount_code
                                                                                 }
+                                                                                disabled={
+                                                                                    dayjs(
+                                                                                        item.discount_start_date
+                                                                                    ).diff(
+                                                                                        dayjs(),
+                                                                                        'millisecond'
+                                                                                    ) <
+                                                                                        0 &&
+                                                                                    dayjs(
+                                                                                        item.discount_end_date
+                                                                                    ).diff(
+                                                                                        dayjs(),
+                                                                                        'millisecond'
+                                                                                    ) >
+                                                                                        0
+                                                                                        ? false
+                                                                                        : true
+                                                                                }
                                                                                 className={({
                                                                                     active,
                                                                                 }) =>
@@ -327,7 +348,7 @@ export default function Checkout() {
                                                                                         active
                                                                                             ? 'bg-magenta-900    text-zinc-700'
                                                                                             : 'text-gray-900'
-                                                                                    }`
+                                                                                    } ui-disabled:opacity-50`
                                                                                 }
                                                                                 value={
                                                                                     item
