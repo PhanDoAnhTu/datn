@@ -1,12 +1,20 @@
 "use strict";
 const { errorResponse } = require("../core");
 const { SpuModel, Spu_AttributeModel } = require("../database/models");
-const { addImageBySkuList, addImageBySpuId, ListImageByProductId } = require("./gallery.service");
+const {
+  addImageBySkuList,
+  addImageBySpuId,
+  ListImageByProductId,
+} = require("./gallery.service");
 const { newSku, allSkuBySpuId, oneSku } = require("./sku.Service");
 const { spuRepository } = require("../database");
 const _ = require("lodash");
 const { Types } = require("mongoose");
-const { RPCRequest, get_old_day_of_time, count_element_in_array } = require("../utils");
+const {
+  RPCRequest,
+  get_old_day_of_time,
+  count_element_in_array,
+} = require("../utils");
 const BrandService = require("./brand.service");
 const AttributeService = require("./attribute.service");
 const { getCommentByproductId } = require("./comment.service");
@@ -121,7 +129,7 @@ const PublishProduct = async ({ product_id }) => {
 const UnPublishProduct = async ({ product_id }) => {
   const spuFound = await SpuModel.findOne({
     _id: Types.ObjectId(product_id),
-  }).lean()
+  }).lean();
   if (!spuFound) throw new errorResponse.NotFoundRequestError("spu not found");
   return await spuRepository.unPublishProduct({ product_id });
 };
@@ -213,14 +221,12 @@ const getAllProductsByfilter = async ({
     product_review.push(review);
     // const productImages = await ListImageByProductId({ product_id: all_Products[index]._id })
     // product_images.push(productImages)
-
-
   }
   const specialoffer = await RPCRequest("SPECIAL_OFFER_RPC", {
     type: "FIND_SPECIAL_OFFER_BY_DATE",
     data: {
       special_offer_is_active: true,
-      date: Date.now()
+      date: Date.now(),
     },
   });
   product_list.all_Products = await all_Products.map((product, index) => {
@@ -231,7 +237,6 @@ const getAllProductsByfilter = async ({
       sku_list: sku_list[index],
       product_review: product_review[index],
       // product_images: product_images[index]
-
     };
   });
 
@@ -291,7 +296,6 @@ const findProductsByCategory = async ({
         sku_list: sku_list[index],
         product_review: product_review[index],
         // product_images: product_images[index]
-
       };
     }
   );
@@ -311,7 +315,7 @@ const findProductDetail = async ({ spu_id, isPublished = true }) => {
       related_products: [],
       product_comment: [],
       product_review: [],
-      product_images: []
+      product_images: [],
     };
     product.product_detail = spu_info ? spu_info : {};
     product.sku_list = sku_list ? sku_list : [];
@@ -330,7 +334,7 @@ const findProductDetail = async ({ spu_id, isPublished = true }) => {
       product_category: {
         $in: spu_info.product_category,
       },
-    }).lean()
+    }).lean();
     // product.product_comment = await getCommentByproductId({ productId: spu_info._id })
     product.product_review = await findReviewByProductId({
       product_id: spu_info._id,
@@ -338,10 +342,9 @@ const findProductDetail = async ({ spu_id, isPublished = true }) => {
     });
     const promotion = await RPCRequest("SPECIAL_OFFER_RPC", {
       type: "FIND_SPECIAL_OFFER_BY_DATE",
-      data: {
-      },
+      data: {},
     });
-    product.special_offer = promotion ? promotion : null
+    product.special_offer = promotion ? promotion : null;
     const categories = await RPCRequest("CATEGORY_RPC", {
       type: "FIND_CATEGORY_BY_ID_LIST",
       data: {
@@ -350,7 +353,9 @@ const findProductDetail = async ({ spu_id, isPublished = true }) => {
       },
     });
     product.product_categories = categories ? categories : [];
-    product.product_images = await ListImageByProductId({ product_id: spu_info._id })
+    product.product_images = await ListImageByProductId({
+      product_id: spu_info._id,
+    });
 
     return product;
   } catch (error) {
@@ -422,49 +427,48 @@ const AllProductsOption = async ({ sort = "ctime", isPublished = true }) => {
   return product_list.all_Products;
 };
 
-
-
 const findProductBestSelling = async ({
   limit = 50,
   page = 1,
-  isPublished = true }) => {
+  isPublished = true,
+}) => {
   const ordersBySuccessful = await RPCRequest("ORDER_RPC", {
     type: "FIND_ORDER_BY_STATUS_AND_AROUND_DAY",
     data: {
       order_status: "successful",
-      numberDay: 30
-    }
-  })
+      numberDay: 30,
+    },
+  });
   // console.log("ordersBySuccessful", ordersBySuccessful)
-  let listIdProduct = []
+  let listIdProduct = [];
   if (ordersBySuccessful.length > 0) {
     ordersBySuccessful.forEach((order) => {
       order.order_product.item_products.forEach((prod) => {
-        listIdProduct.push(prod.productId)
-      })
-    })
+        listIdProduct.push(prod.productId);
+      });
+    });
   }
   // console.log("listIdProduct", listIdProduct)
 
-  const sortArr = listIdProduct.sort((a, b) => count_element_in_array(listIdProduct, b) - count_element_in_array(listIdProduct, a))
+  const sortArr = listIdProduct.sort(
+    (a, b) =>
+      count_element_in_array(listIdProduct, b) -
+      count_element_in_array(listIdProduct, a)
+  );
   // console.log("sortArr", sortArr)
 
   const skip = (page - 1) * limit;
   const products = await SpuModel.find({
     _id: {
-      $in: sortArr
+      $in: sortArr,
     },
-    isPublished
-  }).limit(limit).skip(skip).lean()
+    isPublished,
+  })
+    .limit(limit)
+    .skip(skip);
 
-  return products
-
-
-
-
+  return products;
 };
-
-
 
 const checkProductById = async ({ productId }) => {
   return await spuRepository.getProductById({ productId });
@@ -474,34 +478,39 @@ const checkProductById = async ({ productId }) => {
 //   return await spuRepository.checkProductByServer({ products });
 // };
 const checkProductByServer = async ({ products }) => {
+  return await Promise.all(
+    products.map(async (product) => {
+      if (product.sku_id) {
+        const foundSku = await oneSku({
+          product_id: product.productId,
+          sku_id: product.sku_id,
+        });
+        // console.log("foundSku",foundSku)
 
-  return await Promise.all(products.map(async product => {
-    if (product.sku_id) {
-      const foundSku = await oneSku({ product_id: product.productId, sku_id: product.sku_id })
-      // console.log("foundSku",foundSku)
-
-      if (foundSku) {
-        return {
-          price: foundSku.sku_price,
-          quantity: product.quantity,
-          productId: product.productId,
-          sku_id: foundSku._id
+        if (foundSku) {
+          return {
+            price: foundSku.sku_price,
+            quantity: product.quantity,
+            productId: product.productId,
+            sku_id: foundSku._id,
+          };
+        }
+      } else {
+        const foundProduct = await spuRepository.getProductById(
+          product.productId
+        );
+        if (foundProduct) {
+          return {
+            price: foundProduct.product_price,
+            quantity: product.quantity,
+            productId: product.productId,
+            sku_id: null,
+          };
         }
       }
-    } else {
-      const foundProduct = await spuRepository.getProductById(product.productId)
-      if (foundProduct) {
-        return {
-          price: foundProduct.product_price,
-          quantity: product.quantity,
-          productId: product.productId,
-          sku_id: null
-        }
-      }
-    }
-
-  }))
-}
+    })
+  );
+};
 
 const newSpuAttribute = async ({ attribute_id, spu_id, attribute_value }) => {
   try {
@@ -556,5 +565,5 @@ module.exports = {
   findProductDetail,
   productFromCart,
   AllProductsOption,
-  findProductBestSelling
+  findProductBestSelling,
 };
