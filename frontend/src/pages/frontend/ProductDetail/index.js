@@ -24,7 +24,6 @@ import {
 import HeartIcon from '../../../assets/HeartIcon.js';
 
 export default function ProductDetail() {
-
     const { userInfo } = useSelector((state) => state.userReducer);
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -59,61 +58,32 @@ export default function ProductDetail() {
     // const [comment, setComment] = useState([]);
 
     const getProductDetail = async (product_id) => {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         const responseProductDetail = await dispatch(
             onProductDetail({ spu_id: product_id })
         );
 
         if (responseProductDetail) {
-            const resultProduct = await responseProductDetail?.payload?.metaData
+            const resultProduct =
+                await responseProductDetail?.payload?.metaData;
             // console.log('responseProductDetail.', responseProductDetail);
-            setProductDetail(
-                resultProduct.product_detail
-            );
-            setName(
-                resultProduct.product_detail.product_name
-            );
-            setDescription(
-                resultProduct.product_detail
-                    ?.product_description
-            );
+            setProductDetail(resultProduct.product_detail);
+            setName(resultProduct.product_detail.product_name);
+            setDescription(resultProduct.product_detail?.product_description);
 
-            if (
-                resultProduct.product_detail
-                    ?.product_variations.length > 0
-            ) {
-                setVariations(
-                    resultProduct.product_detail
-                        ?.product_variations
-                );
-                setSelectedVariation(
-                    resultProduct.sku_list[0]
-                        ?.sku_tier_idx
-                );
+            if (resultProduct.product_detail?.product_variations.length > 0) {
+                setVariations(resultProduct.product_detail?.product_variations);
+                setSelectedVariation(resultProduct.sku_list[0]?.sku_tier_idx);
                 setSkuList(resultProduct.sku_list);
-                setSelectedSku(
-                    resultProduct.sku_list[0]
-                );
-                setPrice(
-                    resultProduct.sku_list[0]
-                        ?.sku_price
-                );
-                setStock(
-                    resultProduct.sku_list[0]
-                        .sku_stock
-                );
-
+                setSelectedSku(resultProduct.sku_list[0]);
+                setPrice(resultProduct.sku_list[0]?.sku_price);
+                setStock(resultProduct.sku_list[0].sku_stock);
             } else {
-                setPrice(
-                    resultProduct.product_detail
-                        .product_price
-                );
+                setPrice(resultProduct.product_detail.product_price);
             }
             setProductImages(resultProduct?.product_images);
 
-            setProductCategories(
-                resultProduct.product_categories
-            );
+            setProductCategories(resultProduct.product_categories);
             setReview(resultProduct.product_review);
             // setRelated_products(
             //     resultProduct.related_products
@@ -127,9 +97,7 @@ export default function ProductDetail() {
                     resultProduct.product_review?.reduce(
                         (partialSum, a) => partialSum + a?.rating_score,
                         0
-                    ) /
-                    resultProduct.product_review
-                        ?.length
+                    ) / resultProduct.product_review?.length
                 );
             } else {
                 setRating_score_avg(0);
@@ -154,14 +122,12 @@ export default function ProductDetail() {
 
 
     useEffect(() => {
-        if (
-            special_offer
-        ) {
-
+        if (special_offer) {
             if (special_offer?.sku_list?.length > 0) {
                 special_offer?.sku_list.map((sku) => {
                     if (
-                        sku.sku_tier_idx.toString() == selectedVariation.toString()
+                        sku.sku_tier_idx.toString() ==
+                        selectedVariation.toString()
                     ) {
                         setSale(sku);
                         return;
@@ -171,8 +137,6 @@ export default function ProductDetail() {
                 setSale(special_offer);
             }
         }
-
-
     }, [special_offer]);
     /////////selected variation
     const handleVariationChange = (value, variationOrder) => {
@@ -210,13 +174,12 @@ export default function ProductDetail() {
                     )
                 );
             }
-            if (
-                special_offer
-            ) {
+            if (special_offer) {
                 if (special_offer?.sku_list?.length > 0) {
                     special_offer?.sku_list.map((sku) => {
                         if (
-                            sku?.sku_tier_idx?.toString() == selectedVariation?.toString()
+                            sku?.sku_tier_idx?.toString() ==
+                            selectedVariation?.toString()
                         ) {
                             setSale(sku);
                             return;
@@ -370,14 +333,14 @@ export default function ProductDetail() {
                 </nav>
                 {/* Product info */}
                 <div className="mx-auto max-w-2xl px-4 pb-16 pt-10 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pt-16">
-                    <div className="flex flex-col-reverse lg:col-span-2 lg:h-square lg:flex-row lg:space-x-5 lg:border-r lg:border-gray-200 lg:pr-8 dark:lg:border-stone-700">
+                    <div className="flex flex-col-reverse lg:col-span-2 lg:h-square lg:flex-row lg:space-x-5 lg:border-r lg:border-gray-300 lg:pr-8 dark:lg:border-stone-700">
                         <div className="no-scrollbar flex w-full flex-row overflow-hidden max-lg:mt-3 max-lg:space-x-3 max-lg:overflow-x-scroll max-lg:pb-1 lg:w-44 lg:flex-col lg:space-y-3 lg:overflow-y-scroll">
                             {product_images && product_images?.length > 0 ? (
                                 product_images?.map((item, index) => (
                                     <button
                                         onClick={() => HandleImageChoose(item)}
                                         key={index}
-                                        className="h-24 w-24 flex-shrink-0  bg-gray-200 sm:overflow-hidden sm:rounded-lg lg:h-36 lg:w-full"
+                                        className="h-24 w-24 flex-shrink-0 bg-gray-200 shadow-md sm:overflow-hidden sm:rounded-lg lg:h-36 lg:w-full"
                                     >
                                         <img
                                             src={item.thumb_url}
@@ -390,7 +353,7 @@ export default function ProductDetail() {
                                 <></>
                             )}
                         </div>
-                        <div className="h-9/10 w-full bg-gray-200 sm:overflow-hidden sm:rounded-lg">
+                        <div className="h-9/10 w-full bg-gray-200 shadow-md sm:overflow-hidden sm:rounded-lg">
                             <img
                                 src={selectedImage && selectedImage.thumb_url}
                                 alt={selectedImage && selectedImage.thumb_url}
@@ -427,8 +390,7 @@ export default function ProductDetail() {
                             &emsp;
                             {sale && (
                                 <span className="rounded-full bg-red-100 px-5 py-2 text-xs font-medium  text-red-800 dark:bg-red-900 dark:text-red-300">
-                                    Giảm đến{' '}
-                                    {sale.percentage?.toFixed(1)}%
+                                    Giảm đến {sale.percentage?.toFixed(1)}%
                                 </span>
                             )}
                         </p>
@@ -457,7 +419,7 @@ export default function ProductDetail() {
                                             className={classNames(
                                                 rating_score_avg >= rating
                                                     ? 'text-xanthous-500'
-                                                    : 'text-gray-200',
+                                                    : 'text-gray-400',
                                                 'h-5 w-5 flex-shrink-0'
                                             )}
                                             aria-hidden="true"
@@ -520,7 +482,7 @@ export default function ProductDetail() {
                                                                     active
                                                                         ? 'ring-2 ring-xanthous-400'
                                                                         : '',
-                                                                    'group relative flex items-center justify-center rounded-md border px-4 py-3 text-center text-sm font-medium uppercase transition duration-200 ease-out hover:bg-gray-400 focus:outline-none sm:flex-1 sm:py-5 dark:hover:bg-stone-500'
+                                                                    'group relative flex items-center justify-center rounded-md border px-4 py-3 text-center text-sm font-medium uppercase shadow-md transition duration-200 ease-out hover:bg-gray-400 focus:outline-none sm:flex-1 sm:py-5 dark:hover:bg-stone-500'
                                                                 )
                                                             }
                                                         >
@@ -545,7 +507,7 @@ export default function ProductDetail() {
                                                                                 checked
                                                                                     ? 'border-xanthous-500'
                                                                                     : 'border-transparent',
-                                                                                'pointer-events-none absolute -inset-px rounded-md'
+                                                                                'pointer-events-none absolute -inset-px rounded-md shadow-md'
                                                                             )}
                                                                             aria-hidden="true"
                                                                         />
@@ -598,7 +560,7 @@ export default function ProductDetail() {
                                     ''
                                 )}
                                 <div
-                                    className="inline-flex w-fit overflow-hidden rounded-md border-2 bg-gray-200 shadow-sm dark:bg-zinc-950"
+                                    className="inline-flex w-fit overflow-hidden rounded-md border-2 bg-gray-200 shadow-md dark:bg-zinc-950"
                                     role="group"
                                 >
                                     <button
@@ -635,14 +597,14 @@ export default function ProductDetail() {
                                                     quantity: quantity,
                                                 })
                                             }
-                                            className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
+                                            className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white shadow-md transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
                                         >
                                             Thêm vào giỏ hàng
                                         </button>
                                     ) : (
                                         <button
                                             disabled
-                                            className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400 focus:ring-offset-2 disabled:opacity-50"
+                                            className="flex w-full items-center justify-center rounded-md border border-transparent bg-magenta-500 px-8 py-3 text-base font-medium text-white shadow-md transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400 focus:ring-offset-2 disabled:opacity-50"
                                         >
                                             Thêm vào giỏ hàng
                                         </button>
@@ -663,7 +625,7 @@ export default function ProductDetail() {
                                                             }
                                                         )
                                                     }
-                                                    className="flex w-fit items-center justify-center rounded-md border border-transparent bg-magenta-500 px-5 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
+                                                    className="flex w-fit items-center justify-center rounded-md border border-transparent bg-magenta-500 px-5 py-3 text-base font-medium text-white shadow-md transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
                                                 >
                                                     <HeartSlashIcon />
                                                 </button>
@@ -676,7 +638,7 @@ export default function ProductDetail() {
                                                                 product_detail._id,
                                                         })
                                                     }
-                                                    className="flex w-fit items-center justify-center rounded-md border border-transparent bg-magenta-500 px-5 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
+                                                    className="flex w-fit items-center justify-center rounded-md border border-transparent bg-magenta-500 px-5 py-3 text-base font-medium text-white shadow-md transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
                                                 >
                                                     <HeartIcon />
                                                 </button>
@@ -690,7 +652,7 @@ export default function ProductDetail() {
                                                             product_detail._id,
                                                     })
                                                 }
-                                                className="flex w-fit items-center justify-center rounded-md border border-transparent bg-magenta-500 px-5 py-3 text-base font-medium text-white transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
+                                                className="flex w-fit items-center justify-center rounded-md border border-transparent bg-magenta-500 px-5 py-3 text-base font-medium text-white shadow-md transition duration-200 ease-out hover:bg-magenta-400 focus:outline-none focus:ring-2 focus:ring-magenta-400"
                                             >
                                                 <HeartIcon />
                                             </button>
@@ -707,13 +669,15 @@ export default function ProductDetail() {
                     <p className="text-justify dark:text-white">
                         {description}
                     </p>
-                    <ProductList
-                        title={'Sản phẩm liên quan'}
-                        products={related_products}
-                        summary={
-                            'Những sản phẩm cùng danh mục mà bạn có thể quan tâm'
-                        }
-                    />
+                    <div className="w-full">
+                        <ProductList
+                            title={'Sản phẩm liên quan'}
+                            products={related_products}
+                            summary={
+                                'Những sản phẩm cùng danh mục mà bạn có thể quan tâm'
+                            }
+                        />
+                    </div>
                     <h1 className="border-b border-stone-500 pb-5 text-4xl font-bold dark:text-white">
                         Đánh giá về sản phẩm
                     </h1>
@@ -723,7 +687,7 @@ export default function ProductDetail() {
                             {review?.length > 0 && review.map((rv, index) => (
                                 <div
                                     key={`review-${index}`}
-                                    className="grid gap-2 overflow-hidden rounded-md bg-zinc-400 p-4 shadow-inner shadow-gray-400 dark:bg-zinc-800"
+                                    className="grid gap-2 overflow-hidden rounded-md bg-zinc-200 p-4 shadow-md shadow-gray-400 dark:bg-zinc-800 dark:shadow-inner"
                                 >
                                     <div className="text-lg font-bold text-gray-900 dark:text-white">
                                         {rv.customer_id}
@@ -735,7 +699,7 @@ export default function ProductDetail() {
                                                 className={classNames(
                                                     rv.rating_score >= rating
                                                         ? 'text-xanthous-500'
-                                                        : 'text-gray-200',
+                                                        : 'text-gray-400',
                                                     'h-5 w-5 flex-shrink-0'
                                                 )}
                                                 aria-hidden="true"

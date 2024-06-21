@@ -57,7 +57,7 @@ export default function ProductSingleList({ product, reload }) {
     return (
         <div
             key={product._id}
-            className="flex w-full items-center rounded-md bg-white p-4 shadow-md max-sm:flex-col dark:bg-zinc-800"
+            className="flex w-full items-center rounded-md bg-zinc-200 p-4 shadow-md max-sm:flex-col dark:bg-zinc-800"
         >
             <div
                 className="h-fit overflow-hidden  rounded-md max-sm:m-2 md:w-40"

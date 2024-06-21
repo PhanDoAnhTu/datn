@@ -36,7 +36,7 @@ export default function Blog() {
                         if (index !== 3) {
                             return (
                                 <Link
-                                    to={`/new/d/${item.post_slug}`}
+                                    to={`/bai-viet/${item.post_slug}`}
                                     key={item._id}
                                     className={`all-ease group relative flex h-56 w-full snap-start flex-col justify-between overflow-hidden rounded-md p-3 shadow-md transition duration-200`}
                                 >
