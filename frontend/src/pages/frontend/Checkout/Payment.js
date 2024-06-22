@@ -1,5 +1,6 @@
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 import ButtonWithBorder from '../../../components/frontend/ButtonWithBorder';
+import DocumentTitle from '../../../components/frontend/DocumentTitle';
 
 export default function Payment({
     step,
@@ -14,6 +15,8 @@ export default function Payment({
 
     return (
         <div className={`w-screen flex-shrink-0 px-4 md:px-32`}>
+                        <DocumentTitle title="Phương thức thanh toán" />
+
             <button
                 onClick={() => setStep(step - 1)}
                 className="mb-6 flex items-center text-gray-900 dark:text-white"

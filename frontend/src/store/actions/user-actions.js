@@ -116,30 +116,52 @@ export const onLogout = () => async (dispatch) => {
   }
 };
 
-export const CreateAddress = () => async (dispatch) => {
+export const CreateAddress = (data) => async (dispatch) => {
   try {
-    const response = await PostData('/customer/v1/address/CreateAddress');
-    return dispatch({ type: Action.ADD_ADDRESS, payload: response.data });
-  } catch (err) {
-    console.log(err)
-    // return err.response.data
-
-  }
-};
-export const removeAddress = () => async (dispatch) => {
-  try {
-    const response = await PostData('/customer/v1/address/removeAddress');
-    return dispatch({ type: Action.REMOVE_ADDRESS, payload: response.data });
-  } catch (err) {
-    console.log(err)
-    // return err.response.data
-
-  }
-};
-export const getAddressByCustomerId = () => async (dispatch) => {
-  try {
-    const response = await PostData('/customer/v1/address/getAddressByCustomerId')
+    const response = await PostData('/user/v1/address/CreateAddress',data);
     return dispatch({ type: Action.GET_ADDRESS, payload: response.data });
+  } catch (err) {
+    console.log(err)
+    // return err.response.data
+
+  }
+};
+export const removeAddress = (data) => async (dispatch) => {
+  try {
+    const response = await PostData('/user/v1/address/removeAddress',data);
+    return dispatch({ type: Action.GET_ADDRESS, payload: response.data });
+  } catch (err) {
+    console.log(err)
+    // return err.response.data
+
+  }
+};
+export const getAddressByCustomerId = (data) => async (dispatch) => {
+  try {
+    const response = await PostData('/user/v1/address/getAddressByCustomerId',data)
+    return dispatch({ type: Action.GET_ADDRESS, payload: response.data });
+  } catch (err) {
+    console.log(err)
+    // return err.response.data
+
+  }
+};
+
+export const isDefaultAddress = (data) => async (dispatch) => {
+  try {
+    const response = await PostData('/user/v1/address/isDefaultAddress',data)
+    return dispatch({ type: Action.GET_ADDRESS, payload: response.data });
+  } catch (err) {
+    console.log(err)
+    // return err.response.data
+
+  }
+};
+
+export const findOneAddressByCustomerIdAndIsDefault = (data) => async (dispatch) => {
+  try {
+    const response = await PostData('/user/v1/address/findOneAddressByCustomerIdAndIsDefault',data)
+    return dispatch({ type: Action.ADDRESS_DEFAULT, payload: response.data });
   } catch (err) {
     console.log(err)
     // return err.response.data

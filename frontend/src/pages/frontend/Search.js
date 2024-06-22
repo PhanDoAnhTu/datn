@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router';
 import ProductSingle from '../../components/frontend/ProductSingle';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import DocumentTitle from '../../components/frontend/DocumentTitle';
 
 export default function Search() {
     const navigate = useNavigate();
@@ -36,6 +37,8 @@ export default function Search() {
 
     return (
         <div className="pb-7 pt-10 sm:px-10 md:pt-24">
+            <DocumentTitle title="Trang  tìm kiếm" />
+
             <form
                 className="flex w-full space-x-2 px-10"
                 method="post"

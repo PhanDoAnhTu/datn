@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { DeleteToCartItem } from '../../../store/actions/cart-actions.js';
 import { getSelectedListFromCart } from '../../../utils/localStorage.js';
+import DocumentTitle from '../../../components/frontend/DocumentTitle.js';
 
 export default function CreateOrderSuccess() {
     const navigate = useNavigate();
@@ -41,6 +42,8 @@ export default function CreateOrderSuccess() {
 
     return (
         <div className="flex h-screen justify-center overflow-hidden pb-7 pt-10 text-white md:pt-24">
+                        <DocumentTitle title="Xác nhận đơn hàng" />
+
             <div className="mt-24 flex flex-col ">
                 {isLoading == false ? (
                     <div className="flex flex-col items-center space-y-2">

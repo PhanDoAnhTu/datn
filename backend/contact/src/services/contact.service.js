@@ -7,16 +7,41 @@ const { Types } = require("mongoose");
 
 
 class contactService {
+    async newContact({
+        reply_id = null,
+        reply_by = "0",
+        customer_email,
+        contact_title,
+        contact_content }) {
+        const contact = await ContactModel.create({
+            reply_id,
+            reply_by,
+            customer_email,
+            contact_title,
+            contact_content
+        })
 
-    // async serverRPCRequest(payload) {
-    //     const { type, data } = payload;
-    //     const { } = data
-    //     switch (type) {
-    //         case "":
-    //         default:
-    //             break;
-    //     }
-    // }
+        return contact
+    }
+
+    async getAllContact({ isPublished = true, limit = 50, page = 1, sort = 'ctime' }) {
+        const skip = (page - 1) * limit;
+        const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
+        const contact = await ContactModel.find({
+            isPublished
+        }).sort(sortBy).limit(limit).skip(skip).lean()
+
+        return contact
+    }
+    async findOneContact({ isPublished = true, contact_id }) {
+        const contact = await ContactModel.findOne({
+            isPublished, _id: contact_id
+        }).lean()
+
+        return contact
+    }
+
+    
 }
 
 module.exports = contactService

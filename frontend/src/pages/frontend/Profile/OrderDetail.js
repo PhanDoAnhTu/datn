@@ -368,7 +368,7 @@ export default function OrderDetail() {
                                                                                                         5
                                                                                                     )
                                                                                                 }
-                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${item.ratingScore >= 5 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
+                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${item.rating_score >= 5 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
                                                                                             >
                                                                                                 <StarIcon />
                                                                                             </i>
@@ -380,7 +380,7 @@ export default function OrderDetail() {
                                                                                                         4
                                                                                                     )
                                                                                                 }
-                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${item.ratingScore >= 4 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
+                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${item.rating_score >= 4 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
                                                                                             >
                                                                                                 <StarIcon />
                                                                                             </i>
@@ -392,7 +392,7 @@ export default function OrderDetail() {
                                                                                                         3
                                                                                                     )
                                                                                                 }
-                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${item.ratingScore >= 3 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
+                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${item.rating_score >= 3 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
                                                                                             >
                                                                                                 <StarIcon />
                                                                                             </i>
@@ -404,7 +404,7 @@ export default function OrderDetail() {
                                                                                                         2
                                                                                                     )
                                                                                                 }
-                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${item.ratingScore >= 2 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
+                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${item.rating_score >= 2 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
                                                                                             >
                                                                                                 <StarIcon />
                                                                                             </i>
@@ -416,7 +416,7 @@ export default function OrderDetail() {
                                                                                                         1
                                                                                                     )
                                                                                                 }
-                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${item.ratingScore >= 1 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
+                                                                                                className={`peer mx-2 h-5 w-5 cursor-pointer ${item.rating_score >= 1 ? 'text-yellow-500' : 'text-yellow-100'} hover:text-yellow-500 peer-hover:text-yellow-500`}
                                                                                             >
                                                                                                 <StarIcon />
                                                                                             </i>
@@ -425,7 +425,7 @@ export default function OrderDetail() {
                                                                                             type="text"
                                                                                             placeholder="Nội dung đánh giá"
                                                                                             value={
-                                                                                                item.ratingContent
+                                                                                                item.rating_content
                                                                                             }
                                                                                             onChange={(
                                                                                                 e
@@ -572,7 +572,7 @@ export default function OrderDetail() {
                                 <span className="md:text-lg">Tổng thanh toán</span>
                                 <span className="md:text-lg">{checkout?.totalCheckout}đ</span>
                                 <span className="md:text-lg">Phương thức thanh toán</span>
-                                <span className="md:text-lg">{payment?.payment_method}</span>
+                                <span className="md:text-lg">{payment?.payment_method=="COD"?"Tiền mặt":payment?.payment_method}</span>
 
                             </div>
                         </div>

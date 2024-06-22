@@ -2,6 +2,7 @@ import { EnvelopeIcon, HomeIcon, PhoneIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { toast } from 'react-toastify';
+import DocumentTitle from '../../../components/frontend/DocumentTitle';
 
 export default function Contact() {
     const [emailContent, setEmailContent] = useState('');
@@ -45,6 +46,8 @@ export default function Contact() {
 
     return (
         <div className="flex justify-center pb-16 pt-10 md:pt-24">
+                        <DocumentTitle title="Liên hệ" />
+
             <div className="w-9/12 md:w-10/12">
                 <h1 className="pl-9 text-3xl font-bold tracking-wide text-gray-900 md:pl-14 md:text-4xl dark:text-white">
                     LIÊN HỆ VỚI CHÚNG TÔI
