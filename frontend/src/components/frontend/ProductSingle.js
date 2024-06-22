@@ -57,7 +57,7 @@ export default function ProductSingle({ product, reload }) {
         } catch (error) {
             setTimeout(() => {
                 loadData();
-            }, [3000]);
+            }, 3000);
         }
     }, []);
     useEffect(() => {
