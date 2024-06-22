@@ -1,13 +1,15 @@
 import { Dialog, Tab, Transition } from '@headlessui/react';
 import GenderSelection from '../../../components/frontend/GenderSelection';
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { upLoadImageSingle, changeAvatar } from '../../../store/actions';
+import { toast } from 'react-toastify';
 
 export default function Information() {
     const [isEditable, setIsEditable] = useState(false);
     const { userInfo } = useSelector((state) => state.userReducer);
     const [username, setUsername] = useState('');
-    const [fullname, setFullName] = useState('');
+    const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [gender, setGender] = useState(0);
     let [isOpen, setIsOpen] = useState(false);
@@ -15,10 +17,14 @@ export default function Information() {
     const [password, setPassword] = useState('');
     const [oldpassword, setOldPassword] = useState('');
     const [repassword, setRepassword] = useState('');
+    const [image, setImage] = useState(null);
+
+
+    const dispatch = useDispatch()
 
     useEffect(() => {
         if (isEditable === false) {
-            setFullName(userInfo?.customer_name);
+            setPhone(userInfo?.customer_phone);
             setUsername(userInfo?.customer_name);
             setGender(0);
             setEmail(userInfo?.customer_email);
@@ -63,6 +69,65 @@ export default function Information() {
     };
     let [open, setOpen] = useState(false);
     const cancelButtonRef = useRef(null);
+
+
+    const onChangeAvatar = async (files) => {
+
+        if (files?.length > 0) {
+            setImage(files[0])
+        }
+    }
+    const onSaveChange = async () => {
+        if (image) {
+            const id = toast.loading("Đang cập nhật ảnh đại diện")
+            const formData = new FormData()
+            formData.append("file", image)
+
+            const uploadImage = await dispatch(upLoadImageSingle(formData))
+            if (uploadImage?.payload?.status === (200 || 201)) {
+                await dispatch(changeAvatar({ customer_id: userInfo._id, image: uploadImage.payload.metaData.thumb_url }))
+                toast.update(id, {
+                    render: 'Cập nhật ảnh đại diện thành công',
+                    type: 'success',
+                    isLoading: false,
+                    closeOnClick: true,
+                    autoClose: 2000,
+                });
+            } else {
+                toast.update(id, {
+                    render: 'Cập nhật ảnh đại diện không thành công',
+                    type: 'error',
+                    isLoading: false,
+                    closeOnClick: true,
+                    autoClose: 2000,
+                });
+            }
+            setOpen(false)
+        }
+    }
+
+    const onEditInfo = async () => {
+        // const id = toast.loading("Đang cập nhật...")
+        // const update = await dispatch(updateInfomation({}))
+        // if (update?.payload?.status === (200 || 201)) {
+        //     toast.update(id, {
+        //         render: 'Cập nhật thông tin thành công',
+        //         type: 'success',
+        //         isLoading: false,
+        //         closeOnClick: true,
+        //         autoClose: 2000,
+        //     });
+        // } else {
+        //     toast.update(id, {
+        //         render: 'Cập nhật thông tin không thành công',
+        //         type: 'error',
+        //         isLoading: false,
+        //         closeOnClick: true,
+        //         autoClose: 2000,
+        //     });
+        // }
+        setIsEditable(false)
+    }
 
     return (
         <Tab.Panel className={'flex flex-col space-y-7 p-7 outline-none'}>
@@ -130,6 +195,7 @@ export default function Information() {
                                                                 aria-describedby="file_input_help"
                                                                 id="file_input"
                                                                 type="file"
+                                                                onChange={(e) => onChangeAvatar(e.target.files)}
                                                             />
                                                             <p
                                                                 className="mt-1 text-sm text-gray-500 dark:text-gray-300"
@@ -146,9 +212,9 @@ export default function Information() {
                                             <div className="bg-gray-50 px-4  py-3 sm:flex sm:flex-row-reverse sm:px-6 dark:bg-zinc-800">
                                                 <button
                                                     type="button"
-                                                    className="inline-flex w-full justify-center px-3 py-2 text-sm font-semibold text-white shadow-sm outline-none ring-2 ring-inset ring-white transition duration-500 ease-out hover:bg-magenta-500 hover:text-gray-900 hover:ring-magenta-500 sm:ml-3 sm:w-auto"
+                                                    className="inline-flex w-full justify-center px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm outline-none ring-2 ring-inset ring-white transition duration-500 ease-out hover:bg-magenta-500 hover:text-gray-900 hover:ring-magenta-500 sm:ml-3 sm:w-auto dark:text-white "
                                                     onClick={() =>
-                                                        setOpen(false)
+                                                        onSaveChange()
                                                     }
                                                 >
                                                     Save
@@ -206,9 +272,9 @@ export default function Information() {
                         <input
                             type="text"
                             value={
-                                !isEditable ? userInfo?.customer_name : fullname
+                                !isEditable ? userInfo?.customer_name : username
                             }
-                            onChange={(e) => setFullName(e.target.value)}
+                            onChange={(e) => setUsername(e.target.value)}
                             disabled={!isEditable}
                             className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-white outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white"
                         />
@@ -234,9 +300,9 @@ export default function Information() {
                             value={
                                 !isEditable
                                     ? userInfo?.customer_phone
-                                    : fullname
+                                    : phone
                             }
-                            onChange={(e) => setFullName(e.target.value)}
+                            onChange={(e) => setPhone(e.target.value)}
                             disabled={!isEditable}
                             className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-white outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white"
                         />
@@ -444,7 +510,7 @@ export default function Information() {
                             </Dialog>
                         </Transition>
                         <button
-                            onClick={() => setIsEditable(true)}
+                            onClick={() =>setIsEditable(true)}
                             className="rounded-md border-2 border-gray-900 px-5 py-1 text-gray-900 transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 dark:border-white dark:text-white"
                         >
                             Chỉnh sửa
@@ -459,7 +525,7 @@ export default function Information() {
                             Hủy
                         </button>
                         <button
-                            onClick={() => setIsEditable(false)}
+                            onClick={() => onEditInfo()}
                             className="rounded-md border-2 border-gray-900 px-5 py-1 text-gray-900 transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 dark:border-white dark:text-white"
                         >
                             Lưu thay đổi

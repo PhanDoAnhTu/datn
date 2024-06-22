@@ -118,7 +118,7 @@ export const onLogout = () => async (dispatch) => {
 
 export const CreateAddress = (data) => async (dispatch) => {
   try {
-    const response = await PostData('/user/v1/address/CreateAddress',data);
+    const response = await PostData('/user/v1/address/CreateAddress', data);
     return dispatch({ type: Action.GET_ADDRESS, payload: response.data });
   } catch (err) {
     console.log(err)
@@ -128,7 +128,7 @@ export const CreateAddress = (data) => async (dispatch) => {
 };
 export const removeAddress = (data) => async (dispatch) => {
   try {
-    const response = await PostData('/user/v1/address/removeAddress',data);
+    const response = await PostData('/user/v1/address/removeAddress', data);
     return dispatch({ type: Action.GET_ADDRESS, payload: response.data });
   } catch (err) {
     console.log(err)
@@ -138,7 +138,7 @@ export const removeAddress = (data) => async (dispatch) => {
 };
 export const getAddressByCustomerId = (data) => async (dispatch) => {
   try {
-    const response = await PostData('/user/v1/address/getAddressByCustomerId',data)
+    const response = await PostData('/user/v1/address/getAddressByCustomerId', data)
     return dispatch({ type: Action.GET_ADDRESS, payload: response.data });
   } catch (err) {
     console.log(err)
@@ -149,7 +149,7 @@ export const getAddressByCustomerId = (data) => async (dispatch) => {
 
 export const isDefaultAddress = (data) => async (dispatch) => {
   try {
-    const response = await PostData('/user/v1/address/isDefaultAddress',data)
+    const response = await PostData('/user/v1/address/isDefaultAddress', data)
     return dispatch({ type: Action.GET_ADDRESS, payload: response.data });
   } catch (err) {
     console.log(err)
@@ -160,8 +160,32 @@ export const isDefaultAddress = (data) => async (dispatch) => {
 
 export const findOneAddressByCustomerIdAndIsDefault = (data) => async (dispatch) => {
   try {
-    const response = await PostData('/user/v1/address/findOneAddressByCustomerIdAndIsDefault',data)
+    const response = await PostData('/user/v1/address/findOneAddressByCustomerIdAndIsDefault', data)
     return dispatch({ type: Action.ADDRESS_DEFAULT, payload: response.data });
+  } catch (err) {
+    console.log(err)
+    // return err.response.data
+
+  }
+};
+
+export const changeAvatar = (data) => async (dispatch) => {
+  try {
+    const response = await PostData('/user/v1/customer/changeAvatar', data)
+    console.log("response", response)
+    return dispatch({ type: Action.UPDATE_USER, payload: response.data });
+  } catch (err) {
+    console.log(err)
+    // return err.response.data
+
+  }
+};
+export const updateInfomation = (data) => async (dispatch) => {
+  try {
+    const response = await PostData('/user/v1/customer/updateInfomation', data)
+    console.log("response", response)
+
+    return dispatch({ type: Action.UPDATE_USER, payload: response.data });
   } catch (err) {
     console.log(err)
     // return err.response.data

@@ -15,6 +15,8 @@ router.use(authentication)
 
 router.post('/logout', asynchandler(customerController.logout))
 router.post('/handlerRefreshToken', asynchandler(customerController.handlerRefreshToken))
+router.post('/changeAvatar', asynchandler(customerController.changeAvatar))
+router.post('/updateInfomation', asynchandler(customerController.updateInfomation))
 
 
 module.exports = router

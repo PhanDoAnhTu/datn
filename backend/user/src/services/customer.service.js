@@ -185,6 +185,36 @@ class CustomerService {
             return null
         }
     }
+    async changeAvatar({ customer_id, image }) {
+        const updateInfo = await CustomerModel.findOneAndUpdate({ _id: customer_id }, { customer_avatar: image }, { upsert: true })
+
+        return { customer: updateInfo }
+
+    }
+    async updateInfomation({
+        customer_id,
+        customer_name,
+        customer_phone,
+        customer_sex,
+        customer_date_of_birth
+    }) {
+
+        const query = {
+            _id: customer_id,
+
+        }, updateSet = {
+            $set: {
+                customer_name: customer_name,
+                customer_phone: customer_phone,
+                customer_sex: customer_sex,
+                customer_date_of_birth: customer_date_of_birth
+            }
+        }, options = {
+            upsert: true,
+        }
+        return await CustomerModel.findOneAndUpdate(query, updateSet, options)
+    }
+
     async serverRPCRequest(payload) {
         const { type, data } = payload;
         const { customer_account_id, customer_provider, customer_name, customer_email, customer_avatar, customer_id } = data

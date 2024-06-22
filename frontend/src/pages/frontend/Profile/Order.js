@@ -46,7 +46,7 @@ export default function Order() {
     };
     return (
         <Tab.Panel className={'px-7 pt-4 text-gray-900 dark:text-white'}>
-                        <DocumentTitle title="Hóa đơn" />
+            <DocumentTitle title="Hóa đơn" />
 
             <div className="mb-4">
                 <div className="grid gap-y-3 divide-y">
@@ -89,22 +89,22 @@ export default function Order() {
                                         <div className="text-md flex justify-end space-x-2 text-gray-900 dark:text-white">
                                             <span className="border-r-2 pr-2 ">
                                                 {item.createdOn &&
-                                                dayjs(item.createdOn).format(
-                                                    'hh:mm DD/MM/YYYY'
-                                                )
+                                                    dayjs(item.createdOn).format(
+                                                        'hh:mm DD/MM/YYYY'
+                                                    )
                                                     ? dayjs().diff(
-                                                          dayjs(item.createdOn),
-                                                          'minute'
-                                                      ) < 60
+                                                        dayjs(item.createdOn),
+                                                        'minute'
+                                                    ) < 60
                                                         ? `${dayjs().diff(dayjs(item.createdOn), 'minute')} phút trước`
                                                         : dayjs().diff(
-                                                                dayjs(
-                                                                    item.createdOn
-                                                                ),
-                                                                'hour'
-                                                            ) < 24
-                                                          ? `${dayjs().diff(dayjs(item.createdOn), 'hour')} giờ trước`
-                                                          : dayjs(
+                                                            dayjs(
+                                                                item.createdOn
+                                                            ),
+                                                            'hour'
+                                                        ) < 24
+                                                            ? `${dayjs().diff(dayjs(item.createdOn), 'hour')} giờ trước`
+                                                            : dayjs(
                                                                 item.createdOn
                                                             ).format(
                                                                 'hh:mmA DD/MM/YYYY'

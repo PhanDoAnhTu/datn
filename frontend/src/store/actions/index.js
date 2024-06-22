@@ -7,6 +7,7 @@ export * from './payment-actions';
 export * from './category-actions';
 export * from './order-actions';
 export * from './review-actions';
+export * from './upload-actions';
 
 
 export const Action = {
@@ -92,7 +93,16 @@ export const Action = {
     ADD_ADDRESS: "ADD_ADDRESS",
     GET_ADDRESS: "GET_ADDRESS",
     REMOVE_ADDRESS: "REMOVE_ADDRESS",
-    REVIEW_BY_PRODUCT:"REVIEW_BY_PRODUCT",
-    CREATE_REVIEW:"CREATE_REVIEW",
-    ADDRESS_DEFAULT:"ADDRESS_DEFAULT"
+    REVIEW_BY_PRODUCT: "REVIEW_BY_PRODUCT",
+    CREATE_REVIEW: "CREATE_REVIEW",
+    ADDRESS_DEFAULT: "ADDRESS_DEFAULT",
+
+    ///
+    UPLOAD_PRODUCT_IMAGE_LIST: "UPLOAD_PRODUCT_IMAGE_LIST",
+    UPLOAD_IMAGE_SINGLE: "UPLOAD_IMAGE_SINGLE",
+///
+
+UPDATE_USER:"UPDATE_USER"
+
+
 };

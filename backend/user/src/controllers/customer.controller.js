@@ -43,6 +43,19 @@ class CustomerController {
             metaData: await this.service.checkLoginEmailTokenService({ token })
         }).send(res)
     }
+    changeAvatar = async (req, res, next) => {
+
+        return new successResponse.SuccessResponse({
+            message: "changeAvatar",
+            metaData: await this.service.changeAvatar(req.body)
+        }).send(res)
+    }
+    updateInfomation = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: "updateInfomation",
+            metaData: await this.service.updateInfomation(req.body)
+        }).send(res)
+    }
 
 
 }
