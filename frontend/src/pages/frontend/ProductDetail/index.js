@@ -5,6 +5,7 @@ import classNames from '../../../helpers/classNames';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import HeartSlashIcon from '../../../assets/HeartSlashIcon.js';
 import ProductList from '../../../components/frontend/ProductList';
+import Skeleton from 'react-loading-skeleton';
 import {
     addToCart,
     removeFromWishList,
@@ -26,6 +27,7 @@ import DocumentTitle from '../../../components/frontend/DocumentTitle.js';
 
 export default function ProductDetail() {
     const { userInfo } = useSelector((state) => state.userReducer);
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { all_products } = useSelector((state) => state.productReducer);
@@ -44,7 +46,6 @@ export default function ProductDetail() {
     const [description, setDescription] = useState('');
     const [stock, setStock] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
-
     const [product_detail, setProductDetail] = useState(null);
     const [sku_list, setSkuList] = useState(null);
     const [product_categories, setProductCategories] = useState([]);
@@ -57,8 +58,10 @@ export default function ProductDetail() {
     const [rating_score_avg, setRating_score_avg] = useState(0);
     const [related_products, setRelated_products] = useState([]);
     // const [comment, setComment] = useState([]);
+    const [reload, setReload] = useState(false);
 
     const getProductDetail = async (product_id) => {
+        setReload(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
         const responseProductDetail = await dispatch(
             onProductDetail({ spu_id: product_id })
@@ -89,11 +92,15 @@ export default function ProductDetail() {
             // setRelated_products(
             //     resultProduct.related_products
             // );
-            setRelated_products(all_products?.filter((prod) => prod?.product_category.includes(resultProduct.product_detail.product_category[0])))
-            if (
-                resultProduct?.product_review?.length > 0
-
-            ) {
+            setRelated_products(
+                all_products?.filter(
+                    (prod) =>
+                        prod?.product_category.includes(
+                            resultProduct.product_detail.product_category[0]
+                        ) && prod?._id !== product_id
+                )
+            );
+            if (resultProduct?.product_review?.length > 0) {
                 setRating_score_avg(
                     resultProduct.product_review?.reduce(
                         (partialSum, a) => partialSum + a?.rating_score,
@@ -109,6 +116,7 @@ export default function ProductDetail() {
                 )
             );
         }
+        setReload(false);
     };
     /////////////////////////////
     useEffect(() => {
@@ -117,10 +125,9 @@ export default function ProductDetail() {
         } catch (error) {
             setTimeout(() => {
                 getProductDetail(product_id);
-            }, 2000)
+            }, 2000);
         }
     }, [product_id]);
-
 
     useEffect(() => {
         if (special_offer) {
@@ -272,7 +279,6 @@ export default function ProductDetail() {
     };
 
     return (
-
         <div className="bg-transparent pt-10 md:pt-20">
             <DocumentTitle title="Sản phẩm" />
 
@@ -339,7 +345,9 @@ export default function ProductDetail() {
                 <div className="mx-auto max-w-2xl px-4 pb-16 pt-10 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pt-16">
                     <div className="flex flex-col-reverse lg:col-span-2 lg:h-square lg:flex-row lg:space-x-5 lg:border-r lg:border-gray-300 lg:pr-8 dark:lg:border-stone-700">
                         <div className="no-scrollbar flex w-full flex-row overflow-hidden max-lg:mt-3 max-lg:space-x-3 max-lg:overflow-x-scroll max-lg:pb-1 lg:w-44 lg:flex-col lg:space-y-3 lg:overflow-y-scroll">
-                            {product_images && product_images?.length > 0 ? (
+                            {product_images &&
+                            reload === false &&
+                            product_images?.length > 0 ? (
                                 product_images?.map((item, index) => (
                                     <button
                                         onClick={() => HandleImageChoose(item)}
@@ -354,199 +362,261 @@ export default function ProductDetail() {
                                     </button>
                                 ))
                             ) : (
-                                <></>
+                                <Skeleton count={4} className="h-32 w-24" />
                             )}
                         </div>
-                        <div className="h-9/10 w-full bg-gray-200 shadow-md sm:overflow-hidden sm:rounded-lg">
-                            <img
-                                src={selectedImage && selectedImage.thumb_url}
-                                alt={selectedImage && selectedImage.thumb_url}
-                                className="h-full w-full object-fill object-center"
-                            />
+                        <div className="h-9/10 w-full shadow-md sm:overflow-hidden sm:rounded-lg">
+                            {selectedImage && reload === false ? (
+                                <img
+                                    src={
+                                        selectedImage && selectedImage.thumb_url
+                                    }
+                                    alt={
+                                        selectedImage && selectedImage.thumb_url
+                                    }
+                                    className="h-full w-full object-fill object-center"
+                                />
+                            ) : (
+                                <Skeleton
+                                    count={1}
+                                    className="aspect-h-1 aspect-w-1 h-full w-full"
+                                />
+                            )}
                         </div>
                     </div>
 
                     {/* Options */}
                     <div className="mt-4 lg:row-span-3 lg:mt-0">
-                        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl dark:text-white">
-                            {name}
-                        </h1>
-                        <p className="mt-6 text-3xl tracking-tight text-gray-900 dark:text-gray-200">
-                            {sale ? (
-                                <NumericFormat
-                                    value={sale.price_sale}
-                                    displayType="text"
-                                    thousandSeparator={true}
-                                    decimalScale={0}
-                                    id="price"
-                                    suffix={'đ'}
-                                />
-                            ) : (
-                                <NumericFormat
-                                    value={price}
-                                    displayType="text"
-                                    thousandSeparator={true}
-                                    decimalScale={0}
-                                    id="price"
-                                    suffix={'đ'}
-                                />
-                            )}
-                            &emsp;
-                            {sale && (
-                                <span className="rounded-full bg-red-100 px-5 py-2 text-xs font-medium  text-red-800 dark:bg-red-900 dark:text-red-300">
-                                    Giảm đến {sale.percentage?.toFixed(1)}%
-                                </span>
-                            )}
-                        </p>
-                        {sale && (
-                            <p className="text-2xl tracking-tight text-gray-900 line-through decoration-rose-700 dark:text-gray-200">
-                                <NumericFormat
-                                    value={price}
-                                    displayType={'text'}
-                                    thousandSeparator={true}
-                                    decimalScale={0}
-                                    id="price"
-                                    suffix={'đ'}
-                                />
-                            </p>
+                        {product_detail && reload === false ? (
+                            <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl dark:text-white">
+                                {name}
+                            </h1>
+                        ) : (
+                            <Skeleton
+                                count={2}
+                                className="text-2xl sm:text-3xl"
+                            />
                         )}
+                        {product_detail && reload === false ? (
+                            <>
+                                <p className="mt-6 text-3xl tracking-tight text-gray-900 dark:text-gray-200">
+                                    {sale ? (
+                                        <NumericFormat
+                                            value={sale.price_sale}
+                                            displayType="text"
+                                            thousandSeparator={true}
+                                            decimalScale={0}
+                                            id="price"
+                                            suffix={'đ'}
+                                        />
+                                    ) : (
+                                        <NumericFormat
+                                            value={price}
+                                            displayType="text"
+                                            thousandSeparator={true}
+                                            decimalScale={0}
+                                            id="price"
+                                            suffix={'đ'}
+                                        />
+                                    )}
+                                    &emsp;
+                                    {sale && (
+                                        <span className="rounded-full bg-red-100 px-5 py-2 text-xs font-medium  text-red-800 dark:bg-red-900 dark:text-red-300">
+                                            Giảm đến{' '}
+                                            {sale.percentage?.toFixed(1)}%
+                                        </span>
+                                    )}
+                                </p>
+                                {sale && (
+                                    <p className="text-2xl tracking-tight text-gray-900 line-through decoration-rose-700 dark:text-gray-200">
+                                        <NumericFormat
+                                            value={price}
+                                            displayType={'text'}
+                                            thousandSeparator={true}
+                                            decimalScale={0}
+                                            id="price"
+                                            suffix={'đ'}
+                                        />
+                                    </p>
+                                )}
+                            </>
+                        ) : (
+                            <div className="mt-6 ">
+                                <Skeleton
+                                    count={2}
+                                    className="text-2xl sm:text-3xl"
+                                />
+                            </div>
+                        )}
+
                         {/* Reviews */}
                         <div className="mt-3">
-                            <h3 className="text-xanthous-500">
-                                Điểm đánh giá : {rating_score_avg}
-                            </h3>
-                            <div className="flex items-center">
-                                <div className="flex items-center">
-                                    {[1, 2, 3, 4, 5].map((rating) => (
-                                        <StarIcon
-                                            key={rating}
-                                            className={classNames(
-                                                rating_score_avg >= rating
-                                                    ? 'text-xanthous-500'
-                                                    : 'text-gray-400',
-                                                'h-5 w-5 flex-shrink-0'
-                                            )}
-                                            aria-hidden="true"
-                                        />
-                                    ))}
-                                </div>
+                            {product_detail && reload === false ? (
+                                <>
+                                    <h3 className="text-xanthous-500">
+                                        Điểm đánh giá : {rating_score_avg}
+                                    </h3>
+                                    <div className="flex items-center">
+                                        <div className="flex items-center">
+                                            {[1, 2, 3, 4, 5].map((rating) => (
+                                                <StarIcon
+                                                    key={rating}
+                                                    className={classNames(
+                                                        rating_score_avg >=
+                                                            rating
+                                                            ? 'text-xanthous-500'
+                                                            : 'text-gray-400',
+                                                        'h-5 w-5 flex-shrink-0'
+                                                    )}
+                                                    aria-hidden="true"
+                                                />
+                                            ))}
+                                        </div>
 
-                                <Link
-                                    className="ml-3 text-sm font-medium text-xanthous-500 hover:text-xanthous-600"
-                                >
-                                    {review.length} đánh giá
-                                </Link>
-                            </div>
-
+                                        <Link className="ml-3 text-sm font-medium text-xanthous-500 hover:text-xanthous-600">
+                                            {review.length} đánh giá
+                                        </Link>
+                                    </div>
+                                </>
+                            ) : (
+                                <Skeleton
+                                    count={2}
+                                    className="text-2xl sm:text-3xl"
+                                />
+                            )}
                         </div>
 
                         <div className="mt-10">
-                            {variations.map((item, index) => (
-                                <div key={index}>
-                                    <div className="mt-10" key={index}>
-                                        <div className="flex items-center justify-between">
-                                            <h3 className="text-sm font-medium capitalize text-gray-900 dark:text-white">
-                                                {item.name}
-                                            </h3>
-                                        </div>
+                            {product_detail && reload === false ? (
+                                <>
+                                    {variations.map((item, index) => (
+                                        <div key={index}>
+                                            <div className="mt-10" key={index}>
+                                                <div className="flex items-center justify-between">
+                                                    <h3 className="text-sm font-medium capitalize text-gray-900 dark:text-white">
+                                                        {item.name}
+                                                    </h3>
+                                                </div>
 
-                                        <RadioGroup
-                                            value={selectedVariation[index]}
-                                            onChange={(value) =>
-                                                handleVariationChange(
-                                                    value,
-                                                    index
-                                                )
-                                            }
-                                            className="mt-4"
-                                        >
-                                            <RadioGroup.Label className="sr-only">
-                                                Choose Link size
-                                            </RadioGroup.Label>
-                                            <div className="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-4">
-                                                {item.options.map(
-                                                    (option, subindex) => (
-                                                        <RadioGroup.Option
-                                                            key={option}
-                                                            value={subindex}
-                                                            className={({
-                                                                active,
-                                                            }) =>
-                                                                classNames(
-                                                                    item
-                                                                        ? 'cursor-pointer bg-gray-200 text-gray-900 shadow-sm dark:bg-stone-400 dark:text-white'
-                                                                        : 'cursor-not-allowed bg-gray-50 text-gray-200 dark:bg-stone-300',
-                                                                    active
-                                                                        ? 'ring-2 ring-xanthous-400'
-                                                                        : '',
-                                                                    'group relative flex items-center justify-center rounded-md border px-4 py-3 text-center text-sm font-medium uppercase shadow-md transition duration-200 ease-out hover:bg-gray-400 focus:outline-none sm:flex-1 sm:py-5 dark:hover:bg-stone-500'
-                                                                )
-                                                            }
-                                                        >
-                                                            {({
-                                                                active,
-                                                                checked,
-                                                            }) => (
-                                                                <>
-                                                                    <RadioGroup.Label
-                                                                        as="span"
-                                                                        className="pointer-events-none"
-                                                                    >
-                                                                        {option}
-                                                                    </RadioGroup.Label>
-                                                                    {/*checking if stock is 0 */}
-                                                                    {item ? (
-                                                                        <span
-                                                                            className={classNames(
-                                                                                active
-                                                                                    ? 'border'
-                                                                                    : 'border-4',
-                                                                                checked
-                                                                                    ? 'border-xanthous-500'
-                                                                                    : 'border-transparent',
-                                                                                'pointer-events-none absolute -inset-px rounded-md shadow-md'
-                                                                            )}
-                                                                            aria-hidden="true"
-                                                                        />
-                                                                    ) : (
-                                                                        <span
-                                                                            aria-hidden="true"
-                                                                            className="pointer-events-none absolute -inset-px rounded-md border-2 border-gray-200"
-                                                                        >
-                                                                            <svg
-                                                                                className="absolute inset-0 h-full w-full stroke-2 text-gray-200"
-                                                                                viewBox="0 0 100 100"
-                                                                                preserveAspectRatio="none"
-                                                                                stroke="currentColor"
+                                                <RadioGroup
+                                                    value={
+                                                        selectedVariation[index]
+                                                    }
+                                                    onChange={(value) =>
+                                                        handleVariationChange(
+                                                            value,
+                                                            index
+                                                        )
+                                                    }
+                                                    className="mt-4"
+                                                >
+                                                    <RadioGroup.Label className="sr-only">
+                                                        Choose Link size
+                                                    </RadioGroup.Label>
+                                                    <div className="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-4">
+                                                        {item.options.map(
+                                                            (
+                                                                option,
+                                                                subindex
+                                                            ) => (
+                                                                <RadioGroup.Option
+                                                                    key={option}
+                                                                    value={
+                                                                        subindex
+                                                                    }
+                                                                    className={({
+                                                                        active,
+                                                                    }) =>
+                                                                        classNames(
+                                                                            item
+                                                                                ? 'cursor-pointer bg-gray-200 text-gray-900 shadow-sm dark:bg-stone-400 dark:text-white'
+                                                                                : 'cursor-not-allowed bg-gray-50 text-gray-200 dark:bg-stone-300',
+                                                                            active
+                                                                                ? 'ring-2 ring-xanthous-400'
+                                                                                : '',
+                                                                            'group relative flex items-center justify-center rounded-md border px-4 py-3 text-center text-sm font-medium uppercase shadow-md transition duration-200 ease-out hover:bg-gray-400 focus:outline-none sm:flex-1 sm:py-5 dark:hover:bg-stone-500'
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    {({
+                                                                        active,
+                                                                        checked,
+                                                                    }) => (
+                                                                        <>
+                                                                            <RadioGroup.Label
+                                                                                as="span"
+                                                                                className="pointer-events-none"
                                                                             >
-                                                                                <line
-                                                                                    x1={
-                                                                                        0
-                                                                                    }
-                                                                                    y1={
-                                                                                        100
-                                                                                    }
-                                                                                    x2={
-                                                                                        100
-                                                                                    }
-                                                                                    y2={
-                                                                                        0
-                                                                                    }
-                                                                                    vectorEffect="non-scaling-stroke"
+                                                                                {
+                                                                                    option
+                                                                                }
+                                                                            </RadioGroup.Label>
+                                                                            {/*checking if stock is 0 */}
+                                                                            {item ? (
+                                                                                <span
+                                                                                    className={classNames(
+                                                                                        active
+                                                                                            ? 'border'
+                                                                                            : 'border-4',
+                                                                                        checked
+                                                                                            ? 'border-xanthous-500'
+                                                                                            : 'border-transparent',
+                                                                                        'pointer-events-none absolute -inset-px rounded-md shadow-md'
+                                                                                    )}
+                                                                                    aria-hidden="true"
                                                                                 />
-                                                                            </svg>
-                                                                        </span>
+                                                                            ) : (
+                                                                                <span
+                                                                                    aria-hidden="true"
+                                                                                    className="pointer-events-none absolute -inset-px rounded-md border-2 border-gray-200"
+                                                                                >
+                                                                                    <svg
+                                                                                        className="absolute inset-0 h-full w-full stroke-2 text-gray-200"
+                                                                                        viewBox="0 0 100 100"
+                                                                                        preserveAspectRatio="none"
+                                                                                        stroke="currentColor"
+                                                                                    >
+                                                                                        <line
+                                                                                            x1={
+                                                                                                0
+                                                                                            }
+                                                                                            y1={
+                                                                                                100
+                                                                                            }
+                                                                                            x2={
+                                                                                                100
+                                                                                            }
+                                                                                            y2={
+                                                                                                0
+                                                                                            }
+                                                                                            vectorEffect="non-scaling-stroke"
+                                                                                        />
+                                                                                    </svg>
+                                                                                </span>
+                                                                            )}
+                                                                        </>
                                                                     )}
-                                                                </>
-                                                            )}
-                                                        </RadioGroup.Option>
-                                                    )
-                                                )}
+                                                                </RadioGroup.Option>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                </RadioGroup>
                                             </div>
-                                        </RadioGroup>
-                                    </div>
-                                </div>
-                            ))}
+                                        </div>
+                                    ))}
+                                </>
+                            ) : (
+                                <>
+                                    <Skeleton
+                                        count={4}
+                                        containerClassName="flex gap-2 text-2xl h-16 sm:text-3xl"
+                                    />
+                                    <Skeleton
+                                        count={4}
+                                        containerClassName="flex gap-2 mt-5 text-2xl h-16 sm:text-3xl"
+                                    />
+                                </>
+                            )}
 
                             <div className="mt-10 flex flex-col space-y-5">
                                 {stock != null ? (
@@ -680,35 +750,36 @@ export default function ProductDetail() {
                     </h1>
 
                     <div className="space-y-5">
-
                         <div className="grid gap-5">
-                            {review?.length > 0 && review.map((rv, index) => (
-                                <div
-                                    key={`review-${index}`}
-                                    className="grid gap-2 overflow-hidden rounded-md bg-zinc-200 p-4 shadow-md shadow-gray-400 dark:bg-zinc-800 dark:shadow-inner"
-                                >
-                                    <div className="text-lg font-bold text-gray-900 dark:text-white">
-                                        {rv.customer_id}
+                            {review?.length > 0 &&
+                                review.map((rv, index) => (
+                                    <div
+                                        key={`review-${index}`}
+                                        className="grid gap-2 overflow-hidden rounded-md bg-zinc-200 p-4 shadow-md shadow-gray-400 dark:bg-zinc-800 dark:shadow-inner"
+                                    >
+                                        <div className="text-lg font-bold text-gray-900 dark:text-white">
+                                            {rv.customer_id}
+                                        </div>
+                                        <div className="flex">
+                                            {[1, 2, 3, 4, 5].map((rating) => (
+                                                <StarIcon
+                                                    key={rating}
+                                                    className={classNames(
+                                                        rv.rating_score >=
+                                                            rating
+                                                            ? 'text-xanthous-500'
+                                                            : 'text-gray-400',
+                                                        'h-5 w-5 flex-shrink-0'
+                                                    )}
+                                                    aria-hidden="true"
+                                                />
+                                            ))}
+                                        </div>
+                                        <div className="leading-5 text-gray-900 dark:text-white">
+                                            {rv.rating_content}
+                                        </div>
                                     </div>
-                                    <div className="flex">
-                                        {[1, 2, 3, 4, 5].map((rating) => (
-                                            <StarIcon
-                                                key={rating}
-                                                className={classNames(
-                                                    rv.rating_score >= rating
-                                                        ? 'text-xanthous-500'
-                                                        : 'text-gray-400',
-                                                    'h-5 w-5 flex-shrink-0'
-                                                )}
-                                                aria-hidden="true"
-                                            />
-                                        ))}
-                                    </div>
-                                    <div className="leading-5 text-gray-900 dark:text-white">
-                                        {rv.rating_content}
-                                    </div>
-                                </div>
-                            ))}
+                                ))}
                         </div>
                     </div>
                 </div>
