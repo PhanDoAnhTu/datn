@@ -6,6 +6,7 @@ import { getSinglePost } from '../../../store/actions/post-actions';
 import moment from 'moment';
 
 import 'moment/locale/vi';
+import DocumentTitle from '../../../components/frontend/DocumentTitle';
 
 export default function NewDetail() {
     const navigate = useNavigate();
@@ -18,6 +19,8 @@ export default function NewDetail() {
     }, [slug]);
     return (
         <div className="mx-8 pb-7 pt-10 md:pt-24">
+            <DocumentTitle title="Chi tiết bài viết" />
+
             <button
                 onClick={() => navigate(-1)}
                 className="group mb-4 flex items-center pl-0 text-white"

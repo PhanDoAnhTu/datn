@@ -11,6 +11,7 @@ import Address from './Address';
 // import { useEffect } from 'react';
 import Order from './Order';
 import Favorites from './Favorites';
+import DocumentTitle from '../../../components/frontend/DocumentTitle';
 
 export default function Profile() {
     // useEffect(() => {
@@ -18,6 +19,8 @@ export default function Profile() {
     // }, []);
     return (
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <DocumentTitle title="Trang cá nhân" />
+
             <div className="flex flex-col items-baseline justify-between pb-7 pt-24">
                 <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
                     Hồ sơ của tôi

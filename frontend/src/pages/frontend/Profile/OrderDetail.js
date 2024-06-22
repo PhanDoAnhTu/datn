@@ -437,7 +437,7 @@ export default function OrderDetail() {
                                                                                             type="text"
                                                                                             placeholder="Nội dung đánh giá"
                                                                                             value={
-                                                                                                item.ratingContent
+                                                                                                item.rating_content
                                                                                             }
                                                                                             onChange={(
                                                                                                 e
@@ -602,7 +602,9 @@ export default function OrderDetail() {
                                     Phương thức thanh toán
                                 </span>
                                 <span className="md:text-lg">
-                                    {payment?.payment_method}
+                                    {payment?.payment_method == 'COD'
+                                        ? 'Tiền mặt'
+                                        : payment?.payment_method}
                                 </span>
                             </div>
                         </div>

@@ -8,6 +8,7 @@ import {
 } from '../../../store/actions/payment-actions.js';
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
+import DocumentTitle from '../../../components/frontend/DocumentTitle.js';
 
 export default function TransactionCheck() {
     const searchParams = new URLSearchParams(window.location.search);
@@ -80,6 +81,8 @@ export default function TransactionCheck() {
 
     return (
         <div className="flex h-screen justify-center overflow-hidden pb-7 pt-10 text-gray-900 md:pt-24 dark:text-white">
+            <DocumentTitle title="Xác nhận đơn hàng" />
+
             <div className="mt-24 flex flex-col ">
                 {!isLoading ? (
                     <div className="flex flex-col items-center space-y-2">

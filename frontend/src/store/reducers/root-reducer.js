@@ -14,9 +14,11 @@ import BrandReducer from './brand-reducer';
 import AttributeReducer from './attribute-reducer';
 import OrderReducer from './order-reducer';
 import DiscountReducer from './discount-reducer';
+import AddressReducer from './address-reducer';
 
 const reducers = combineReducers({
     userReducer: UserReducer,
+    addressReducer: AddressReducer,
     productReducer: ProductReducer,
     cartReducer: CartReducer,
     categoryReducer: CategoryReducer,

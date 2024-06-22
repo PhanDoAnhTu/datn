@@ -22,6 +22,7 @@ import {
     removeFavoriteFromLocalStorage,
 } from '../../../utils';
 import HeartIcon from '../../../assets/HeartIcon.js';
+import DocumentTitle from '../../../components/frontend/DocumentTitle.js';
 
 export default function ProductDetail() {
     const { userInfo } = useSelector((state) => state.userReducer);
@@ -271,7 +272,10 @@ export default function ProductDetail() {
     };
 
     return (
+
         <div className="bg-transparent pt-10 md:pt-20">
+            <DocumentTitle title="Sản phẩm" />
+
             <div className="pt-6">
                 <nav aria-label="Breadcrumb">
                     <ol className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
@@ -433,16 +437,9 @@ export default function ProductDetail() {
                                     {review.length} đánh giá
                                 </Link>
                             </div>
+
                         </div>
-                        <div
-                            className="fb-like mt-2"
-                            data-href="https://developers.facebook.com/docs/plugins/"
-                            data-width=""
-                            data-layout=""
-                            data-action=""
-                            data-size=""
-                            data-share="true"
-                        ></div>
+
                         <div className="mt-10">
                             {variations.map((item, index) => (
                                 <div key={index}>
@@ -681,6 +678,7 @@ export default function ProductDetail() {
                     <h1 className="border-b border-stone-500 pb-5 text-4xl font-bold dark:text-white">
                         Đánh giá về sản phẩm
                     </h1>
+
                     <div className="space-y-5">
 
                         <div className="grid gap-5">

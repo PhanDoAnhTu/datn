@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { onSignup } from '../../../store/actions';
 import { toast } from 'react-toastify';
+import DocumentTitle from '../../../components/frontend/DocumentTitle';
 export default function Register() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -47,6 +48,8 @@ export default function Register() {
     };
     return (
         <>
+                            <DocumentTitle title="Đăng ký" />
+
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-32 md:py-64 md:pt-32 lg:px-8">
                 <div className="self-center rounded-md bg-white/75 pb-12 shadow-md max-sm:w-full max-sm:px-12 sm:w-3/6 dark:bg-zinc-800">
                     <div className="sm:mx-auto sm:w-full sm:max-w-sm">

@@ -8,6 +8,8 @@ const { addressController } = require('../../controllers');
 router.post('/CreateAddress', asynchandler(addressController.CreateAddress))
 router.post('/removeAddress', asynchandler(addressController.removeAddress))
 router.post('/getAddressByCustomerId', asynchandler(addressController.getAddressByCustomerId))
+router.post('/isDefaultAddress', asynchandler(addressController.isDefaultAddress))
+router.post('/findOneAddressByCustomerIdAndIsDefault', asynchandler(addressController.getAddressByCustomerIdAndIsDefault))
 
 module.exports = router
 

@@ -6,12 +6,14 @@ const DOCUMENT_NAME = "address"
 const COLLECTION_NAME = "addresss"
 
 const AddressSchema = new Schema({
-    customer_id: { type: Schema.Types.ObjectId, ref: 'customer', require: true },
-    phone_number: String,
-    street: String,
-    postal_code: String,
-    city: String,
-    country: String
+    customer_id: { type: String, require: true },
+    phone_number: { type: String, require: true },
+    customer_name: { type: String, default: "" },
+    street: { type: String, default: "" },
+    postal_code: { type: String, default: "" },
+    city: { type: String, default: "" },
+    country: { type: String, default: "" },
+    isDefault: { type: Boolean, default: false }
 },
     {
         timestamps: true,

@@ -9,6 +9,7 @@ import {
 import { useEffect } from 'react';
 import { getFavoritesFromLocalStorage } from '../../../utils';
 import { toast } from 'react-toastify';
+import DocumentTitle from '../../../components/frontend/DocumentTitle';
 
 export default function Favorites() {
     const dispatch = useDispatch();
@@ -56,6 +57,8 @@ export default function Favorites() {
 
     return (
         <Tab.Panel className={'px-7 pt-4'}>
+                        <DocumentTitle title="Yêu thích" />
+
             <div className="mb-4 grid">
                 <div className="flex justify-end">
                     {wish_list && wish_list.wish_list_products?.length !== 0 ? (

@@ -1,6 +1,6 @@
 'use strict'
 
-const { RPCRequest } = require("../../../user/src/utils")
+// const { RPCRequest } = require("../../../user/src/utils")
 const { ReviewModel } = require("../database/models")
 
 class ReviewService {
@@ -41,9 +41,9 @@ class ReviewService {
             isPublished,
             _id: review_id
         })
-
         return review
     }
+
 
     async findReviewByProductId({ product_id, isPublished = true }) {
         let list_review = await ReviewModel.find({
@@ -60,7 +60,6 @@ class ReviewService {
         //     });
         //     return { ...review, user: user }
         // })
-
 
         return list_review
     }

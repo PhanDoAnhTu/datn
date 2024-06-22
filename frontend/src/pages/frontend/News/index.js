@@ -9,6 +9,7 @@ import { getListTopic } from '../../../store/actions/topic-actions';
 import { getListPosts } from '../../../store/actions/post-actions';
 import moment from 'moment';
 import 'moment/locale/vi';
+import DocumentTitle from '../../../components/frontend/DocumentTitle';
 
 export default function News() {
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -51,6 +52,8 @@ export default function News() {
     }, [posts, page]);
     return (
         <div>
+            <DocumentTitle title="Tin tức" />
+
             <div>
                 {/* Mobile filter dialog */}
                 <Transition.Root show={mobileFiltersOpen} as={Fragment}>

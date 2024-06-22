@@ -4,7 +4,9 @@ const express = require('express')
 const router = express.Router()
 const { asynchandler } = require('../../helpers/asyncHandlers')
 const {  ContactController} = require('../../controllers');
-const { authentication } = require('../../auth/authUtils');
 
+router.post("/findOneContact", asynchandler(ContactController.findOneContact));
+router.post("/getAllContact", asynchandler(ContactController.getAllContact));
+router.post("/newContact", asynchandler(ContactController.newContact));
 
 module.exports = router

@@ -9,6 +9,7 @@ module.exports = {
     CustomerModel: require('./Customer'),
     StaffModel: require('./Staff'),
 
+    AddressModel: require('./Address'),
 
 
 

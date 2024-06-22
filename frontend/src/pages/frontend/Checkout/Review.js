@@ -10,6 +10,7 @@ import { NumericFormat } from 'react-number-format';
 import { getCartFromLocalStorage } from '../../../utils/index';
 import { createOrder } from '../../../store/actions/order-actions';
 import { toast } from 'react-toastify';
+import DocumentTitle from '../../../components/frontend/DocumentTitle';
 const _ = require('lodash');
 
 export default function Review({
@@ -128,6 +129,8 @@ export default function Review({
         <div
             className={`w-screen flex-shrink-0 px-4 md:px-32 ${step === 3 ? '' : 'hidden'}`}
         >
+                        <DocumentTitle title="Kiểm tra trước thanh toán" />
+
             <button
                 onClick={() => setStep(step - 1)}
                 className="mb-6 flex items-center text-gray-900 dark:text-white"

@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { findOrderByUserId } from '../../../store/actions/order-actions';
 import { NumericFormat } from 'react-number-format';
 import dayjs from 'dayjs';
+import DocumentTitle from '../../../components/frontend/DocumentTitle';
 
 export default function Order() {
     // eslint-disable-next-line no-unused-vars
@@ -45,6 +46,8 @@ export default function Order() {
     };
     return (
         <Tab.Panel className={'px-7 pt-4 text-gray-900 dark:text-white'}>
+                        <DocumentTitle title="Hóa đơn" />
+
             <div className="mb-4">
                 <div className="grid gap-y-3 divide-y">
                     {orders && orders.length !== 0 ? (
