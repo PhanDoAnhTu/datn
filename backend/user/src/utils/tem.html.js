@@ -196,7 +196,7 @@ width: 200px;
                         <td align="center">
                           <div class="button button--blue">
                           
-                            <a href="{{link_verify}}" target="_blank" style="color: #ffffff; text-decoration: none; font-size:16px ;">Verify Email</a>
+                            <a href="{{link_verify}}" target="_blank" style="color: #ffffff; text-decoration: none; font-size:16px ;">{{button_text}}</a>
                           </div>
                         </td>
                       </tr>

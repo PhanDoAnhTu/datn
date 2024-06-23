@@ -192,3 +192,47 @@ export const updateInfomation = (data) => async (dispatch) => {
 
   }
 };
+export const resetPassword = (data) => async (dispatch) => {
+  try {
+    const response = await PostData('/user/v1/customer/resetPassword', data)
+    console.log("response", response)
+
+    return dispatch({ type: Action.PASSWORD_USER, payload: response.data });
+  } catch (err) {
+    console.log(err)
+  }
+};
+export const verifyOtp = (data) => async (dispatch) => {
+  try {
+    const response = await PostData('/user/v1/customer/verifyOtp', data)
+    console.log("response", response)
+
+    return dispatch({ type: Action.PASSWORD_USER, payload: response.data });
+  } catch (err) {
+    console.log(err)
+
+  }
+};
+
+export const checkPassword = (data) => async (dispatch) => {
+  try {
+    const response = await PostData('/user/v1/customer/checkPassword', data)
+    console.log("response", response)
+
+    return dispatch({ type: Action.PASSWORD_USER, payload: response.data });
+  } catch (err) {
+    console.log(err)
+
+  }
+};
+export const onChangePassword = (data) => async (dispatch) => {
+  try {
+    const response = await PostData('/user/v1/customer/changePassword', data)
+    console.log("response", response)
+
+    return dispatch({ type: Action.PASSWORD_USER, payload: response.data });
+  } catch (err) {
+    console.log(err)
+
+  }
+};

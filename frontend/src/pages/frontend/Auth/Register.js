@@ -38,8 +38,8 @@ export default function Register() {
                         customer_name: username,
                     })
                 );
-                navigate(redirect);
-                toast.success('Người dùng đăng ký thành công');
+                navigate("/xac-nhan");
+                toast.info('Vui lòng xác nhận email này');
             } catch (err) {
                 console.log(err);
                 toast.error(err?.data?.message || err);

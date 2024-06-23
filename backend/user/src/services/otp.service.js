@@ -29,7 +29,7 @@ const generatorTokenRandom = async ({ payload, key }) => {
     }
 }
 
-const newOtp = async ({ user_email, user_name, user_password }) => {
+const newOtp = async ({ user_email, user_name , user_password }) => {
     const key = await crypto.randomBytes(64).toString('hex')
     const token = await generatorTokenRandom({ payload: { user_email, user_name, user_password }, key });
     const newToken = await OtpModel.create({
@@ -37,20 +37,29 @@ const newOtp = async ({ user_email, user_name, user_password }) => {
         otp_email: user_email,
         otp_key: key
     })
-
     return newToken
 }
 
 const checkEmailToken = async ({ token }) => {
-    const foundToken = await OtpModel.findOne({ otp_token: token })
+    const foundToken = await OtpModel.findOne({ otp_token: token }).lean()
 
     if (!foundToken) throw new errorResponse.NotFoundRequestError("token not found")
     const deleteOtp = await OtpModel.deleteOne({ otp_token: token }).lean()
-    console.log("foundToken", deleteOtp)
+    // console.log("foundToken", deleteOtp)
+    return foundToken
+}
+
+const checkEmailOtp = async ({ otp }) => {
+    const foundToken = await OtpModel.findOne({ otp_key: otp }).lean()
+
+    if (!foundToken) throw new errorResponse.NotFoundRequestError("token not found")
+    const deleteOtp = await OtpModel.deleteOne({ otp_key: otp }).lean()
+    // console.log("foundToken", deleteOtp)otp
     return foundToken
 }
 
 module.exports = {
     newOtp,
-    checkEmailToken
+    checkEmailToken,
+    checkEmailOtp
 }

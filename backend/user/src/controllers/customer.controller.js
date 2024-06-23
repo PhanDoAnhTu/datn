@@ -38,10 +38,13 @@ class CustomerController {
     checkLoginEmailToken = async (req, res, next) => {
         const { token = null } = req.query
 
-        return new successResponse.SuccessResponse({
-            message: "checkLoginEmailTokenService",
-            metaData: await this.service.checkLoginEmailTokenService({ token })
-        }).send(res)
+        const check = await this.service.checkLoginEmailTokenService({ token })
+        if (check) {
+            return res.status(200).redirect(`http://localhost:3000/xac-nhan/${check.message}`);
+        } else {
+            return res.status(500)
+        }
+
     }
     changeAvatar = async (req, res, next) => {
 
@@ -56,8 +59,30 @@ class CustomerController {
             metaData: await this.service.updateInfomation(req.body)
         }).send(res)
     }
-
-
+    resetPassword = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: "resetPassword",
+            metaData: await this.service.resetPassword(req.body)
+        }).send(res)
+    }
+    verifyOtp = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: "verifyOtp",
+            metaData: await this.service.verifyOtp(req.body)
+        }).send(res)
+    }
+    checkPassword = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: "checkPassword",
+            metaData: await this.service.checkPassword(req.body)
+        }).send(res)
+    }
+    changePassword = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: "changePassword",
+            metaData: await this.service.changePassword(req.body)
+        }).send(res)
+    }
 }
 
 module.exports = new CustomerController

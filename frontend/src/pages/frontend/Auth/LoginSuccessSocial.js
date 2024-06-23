@@ -23,7 +23,6 @@ const LoginSuccessSocial = () => {
       }
       if (provider === 'google') {
         const google = await dispatch(onLoginWithGoogle({ userId, provider }))
-        console.log("aaaa", google)
         if (google?.payload?.metaData?.customer) {
           toast.success("Đăng nhập bằng google thành công")
         } else {

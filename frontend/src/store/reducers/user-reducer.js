@@ -10,29 +10,31 @@ const UserReducer = (state = initialState, action) => {
         case Action.SIGNUP:
             return state
         case Action.LOGIN_WITH_FACEBOOK:
-            localStorage.setItem("userInfo", JSON.stringify(action.payload.metaData.customer));
+            localStorage.setItem("userInfo", JSON.stringify(action?.payload?.metaData?.customer));
             return {
                 ...state,
-                userInfo: action.payload.metaData.customer
+                userInfo: action?.payload?.metaData?.customer
             }
         case Action.LOGIN_WITH_GOOGLE:
-            localStorage.setItem("userInfo", JSON.stringify(action.payload.metaData.customer));
+            localStorage.setItem("userInfo", JSON.stringify(action?.payload?.metaData?.customer));
             return {
                 ...state,
-                userInfo: action.payload.metaData.customer
+                userInfo: action?.payload?.metaData?.customer
             }
         case Action.LOGIN:
-            localStorage.setItem("userInfo", JSON.stringify(action.payload.metaData.customer));
+            localStorage.setItem("userInfo", JSON.stringify(action?.payload?.metaData?.customer));
             return {
                 ...state,
-                userInfo: action.payload.metaData.customer
+                userInfo: action?.payload?.metaData?.customer
             }
         case Action.UPDATE_USER:
-            localStorage.setItem("userInfo", JSON.stringify(action.payload.metaData.customer));
+            localStorage.setItem("userInfo", JSON.stringify(action?.payload?.metaData?.customer));
             return {
                 ...state,
-                userInfo: action.payload.metaData.customer
+                userInfo: action?.payload?.metaData?.customer
             }
+        case Action.PASSWORD_USER:
+            return state
         case Action.LOGOUT:
 
             return {

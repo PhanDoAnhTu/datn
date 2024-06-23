@@ -65,16 +65,14 @@ class CheckoutService {
         if (spu_sale) {
           checkDateNow.special_offer_spu_list?.filter((spu_sale) => {
             if (prod.sku_id === null) {
-              const { price, ...prodNoPrice } = prod
-              checkProductServerSpecialOffer.push({ ...prodNoPrice, price: spu_sale.price_sale })
+              checkProductServerSpecialOffer.push({ ...prod, price_sale: spu_sale.price_sale })
               return
             }
             if (prod.sku_id !== null && spu_sale.sku_list.length > 0) {
               const sku_sale = spu_sale.sku_list.find((sku) => sku.sku_id == prod.sku_id)
 
               if (sku_sale) {
-                const { price, ...prodNoPrice } = prod
-                checkProductServerSpecialOffer.push({ ...prodNoPrice, price: sku_sale.price_sale })
+                checkProductServerSpecialOffer.push({ ...prod, price_sale: sku_sale.price_sale })
                 return
               }
             }
@@ -88,7 +86,7 @@ class CheckoutService {
     }
     // console.log("checkProductServerSpecialOffer",checkProductServerSpecialOffer)
     itemCheckout.priceApplySpecialOffer = checkProductServerSpecialOffer.reduce((acc, product) => {
-      return acc + (product.quantity * product.price)
+      return acc + (product.quantity * (product.price_sale ? product.price_sale : product.price))
     }, 0)
     checkout_oder.totalSpecialOffer = itemCheckout.priceRaw - itemCheckout.priceApplySpecialOffer
 
@@ -105,7 +103,9 @@ class CheckoutService {
       checkout_oder.totalDiscount = discount
       //neu tien giam gia >0
       itemCheckout.priceApplyPromotionAndDiscount = itemCheckout.priceRaw - checkout_oder.totalSpecialOffer - discount
-
+    }
+    if (checkProductServerSpecialOffer.length > 0) {
+      itemCheckout.item_products = checkProductServerSpecialOffer
     }
 
     //tong thanh toan
@@ -271,9 +271,12 @@ class CheckoutService {
   }
 
   async findOrderByTrackingNumber({ order_trackingNumber }) {
+
     const foundOrder = await OrderModel.findOne({ order_trackingNumber });
     if (!foundOrder)
       throw new errorResponse.BadRequestError("order not exitsts");
+
+    
 
     return foundOrder;
   }

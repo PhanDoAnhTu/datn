@@ -158,15 +158,15 @@ class DiscountService {
         let totalOrderDiscount = 0
         if (discount_min_order_value > 0) {
             totalOrder = products.reduce((acc, pro) => {
-                return acc + (pro.quantity * pro.price)
+                return acc + (pro.quantity * (pro.price_sale ? pro.price_sale : pro.price))
             }, 0)
             if (discount_applies_to === "specific") {
                 const discount_applies_to_products = await products.filter((product) => discount_product_ids.includes(product.productId) == true)
                 console.log(discount_applies_to_products)
                 totalOrderDiscount = discount_applies_to_products.reduce((acc, pro) => {
-                    return acc + (pro.quantity * pro.price)
+                    return acc + (pro.quantity *  (pro.price_sale ? pro.price_sale : pro.price))
                 }, 0)
-                console.log("discount_applies_to_products", discount_applies_to_products)
+                // console.log("discount_applies_to_products", discount_applies_to_products)
             }
             if (discount_applies_to === "all") {
                 totalOrderDiscount = totalOrder

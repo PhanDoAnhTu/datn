@@ -23,6 +23,7 @@ passport.use(
           customer_email: profile.emails[0].value
         }
       })
+      console.log(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",user)
       if (!user) {
         console.log('Adding new google user to DB..');
         const newCustomer = await RPCRequest("CUSTOMER_RPC", {

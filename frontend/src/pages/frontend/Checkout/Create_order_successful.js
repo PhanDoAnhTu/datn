@@ -42,7 +42,7 @@ export default function CreateOrderSuccess() {
 
     return (
         <div className="flex h-screen justify-center overflow-hidden pb-7 pt-10 text-white md:pt-24">
-                        <DocumentTitle title="Xác nhận đơn hàng" />
+            <DocumentTitle title="Xác nhận đơn hàng" />
 
             <div className="mt-24 flex flex-col ">
                 {isLoading == false ? (

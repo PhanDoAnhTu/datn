@@ -4,12 +4,12 @@ const transport = require("../database/nodemailer");
 const { replacePlaceholder } = require("../utils");
 const TemplateService = require("./template.service");
 
-const sendEmailLinkVerify = async ({ html, toEmail, subject = "xac nhan", text = "..." }) => {
+const sendEmailLinkVerify = async ({ html, toEmail, subject = "Xác nhận Email", text = "..." }) => {
     try {
         const mailOption = {
             from: `"OUTRUNNER STORE" <phandoanhtu0291@gmail.com>`,
             to: toEmail,
-            subject: "Xac nhan",
+            subject: subject,
             text,
             html
         }
@@ -17,16 +17,16 @@ const sendEmailLinkVerify = async ({ html, toEmail, subject = "xac nhan", text =
             if (err) {
                 return console.log(err)
             }
-            console.log("message sent :: ", info.messageId)
+            // console.log("message sent :: ", info.messageId)
         })
     } catch (error) {
-
         console.log(error);
         return error
-
     }
 
 }
+
+
 
 const sendEmailToken = async ({ user_email, token }) => {
     try {
@@ -36,8 +36,8 @@ const sendEmailToken = async ({ user_email, token }) => {
         if (!template) {
             return console.log("not found tem")
         }
-        console.log("otp_token", token.otp_token)
-        const content = replacePlaceholder(template.tem_html, { link_verify: `http://localhost:5000/user/v1/api/customer/welcome?token=${token.otp_token}`,user_email:user_email,store_name:"OUTRUNNER STORE" })
+        // console.log("otp_token", token.otp_token)
+        const content = replacePlaceholder(template.tem_html, { link_verify: `http://localhost:5000/api/user/v1/customer/welcome?token=${token.otp_token}`, user_email: user_email, store_name: "OUTRUNNER STORE", button_text: "Verify Email" })
 
         sendEmailLinkVerify({
             html: content,
@@ -52,7 +52,34 @@ const sendEmailToken = async ({ user_email, token }) => {
     }
 
 }
+
+
+const sendEmailOTP = async ({ user_email, otp }) => {
+    try {
+        const template = await TemplateService.getTemplate({
+            tem_name: "HTML EMAIL TOKEN"
+        })
+        if (!template) {
+            return console.log("not found tem")
+        }
+        // console.log("otp_token", token.otp_token)
+        const content = replacePlaceholder(template.tem_html, { link_verify: `#`, user_email: user_email, store_name: "OUTRUNNER STORE", button_text: otp })
+
+        sendEmailLinkVerify({
+            html: content,
+            toEmail: user_email,
+            subject: "OTP Xác nhận Email"
+        }).catch(error =>
+            console.log(error)
+        )
+        return 1
+    } catch (error) {
+        return null
+    }
+
+}
 module.exports = {
     sendEmailToken,
     sendEmailLinkVerify,
+    sendEmailOTP
 }

@@ -317,8 +317,8 @@ const PromotionAdd = () => {
       special_offer_name: data.special_offer_name,
       special_offer_description: data.special_offer_description,
       special_offer_image: "",
-      special_offer_start_date: `${data.special_offer_start_date.$y}-${data.special_offer_start_date.$M + 1}-${data.special_offer_start_date.$D + 1} 00:00:00`,
-      special_offer_end_date: `${data.special_offer_end_date.$y}-${data.special_offer_end_date.$M + 1}-${data.special_offer_end_date.$D + 1} 00:00:00`,
+      special_offer_start_date: `${data.special_offer_start_date.$y}-${data.special_offer_start_date.$M + 1}-${data.special_offer_start_date.$D} 00:00:01`,
+      special_offer_end_date: `${data.special_offer_end_date.$y}-${data.special_offer_end_date.$M + 1}-${data.special_offer_end_date.$D} 00:00:01`,
       special_offer_is_active: false,
       special_offer_spu_list: data.special_offer_spu_list,
     }

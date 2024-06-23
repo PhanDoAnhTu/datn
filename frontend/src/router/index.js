@@ -58,7 +58,7 @@ const router = createBrowserRouter(
             <Route index={true} path="/" element={<Home />} />
             <Route path="/dang-nhap" element={<Login />} />
             <Route path="/dang-ky" element={<Register />} />
-            <Route path="/dang-ky-thanh-cong" element={<RegisterComplete />} />
+            <Route path="/xac-nhan/:status?" element={<RegisterComplete />} />
 
             <Route
                 path="/san-pham-theo-danh-muc/:category1?/:category2?/:category3?"

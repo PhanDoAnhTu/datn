@@ -17,6 +17,10 @@ router.post('/logout', asynchandler(customerController.logout))
 router.post('/handlerRefreshToken', asynchandler(customerController.handlerRefreshToken))
 router.post('/changeAvatar', asynchandler(customerController.changeAvatar))
 router.post('/updateInfomation', asynchandler(customerController.updateInfomation))
+router.post('/resetPassword', asynchandler(customerController.resetPassword))
+router.post('/verifyOtp', asynchandler(customerController.verifyOtp))
+router.post('/changePassword', asynchandler(customerController.changePassword))
+router.post('/checkPassword', asynchandler(customerController.checkPassword))
 
 
 module.exports = router

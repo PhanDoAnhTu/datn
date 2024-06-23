@@ -63,11 +63,20 @@ export default function UserPopover() {
                                                 <div className="flex flex-col items-center justify-items-center space-y-2 px-2 py-4 pb-10 text-white">
                                                     {/* <UserIcon className="h-10 w-10 drop-shadow-md"  /> */}
                                                     <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-white">
-                                                        <img
-                                                            src={userInfo?.customer_avatar}
-                                                            alt="avatar"
-                                                            className="object-cover object-center"
-                                                        />
+                                                        {
+                                                            userInfo.customer_avatar != ""
+                                                                ? <img
+                                                                    src={userInfo?.customer_avatar}
+                                                                    alt="avatar"
+                                                                    className="object-cover object-center"
+                                                                />
+                                                                : <div className="flex h-20 w-20 items-center justify-center rounded-full bg-stone-300 text-gray-500 dark:bg-magenta-400 dark:text-white">
+                                                                    <UserIcon className="h-10 w-10 drop-shadow-md" />
+                                                                </div>
+
+
+                                                        }
+
                                                     </div>
 
 

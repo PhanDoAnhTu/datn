@@ -39,7 +39,7 @@ export default function Checkout() {
 
     const [email, setEmail] = useState(userInfo?.customer_email);
     const [fullname, setFullName] = useState(addressDefault ? addressDefault?.customer_name : "");
-    const [phonenumber, setPhoneNumber] = useState(addressDefault ? addressDefault?.phone_number : "");
+    const [phonenumber, setPhoneNumber] = useState(addressDefault ? addressDefault?.phone_number : (userInfo?.customer_phone ? userInfo?.customer_phone : ""));
     const [address, setAddress] = useState(addressDefault ? addressDefault?.street : "");
     // const [cancelDiscount, setCancelDiscount] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState('COD');

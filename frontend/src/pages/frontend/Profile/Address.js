@@ -28,7 +28,7 @@ export default function Address() {
     };
     useEffect(() => {
         fetchDataAddress();
-    }, []);
+    }, [userInfo]);
 
     const remove = async () => {
         if (addressCurrent) {

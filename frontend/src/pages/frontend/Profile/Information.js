@@ -2,8 +2,9 @@ import { Dialog, Tab, Transition } from '@headlessui/react';
 import GenderSelection from '../../../components/frontend/GenderSelection';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { upLoadImageSingle, changeAvatar } from '../../../store/actions';
+import { upLoadImageSingle, changeAvatar, checkPassword, onChangePassword } from '../../../store/actions';
 import { toast } from 'react-toastify';
+import { UserIcon } from '@heroicons/react/24/outline';
 
 export default function Information() {
     const [isEditable, setIsEditable] = useState(false);
@@ -37,35 +38,80 @@ export default function Information() {
     function openModal() {
         setIsOpen(true);
     }
-    const handleIsForgot = (signal) => {
-        //if signal equal 1, modal will close and set all variable to their default
-        if (signal !== -1) {
-            //if isForgot equal 0 that means user is at enter old password
-            if (isForgot === 0) {
-                //call a service that checking if old password is valid in database
+    const handleIsForgot = async (signal) => {
+        if (signal == -1) {
+            closeModal();
+            setIsForgot(0);
+            setOldPassword('');
+            setPassword('');
+            setRepassword('');
+            return
+        }
+        if (isForgot === 0) {
+            const id = toast.loading("Vui lòng chờ...")
+            const check = await dispatch(checkPassword({ customer_email: userInfo.customer_email, customer_password: oldpassword }))
+            if (check?.payload?.status === (200 || 201)) {
+                toast.update(id, {
+                    render: 'Mật khẩu cũ đúng, hãy nhập mật khẩu mới',
+                    type: 'success',
+                    isLoading: false,
+                    closeOnClick: true,
+                    autoClose: 2000,
+                });
                 setIsForgot(signal);
-                return;
+            } else {
+                toast.update(id, {
+                    render: 'Mật khẩu cũ sai',
+                    type: 'error',
+                    isLoading: false,
+                    closeOnClick: true,
+                    autoClose: 3000,
+                });
             }
-            return;
         }
-        closeModal();
-        setIsForgot(0);
-        setOldPassword('');
-        setPassword('');
-        setRepassword('');
+
     };
-    const changePassword = () => {
-        //call a service that change the password here before close modal
+    const changePassword = async () => {
+
         if (password !== repassword) {
-            alert('Not matching');
+            toast.error("Nhập lại mật khẩu không khớp");
             return;
         }
+        if (isForgot == 1) {
+            const id = toast.loading("Vui lòng chờ...")
+
+            const change = await dispatch(onChangePassword({ customer_email: userInfo.customer_email, customer_password: password }))
+            if (change?.payload?.status === (200 || 201)) {
+                toast.update(id, {
+                    render: 'Đổi mật khẩu thành công',
+                    type: 'success',
+                    isLoading: false,
+                    closeOnClick: true,
+                    autoClose: 3000,
+                });
+                closeModal();
+                setIsForgot(0);
+                setOldPassword('');
+                setRepassword('');
+                setPassword('');
+                return
+            }
+            toast.update(id, {
+                render: 'Đổi mật khẩu không thành công',
+                type: 'error',
+                isLoading: false,
+                closeOnClick: true,
+                autoClose: 3000,
+            });
+        }
+
         closeModal();
         setIsForgot(0);
         setOldPassword('');
         setRepassword('');
         setPassword('');
-        alert(password);
+        return
+
     };
     let [open, setOpen] = useState(false);
     const cancelButtonRef = useRef(null);
@@ -77,6 +123,7 @@ export default function Information() {
             setImage(files[0])
         }
     }
+
     const onSaveChange = async () => {
         if (image) {
             const id = toast.loading("Đang cập nhật ảnh đại diện")
@@ -134,11 +181,16 @@ export default function Information() {
             <div className="flex items-center max-sm:flex-col max-sm:justify-center max-sm:space-y-5 sm:space-x-6">
                 <div className="relative">
                     <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-white">
-                        <img
-                            src={userInfo?.customer_avatar}
-                            alt=""
-                            className="object-cover object-center"
-                        />
+
+                        {userInfo.customer_avatar
+                            ? <img
+                                src={userInfo?.customer_avatar}
+                                alt=""
+                                className="object-cover object-center"
+                            />
+                            : <div className="flex h-20 w-20 items-center justify-center rounded-full bg-stone-300 text-gray-500 dark:bg-magenta-400 dark:text-white">
+                                <UserIcon className="h-10 w-10 drop-shadow-md" />
+                            </div>}
                     </div>
                 </div>
                 <div className="flex flex-col justify-center space-y-1 max-sm:items-center">
@@ -313,12 +365,16 @@ export default function Information() {
             <div className="flex items-center justify-end space-x-2">
                 {!isEditable ? (
                     <>
-                        <button
-                            onClick={openModal}
-                            className="rounded-md border-2 border-gray-900 px-5 py-1 text-gray-900 transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 dark:border-white dark:text-white"
-                        >
-                            Đổi mật khẩu
-                        </button>
+                        {userInfo?.customer_provider == 'google' || userInfo?.customer_provider == "facebook"
+                            ? <></>
+                            : <button
+                                onClick={openModal}
+                                className="rounded-md border-2 border-gray-900 px-5 py-1 text-gray-900 transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 dark:border-white dark:text-white"
+                            >
+                                Đổi mật khẩu
+                            </button>
+                        }
+
                         <Transition appear show={isOpen} as={Fragment}>
                             <Dialog
                                 as="div"
@@ -510,7 +566,7 @@ export default function Information() {
                             </Dialog>
                         </Transition>
                         <button
-                            onClick={() =>setIsEditable(true)}
+                            onClick={() => setIsEditable(true)}
                             className="rounded-md border-2 border-gray-900 px-5 py-1 text-gray-900 transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 dark:border-white dark:text-white"
                         >
                             Chỉnh sửa

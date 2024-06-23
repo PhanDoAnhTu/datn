@@ -7,7 +7,7 @@ const DOCUMENT_NAME = "customer"
 const COLLECTION_NAME = "customers"
 
 const customerSchema = new Schema({
-    customer_account_id: { type: String, default: "1" },
+    customer_account_id: { type: String, default: "" },
     customer_slug: { type: String, default: "" },
     customer_name: { type: String, default: "" },
     customer_password: { type: String, default: "" },

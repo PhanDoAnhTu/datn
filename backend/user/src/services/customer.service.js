@@ -7,9 +7,9 @@ const { GeneratePassword, GenerateSignature, getIntoData } = require('../utils')
 const crypto = require('crypto');
 const keyTokenService = require('./keyToken.service');
 const { verifyJWT } = require('../auth/authUtils');
-const { sendEmailToken } = require('./email.service');
+const { sendEmailToken, sendEmailOTP } = require('./email.service');
 const { CustomerModel } = require('../database/models');
-const { checkEmailToken, newOtp } = require('./otp.service');
+const { checkEmailToken, newOtp, checkEmailOtp } = require('./otp.service');
 const jwt = require("jsonwebtoken");
 
 class CustomerService {
@@ -23,8 +23,7 @@ class CustomerService {
         if (!foundCustomer) {
             throw new errorResponse.ForbiddenRequestError("auth err")
         }
-
-        const match = bcrypt.compare(customer_password, foundCustomer.customer_password)
+        const match = await bcrypt.compare(customer_password, foundCustomer.customer_password)
         if (!match) {
             throw new errorResponse.ForbiddenRequestError("auth err not math")
         }
@@ -122,11 +121,10 @@ class CustomerService {
                 }
                 //create tokenpair
                 const tokens = await GenerateSignature({ customerId: newCustomer._id, customer_email: email }, publicKey, privateKey)
-                customer = await getIntoData({ fileds: ['_id', 'customer_name', 'customer_email'], object: newCustomer }),
+                customer = await getIntoData({ fileds: ['_id', 'customer_name', 'customer_email'], object: newCustomer })
 
-                    console.log("tokens:;;", tokens)
                 return {
-                    message: "Success created customer",
+                    message: "dang-ky-tai-khoan-thanh-cong",
                     customer,
                     tokens
                 }
@@ -186,11 +184,66 @@ class CustomerService {
         }
     }
     async changeAvatar({ customer_id, image }) {
-        const updateInfo = await CustomerModel.findOneAndUpdate({ _id: customer_id }, { customer_avatar: image }, { upsert: true })
+        const updateInfo = await CustomerModel.findOneAndUpdate({ _id: customer_id }, {
+            $set: {
+                customer_avatar: image
+            }
+        }, { upsert: true, new: true })
 
         return { customer: updateInfo }
+    }
+
+    async changePassword({ customer_email, customer_password }) {
+        const passwordHash = await GeneratePassword(customer_password, 10)
+
+        const updateInfo = await CustomerModel.findOneAndUpdate({ customer_email: customer_email }, {
+            $set: {
+                customer_password: passwordHash
+            }
+        }, { upsert: true, new: true })
+
+        return updateInfo
 
     }
+
+    async verifyOtp({ otp }) {
+
+        const { otp_token, otp_key } = await checkEmailOtp({ otp })
+        const { user_email, user_password } = await jwt.verify(otp_token, otp_key)
+
+        const updatePassword = await this.changePassword({ customer_email: user_email, user_password })
+
+        return updatePassword
+    }
+
+    async checkPassword({ customer_email, customer_password }) {
+
+        const foundCustomer = await this.repository.findByEmail(customer_email)
+        if (!foundCustomer) {
+            throw new errorResponse.ForbiddenRequestError("auth err")
+        }
+        const match = await bcrypt.compare(customer_password, foundCustomer.customer_password)
+        if (!match) {
+            throw new errorResponse.ForbiddenRequestError("auth err not math")
+        }
+        console.log(customer_email, customer_password, match, "ssssssssssssssss")
+        return true
+    }
+
+
+
+    async resetPassword({ customer_email, customer_password }) {
+
+        const hodelCustomer = await this.repository.findByEmail(customer_email)
+        if (!hodelCustomer) {
+            throw new errorResponse.NotFoundRequestError("customer not found")
+        }
+        const otp = await newOtp({ user_email: hodelCustomer.customer_email, user_name: hodelCustomer.customer_name, user_password: customer_password })
+        const result = await sendEmailOTP({ user_email: customer_email, otp })
+
+        return result
+    }
+
     async updateInfomation({
         customer_id,
         customer_name,
@@ -211,8 +264,10 @@ class CustomerService {
             }
         }, options = {
             upsert: true,
+            new: true 
         }
-        return await CustomerModel.findOneAndUpdate(query, updateSet, options)
+        const cus = await CustomerModel.findOneAndUpdate(query, updateSet, options)
+        return { customer: cus }
     }
 
     async serverRPCRequest(payload) {
@@ -233,7 +288,6 @@ class CustomerService {
                 return await this.loginWithSocial({ customer_account_id, customer_provider });
             case "FIND_CUSTOMER_BY_ID":
                 return await this.findCustomerById({ customer_id });
-
             default:
                 break;
         }
