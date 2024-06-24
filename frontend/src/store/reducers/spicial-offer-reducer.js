@@ -1,7 +1,7 @@
 import { Action } from '../actions'
 
 const initialState = {
-    spicial_offer: null,
+    special_offer: null,
 }
 
 const Special_offerReducer = (state = initialState, action) => {
@@ -12,7 +12,7 @@ const Special_offerReducer = (state = initialState, action) => {
         case Action.SPICIAL_OFFER_TODAY:
             return {
                 ...state,
-                spicial_offer: action.payload.metaData
+                special_offer: action.payload.metaData
             }
         default:
             return state;

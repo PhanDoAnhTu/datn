@@ -226,7 +226,7 @@ export default function Category() {
     useEffect(() => {
         setFilteredProducts(products);
     }, [products]);
-
+9
     useEffect(() => {
         setPage(1);
         if (selectedBrands?.length === 0) {

@@ -37,7 +37,6 @@ export default function ProductDetail() {
     const [favories_products, setfavoriesProduct] = useState(
         getFavoritesFromLocalStorage()
     );
-
     const [variations, setVariations] = useState([]);
     const [selectedVariation, setSelectedVariation] = useState(null);
 
@@ -143,6 +142,7 @@ export default function ProductDetail() {
                 });
             } else {
                 setSale(special_offer);
+                return
             }
         }
     }, [special_offer]);

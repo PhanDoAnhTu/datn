@@ -105,7 +105,7 @@ export const changeSkuIdFromCart = (sku, cart_products) => {
 
     if (sku_new_in_cart && !sku_new_in_selected_sku) {
       update_selected_list.push({
-        sku_id: sku.sku_id, quantity: sku.quantity + sku_new_in_cart.quantity, productId: sku.productId, price: sku.price,
+        sku_id: sku.sku_id, quantity: sku.quantity + sku_new_in_cart.quantity, productId: sku.productId, price: sku.price, price_sale: sku.price_sale,
         product_name: sku.product_name,
         product_slug_id: sku.product_slug_id,
         product_variation: sku.product_variation,
@@ -120,19 +120,18 @@ export const changeSkuIdFromCart = (sku, cart_products) => {
         ({ sku_id }) => sku_id.toString() !== sku_new_in_selected_sku.sku_id.toString()
       );
       update_selected_list_v2.push({
-        sku_id: sku.sku_id, quantity: sku.quantity + sku_new_in_cart.quantity, productId: sku.productId, price: (sku.quantity + sku_new_in_cart.quantity) * sku.price, product_name: sku.product_name,
+        sku_id: sku.sku_id, quantity: sku.quantity + sku_new_in_cart.quantity, productId: sku.productId, price: (sku.quantity + sku_new_in_cart.quantity) * sku.price, price_sale: (sku.quantity + sku_new_in_cart.quantity) * sku.price_sale, product_name: sku.product_name,
         product_slug_id: sku.product_slug_id,
         product_variation: sku.product_variation,
         product_image: sku.product_image,
         product_option: sku.product_option
-
 
       })
       localStorage.setItem("selected_list_from_cart", JSON.stringify(update_selected_list_v2));
       return
     }
     update_selected_list.push({
-      sku_id: sku.sku_id, quantity: sku.quantity, productId: sku.productId, price: sku.price, product_name: sku.product_name,
+      sku_id: sku.sku_id, quantity: sku.quantity, productId: sku.productId, price: sku.price, price_sale: sku.price_sale, product_name: sku.product_name,
       product_slug_id: sku.product_slug_id,
       product_variation: sku.product_variation,
       product_image: sku.product_image,

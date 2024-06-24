@@ -160,12 +160,6 @@ export default function CartPopover({ Button }) {
             navigate('/dang-nhap');
         }
     };
-    // useEffect(() => {
-    //     if (userInfo) {
-    //         dispatch(getCart({ userId: userInfo._id }));
-    //         dispatch(specialOfferToday());
-    //     }
-    // }, [userInfo]);
     useEffect(() => {
         special_offer && setSpecial_offer_today(special_offer);
     }, [special_offer]);
@@ -174,7 +168,7 @@ export default function CartPopover({ Button }) {
         setprice_total(
             selectedProductFromCart?.reduce(
                 (accumulator, currentValue) =>
-                    accumulator + currentValue.price * currentValue.quantity,
+                    accumulator + (currentValue.price_sale ? currentValue.price_sale : currentValue.price) * currentValue.quantity,
                 0
             )
         );

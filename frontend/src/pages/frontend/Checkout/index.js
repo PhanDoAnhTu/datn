@@ -104,7 +104,7 @@ export default function Checkout() {
         setPrice(
             selectedProductFromCart?.reduce(
                 (accumulator, currentValue) =>
-                    accumulator + currentValue.price * currentValue.quantity,
+                    accumulator + (currentValue.price_sale ? currentValue.price_sale : currentValue.price) * currentValue.quantity,
                 0
             )
         );
@@ -154,7 +154,7 @@ export default function Checkout() {
                                                             className="h-full w-full object-cover object-center"
                                                         />
                                                     </div>
-                                                    <div className="ml-4 flex flex-1 flex-col">
+                                                    <div className="ml-3 flex flex-1 flex-col">
                                                         <div>
                                                             <div className="flex justify-between text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                                                                 <h3 className="line-clamp-3 text-ellipsis">
@@ -166,7 +166,42 @@ export default function Checkout() {
                                                                         }
                                                                     </Link>
                                                                 </h3>
-                                                                <p className="ml-4 text-gray-900 transition-colors duration-200 ease-out dark:text-white">
+                                                                <p className=" text-gray-900 transition-colors duration-200 ease-out dark:text-white">
+                                                                    {product.price_sale ? <NumericFormat
+                                                                        value={
+                                                                            product.price_sale
+                                                                        }
+                                                                        displayType="text"
+                                                                        thousandSeparator={
+                                                                            true
+                                                                        }
+                                                                        decimalScale={
+                                                                            0
+                                                                        }
+                                                                        id="price"
+                                                                        suffix={
+                                                                            'đ'
+                                                                        }
+                                                                    />
+                                                                        :
+                                                                        <NumericFormat
+                                                                            value={
+                                                                                product.price
+                                                                            }
+                                                                            displayType="text"
+                                                                            thousandSeparator={
+                                                                                true
+                                                                            }
+                                                                            decimalScale={
+                                                                                0
+                                                                            }
+                                                                            id="price"
+                                                                            suffix={
+                                                                                'đ'
+                                                                            }
+                                                                        />}
+                                                                </p>
+                                                                {product.price_sale && <s className='text-red-500 ml-2'>
                                                                     <NumericFormat
                                                                         value={
                                                                             product.price
@@ -182,8 +217,7 @@ export default function Checkout() {
                                                                         suffix={
                                                                             'đ'
                                                                         }
-                                                                    />
-                                                                </p>
+                                                                    /></s>}
                                                             </div>
                                                             <div className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
                                                                 {product.product_option.map(

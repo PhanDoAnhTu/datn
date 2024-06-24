@@ -27,6 +27,7 @@ export default function CartPopoverItem({
     const [selected, setSelected] = useState(null);
     const [selected_sku, setSelected_sku] = useState(null);
     const [_quantity, setQuantity] = useState(null);
+    const [special_offer, setSpicial_offer] = useState(null);
 
     //sale
     const [sku_sale, setSku_sale] = useState(null);
@@ -56,35 +57,44 @@ export default function CartPopoverItem({
                             item._id.toString() === product.sku_id.toString()
                     ).sku_tier_idx
                 );
+                setPrice(respon.payload.metaData.sku_list.find(
+                    (item) =>
+                        item._id.toString() === product.sku_id.toString()
+                ).sku_price);
+            } else {
+                setPrice(respon.payload.metaData?.spu_info?.product_price);
             }
 
-            setPrice(respon.payload.metaData?.spu_info?.product_price);
         }
     };
+    useEffect(() => {
+        setSpicial_offer(special_offer_today?.special_offer_spu_list?.find(
+            (spu) => spu.product_id == product.productId
+        ))
+    }, [])
 
     useEffect(() => {
         productItemApi();
         setQuantity(product.quantity);
     }, [state]);
 
-    useEffect(() => {
-        selected &&
-            special_offer_today &&
-            special_offer_today.special_offer_spu_list.filter((spu) => {
-                if (
-                    spu.product_id.toString() === product.productId.toString()
-                ) {
-                    return spu.sku_list.filter((sku) => {
-                        if (
-                            sku.sku_tier_idx.toString() === selected.toString()
-                        ) {
-                            setSku_sale(sku);
-                            return;
-                        }
-                    });
-                }
-            });
-    }, [selected, special_offer_today]);
+    // useEffect(() => {
+    //     if (special_offer) {
+    //         if (special_offer?.sku_list?.length > 0) {
+    //             special_offer?.sku_list.map((sku) => {
+    //                 if (
+    //                     sku.sku_tier_idx.toString() ==
+    //                     selected.toString()
+    //                 ) {
+    //                     setSku_sale(sku);
+    //                     return;
+    //                 }
+    //             });
+    //         } else {
+    //             setSku_sale(special_offer);
+    //         }
+    //     }
+    // }, [selected, special_offer]);
 
     const changeVariation = async (value, variationOrder) => {
         setSelected((s) => {
@@ -116,24 +126,35 @@ export default function CartPopoverItem({
                 sku_id_old: selected_sku_old._id,
                 quantity: _quantity,
             }) &
-                checkbox('variation', {
-                    productId: product.productId,
-                    quantity: _quantity,
-                    old_quantity: _quantity,
-                    sku_id: selected_sku._id,
-                    sku_id_old: selected_sku_old._id,
-                    price: sku_sale
-                        ? sku_sale.sku_id == selected_sku?._id &&
-                          sku_sale.price_sale
-                        : selected_sku
-                          ? selected_sku.sku_price
-                          : price,
-                    product_name: product_item?.spu_info?.product_name,
-                    product_image: product_item?.spu_info?.product_thumb,
-                    product_slug_id: `${product_item?.spu_info?.product_slug}-${product_item?.spu_info?._id}`,
-                    product_variation: selected,
-                    product_option: product_item?.spu_info?.product_variations,
+            checkbox('variation', {
+                productId: product.productId,
+                quantity: _quantity,
+                old_quantity: _quantity,
+                sku_id: selected_sku._id,
+                sku_id_old: selected_sku_old._id,
+                price: price,
+                price_sale: sku_sale ? sku_sale.price_sale : null,
+                product_name: product_item?.spu_info?.product_name,
+                product_image: product_item?.spu_info?.product_thumb,
+                product_slug_id: `${product_item?.spu_info?.product_slug}-${product_item?.spu_info?._id}`,
+                product_variation: selected,
+                product_option: product_item?.spu_info?.product_variations,
+            });
+        if (special_offer) {
+            if (special_offer?.sku_list?.length > 0) {
+                special_offer?.sku_list.map((sku) => {
+                    if (
+                        sku?.sku_tier_idx?.toString() ==
+                        selected?.toString()
+                    ) {
+                        setSku_sale(sku);
+                        return;
+                    }
                 });
+            } else {
+                setSku_sale(special_offer);
+            }
+        }
     }, [selected_sku]);
 
     useEffect(() => {
@@ -230,13 +251,9 @@ export default function CartPopoverItem({
                                             sku_id: selected_sku._id,
                                             quantity: _quantity,
                                             productId: selected_sku.product_id,
-                                            price: sku_sale
-                                                ? sku_sale.sku_id ==
-                                                      selected_sku?._id &&
-                                                  sku_sale.price_sale
-                                                : selected_sku
-                                                  ? selected_sku.sku_price
-                                                  : price,
+                                            price: price,
+                                            price_sale: sku_sale ? sku_sale.price_sale : null,
+
                                             product_name:
                                                 product_item?.spu_info
                                                     ?.product_name,
@@ -263,13 +280,9 @@ export default function CartPopoverItem({
                                             sku_id: selected_sku._id,
                                             quantity: _quantity,
                                             productId: selected_sku.product_id,
-                                            price: sku_sale
-                                                ? sku_sale.sku_id ==
-                                                      selected_sku?._id &&
-                                                  sku_sale.price_sale
-                                                : selected_sku
-                                                  ? selected_sku.sku_price
-                                                  : price,
+                                            price: price,
+                                            price_sale: sku_sale ? sku_sale.price_sale : null,
+
                                             product_name:
                                                 product_item?.spu_info
                                                     ?.product_name,
@@ -304,21 +317,20 @@ export default function CartPopoverItem({
                             <a href={''}>
                                 {product_item &&
                                     (product_item.spu_info.product_name.length >
-                                    25
+                                        25
                                         ? product_item.spu_info.product_name
-                                              .substr(3)
-                                              .padEnd(
-                                                  product_item.spu_info
-                                                      .product_name.length,
-                                                  '...'
-                                              )
+                                            .substr(3)
+                                            .padEnd(
+                                                product_item.spu_info
+                                                    .product_name.length,
+                                                '...'
+                                            )
                                         : product_item.spu_info.product_name)}
                             </a>
                         </h3>
                         <div className="flex flex-col ">
                             <p className="text-md font-medium text-gray-900 dark:text-white">
-                                {sku_sale &&
-                                sku_sale?.sku_id == selected_sku?._id ? (
+                                {sku_sale ? (
                                     <NumericFormat
                                         value={sku_sale.price_sale}
                                         displayType="text"
@@ -339,17 +351,16 @@ export default function CartPopoverItem({
                                 )}
                             </p>
                             <p className="text-sm font-medium  text-gray-400/75 line-through decoration-rose-700 ">
-                                {sku_sale &&
-                                    sku_sale?.sku_id == selected_sku?._id && (
-                                        <NumericFormat
-                                            value={price}
-                                            displayType={'text'}
-                                            thousandSeparator={true}
-                                            decimalScale={0}
-                                            id="price"
-                                            suffix={'đ'}
-                                        />
-                                    )}
+                                {sku_sale && (
+                                    <NumericFormat
+                                        value={price}
+                                        displayType={'text'}
+                                        thousandSeparator={true}
+                                        decimalScale={0}
+                                        id="price"
+                                        suffix={'đ'}
+                                    />
+                                )}
                             </p>
                         </div>
                     </div>
@@ -390,9 +401,9 @@ export default function CartPopoverItem({
                                                                                     index
                                                                                 ]
                                                                                     .options[
-                                                                                    selected[
-                                                                                        index
-                                                                                    ]
+                                                                                selected[
+                                                                                index
+                                                                                ]
                                                                                 ]}
                                                                         </span>
                                                                     </span>
@@ -511,13 +522,8 @@ export default function CartPopoverItem({
                                         productId: product.productId,
                                         quantity: _quantity - 1,
                                         sku_id: selected_sku._id,
-                                        price: sku_sale
-                                            ? sku_sale.sku_id ==
-                                                  selected_sku?._id &&
-                                              sku_sale.price_sale
-                                            : selected_sku
-                                              ? selected_sku.sku_price
-                                              : price,
+                                        price: price,
+                                        price_sale: sku_sale ? sku_sale.price_sale : null,
                                         product_name:
                                             product_item?.spu_info
                                                 ?.product_name,
@@ -554,13 +560,9 @@ export default function CartPopoverItem({
                                         productId: product?.productId,
                                         quantity: _quantity + 1,
                                         sku_id: selected_sku._id,
-                                        price: sku_sale
-                                            ? sku_sale.sku_id ==
-                                                  selected_sku?._id &&
-                                              sku_sale.price_sale
-                                            : selected_sku
-                                              ? selected_sku.sku_price
-                                              : price,
+                                        price: price,
+                                        price_sale: sku_sale ? sku_sale.price_sale : null,
+
                                         product_name:
                                             product_item?.spu_info
                                                 ?.product_name,
