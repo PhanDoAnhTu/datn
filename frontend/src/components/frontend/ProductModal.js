@@ -55,7 +55,6 @@ export default function ProductModal() {
     // const [comment, setComment] = useState([]);
 
     const getProductDetail = async (product_id) => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
         const responseProductDetail = await dispatch(
             onProductDetail({ spu_id: product_id })
         );
