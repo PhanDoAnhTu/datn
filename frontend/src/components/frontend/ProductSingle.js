@@ -59,7 +59,7 @@ export default function ProductSingle({ product, reload }) {
                 loadData();
             }, 3000);
         }
-    }, []);
+    }, [product]);
     useEffect(() => {
         review?.length > 0 &&
             setRating_score_avg(

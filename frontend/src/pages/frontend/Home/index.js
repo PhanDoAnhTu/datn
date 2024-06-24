@@ -25,9 +25,9 @@ export default function Home() {
     const fetchData = async () => {
         !all_products && dispatch(allProducts({}));
         // dispatch(findListBrand());
-        !slider && dispatch(getSliderByActive({ slider_is_active: true, }));
+        !slider && dispatch(getSliderByActive({ slider_is_active: true }));
         !product_best_selling && dispatch(findProductbestSelling({}));
-    }
+    };
 
     useEffect(() => {
         try {

@@ -89,6 +89,8 @@ export default {
             height: {
                 square: '44rem',
                 '1/2square': '30rem',
+                '1/3square': '36rem',
+                '32square': '33rem',
                 '9/10': '90%',
             },
         },

@@ -33,15 +33,33 @@ export default function Order() {
     const statusOrder = (item) => {
         switch (item.order_status) {
             case 'confirmed':
-                return 'Đã xác nhận';
-            case 'shipped':
-                return 'Đang giao';
+                return (
+                    <span className="font-bold text-green-400">
+                        Đã xác nhận
+                    </span>
+                );
+            case 'shipping':
+                return (
+                    <span className="font-bold text-green-400">Đang giao</span>
+                );
+            case 'review':
+                return (
+                    <span className="font-bold text-xanthous-400">
+                        Đã đánh giá
+                    </span>
+                );
             case 'cancelled':
-                return 'Đã hủy';
+                return <span className="font-bold text-rose-500">Đã hủy</span>;
             case 'successful':
-                return 'Đã nhận';
+                return (
+                    <span className="font-bold text-green-400">Đã nhận</span>
+                );
             default:
-                return 'Chờ xác nhận';
+                return (
+                    <span className="font-bold text-gray-400">
+                        Chờ xác nhận
+                    </span>
+                );
         }
     };
     return (
@@ -89,31 +107,30 @@ export default function Order() {
                                         <div className="text-md flex justify-end space-x-2 text-gray-900 dark:text-white">
                                             <span className="border-r-2 pr-2 ">
                                                 {item.createdOn &&
-                                                    dayjs(item.createdOn).format(
-                                                        'hh:mm DD/MM/YYYY'
-                                                    )
+                                                dayjs(item.createdOn).format(
+                                                    'hh:mm DD/MM/YYYY'
+                                                )
                                                     ? dayjs().diff(
-                                                        dayjs(item.createdOn),
-                                                        'minute'
-                                                    ) < 60
+                                                          dayjs(item.createdOn),
+                                                          'minute'
+                                                      ) < 60
                                                         ? `${dayjs().diff(dayjs(item.createdOn), 'minute')} phút trước`
                                                         : dayjs().diff(
-                                                            dayjs(
-                                                                item.createdOn
-                                                            ),
-                                                            'hour'
-                                                        ) < 24
-                                                            ? `${dayjs().diff(dayjs(item.createdOn), 'hour')} giờ trước`
-                                                            : dayjs(
+                                                                dayjs(
+                                                                    item.createdOn
+                                                                ),
+                                                                'hour'
+                                                            ) < 24
+                                                          ? `${dayjs().diff(dayjs(item.createdOn), 'hour')} giờ trước`
+                                                          : dayjs(
                                                                 item.createdOn
                                                             ).format(
                                                                 'hh:mmA DD/MM/YYYY'
                                                             )
                                                     : ''}
                                             </span>
-                                            <span className="font-bold text-green-400">
-                                                {statusOrder(item)}
-                                            </span>
+
+                                            {statusOrder(item)}
                                         </div>
                                         <div className="mt-5 flex justify-end">
                                             <Link

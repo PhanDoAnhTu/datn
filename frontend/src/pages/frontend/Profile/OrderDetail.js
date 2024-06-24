@@ -6,6 +6,7 @@ import {
     HandThumbUpIcon,
     SparklesIcon,
     StarIcon,
+    TruckIcon,
     XCircleIcon,
 } from '@heroicons/react/24/solid';
 import { Fragment, useEffect, useRef, useState } from 'react';
@@ -41,9 +42,7 @@ export default function OrderDetail() {
         await dispatch(
             findOrderByTrackingNumber({ order_trackingNumber: orderTrackingId })
         );
-        await dispatch(
-            allProducts({ limit: 100 })
-        );
+        await dispatch(allProducts({ limit: 100 }));
     };
     useEffect(() => {
         fetchDataOrder();
@@ -56,7 +55,7 @@ export default function OrderDetail() {
     // }, [all_products]);
 
     useEffect(() => {
-        console.log(generatedReview)
+        console.log(generatedReview);
         if (currentOrder) {
             if (all_products) {
                 setStatus(currentOrder.order_status);
@@ -65,16 +64,21 @@ export default function OrderDetail() {
                 setCheckout(currentOrder.order_checkout);
                 setGeneratedReview(
                     currentOrder?.order_product?.item_products?.map((item) => {
-
                         return {
-                            product_brand: all_products?.find((prod) => prod._id == item.productId)?.brand?.brand_name,
-                            product_name: all_products?.find((prod) => prod._id == item.productId)?.product_name,
+                            product_brand: all_products?.find(
+                                (prod) => prod._id == item.productId
+                            )?.brand?.brand_name,
+                            product_name: all_products?.find(
+                                (prod) => prod._id == item.productId
+                            )?.product_name,
                             product_id: item.productId,
                             order_id: currentOrder._id,
                             customer_id: currentOrder.order_userId,
                             sku_id: item.sku_id,
                             price: item.price,
-                            price_sale: item.price_sale ? item.price_sale : null,
+                            price_sale: item.price_sale
+                                ? item.price_sale
+                                : null,
                             quantity: item.quantity,
                             rating_score: 0,
                             rating_content: '',
@@ -158,10 +162,10 @@ export default function OrderDetail() {
                     <div className="pointer-events-none my-6 flex w-full justify-center space-x-6 sm:space-x-10">
                         <div className="flex flex-col items-center space-y-1">
                             <div
-                                className={`border-b-2 ${status === 'pending' || status === 'confirmed' || status === 'successful' ? 'border-magenta-500 text-magenta-500' : 'border-gray-900 dark:border-white'} px-6 py-4 text-xl font-bold text-white transition duration-500 ease-out max-sm:px-4 max-sm:py-2`}
+                                className={`border-b-2 ${status === 'pending' || status === 'confirmed' || status === 'successful' || status === 'review' || status === 'shipping' ? 'border-magenta-500 text-magenta-500' : 'border-gray-900 dark:border-white'} px-6 py-4 text-xl font-bold text-white transition duration-500 ease-out max-sm:px-4 max-sm:py-2`}
                             >
                                 <ArchiveBoxArrowDownIcon
-                                    className={`h-7 w-7 ${status === 'pending' || status === 'confirmed' || status === 'successful' ? 'border-magenta-500 text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                    className={`h-7 w-7 ${status === 'pending' || status === 'confirmed' || status === 'successful' || status === 'review' || status === 'shipping' ? 'border-magenta-500 text-magenta-500' : 'text-gray-900 dark:text-white'}`}
                                 />
                             </div>
                             <span className="text-sm font-bold text-gray-900 max-sm:text-xs dark:text-white">
@@ -170,10 +174,10 @@ export default function OrderDetail() {
                         </div>
                         <div className="flex flex-col items-center space-y-1">
                             <div
-                                className={`border-b-2 ${status === 'confirmed' || status === 'successful' ? 'border-magenta-500 text-magenta-500' : 'border-gray-900 dark:border-white'} px-6 py-4 text-xl font-bold text-white transition duration-500 ease-out max-sm:px-4 max-sm:py-2`}
+                                className={`border-b-2 ${status === 'confirmed' || status === 'successful' || status === 'review' || status === 'shipping' ? 'border-magenta-500 text-magenta-500' : 'border-gray-900 dark:border-white'} px-6 py-4 text-xl font-bold text-white transition duration-500 ease-out max-sm:px-4 max-sm:py-2`}
                             >
                                 <CheckBadgeIcon
-                                    className={`h-7 w-7  ${status === 'confirmed' || status === 'successful' ? 'border-magenta-500 text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                    className={`h-7 w-7  ${status === 'confirmed' || status === 'successful' || status === 'review' || status === 'shipping' ? 'border-magenta-500 text-magenta-500' : 'text-gray-900 dark:text-white'}`}
                                 />
                             </div>
                             <span className="text-sm font-bold text-gray-900 max-sm:text-xs dark:text-white">
@@ -182,10 +186,22 @@ export default function OrderDetail() {
                         </div>
                         <div className="flex flex-col items-center space-y-1">
                             <div
-                                className={`border-b-2 ${status === 'successful' ? 'border-magenta-500 text-magenta-500' : 'border-gray-900 dark:border-white'} px-6 py-4 text-xl font-bold text-white transition duration-500 ease-out max-sm:px-4 max-sm:py-2`}
+                                className={`border-b-2 ${status === 'shipping' || status === 'review' ? 'border-magenta-500 text-magenta-500' : 'border-gray-900 dark:border-white'} px-6 py-4 text-xl font-bold text-white transition duration-500 ease-out max-sm:px-4 max-sm:py-2`}
+                            >
+                                <TruckIcon
+                                    className={`h-7 w-7  ${status === 'shipping' || status === 'review' ? 'border-magenta-500 text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                />
+                            </div>
+                            <span className="text-sm font-bold text-gray-900 max-sm:text-xs dark:text-white">
+                                Đang giao
+                            </span>
+                        </div>
+                        <div className="flex flex-col items-center space-y-1">
+                            <div
+                                className={`border-b-2 ${status === 'successful' || status === 'review' ? 'border-magenta-500 text-magenta-500' : 'border-gray-900 dark:border-white'} px-6 py-4 text-xl font-bold text-white transition duration-500 ease-out max-sm:px-4 max-sm:py-2`}
                             >
                                 <HandThumbUpIcon
-                                    className={`h-7 w-7 ${status === 'successful' ? 'border-magenta-500 text-magenta-500' : 'text-gray-900 dark:text-white'}`}
+                                    className={`h-7 w-7 ${status === 'successful' || status === 'review' ? 'border-magenta-500 text-magenta-500' : 'text-gray-900 dark:text-white'}`}
                                 />
                             </div>
                             <span className="text-sm font-bold text-gray-900 max-sm:text-xs dark:text-white">
@@ -224,7 +240,7 @@ export default function OrderDetail() {
                                     </button>
                                     <button
                                         onClick={() => setOpen('cancelled')}
-                                        className="flex items-center justify-center space-x-1 border-2 border-gray-900 py-3 font-bold text-gray-900 transition duration-500 ease-out hover:border-rose-500 hover:text-rose-500 max-sm:text-sm dark:border-white dark:text-white"
+                                        className={`flex ${status === 'shipping' ? 'hidden' : ''} items-center justify-center space-x-1 border-2 border-gray-900 py-3 font-bold text-gray-900 transition duration-500 ease-out hover:border-rose-500 hover:text-rose-500 max-sm:text-sm dark:border-white dark:text-white`}
                                     >
                                         <span>Hủy đơn hàng</span>
                                         <XCircleIcon className="h-7 w-7" />
@@ -246,8 +262,8 @@ export default function OrderDetail() {
                         <Transition.Root
                             show={
                                 open === 'review' ||
-                                    open === 'cancelled' ||
-                                    open === 'successful'
+                                open === 'cancelled' ||
+                                open === 'successful'
                                     ? true
                                     : false
                             }
@@ -291,19 +307,19 @@ export default function OrderDetail() {
                                                                 className="text-base font-semibold leading-6 text-gray-900 dark:text-white"
                                                             >
                                                                 {open ===
-                                                                    'cancelled'
+                                                                'cancelled'
                                                                     ? 'Bạn có muốn hủy đơn hàng?'
                                                                     : open ===
                                                                         'successful'
-                                                                        ? 'Bạn có muốn xác nhận đã nhận hàng?'
-                                                                        : open ===
-                                                                            'review'
-                                                                            ? 'Đánh giá đơn hàng'
-                                                                            : ''}
+                                                                      ? 'Bạn có muốn xác nhận đã nhận hàng?'
+                                                                      : open ===
+                                                                          'review'
+                                                                        ? 'Đánh giá đơn hàng'
+                                                                        : ''}
                                                             </Dialog.Title>
                                                             <div className="mt-2 text-gray-900 dark:text-white">
                                                                 {open ===
-                                                                    'cancelled' ? (
+                                                                'cancelled' ? (
                                                                     <input
                                                                         type="text"
                                                                         value={
@@ -322,10 +338,10 @@ export default function OrderDetail() {
                                                                         className="w-full border-b-2 border-l-0 border-r-0 border-t-0 border-gray-900 bg-transparent pl-0 text-gray-900 transition duration-300 ease-out focus:border-magenta-500 focus:ring-0 dark:border-white dark:text-white dark:placeholder:text-gray-400"
                                                                     />
                                                                 ) : open ===
-                                                                    'successful' ? (
+                                                                  'successful' ? (
                                                                     'Bạn chỉ bấm xác nhận khi bạn đã nhận được sản phẩm và chắc chắn hài lòng.'
                                                                 ) : open ===
-                                                                    'review' ? (
+                                                                  'review' ? (
                                                                     <div className="no-scrollbar grid h-96 gap-2 overflow-y-scroll">
                                                                         {generatedReview.map(
                                                                             (
@@ -348,12 +364,14 @@ export default function OrderDetail() {
                                                                                                     <div className="flex">
                                                                                                         <div className="flex-1">
                                                                                                             <h1 className="line-clamp-2 truncate text-wrap text-sm font-bold max-sm:w-36 md:text-xl">
-
-                                                                                                                {item.product_name}
-
+                                                                                                                {
+                                                                                                                    item.product_name
+                                                                                                                }
                                                                                                             </h1>
                                                                                                             <div className="text-md text-gray-500 dark:text-gray-200">
-                                                                                                                {item.product_brand}
+                                                                                                                {
+                                                                                                                    item.product_brand
+                                                                                                                }
                                                                                                             </div>
                                                                                                         </div>
                                                                                                     </div>
@@ -361,7 +379,9 @@ export default function OrderDetail() {
                                                                                                         Giá:{' '}
                                                                                                         <NumericFormat
                                                                                                             value={
-                                                                                                                item.price_sale ? item.price_sale : item.price
+                                                                                                                item.price_sale
+                                                                                                                    ? item.price_sale
+                                                                                                                    : item.price
                                                                                                             }
                                                                                                             displayType="text"
                                                                                                             thousandSeparator={
@@ -375,8 +395,8 @@ export default function OrderDetail() {
                                                                                                                 'đ'
                                                                                                             }
                                                                                                         />
-                                                                                                        {item.price_sale &&
-                                                                                                            <s className="text-red-500 ml-2">
+                                                                                                        {item.price_sale && (
+                                                                                                            <s className="ml-2 text-red-500">
                                                                                                                 <NumericFormat
                                                                                                                     value={
                                                                                                                         item.price
@@ -394,8 +414,7 @@ export default function OrderDetail() {
                                                                                                                     }
                                                                                                                 />
                                                                                                             </s>
-
-                                                                                                        }
+                                                                                                        )}
                                                                                                     </div>
 
                                                                                                     <div className="flex h-full flex-col justify-end">
@@ -505,8 +524,8 @@ export default function OrderDetail() {
                                                 </div>
                                                 <div className="bg-gray-50 px-4  py-3 sm:flex sm:flex-row-reverse sm:px-6 dark:bg-zinc-800">
                                                     {open === 'review' ||
-                                                        open === 'cancelled' ||
-                                                        open === 'successful' ? (
+                                                    open === 'cancelled' ||
+                                                    open === 'successful' ? (
                                                         <>
                                                             <button
                                                                 type="button"
@@ -566,8 +585,8 @@ export default function OrderDetail() {
                     </div>
 
                     <div className="mt-2 grid rounded-md bg-zinc-200 p-4 text-gray-900 shadow-md shadow-zinc-500 md:grid-cols-2 dark:bg-zinc-800 dark:text-white dark:shadow-inner dark:shadow-zinc-500">
-                        {generatedReview?.length > 0 && generatedReview.map(
-                            (item) => (
+                        {generatedReview?.length > 0 &&
+                            generatedReview.map((item) => (
                                 <div key={item.productId}>
                                     <div className="flex w-full overflow-hidden border-b-2 border-zinc-600 p-4 sm:space-x-2">
                                         <div className="h-fit w-32 overflow-hidden rounded-md">
@@ -594,22 +613,18 @@ export default function OrderDetail() {
                                                     Giá:{' '}
                                                     <NumericFormat
                                                         value={
-                                                            item.price_sale ? item.price_sale : item.price
+                                                            item.price_sale
+                                                                ? item.price_sale
+                                                                : item.price
                                                         }
                                                         displayType="text"
-                                                        thousandSeparator={
-                                                            true
-                                                        }
-                                                        decimalScale={
-                                                            0
-                                                        }
+                                                        thousandSeparator={true}
+                                                        decimalScale={0}
                                                         id="price"
-                                                        suffix={
-                                                            'đ'
-                                                        }
+                                                        suffix={'đ'}
                                                     />
-                                                    {item.price_sale &&
-                                                        <s className="text-red-500 ml-2">
+                                                    {item.price_sale && (
+                                                        <s className="ml-2 text-red-500">
                                                             <NumericFormat
                                                                 value={
                                                                     item.price
@@ -618,17 +633,12 @@ export default function OrderDetail() {
                                                                 thousandSeparator={
                                                                     true
                                                                 }
-                                                                decimalScale={
-                                                                    0
-                                                                }
+                                                                decimalScale={0}
                                                                 id="price"
-                                                                suffix={
-                                                                    'đ'
-                                                                }
+                                                                suffix={'đ'}
                                                             />
                                                         </s>
-
-                                                    }
+                                                    )}
                                                 </div>
                                                 <div className="flex h-full flex-col justify-end">
                                                     <span className="md:text-md font-bold">
@@ -640,92 +650,55 @@ export default function OrderDetail() {
                                         </div>
                                     </div>
                                 </div>
-                            )
-                        )}
+                            ))}
                         <div className="grid justify-center gap-5 py-3 md:col-span-2 md:grid-cols-2">
                             <div className="grid justify-end font-bold"></div>
                             <div className="grid grid-cols-2 font-bold">
                                 <span className="md:text-lg">Tạm tính</span>
                                 <span className="md:text-lg">
                                     <NumericFormat
-                                        value={
-                                            checkout?.totalPrice
-                                        }
+                                        value={checkout?.totalPrice}
                                         displayType="text"
-                                        thousandSeparator={
-                                            true
-                                        }
-                                        decimalScale={
-                                            0
-                                        }
+                                        thousandSeparator={true}
+                                        decimalScale={0}
                                         id="price"
-                                        suffix={
-                                            'đ'
-                                        }
+                                        suffix={'đ'}
                                     />
-
                                 </span>
                                 <span className="md:text-lg">Giá giảm</span>
                                 <span className="md:text-lg">
                                     <NumericFormat
-                                        value={
-                                            checkout?.totalSpecialOffer
-                                        }
+                                        value={checkout?.totalSpecialOffer}
                                         displayType="text"
-                                        thousandSeparator={
-                                            true
-                                        }
-                                        decimalScale={
-                                            0
-                                        }
+                                        thousandSeparator={true}
+                                        decimalScale={0}
                                         id="price"
-                                        suffix={
-                                            'đ'
-                                        }
+                                        suffix={'đ'}
                                     />
-
                                 </span>
                                 <span className="md:text-lg">Mã giảm</span>
                                 <span className="md:text-lg">
                                     <NumericFormat
-                                        value={
-                                            checkout?.totalDiscount
-                                        }
+                                        value={checkout?.totalDiscount}
                                         displayType="text"
-                                        thousandSeparator={
-                                            true
-                                        }
-                                        decimalScale={
-                                            0
-                                        }
+                                        thousandSeparator={true}
+                                        decimalScale={0}
                                         id="price"
-                                        suffix={
-                                            'đ'
-                                        }
+                                        suffix={'đ'}
                                     />
-
                                 </span>
                                 <span className="md:text-lg">
                                     Tổng thanh toán
                                 </span>
                                 <span className="md:text-lg">
                                     <NumericFormat
-                                        value={
-                                            checkout?.totalCheckout
-                                        }
+                                        value={checkout?.totalCheckout}
                                         displayType="text"
-                                        thousandSeparator={
-                                            true
-                                        }
-                                        decimalScale={
-                                            0
-                                        }
+                                        thousandSeparator={true}
+                                        decimalScale={0}
                                         id="price"
-                                        suffix={
-                                            'đ'
-                                        }
+                                        suffix={'đ'}
                                     />
-
                                 </span>
                                 <span className="md:text-lg">
                                     Phương thức thanh toán

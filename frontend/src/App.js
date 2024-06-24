@@ -63,11 +63,11 @@ const App = () => {
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
                         >
-                            <div className="fixed inset-0 bg-black/50" />
+                            <div className="fixed inset-0 bg-black/50 max-xl:hidden" />
                         </Transition.Child>
 
-                        <div className="fixed inset-0 overflow-y-auto">
-                            <div className="flex min-h-full items-center justify-center px-60 pt-20 text-center">
+                        <div className="fixed inset-0 overflow-y-auto max-xl:hidden">
+                            <div className="flex min-h-full items-center justify-center px-60 pt-16 text-center">
                                 <Transition.Child
                                     as={Fragment}
                                     enter="ease-out duration-300"
@@ -77,7 +77,7 @@ const App = () => {
                                     leaveFrom="opacity-100 scale-100"
                                     leaveTo="opacity-0 scale-95"
                                 >
-                                    <Dialog.Panel className="no-scrollbar h-1/2square w-full max-w-full transform overflow-y-scroll rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-zinc-900">
+                                    <Dialog.Panel className="no-scrollbar h-1/3square w-full max-w-full transform overflow-y-scroll rounded-md bg-white text-left align-middle shadow-xl transition-all dark:bg-zinc-900">
                                         <div className="group">
                                             <ProductModal />
                                         </div>

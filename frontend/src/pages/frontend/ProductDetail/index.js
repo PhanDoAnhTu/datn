@@ -142,7 +142,7 @@ export default function ProductDetail() {
                 });
             } else {
                 setSale(special_offer);
-                return
+                return;
             }
         }
     }, [special_offer]);
@@ -751,7 +751,7 @@ export default function ProductDetail() {
 
                     <div className="space-y-5">
                         <div className="grid gap-5">
-                            {review?.length > 0 &&
+                            {review?.length > 0 ? (
                                 review.map((rv, index) => (
                                     <div
                                         key={`review-${index}`}
@@ -779,7 +779,12 @@ export default function ProductDetail() {
                                             {rv.rating_content}
                                         </div>
                                     </div>
-                                ))}
+                                ))
+                            ) : (
+                                <div className="text-center text-lg font-bold text-gray-900">
+                                    Hiện không có đánh giá nào về sản phẩm này
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
