@@ -39,18 +39,24 @@ class PostService {
     limit = 10,
     page = 1,
     sort = "ctime",
-    isPublished = true,
+    isPublished,
   }) {
-    const skip = (page - 1) * limit;
-    const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
-    const listpost = await PostModel.find({
-      isPublished,
-    })
-      .skip(skip)
-      .limit(limit)
-      .sort(sortBy)
-      .lean();
-    return listpost;
+    if (isPublished == true || isPublished == false) {
+      const skip = (page - 1) * limit;
+      const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
+      const listpost = await PostModel.find({
+        isPublished,
+      })
+        .skip(skip)
+        .limit(limit)
+        .sort(sortBy)
+        .lean();
+      return listpost;
+    } else {
+      const listpost = await PostModel.find()
+        .lean();
+      return listpost;
+    }
   }
 
   async getSinglePost({ post_slug }) {

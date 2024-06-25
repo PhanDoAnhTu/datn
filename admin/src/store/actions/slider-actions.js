@@ -4,7 +4,7 @@ import { Action } from './index'
 
 export const createSlider = (data) => async (dispatch) => {
     try {
-        const response = await PostData('/slider/v1/slider/createSlider', data);
+        const response = await PostData('/banner/v1/slider/createSlider', data);
         console.log('response:', response)
         return dispatch({ type: Action.ADD_SLIDER, payload: response.data });
 
@@ -12,9 +12,9 @@ export const createSlider = (data) => async (dispatch) => {
         console.log(err)
     }
 };
-export const getAllSliderByActive = (data) => async (dispatch) => {
+export const getAllSlider = () => async (dispatch) => {
     try {
-        const response = await PostData('/slider/v1/slider/getAllSliderByActive', data);
+        const response = await GetData('/banner/v1/slider/getAllSlider');
         console.log('response:', response)
         return dispatch({ type: Action.GET_ALL_SLIDER, payload: response.data });
 
@@ -22,9 +22,9 @@ export const getAllSliderByActive = (data) => async (dispatch) => {
         console.log(err)
     }
 };
-export const changeActive = (data) => async (dispatch) => {
+export const changeActiveSlider = (data) => async (dispatch) => {
     try {
-        const response = await PostData('/slider/v1/slider/changeActive', data);
+        const response = await PostData('/banner/v1/slider/changeActive', data);
         console.log('response:', response)
         return dispatch({ type: Action.UPDATE_SLIDER, payload: response.data });
 
@@ -32,9 +32,9 @@ export const changeActive = (data) => async (dispatch) => {
         console.log(err)
     }
 };
-export const isTrash = (data) => async (dispatch) => {
+export const isTrashSlider = (data) => async (dispatch) => {
     try {
-        const response = await PostData('/slider/v1/slider/isTrash', data);
+        const response = await PostData('/banner/v1/slider/isTrash', data);
         console.log('response:', response)
         return dispatch({ type: Action.UPDATE_SLIDER, payload: response.data });
 

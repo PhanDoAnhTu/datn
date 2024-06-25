@@ -191,6 +191,7 @@ const PromotionMangementTable = () => {
     if (category === "all") return data.filter((product) => product.isDeleted === false).length;
     if (category === "isPublished") return data.filter((product) => product.isPublished === true).length;
     if (category === "isDeleted") return data.filter((product) => product.isDeleted === true).length;
+    if (category === "isDraft") return data.filter((product) => product.isPublished === false).length;
 
   };
 
@@ -259,6 +260,8 @@ const PromotionMangementTable = () => {
     if (category === "all") return data.filter((product) => product.isDeleted === false);
     if (category === "isPublished") return data.filter((product) => product.isPublished === true);
     if (category === "isDeleted") return data.filter((product) => product.isDeleted === true);
+    if (category === "isDraft") return data.filter((product) => product.isPublished === false);
+
   };
 
   const pagination = usePagination(dataByStatus(category), 8);
@@ -284,6 +287,7 @@ const PromotionMangementTable = () => {
           {[
             { value: "all", label: "Tất cả" },
             { value: "isPublished", label: "Đang hoạt động" },
+            { value: "isDraft", label: "Không hoạt động" },
             { value: "isDeleted", label: "Thùng rác" },
           ].map((option, index) => (
             <FilterItem

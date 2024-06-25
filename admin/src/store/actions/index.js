@@ -9,6 +9,9 @@ export * from "./attribute-actions";
 export * from "./discount-actions";
 export * from "./slider-actions";
 export * from "./contact-actions";
+export * from "./blog-actions";
+
+
 export const Action = {
   //auth
   ERROR: "ERROR",

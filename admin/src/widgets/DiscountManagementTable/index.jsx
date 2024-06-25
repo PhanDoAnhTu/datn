@@ -84,7 +84,7 @@ const DiscountManagementTable = () => {
     },
     {
       title: "Hoạt động",
-      dataIndex: "status",
+      dataIndex: "isPublished",
       render: (status, record) => (
         <div>
           {
@@ -121,7 +121,6 @@ const DiscountManagementTable = () => {
   ];
 
   const { width } = useWindowSize();
-  const [isLoad, setIsLoad] = useState(false);
   const dispatch = useDispatch()
   const defaultSort = {
     sortBy: ADDITIONAL_OPTIONS[0],
@@ -135,6 +134,7 @@ const DiscountManagementTable = () => {
 
 
 
+  const [isLoad, setIsLoad] = useState(false);
 
   const fetchDataPromotionManagement = async () => {
     const response = await dispatch(onGetAllDiscount());
@@ -151,6 +151,7 @@ const DiscountManagementTable = () => {
     if (category === "all") return data.filter((product) => product.isDeleted === false).length;
     if (category === "isPublished") return data.filter((product) => product.isPublished === true).length;
     if (category === "isDeleted") return data.filter((product) => product.isDeleted === true).length;
+    if (category === "isDraft") return data.filter((product) => product.isPublished === false).length;
 
   };
 
@@ -230,6 +231,8 @@ const DiscountManagementTable = () => {
     if (category === "all") return data.filter((product) => product.isDeleted === false);
     if (category === "isPublished") return data.filter((product) => product.isPublished === true);
     if (category === "isDeleted") return data.filter((product) => product.isDeleted === true);
+    if (category === "isDraft") return data.filter((product) => product.isPublished === false);
+
   };
 
   const pagination = usePagination(dataByStatus(category), 8);
@@ -311,6 +314,7 @@ const DiscountManagementTable = () => {
           {[
             { value: "all", label: "Tất cả" },
             { value: "isPublished", label: "Đang hoạt động" },
+            { value: "isDraft", label: "Không hoạt động" },
             { value: "isDeleted", label: "Thùng rác" },
           ].map((option, index) => (
             <FilterItem

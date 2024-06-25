@@ -10,6 +10,7 @@ router.post('/createSlider', asynchandler(SliderController.createSlider))
 router.post('/getAllSliderByActive', asynchandler(SliderController.getAllSliderByActive))
 router.post('/changeActive', asynchandler(SliderController.changeActive))
 router.post('/isTrash', asynchandler(SliderController.isTrash))
+router.get('/getAllSlider', asynchandler(SliderController.getAllSlider))
 
 
 module.exports = router

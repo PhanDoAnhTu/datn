@@ -465,7 +465,7 @@ const productFromCart = async ({ spu_id, isPublished = true }) => {
     return null;
   }
 };
-const AllProductsOption = async ({ sort = "ctime", isPublished = true }) => {
+const AllProductsOption = async ({ sort = "ctime", isPublished  }) => {
   let all_Products = []
   if (isPublished) {
     all_Products = await spuRepository.getAllProducts({

@@ -66,7 +66,7 @@ class DiscountService {
     }
 
     async getAllDiscountCodeByShop({
-        limit = 50, page = 1, sort = 'ctime', filter = {
+        limit = 100, page = 1, sort = 'ctime', filter = {
         }
     }) {
         const discounts = await discountRepository.findAllDiscountCodeUnSelect({

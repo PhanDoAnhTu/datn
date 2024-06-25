@@ -33,6 +33,12 @@ class SliderController {
             metaData: await this.service.isTrash(req.body)
         }).send(res)
     }
+    getAllSlider = async (req, res, next) => {
+        new successResponse.SuccessResponse({
+            message: 'getAllSlider success',
+            metaData: await this.service.getAllSlider(req.body)
+        }).send(res)
+    }
 }
 
 module.exports = new SliderController()

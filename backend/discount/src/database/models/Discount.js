@@ -20,8 +20,8 @@ const discountSchema = new Schema({
     discount_max_person_uses: { type: Number, required: true },
     discount_max_user_uses: { type: Number, required: true },
     discount_min_order_value: { type: Number, required: true },
-    discount_min_order_qty: { type: Number, required: true},
-    discount_is_active: { type: Boolean, default: true },
+    discount_min_order_qty: { type: Number, required: true },
+    isPublished: { type: Boolean, default: false },
     discount_applies_to: { type: String, required: true, enum: ['all', 'specific'] },
     discount_product_ids: { type: Array, default: [] },
     isDeleted: { type: Boolean, default: false, index: true, select: true }

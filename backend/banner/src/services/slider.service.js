@@ -42,6 +42,15 @@ class SliderService {
       return [];
     }
   };
+  getAllSlider = async () => {
+    try {
+      const slider = await SliderModel.find();
+      return slider;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  };
 
   changeActive = async ({ slider_id, isPublished = false }) => {
     try {
@@ -63,7 +72,7 @@ class SliderService {
         _id: slider_id
       });
       slider.isDeleted = isDeleted
-
+      slider.isPublished = false
       return await slider.updateOne(slider);
     } catch (error) {
       console.log(error);

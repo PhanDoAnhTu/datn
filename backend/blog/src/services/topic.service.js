@@ -29,19 +29,25 @@ class TopicService {
     limit = 10,
     page = 1,
     sort = "ctime",
-    isPublished = true,
+    isPublished,
   }) {
-    const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
-    const skip = (page - 1) * limit;
+    if (isPublished) {
+      const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
+      const skip = (page - 1) * limit;
 
-    const listTopic = await TopicModel.find({
-      isPublished,
-    })
-      .skip(skip)
-      .limit(limit)
-      .sort(sortBy)
-      .lean();
-    return listTopic;
+      const listTopic = await TopicModel.find({
+        isPublished,
+      })
+        .skip(skip)
+        .limit(limit)
+        .sort(sortBy)
+        .lean();
+      return listTopic;
+    } else {
+      const listTopic = await TopicModel.find()
+        .lean();
+      return listTopic;
+    }
   }
 
   async getListTopicByParentId({
