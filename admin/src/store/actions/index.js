@@ -1,13 +1,12 @@
-export * from './user-actions';
-export * from './product-actions';
-export * from './cart-actions';
-export * from './spicial-offer-actions';
-export * from './upload-actions';
-export * from './category-action';
-export * from './brand-actions';
-export * from './attribute-actions';
-export * from './discount-actions';
-
+export * from "./user-actions";
+export * from "./product-actions";
+export * from "./cart-actions";
+export * from "./spicial-offer-actions";
+export * from "./upload-actions";
+export * from "./category-action";
+export * from "./brand-actions";
+export * from "./attribute-actions";
+export * from "./discount-actions";
 
 export const Action = {
   //auth
@@ -39,7 +38,6 @@ export const Action = {
   CATEGORY_ALL: "CATEGORY_ALL",
   CATEGORY_CREATE: "CATEGORY_CREATE",
 
-
   //spicial-offer
   SPICIAL_OFFER_BY_PRODUCT: "SPICIAL_OFFER_BY_PRODUCT",
   CREATE_SPECIAL_OFFER: "CREATE_SPECIAL_OFFER",
@@ -62,13 +60,11 @@ export const Action = {
   AMOUNT_DISCOUNT: "AMOUNT_DISCOUNT",
   DISCOUNT_BY_ID: "DISCOUNT_BY_ID",
 
+  //contact
 
-
-//contact
-
-ALL_CONTACT:"ALL_CONTACT",
-NEW_CONTACT:"NEW_CONTACT",
-FIND_CONTACT:"FIND_CONTACT"
+  ALL_CONTACT: "ALL_CONTACT",
+  NEW_CONTACT: "NEW_CONTACT",
+  FIND_CONTACT: "FIND_CONTACT",
 
   // PROFILE: "PROFILE",
   // DISSMISS: "DISSMISS",
@@ -78,10 +74,7 @@ FIND_CONTACT:"FIND_CONTACT"
   // ADD_TO_WISHLIST: "ADD_TO_WISHLIST",
   // REMOVE_FROM_WISHLIST: "REMOVE_FROM_WISHLIST",
 
-
   // ADDED_NEW_ADDRESS: "ADDED_NEW_ADDRESS",
 
   // PLACE_ORDER: "PLACE_ORDER"
-
-
 };
