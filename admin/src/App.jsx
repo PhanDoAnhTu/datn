@@ -72,6 +72,7 @@ const ContactsManagement = lazy(() => import("@pages/ContactsManagement"));
 const ContactResponse = lazy(() => import("@pages/ContactResponse"));
 const BrandsManagement = lazy(() => import("@pages/BrandsManagement"));
 const BrandEditor = lazy(() => import("@pages/EditBrand"));
+const EditBrand = lazy(() => import("@pages/BrandEdit"));
 const DetailBrand = lazy(() => import("@pages/DetailBrand"));
 const DiscountsManagement = lazy(() => import("@pages/DiscountsManagement"));
 const PromotionsManagement = lazy(() => import("@pages/PromotionsManagement"));
@@ -176,6 +177,7 @@ const App = () => {
                   />
                   <Route path="brand-editor" element={<BrandEditor />} />
                   <Route path="brand-detail/:id" element={<DetailBrand />} />
+                  <Route path="brand-editor/:id" element={<EditBrand />} />
                   {/* Discount */}
                   <Route
                     path="discounts-management"

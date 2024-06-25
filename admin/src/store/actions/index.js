@@ -53,6 +53,8 @@ export const Action = {
 
   ALL_BRAND: "ALL_BRAND",
   CREATE_BRAND: "CREATE_BRAND",
+  UPDATE_BRAND: "UPDATE_BRAND",
+  BRAND_BY_ID: "BRAND_BY_ID",
 
   //discount
 

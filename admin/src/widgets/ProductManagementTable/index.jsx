@@ -18,16 +18,15 @@ import {
   ADDITIONAL_OPTIONS,
   SELECT_OPTIONS,
 } from "@constants/options";
-// import { PRODUCTS_MANAGEMENT_COLUMN_DEFS } from "@constants/columnDefs";
 
 // data placeholder
-// import products_management from "@db/products_management";
-import categories_management from "@db/categories_management";
 import { useDispatch } from "react-redux";
-import { onAllProductsOption } from "../../store/actions";
+import { findAllCategory, onAllProductsOption } from "../../store/actions";
 import EditBtn from "@components/EditBtn";
 import Actions from "@components/Actions";
 import dayjs from "dayjs";
+import { CSVLink } from "react-csv";
+import { NumericFormat } from "react-number-format";
 
 const ProductManagementTable = () => {
   const PRODUCTS_MANAGEMENT_COLUMN_DEFS = [
@@ -84,47 +83,36 @@ const ProductManagementTable = () => {
     {
       title: "Giá",
       dataIndex: "product_price",
-      render: (price) => <span>${price ? price.toFixed(2) : "0.00"}</span>,
+      render: (price) => (
+        <span>
+          <NumericFormat
+            value={price}
+            displayType="text"
+            thousandSeparator={true}
+            decimalScale={0}
+            id="price"
+            suffix={"đ"}
+          />
+        </span>
+      ),
     },
     {
       title: "Danh mục",
       dataIndex: "product_category",
-      width: 125,
-      render: (categories) => (
-        <div className="flex flex-wrap gap-x-0.5">
-          {categories && categories.length
-            ? categories.map((tag, index) => (
-                <button className="tag text-accent capitalize" key={tag}>
-                  {tag}
-                  {index !== categories.length - 1 && ","}
-                </button>
-              ))
-            : "-"}
-        </div>
-      ),
-      responsive: ["xl"],
-    },
-    {
-      title: "Thuộc tính",
-      dataIndex: "product_attributes",
       width: 200,
       render: (categories) => (
         <div className="flex flex-wrap gap-x-0.5">
           {categories && categories.length
-            ? categories?.map((attribute) => {
-                return attribute?.attribute_value_list?.map(
-                  (value, subindex) => (
-                    <button
-                      className="tag text-accent capitalize"
-                      key={subindex}
-                    >
-                      {value.attribute_value}
-                      {subindex !== attribute.attribute_value_list.length - 1 &&
-                        ","}
-                    </button>
-                  )
-                );
-              })
+            ? categories.map((tag, index) => (
+                <span className="tag text-accent capitalize" key={tag}>
+                  {
+                    categories_management
+                      ?.slice()
+                      .find((item) => item.value === tag)?.label
+                  }
+                  {index !== categories.length - 1 && " | "}
+                </span>
+              ))
             : "-"}
         </div>
       ),
@@ -171,10 +159,11 @@ const ProductManagementTable = () => {
     parentCategory: null,
   };
   const defaultSort = {
-    sortBy: ADDITIONAL_OPTIONS[0],
+    sortBy: { value: "product_name", label: "Tên" },
     sortOrder: SELECT_OPTIONS[0],
   };
-  const [products_management, setProducts_management] = useState([]);
+  const [categories_management, setCategoriesManagement] = useState([]);
+  const [products_management, setProductsManagement] = useState([]);
   const [data, setData] = useState([]);
   const [category, setCategory] = useState("all");
   const [sorts, setSorts] = useState(defaultSort);
@@ -189,6 +178,17 @@ const ProductManagementTable = () => {
     const responseProducts = await dispatch(onAllProductsOption());
     if (responseProducts) {
       setData(responseProducts.payload.metaData);
+      setProductsManagement(responseProducts.payload.metaData);
+    }
+    const responseCategory = await dispatch(
+      findAllCategory({ isPublished: true })
+    );
+    if (responseCategory) {
+      setCategoriesManagement(
+        responseCategory.payload.metaData.map((item) => {
+          return { label: item.category_name, value: item._id };
+        })
+      );
     }
   };
 
@@ -219,17 +219,91 @@ const ProductManagementTable = () => {
       [name]: { label, value },
     }));
   };
+  useEffect(() => {
+    if (sorts.sortBy.value === "product_name") {
+      setData(
+        data
+          .slice()
+          .sort((a, b) =>
+            sorts.sortOrder.value === "ascending"
+              ? a.product_name.toLowerCase() > b.product_name.toLowerCase()
+                ? 1
+                : -1
+              : a.product_name.toLowerCase() < b.product_name.toLowerCase()
+              ? 1
+              : -1
+          )
+      );
+    }
+    if (sorts.sortBy.value === "modifiedOn") {
+      setData(
+        data
+          .slice()
+          .sort((a, b) =>
+            sorts.sortOrder.value === "ascending"
+              ? new Date(a.updatedAt) < new Date(b.updatedAt)
+                ? 1
+                : -1
+              : new Date(a.updatedAt) > new Date(b.updatedAt)
+              ? 1
+              : -1
+          )
+      );
+    }
+    if (sorts.sortBy.value === "createdOn") {
+      setData(
+        data
+          .slice()
+          .sort((a, b) =>
+            sorts.sortOrder.value === "ascending"
+              ? new Date(a.createdAt) < new Date(b.createdAt)
+                ? 1
+                : -1
+              : new Date(a.createdAt) > new Date(b.createdAt)
+              ? 1
+              : -1
+          )
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sorts.sortBy.value, sorts.sortOrder.value]);
 
   const handleApplyFilters = () => {
     if (filters.parentCategory != null) {
       setData(
-        data.filter((item) => item.category === filters.parentCategory.label)
+        products_management.filter((item) =>
+          item.product_category.includes(filters.parentCategory.value)
+        )
       );
+    }
+    if (filters.stockStatus != null) {
+      if (filters.stockStatus.value === "low") {
+        setData(
+          products_management
+            .slice()
+            .filter((item) => item.product_quantity < 10)
+        );
+      }
+      if (filters.stockStatus.value === "high") {
+        setData(
+          products_management
+            .slice()
+            .filter((item) => item.product_quantity >= 10)
+        );
+      }
+      if (filters.stockStatus.value === "out") {
+        setData(
+          products_management
+            .slice()
+            .filter((item) => item.product_quantity === 0)
+        );
+      }
     }
   };
 
   const handleClearFilters = () => {
     setFilters(defaultFilters);
+    setData(products_management);
   };
 
   const dataByStatus = (category) => {
@@ -276,15 +350,19 @@ const ProductManagementTable = () => {
       </div>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-x-6 xl:grid-cols-6">
         <Select
-          options={STOCK_STATUS_OPTIONS}
+          options={[
+            { label: "Còn hàng", value: "high" },
+            { label: "Còn ít hàng", value: "low" },
+            { label: "Hết hàng", value: "out" },
+          ]}
           value={filters.stockStatus}
-          placeholder="Stock Status"
+          placeholder="Kho"
           onChange={(e) => handleFilterSelect(e, "stockStatus")}
         />
         <Select
           options={categories_management}
           value={filters.parentCategory}
-          placeholder="Category"
+          placeholder="Danh mục"
           onChange={(e) => handleFilterSelect(e, "parentCategory")}
         />
 
@@ -305,9 +383,16 @@ const ProductManagementTable = () => {
       </div>
       <div className="flex flex-col-reverse gap-4 mt-4 mb-5 md:flex-row md:justify-between md:items-end md:mt-5 md:mb-6">
         <p>Dữ liệu đang xem: {pagination.showingOf()}</p>
-        <div className="md:min-w-[560px] grid md:grid-cols-2 gap-4">
+        <div className="md:min-w-[560px] grid md:grid-cols-3 gap-4">
+          <CSVLink className="btn btn--outline blue !h-[44px]" data={data}>
+            Xuất Excel <i className="icon-file-export-solid" />
+          </CSVLink>
           <Select
-            options={ADDITIONAL_OPTIONS}
+            options={[
+              { value: "product_name", label: "Tên" },
+              { value: "createdOn", label: "Ngày tạo" },
+              { value: "modifiedOn", label: "Ngày chỉnh sửa" },
+            ]}
             value={sorts.sortBy}
             placeholder="Sort by"
             onChange={(e) => handleSortChange(e, "sortBy")}
