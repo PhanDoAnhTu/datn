@@ -712,7 +712,11 @@ export const BRANDS_MANAGEMENT_COLUMN_DEFS = [
     dataIndex: "brand",
     render: (text, record) => (
       <div className="flex items-center justify-end gap-11">
-        <EditBtn link={"/brand-editor"} record={record} title={"Brand Edit"} />
+        <EditBtn
+          link={`/brand-editor/${record._id}`}
+          record={record._id}
+          title={"Brand Edit"}
+        />
         <Actions record={record} table={"brand"} />
       </div>
     ),

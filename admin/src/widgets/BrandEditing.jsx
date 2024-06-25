@@ -10,10 +10,17 @@ import classNames from "classnames";
 import MediaDropPlaceholder from "@ui/MediaDropPlaceholder";
 import DropFiles from "@components/DropFiles";
 import { useDispatch } from "react-redux";
-import { createBrand, upLoadImageSingle } from "../store/actions";
+import {
+  createBrand,
+  findBrandById,
+  upLoadImageSingle,
+  updateOneBrand,
+} from "../store/actions";
+import { useEffect, useState } from "react";
 
-const BrandEditor = () => {
+const BrandEditing = ({ id }) => {
   const dispatch = useDispatch();
+  const [data, setData] = useState({});
 
   const defaultValues = {
     brand_name: "",
@@ -25,56 +32,33 @@ const BrandEditor = () => {
     register,
     control,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: defaultValues,
   });
 
-  // do something with the data
-  const handleSave = async (data) => {
-    const id = toast.loading("Vui lòng chờ...");
-    let imageSingle = null;
-    if (data?.brand_image?.length > 0) {
-      const image = new FormData();
-      image.append("file", data.brand_image[0]);
-      image.append("folderName", "outrunner/images/brand");
-      const uploadImageSingle = await dispatch(upLoadImageSingle(image));
-      imageSingle =
-        uploadImageSingle && uploadImageSingle?.payload?.metaData?.thumb_url;
-    }
-    const newBrand = await dispatch(
-      createBrand({
-        brand_name: data.brand_name,
-        brand_image: imageSingle,
-        brand_description: data.brand_description,
-        isPublished: false,
-      })
-    );
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await dispatch(findBrandById({ brand_id: id }));
+      if (result) {
+        setData(result.payload.metaData);
+      }
+    };
+    fetchData();
+  }, []);
+  useEffect(() => {
+    setValue("brand_name", data.brand_name);
+    setValue("brand_description", data.brand_description);
+  }, [data]);
 
-    // console.log(newBrand);
-
-    if (newBrand?.payload?.status === (200 || 201)) {
-      toast.update(id, {
-        render: "Thêm thương hiệu thành công",
-        type: "success",
-        isLoading: false,
-        closeOnClick: true,
-        autoClose: 3000,
-      });
-    } else {
-      toast.update(id, {
-        render: "Thêm thương hiệu không thành công",
-        type: "error",
-        isLoading: false,
-        closeOnClick: true,
-        autoClose: 3000,
-      });
-    }
-  };
+  const brand_name = watch("brand_name");
+  const brand_description = watch("brand_description");
 
   // do something with the data
   const handlePublish = async (data) => {
-    const id = toast.loading("Vui lòng chờ...");
+    const signal = toast.loading("Vui lòng chờ...");
     let imageSingle = null;
     if (data?.brand_image?.length > 0) {
       const image = new FormData();
@@ -84,28 +68,28 @@ const BrandEditor = () => {
       imageSingle =
         uploadImageSingle && uploadImageSingle?.payload?.metaData?.thumb_url;
     }
-    const newBrand = await dispatch(
-      createBrand({
+    const updatedBrand = await dispatch(
+      updateOneBrand({
+        brand_id: id,
         brand_name: data.brand_name,
-        brand_image: imageSingle,
+        brand_image: imageSingle ? imageSingle : "",
         brand_description: data.brand_description,
-        isPublished: true,
       })
     );
 
-    // console.log(newBrand);
+    // console.log(updatedBrand);
 
-    if (newBrand?.payload?.status === (200 || 201)) {
-      toast.update(id, {
-        render: "Thêm thương hiệu thành công",
+    if (updatedBrand?.payload?.status === (200 || 201)) {
+      toast.update(signal, {
+        render: "Cập nhật thương hiệu thành công",
         type: "success",
         isLoading: false,
         closeOnClick: true,
         autoClose: 3000,
       });
     } else {
-      toast.update(id, {
-        render: "Thêm thương hiệu không thành công",
+      toast.update(signal, {
+        render: "Cập nhật thương hiệu không thành công",
         type: "error",
         isLoading: false,
         closeOnClick: true,
@@ -148,6 +132,7 @@ const BrandEditor = () => {
                 "field-input--error": errors.brand_name,
               })}
               id="brand_name"
+              value={brand_name}
               defaultValue={defaultValues.brand_name}
               placeholder="VD: Fjallraven, Coca,..."
               {...register("brand_name", { required: true })}
@@ -162,6 +147,7 @@ const BrandEditor = () => {
                 "field-input--error": errors.brand_description,
               })}
               id="brand_description"
+              value={brand_description}
               defaultValue={defaultValues.brand_description}
               placeholder="VD:  Giới thiệu sơ lược về thương hiệu,..."
               {...register("brand_description", { required: true })}
@@ -169,18 +155,12 @@ const BrandEditor = () => {
           </div>
         </div>
 
-        <div className="grid gap-2 mt-5 sm:grid-cols-2 sm:mt-10 md:mt-11">
-          <button
-            className="btn btn--secondary"
-            onClick={handleSubmit(handleSave)}
-          >
-            Lưu thành bản nháp
-          </button>
+        <div className="grid gap-2 mt-5 sm:mt-10 md:mt-11">
           <button
             className="btn btn--primary"
             onClick={handleSubmit(handlePublish)}
           >
-            Xuất bản
+            Cập nhật
           </button>
         </div>
       </form>
@@ -188,4 +168,4 @@ const BrandEditor = () => {
   );
 };
 
-export default BrandEditor;
+export default BrandEditing;
