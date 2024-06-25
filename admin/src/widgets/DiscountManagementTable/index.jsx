@@ -13,14 +13,116 @@ import { useWindowSize } from "react-use";
 
 // constants
 import { ADDITIONAL_OPTIONS, SELECT_OPTIONS } from "@constants/options";
-import { DISCOUNTS_MANAGEMENT_COLUMN_DEFS } from "@constants/columnDefs";
+// import { DISCOUNTS_MANAGEMENT_COLUMN_DEFS } from "@constants/columnDefs";
 import discounts_manangement from "@db/discounts_managements";
+import { Switch } from "antd";
+import Actions from "@components/Actions";
+import { changeIsActiveDiscount, onGetAllDiscount, isTrashDiscount } from "../../store/actions";
+import dayjs from "dayjs";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
 
 // data placeholder
 
 const DiscountManagementTable = () => {
-  const { width } = useWindowSize();
+  const DISCOUNTS_MANAGEMENT_COLUMN_DEFS = [
+    {
+      title: "Tên",
+      dataIndex: "discount_name",
+      render: (discount_name) => (
+        <span className="inline-block h6 !text-sm max-w-[150px]">
+          {discount_name}
+        </span>
+      ),
+    },
+    {
+      title: "Mã giảm giá",
+      dataIndex: "discount_code",
+      render: (discount_code) => (
+        <span className="inline-block h6 !text-sm max-w-[200px]">
+          {discount_code}
+        </span>
+      ),
+    },
+    {
+      title: "Áp dụng với",
+      dataIndex: "discount_applies_to",
+      render: (discount_applies_to) => (
+        <span className="inline-block h6 !text-sm max-w-[150px]">
+          {discount_applies_to === "all"
+            ? "Tất cả sản phẩm"
+            : "Sản phẩm nhất định"}
+        </span>
+      ),
+    },
+    {
+      title: "Số lượng đã dùng",
+      dataIndex: "discount_uses_count",
+      render: (discount_uses_count) => (
+        <span className="inline-block h6 !text-sm max-w-[50px]">
+          {discount_uses_count}
+        </span>
+      ),
+      responsive: ["lg"],
+    },
+    {
+      title: "Ngày bắt đầu - Ngày kêt thúc",
+      dataIndex: "dateAdded",
+      render: (date, record) => (
+        <div>
+          <div className="font-bold text-header">
+            Bắt đầu:{" "}
+            {record && dayjs(record.discount_start_date).format("DD/MM/YYYY")}
+          </div>
+          <div className="font-bold text-header">
+            Kết thúc:{" "}
+            {record && dayjs(record.discount_end_date).format("DD/MM/YYYY")}
+          </div>
+        </div>
+      ),
+      responsive: ["lg"],
+    },
+    {
+      title: "Hoạt động",
+      dataIndex: "status",
+      render: (status, record) => (
+        <div>
+          {
+            record.isDeleted === false
+              ? <Switch
+                checkedChildren={"ON"}
+                unCheckedChildren={"OFF"}
+                onChange={(e) => handleChangeStatus(e, record?._id)}
+                loading={false}
+                checked={record?.isPublished}
+              />
+              : <Switch
+                disabled
+                checkedChildren={"ON"}
+                unCheckedChildren={"OFF"}
+                loading={false}
+                checked={false}
+              />
+          }
+        </div>
+      ),
+    },
+    {
+      title: "Chức năng",
+      dataIndex: "actions",
+      render: (text, record) => {
+        return (
+          <div className="flex items-center justify-end gap-11">
+            <Actions record={record} table={"Promotion"} handleTrash={() => record.isDeleted === true ? onRemovePromotion(record._id, false) : onRemovePromotion(record._id, true)} />
+          </div>
+        );
+      },
+    },
+  ];
 
+  const { width } = useWindowSize();
+  const [isLoad, setIsLoad] = useState(false);
+  const dispatch = useDispatch()
   const defaultSort = {
     sortBy: ADDITIONAL_OPTIONS[0],
     sortOrder: SELECT_OPTIONS[0],
@@ -31,11 +133,25 @@ const DiscountManagementTable = () => {
   const [sorts, setSorts] = useState(defaultSort);
   const [activeCollapse, setActiveCollapse] = useState("");
 
+
+
+
+  const fetchDataPromotionManagement = async () => {
+    const response = await dispatch(onGetAllDiscount());
+    if (response) {
+      setData(response.payload.metaData);
+    }
+  };
+
+  useEffect(() => {
+    fetchDataPromotionManagement();
+  }, [isLoad]);
+  
   const getQty = (category) => {
-    if (category === "all") return discounts_manangement.length;
-    return discounts_manangement.filter(
-      (product) => product.discount_is_active === category
-    ).length;
+    if (category === "all") return data.filter((product) => product.isDeleted === false).length;
+    if (category === "isPublished") return data.filter((product) => product.isPublished === true).length;
+    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true).length;
+
   };
 
   const handleSortChange = ({ value, label }, name) => {
@@ -55,8 +171,8 @@ const DiscountManagementTable = () => {
                 ? 1
                 : -1
               : a.discount_name.toLowerCase() < b.discount_name.toLowerCase()
-              ? 1
-              : -1
+                ? 1
+                : -1
           )
       );
     }
@@ -72,8 +188,8 @@ const DiscountManagementTable = () => {
                 : -1
               : new Date(a.discount_start_date) >
                 new Date(b.discount_start_date)
-              ? 1
-              : -1
+                ? 1
+                : -1
           )
       );
     }
@@ -87,8 +203,8 @@ const DiscountManagementTable = () => {
                 ? 1
                 : -1
               : new Date(a.discount_end_date) > new Date(b.discount_end_date)
-              ? 1
-              : -1
+                ? 1
+                : -1
           )
       );
     }
@@ -102,20 +218,21 @@ const DiscountManagementTable = () => {
                 ? -1
                 : 1
               : a.discount_uses_count > b.discount_uses_count
-              ? -1
-              : 1
+                ? -1
+                : 1
           )
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sorts.sortBy.value, sorts.sortOrder.value]);
 
-  const dataByStatus = () => {
-    if (category === "all") return data;
-    return data.filter((product) => product.discount_is_active === category);
+  const dataByStatus = (category) => {
+    if (category === "all") return data.filter((product) => product.isDeleted === false);
+    if (category === "isPublished") return data.filter((product) => product.isPublished === true);
+    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true);
   };
 
-  const pagination = usePagination(dataByStatus(), 8);
+  const pagination = usePagination(dataByStatus(category), 8);
 
   // reset active collapse when page or window width changes
   useEffect(() => {
@@ -130,6 +247,62 @@ const DiscountManagementTable = () => {
     }
   };
 
+  const handleChangeStatus = async (e, discount_id) => {
+    const id = toast.loading("Vui lòng đợi...");
+    const changeStatus = await dispatch(
+      changeIsActiveDiscount({
+        discount_id: discount_id,
+        isPublished: e,
+      })
+    );
+    if (changeStatus?.payload?.status === (200 || 201)) {
+      toast.update(id, {
+        render: `Mã giảm giá đã được ${e === false ? "tắt" : "áp dụng"
+          }`,
+        type: "success",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    } else {
+      toast.update(id, {
+        render: "Thay đổi trạng thái không thành công",
+        type: "error",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    }
+    setIsLoad(!isLoad);
+  };
+  const onRemovePromotion = async (discount_id, isDeleted) => {
+    const id = toast.loading("Vui lòng đợi...");
+    const changeStatus = await dispatch(
+      isTrashDiscount({ discount_id: discount_id, isDeleted: isDeleted })
+    );
+    if (
+      (changeStatus?.payload?.status === (200 || 201)) &
+      (changeStatus?.payload?.metaData?.nModified === 1)
+    ) {
+      toast.update(id, {
+        render: `Mã giảm giá này vào thùng rác`,
+        type: "success",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    } else {
+      toast.update(id, {
+        render: "Xóa không thành công",
+        type: "error",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    }
+    setIsLoad(!isLoad);
+  };
+
   return (
     <div className="flex flex-col flex-1">
       <div className="flex flex-wrap gap-2 mb-4">
@@ -137,8 +310,8 @@ const DiscountManagementTable = () => {
         <div>
           {[
             { value: "all", label: "Tất cả" },
-            { value: true, label: "Đang hoạt động" },
-            { value: false, label: "Không hoạt động" },
+            { value: "isPublished", label: "Đang hoạt động" },
+            { value: "isDeleted", label: "Thùng rác" },
           ].map((option, index) => (
             <FilterItem
               key={`filter-${index}`}

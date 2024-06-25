@@ -34,9 +34,9 @@ export const onFindDiscountById = (data) => async (dispatch) => {
         console.log(err)
     }
 };
-export const changeIsActiveDiscoun = (data) => async (dispatch) => {
+export const changeIsActiveDiscount = (data) => async (dispatch) => {
     try {
-        const response = await PostData('/discount/v1/changeIsActiveDiscoun', data);
+        const response = await PostData('/discount/v1/changeIsActiveDiscount', data);
         console.log('response:', response)
         return dispatch({ type: Action.DISCOUNT_BY_ID, payload: response.data });
 
@@ -47,6 +47,16 @@ export const changeIsActiveDiscoun = (data) => async (dispatch) => {
 export const deleteDiscountCode = (data) => async (dispatch) => {
     try {
         const response = await PostData('/discount/v1/deleteDiscountCode', data);
+        console.log('response:', response)
+        return dispatch({ type: Action.DISCOUNT_BY_ID, payload: response.data });
+
+    } catch (err) {
+        console.log(err)
+    }
+};
+export const isTrashDiscount = (data) => async (dispatch) => {
+    try {
+        const response = await PostData('/discount/v1/isTrashDiscount', data);
         console.log('response:', response)
         return dispatch({ type: Action.DISCOUNT_BY_ID, payload: response.data });
 

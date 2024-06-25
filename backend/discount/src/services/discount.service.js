@@ -58,7 +58,7 @@ class DiscountService {
             discount_max_user_uses: discount_max_user_uses,  // 1 người sử dụng tối đa bao nhiêu lần
             discount_min_order_value: discount_min_order_value,
             discount_min_order_qty: discount_min_order_qty,
-            discount_is_active: discount_is_active,
+            isPublished: discount_is_active,
             discount_applies_to: discount_applies_to,
             discount_product_ids: discount_applies_to === 'all' ? [] : discount_product_ids  // so san pham duoc ap dung
         })
@@ -67,7 +67,6 @@ class DiscountService {
 
     async getAllDiscountCodeByShop({
         limit = 50, page = 1, sort = 'ctime', filter = {
-            discount_is_active: true
         }
     }) {
         const discounts = await discountRepository.findAllDiscountCodeUnSelect({
@@ -91,13 +90,13 @@ class DiscountService {
     }
 
     async changeIsActiveDiscount({
-        discount_id, discount_is_active=false
+        discount_id, isPublished = false
     }) {
         const discount = await DiscountModel.findOne({
-            _id: discount_id,
+            _id: discount_id
         })
         discount.isDeleted = false
-        discount.discount_is_active = discount_is_active
+        discount.isPublished = isPublished
         return await discount.updateOne(discount)
     }
     async isTrashDiscount({
@@ -108,7 +107,7 @@ class DiscountService {
             _id: discount_id,
         })
 
-        discount.discount_is_active = false
+        discount.isPublished = false
 
         discount.isDeleted = isDeleted
 
@@ -145,11 +144,11 @@ class DiscountService {
             discount_max_user_uses,
             discount_min_order_value,
             discount_min_order_qty,
-            discount_is_active,
+            isPublished,
             discount_applies_to,
             discount_product_ids } = foundDiscount
 
-        if (!discount_is_active) throw new errorResponse.NotFoundRequestError("discount expried")
+        if (!isPublished) throw new errorResponse.NotFoundRequestError("discount expried")
         if (discount_max_uses < 1 || discount_users_used.length >= discount_max_uses) throw new errorResponse.NotFoundRequestError("discount are out")
         const uniqueSet = new Set(discount_users_used);
         const discount_users_used_unique = [...uniqueSet];
