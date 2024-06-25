@@ -49,7 +49,9 @@ const ProductManagementTable = () => {
       title: "Tên",
       dataIndex: "product_name",
       render: (product_name) => (
-        <span className="inline-block h6 !text-sm max-w-[155px]">{product_name}</span>
+        <span className="inline-block h6 !text-sm max-w-[155px]">
+          {product_name}
+        </span>
       ),
     },
     {
@@ -62,7 +64,11 @@ const ProductManagementTable = () => {
             "On Demand"
           ) : (
             <span>
-              <span className={`${product_quantity !== 0 ? "text-green" : "text-red"}`}>
+              <span
+                className={`${
+                  product_quantity !== 0 ? "text-green" : "text-red"
+                }`}
+              >
                 {product_quantity !== 0
                   ? product_quantity >= 10
                     ? "Còn hàng "
@@ -88,11 +94,11 @@ const ProductManagementTable = () => {
         <div className="flex flex-wrap gap-x-0.5">
           {categories && categories.length
             ? categories.map((tag, index) => (
-              <button className="tag text-accent capitalize" key={tag}>
-                {tag}
-                {index !== categories.length - 1 && ","}
-              </button>
-            ))
+                <button className="tag text-accent capitalize" key={tag}>
+                  {tag}
+                  {index !== categories.length - 1 && ","}
+                </button>
+              ))
             : "-"}
         </div>
       ),
@@ -106,14 +112,19 @@ const ProductManagementTable = () => {
         <div className="flex flex-wrap gap-x-0.5">
           {categories && categories.length
             ? categories?.map((attribute) => {
-              return attribute?.attribute_value_list?.map((value, subindex) => (
-                <button className="tag text-accent capitalize" key={subindex}>
-                  {value.attribute_value}
-                  {subindex !== attribute.attribute_value_list.length - 1 &&
-                    ","}
-                </button>
-              ));
-            })
+                return attribute?.attribute_value_list?.map(
+                  (value, subindex) => (
+                    <button
+                      className="tag text-accent capitalize"
+                      key={subindex}
+                    >
+                      {value.attribute_value}
+                      {subindex !== attribute.attribute_value_list.length - 1 &&
+                        ","}
+                    </button>
+                  )
+                );
+              })
             : "-"}
         </div>
       ),
@@ -170,26 +181,29 @@ const ProductManagementTable = () => {
   const [filters, setFilters] = useState(defaultFilters);
   const [activeCollapse, setActiveCollapse] = useState("");
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const [isLoad, setIsLoad] = useState(false);
 
   const fetchDataProductsManagement = async () => {
-    const responseProducts = await dispatch((onAllProductsOption({ isPublished: true })))
+    const responseProducts = await dispatch(onAllProductsOption());
     if (responseProducts) {
-      setData(responseProducts.payload.metaData)
+      setData(responseProducts.payload.metaData);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchDataProductsManagement()
-  }, [isLoad])
+    fetchDataProductsManagement();
+  }, [isLoad]);
 
   const getQty = (category) => {
     if (category === "all") return data.length;
-    if (category === "isPublished") return data.filter((product) => product.isPublished === true).length;
-    if (category === "isDraft") return data.filter((product) => product.isDraft === true).length;
-    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true).length;
+    if (category === "isPublished")
+      return data.filter((product) => product.isPublished === true).length;
+    if (category === "isDraft")
+      return data.filter((product) => product.isDraft === true).length;
+    if (category === "isDeleted")
+      return data.filter((product) => product.isDeleted === true).length;
   };
 
   const handleFilterSelect = ({ value, label }, name) => {
@@ -209,9 +223,7 @@ const ProductManagementTable = () => {
   const handleApplyFilters = () => {
     if (filters.parentCategory != null) {
       setData(
-        data.filter(
-          (item) => item.category === filters.parentCategory.label
-        )
+        data.filter((item) => item.category === filters.parentCategory.label)
       );
     }
   };
@@ -222,9 +234,12 @@ const ProductManagementTable = () => {
 
   const dataByStatus = (category) => {
     if (category === "all") return data;
-    if (category === "isPublished") return data.filter((product) => product.isPublished === true);
-    if (category === "isDraft") return data.filter((product) => product.isDraft === true);
-    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true);
+    if (category === "isPublished")
+      return data.filter((product) => product.isPublished === true);
+    if (category === "isDraft")
+      return data.filter((product) => product.isDraft === true);
+    if (category === "isDeleted")
+      return data.filter((product) => product.isDeleted === true);
   };
 
   const pagination = usePagination(dataByStatus(category), 8);

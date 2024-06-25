@@ -8,7 +8,7 @@ const ContactResponse = () => {
   return (
     <>
       <PageHeader title="Phản hồi người dùng" />
-      <ContactResponsing item={location.state ? location.state.record : ""} />
+      <ContactResponsing id={location.state ? location.state._id : ""} />
     </>
   );
 };

@@ -792,14 +792,14 @@ export const SLIDERS_MANAGEMENT_COLUMN_DEFS = [
 export const CONTACTS_MANAGEMENT_COLUMN_DEFS = [
   {
     title: "Tiêu đề",
-    dataIndex: "label",
+    dataIndex: "contact_title",
     render: (label) => (
       <span className="inline-block h6 !text-sm max-w-[150px]">{label}</span>
     ),
   },
   {
     title: "Ngày tạo",
-    dataIndex: "dateAdded",
+    dataIndex: "createdOn",
     render: (date) => (
       <div>
         <span className="font-bold text-header">
@@ -811,7 +811,7 @@ export const CONTACTS_MANAGEMENT_COLUMN_DEFS = [
   },
   {
     title: "Ngày phản hồi",
-    dataIndex: "dateModified",
+    dataIndex: "modifiedOn",
     render: (date) => (
       <div>
         <span className="font-bold text-header">
@@ -828,12 +828,12 @@ export const CONTACTS_MANAGEMENT_COLUMN_DEFS = [
     responsive: ["sm"],
   },
   {
-    title: "Đã giải quyết",
-    dataIndex: "isSolved",
-    render: (isSolved) => (
+    title: "Đã phản hồi",
+    dataIndex: "isReply",
+    render: (reply_id) => (
       <div>
         <span className="font-bold text-header">
-          {isSolved === 0 ? "CHƯA" : "CÓ"}
+          {reply_id === false ? "CHƯA" : "CÓ"}
         </span>
       </div>
     ),
@@ -844,17 +844,19 @@ export const CONTACTS_MANAGEMENT_COLUMN_DEFS = [
     dataIndex: "topic",
     render: (text, record) => (
       <div className="flex items-center justify-end">
-        {record.isSolved === 0 ? (
+        {record.isReply === false ? (
           <NavigateBtn
             className={"btn--outline blue"}
             title={"Trả lời"}
             state={{
-              state: { record: record },
+              state: { _id: record._id },
             }}
             link={`/support/res`}
           />
         ) : (
-          ""
+          <span className="font-bold text-header">
+            Trả lời bởi: {record.reply_by}
+          </span>
         )}
       </div>
     ),
