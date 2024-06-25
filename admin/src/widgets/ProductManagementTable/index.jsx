@@ -148,7 +148,7 @@ const ProductManagementTable = () => {
       dataIndex: "actions",
       render: (text, record) => (
         <div className="flex items-center justify-end gap-11">
-          <EditBtn link={`/product-editor/${record._id}`} record={record} />
+          {/* <EditBtn link={`/product-editor/${record._id}`} record={record} /> */}
           <Actions record={record} table={"product"} />
         </div>
       ),
@@ -175,7 +175,7 @@ const ProductManagementTable = () => {
   const [isLoad, setIsLoad] = useState(false);
 
   const fetchDataProductsManagement = async () => {
-    const responseProducts = await dispatch((onAllProductsOption({ isPublished: true })))
+    const responseProducts = await dispatch((onAllProductsOption({})))
     if (responseProducts) {
       setData(responseProducts.payload.metaData)
     }
@@ -221,7 +221,7 @@ const ProductManagementTable = () => {
   };
 
   const dataByStatus = (category) => {
-    if (category === "all") return data;
+    if (category === "all") return data.filter((product) => product.isDeleted === false);
     if (category === "isPublished") return data.filter((product) => product.isPublished === true);
     if (category === "isDraft") return data.filter((product) => product.isDraft === true);
     if (category === "isDeleted") return data.filter((product) => product.isDeleted === true);

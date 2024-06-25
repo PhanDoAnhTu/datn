@@ -13,7 +13,7 @@ class SliderService {
     slider_summary,
     slider_position,
     slider_image,
-    slider_is_active = false,
+    isPublished = false,
   }) => {
     try {
       const slider = await SliderModel.create({
@@ -23,7 +23,7 @@ class SliderService {
         slider_summary,
         slider_position,
         slider_image,
-        slider_is_active,
+        isPublished,
       });
       return slider;
     } catch (error) {
@@ -34,7 +34,7 @@ class SliderService {
   getAllSliderByActive = async ({ slider_is_active = true }) => {
     try {
       const slider = await SliderModel.find({
-        slider_is_active,
+        isPublished: slider_is_active,
       });
       return slider;
     } catch (error) {
@@ -43,12 +43,12 @@ class SliderService {
     }
   };
 
-  changeActive = async ({ slider_id, slider_is_active = false }) => {
+  changeActive = async ({ slider_id, isPublished = false }) => {
     try {
       const slider = await SliderModel.findOne({
         _id: slider_id
       });
-      slider.slider_is_active = slider_is_active
+      slider.isPublished = isPublished
 
       return await slider.updateOne(slider);
     } catch (error) {

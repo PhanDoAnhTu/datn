@@ -43,7 +43,7 @@ class SpecialOfferService {
         try {
             let now = new Date();
             const special = await SpecialOfferModel.findOne({
-                special_offer_is_active,
+                isPublished: special_offer_is_active,
                 special_offer_start_date: { $lte: now },
                 special_offer_end_date: { $gte: now },
                 'special_offer_spu_list.product_id': {
@@ -59,20 +59,20 @@ class SpecialOfferService {
     async findSpecialOfferBetweenStartDateAndEndByDate({ special_offer_is_active = true, date = Date.now() }) {
         let now = new Date(date);
         const special = await SpecialOfferModel.findOne({
-            special_offer_is_active,
+            isPublished: special_offer_is_active,
             special_offer_start_date: { $lte: now },
             special_offer_end_date: { $gte: now }
         }).lean()
         return special
     }
-    async updateStatusById({ special_offer_is_active, special_offer_id }) {
+    async updateStatusById({ isPublished, special_offer_id }) {
         const foundSpecialOffer = await SpecialOfferModel.findOne({
             _id: special_offer_id
         })
         if (!foundSpecialOffer) return null
-        foundSpecialOffer.special_offer_is_active = special_offer_is_active
+        foundSpecialOffer.isPublished = isPublished
 
-        console.log(foundSpecialOffer)
+        // console.log(foundSpecialOffer)
 
         const updateSpecialOffer = await foundSpecialOffer.updateOne(foundSpecialOffer)
         return updateSpecialOffer
@@ -80,7 +80,7 @@ class SpecialOfferService {
     async findSpecialOfferTodayBySpuIdList({ spu_id_list = [], special_offer_is_active = true }) {
         let now = new Date();
         const special = await SpecialOfferModel.findOne({
-            special_offer_is_active,
+            isPublished: special_offer_is_active,
             special_offer_start_date: { $lte: now },
             special_offer_end_date: { $gte: now },
             'special_offer_spu_list.product_id': {
@@ -93,9 +93,9 @@ class SpecialOfferService {
         const special = await SpecialOfferModel.find()
         return special
     }
-    async onChangeStatusSpecialOfferById({ special_offer_is_active, special_offer_id }) {
+    async onChangeStatusSpecialOfferById({ isPublished, special_offer_id }) {
 
-        if (special_offer_is_active == true) {
+        if (isPublished == true) {
             const special = await SpecialOfferModel.findOne({ _id: special_offer_id })
             if (!special) throw new errorResponse.NotFoundRequestError("not found")
             const checkStartDate = await this.findSpecialOfferBetweenStartDateAndEndByDate({ date: special.special_offer_start_date })
@@ -107,7 +107,7 @@ class SpecialOfferService {
         const query = { _id: special_offer_id }
         const updateOrInsert = {
             $set: {
-                special_offer_is_active: special_offer_is_active
+                isPublished: isPublished
             }
         }, options = {
             upsert: true,
@@ -117,13 +117,13 @@ class SpecialOfferService {
     }
     async isTrashPromotion({
         isDeleted = false,
-        promotion_id,
+        special_offer_id,
     }) {
         const discount = await SpecialOfferModel.findOne({
-            _id: promotion_id,
+            _id: special_offer_id,
         })
 
-        discount.special_offer_is_active = false
+        discount.isPublished = false
 
         discount.isDeleted = isDeleted
 
@@ -132,7 +132,7 @@ class SpecialOfferService {
     async removeSpecialOfferById({ special_offer_id }) {
         const special = await SpecialOfferModel.findOne({ _id: special_offer_id })
         if (!special) throw new errorResponse.NotFoundRequestError("not found")
-        if (special.special_offer_is_active == true) throw new errorResponse.ForbiddenRequestError("active using")
+        if (special.isPublished == true) throw new errorResponse.ForbiddenRequestError("active using")
         return await SpecialOfferModel.deleteOne({ _id: special_offer_id })
     }
     async serverRPCRequest(payload) {
@@ -145,7 +145,7 @@ class SpecialOfferService {
             //     return this.findSpecialOfferTodayBySpuIdList({ spu_id_list, special_offer_is_active })
             case "FIND_SPECIAL_OFFER_TODAY_BY_ID":
                 return this.findSpecialOfferBySpuId({ spu_id, special_offer_is_active })
-                
+
             default:
                 break;
         }

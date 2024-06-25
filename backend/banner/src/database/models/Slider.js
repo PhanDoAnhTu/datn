@@ -17,7 +17,7 @@ const sliderSchema = new Schema(
       default: "banner",
     },
     slider_image: { type: String },
-    slider_is_active: {
+    isPublished: {
       type: Boolean,
       default: false,
       index: true,
