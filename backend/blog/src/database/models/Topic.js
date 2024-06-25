@@ -10,8 +10,9 @@ const topicSchema = new Schema(
     topic_image: { type: String, default: null },
     topic_description: String,
     topic_slug: String,
-    isPublished: { type: Boolean, default: false, index: true, select: false },
-    isDeleted: { type: Boolean, default: false, index: true, select: false }
+    isPublished: { type: Boolean, default: false, index: true, select: true },
+    isDeleted: { type: Boolean, default: false, index: true, select: true },
+    isDraft: { type: Boolean, default: true, index: true },
 
   },
   {

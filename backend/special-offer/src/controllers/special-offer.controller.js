@@ -46,6 +46,12 @@ class SpecialOfferController {
             metaData: await this.service.removeSpecialOfferById(req.body)
         }).send(res)
     }
+    isTrashPromotion = async (req, res, next) => {
+        new successResponse.SuccessResponse({
+            message: 'isTrashPromotion success',
+            metaData: await this.service.isTrashPromotion(req.body)
+        }).send(res)
+    }
 }
 
 module.exports = new SpecialOfferController()

@@ -11,8 +11,9 @@ const categorySchema = new Schema(
     category_slug: { type: String },
     category_icon: { type: String, default: null },
     category_image: { type: String, default: null },
-    isPublished: { type: Boolean, default: true, index: true, select: false },
-    isDeleted: { type: Boolean, default: false, index: true, select: false }
+    isPublished: { type: Boolean, default: false, index: true, select: true },
+    isDeleted: { type: Boolean, default: false, index: true, select: true },
+    isDraft: { type: Boolean, default: true, index: true, select: true }
 
   },
   {

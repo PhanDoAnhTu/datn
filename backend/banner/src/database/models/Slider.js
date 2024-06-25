@@ -21,9 +21,8 @@ const sliderSchema = new Schema(
       type: Boolean,
       default: false,
       index: true,
-      select: false,
     },
-    isDeleted: { type: Boolean, default: false, index: true, select: false },
+    isDeleted: { type: Boolean, default: false, index: true },
   },
   {
     timestamps: true,

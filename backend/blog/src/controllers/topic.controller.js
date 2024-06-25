@@ -29,6 +29,19 @@ class TopicController {
         }).send(res)
     }
 
+    changeIsPublished = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+          message: "changeIsPublished success",
+          metaData: await this.service.changeIsPublished(req.body),
+        }).send(res);
+      };
+      isTrashTopic = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+          message: "isTrashTopic success",
+          metaData: await this.service.isTrashTopic(req.body),
+        }).send(res);
+      };
+
 }
 
 module.exports = new TopicController()

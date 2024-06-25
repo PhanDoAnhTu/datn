@@ -25,5 +25,17 @@ class CategoryController {
       metaData: await this.service.getAllCategory(req.body),
     }).send(res);
   };
+  changeIsPublished = async (req, res, next) => {
+    new successResponse.SuccessResponse({
+      message: "changeIsPublished success",
+      metaData: await this.service.changeIsPublished(req.body),
+    }).send(res);
+  };
+  isTrashcategory = async (req, res, next) => {
+    new successResponse.SuccessResponse({
+      message: "isTrashcategory success",
+      metaData: await this.service.isTrashcategory(req.body),
+    }).send(res);
+  };
 }
 module.exports = new CategoryController();

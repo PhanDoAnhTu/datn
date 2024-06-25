@@ -12,10 +12,9 @@ const postSchema = new Schema(
     post_slug: String,
     post_title: String,
     post_content: String,
-    isPublished: { type: Boolean, default: false, index: true, select: false },
-    isDeleted: { type: Boolean, default: false, index: true, select: false },
-    isDraft: { type: Boolean, default: true, index: true, select: false },
-
+    isPublished: { type: Boolean, default: false, index: true },
+    isDeleted: { type: Boolean, default: false, index: true },
+    isDraft: { type: Boolean, default: true, index: true },
   },
   {
     collection: COLLECTION_NAME,

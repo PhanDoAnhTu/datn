@@ -32,6 +32,18 @@ class PostController {
       metaData: await this.service.getSinglePost(req.body),
     }).send(res);
   };
+  changeIsPublished = async (req, res, next) => {
+    return new successResponse.SuccessResponse({
+      message: "changeIsPublished success",
+      metaData: await this.service.changeIsPublished(req.body),
+    }).send(res);
+  };
+  isTrashPost = async (req, res, next) => {
+    return new successResponse.SuccessResponse({
+      message: "isTrashPost success",
+      metaData: await this.service.isTrashPost(req.body),
+    }).send(res);
+  };
 }
 
 module.exports = new PostController();

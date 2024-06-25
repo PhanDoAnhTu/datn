@@ -12,5 +12,7 @@ router.post(
   asynchandler(categoryController.getListCategoryByParentId)
 );
 router.post("/getAllCategory", asynchandler(categoryController.getAllCategory));
+router.post("/isTrashcategory", asynchandler(categoryController.isTrashcategory));
+router.post("/changeIsPublished", asynchandler(categoryController.changeIsPublished));
 
 module.exports = router;

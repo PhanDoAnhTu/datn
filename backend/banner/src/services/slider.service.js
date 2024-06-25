@@ -43,6 +43,34 @@ class SliderService {
     }
   };
 
+  changeActive = async ({ slider_id, slider_is_active = false }) => {
+    try {
+      const slider = await SliderModel.findOne({
+        _id: slider_id
+      });
+      slider.slider_is_active = slider_is_active
+
+      return await slider.updateOne(slider);
+    } catch (error) {
+      console.log(error);
+      throw new errorResponse.NotFoundRequestError("not found")
+    }
+  };
+
+  isTrash = async ({ slider_id, isDeleted = false }) => {
+    try {
+      const slider = await SliderModel.findOne({
+        _id: slider_id
+      });
+      slider.isDeleted = isDeleted
+
+      return await slider.updateOne(slider);
+    } catch (error) {
+      console.log(error);
+      throw new errorResponse.NotFoundRequestError("not found")
+    }
+  };
+
   // async serverRPCRequest(payload) {
   //     const { type, data } = payload;
   //     const { } = data

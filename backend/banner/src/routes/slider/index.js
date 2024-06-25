@@ -8,6 +8,8 @@ const { authentication } = require('../../auth/authUtils');
 
 router.post('/createSlider', asynchandler(SliderController.createSlider))
 router.post('/getAllSliderByActive', asynchandler(SliderController.getAllSliderByActive))
+router.post('/changeActive', asynchandler(SliderController.changeActive))
+router.post('/isTrash', asynchandler(SliderController.isTrash))
 
 
 module.exports = router

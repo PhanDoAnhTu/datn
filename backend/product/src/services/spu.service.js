@@ -466,9 +466,48 @@ const productFromCart = async ({ spu_id, isPublished = true }) => {
   }
 };
 const AllProductsOption = async ({ sort = "ctime", isPublished = true }) => {
+  let all_Products = []
+  if (isPublished) {
+    all_Products = await spuRepository.getAllProducts({
+      sort,
+      isPublished,
+    });
+  } else {
+    all_Products = await spuRepository.getAllProducts({
+      sort
+    });
+  }
+
+  if (all_Products.length == 0) return null;
+  let product_list = {
+    all_Products: [],
+  };
+  let brand_list = [];
+  let sku_list = [];
+  for (let index = 0; index < all_Products.length; index++) {
+    const brand = await new BrandService().findBrandById({
+      brand_id: all_Products[index].product_brand,
+    });
+    brand_list.push(brand);
+    const skulist = await allSkuBySpuId({
+      product_id: all_Products[index]._id,
+    });
+    sku_list.push(skulist);
+  }
+
+  product_list.all_Products = await all_Products.map((product, index) => {
+    return {
+      ...product,
+      brand: brand_list[index],
+      sku_list: sku_list[index],
+    };
+  });
+
+  return product_list.all_Products;
+};
+const AllProducts_management = async ({ sort = "ctime" }) => {
   const all_Products = await spuRepository.getAllProducts({
     sort,
-    isPublished,
   });
   if (all_Products.length == 0) return null;
   let product_list = {
@@ -497,6 +536,7 @@ const AllProductsOption = async ({ sort = "ctime", isPublished = true }) => {
 
   return product_list.all_Products;
 };
+
 
 const findProductBestSelling = async ({
   limit = 50,
@@ -638,5 +678,6 @@ module.exports = {
   AllProductsOption,
   findProductBestSelling,
   isTrashProduct,
-  OneProductDetail
+  OneProductDetail,
+  AllProducts_management
 };

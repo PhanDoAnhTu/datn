@@ -91,19 +91,28 @@ class DiscountService {
     }
 
     async changeIsActiveDiscount({
-        discount_id, discount_is_active
+        discount_id, discount_is_active=false
     }) {
-        const query = { _id: discount_id }
-        const updateOrInsert = {
-            $set: {
-                discount_is_active: discount_is_active
-            }
-        }, options = {
-            upsert: true,
-            new: true
-        }
-        return await DiscountModel.findOneAndUpdate(query, updateOrInsert, options)
+        const discount = await DiscountModel.findOne({
+            _id: discount_id,
+        })
+        discount.isDeleted = false
+        discount.discount_is_active = discount_is_active
+        return await discount.updateOne(discount)
+    }
+    async isTrashDiscount({
+        isDeleted = false,
+        discount_id,
+    }) {
+        const discount = await DiscountModel.findOne({
+            _id: discount_id,
+        })
 
+        discount.discount_is_active = false
+
+        discount.isDeleted = isDeleted
+
+        return await discount.updateOne(discount)
     }
     /**
      * 
@@ -164,7 +173,7 @@ class DiscountService {
                 const discount_applies_to_products = await products.filter((product) => discount_product_ids.includes(product.productId) == true)
                 console.log(discount_applies_to_products)
                 totalOrderDiscount = discount_applies_to_products.reduce((acc, pro) => {
-                    return acc + (pro.quantity *  (pro.price_sale ? pro.price_sale : pro.price))
+                    return acc + (pro.quantity * (pro.price_sale ? pro.price_sale : pro.price))
                 }, 0)
                 // console.log("discount_applies_to_products", discount_applies_to_products)
             }

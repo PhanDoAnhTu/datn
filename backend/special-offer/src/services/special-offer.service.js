@@ -115,6 +115,20 @@ class SpecialOfferService {
         }
         return await SpecialOfferModel.findOneAndUpdate(query, updateOrInsert, options)
     }
+    async isTrashPromotion({
+        isDeleted = false,
+        promotion_id,
+    }) {
+        const discount = await SpecialOfferModel.findOne({
+            _id: promotion_id,
+        })
+
+        discount.special_offer_is_active = false
+
+        discount.isDeleted = isDeleted
+
+        return await discount.updateOne(discount)
+    }
     async removeSpecialOfferById({ special_offer_id }) {
         const special = await SpecialOfferModel.findOne({ _id: special_offer_id })
         if (!special) throw new errorResponse.NotFoundRequestError("not found")

@@ -101,6 +101,49 @@ class PostService {
       .lean();
     return listpost;
   }
+
+
+
+  async changeIsPublished({
+    isPublished = true,
+    post_id,
+  }) {
+    const post = await PostModel.findOne({
+      _id: post_id,
+    })
+    if (isPublished == true) {
+      post.isDraft = false
+      post.isDeleted = false
+    }
+    if (isPublished == false) {
+      post.isDraft = true
+      post.isDeleted = false
+    }
+    post.isPublished = isPublished
+
+    return await post.updateOne(post)
+  }
+
+  async isTrashPost({
+    isDeleted = true,
+    post_id,
+  }) {
+    const post = await PostModel.findOne({
+      _id: post_id,
+    })
+    if (isDeleted == true) {
+      post.isDraft = false
+      post.isPublished = false
+    }
+    if (isDeleted == false) {
+      post.isDraft = true
+      post.isPublished = false
+    }
+    post.isDeleted = isDeleted
+
+    return await post.updateOne(post)
+  }
+
 }
 
 module.exports = PostService;

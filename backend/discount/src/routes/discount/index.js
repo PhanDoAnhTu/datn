@@ -12,5 +12,6 @@ const { discountController } = require('../../controllers');
  router.post('/findOneDiscount', asynchandler(discountController.findOneDiscount))
  router.post('/changeIsActiveDiscount', asynchandler(discountController.changeIsActiveDiscount))
  router.post('/deleteDiscountCode', asynchandler(discountController.deleteDiscountCode))
+ router.post('/isTrashDiscount', asynchandler(discountController.isTrashDiscount))
 
 module.exports = router

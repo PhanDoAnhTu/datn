@@ -55,6 +55,45 @@ class CategoryService {
       return null
     }
   }
+  async changeIsPublished({
+    isPublished = true,
+    category_id,
+  }) {
+    const category = await CategoryModel.findOne({
+      _id: category_id,
+    })
+    if (isPublished == true) {
+      category.isDraft = false
+      category.isDeleted = false
+    }
+    if (isPublished == false) {
+      category.isDraft = true
+      category.isDeleted = false
+    }
+    category.isPublished = isPublished
+
+    return await category.updateOne(category)
+  }
+
+  async isTrashcategory({
+    isDeleted = true,
+    category_id,
+  }) {
+    const category = await CategoryModel.findOne({
+      _id: category_id,
+    })
+    if (isDeleted == true) {
+      category.isDraft = false
+      category.isPublished = false
+    }
+    if (isDeleted == false) {
+      category.isDraft = true
+      category.isPublished = false
+    }
+    category.isDeleted = isDeleted
+
+    return await category.updateOne(category)
+  }
   async serverRPCRequest(payload) {
     const { type, data } = payload;
     const { category_id, isPublished = true, category_id_list } = data

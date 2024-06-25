@@ -9,7 +9,8 @@ const { authentication } = require('../../auth/authUtils');
 router.post('/create', asynchandler(topicController.createTopic))
 router.post('/getListTopic', asynchandler(topicController.getListTopic))
 router.post('/getListTopicByParentId', asynchandler(topicController.getListTopicByParentId))
-
+router.post("/changeIsPublished", asynchandler(topicController.changeIsPublished));
+router.post("/isTrashTopic", asynchandler(topicController.isTrashTopic));
 
 
 

@@ -38,6 +38,12 @@ class DiscountController {
             metaData: await this.service.changeIsActiveDiscount(req.body)
         }).send(res)
     }
+    isTrashDiscount = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: " isTrashDiscount  success",
+            metaData: await this.service.isTrashDiscount(req.body)
+        }).send(res)
+    }
     deleteDiscountCode = async (req, res, next) => {
         return new successResponse.SuccessResponse({
             message: " deleteDiscountCode  success",

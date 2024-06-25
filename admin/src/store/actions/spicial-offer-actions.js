@@ -54,3 +54,13 @@ export const removeSpecialOfferById = (data) => async (dispatch) => {
         console.log(err)
     }
 };
+export const isTrashPromotion = (data) => async (dispatch) => {
+    try {
+        const response = await PostData('/Special-Offer/v1/isTrashPromotion',data);
+        console.log('response:', response)
+        return dispatch({ type: Action.REMOVE_PROMOTION, payload: response.data });
+
+    } catch (err) {
+        console.log(err)
+    }
+};

@@ -10,7 +10,7 @@ const specialOfferSchema = new Schema({
     special_offer_image: { type: String, default: null }, 
     special_offer_is_active: { type: Boolean, default: false },
     special_offer_spu_list: { type: Schema.Types.Mixed, required: true },
-    
+    isDeleted: { type: Boolean, default: false, index: true, select: true }
 },
     {
         collection: COLLECTION_NAME,

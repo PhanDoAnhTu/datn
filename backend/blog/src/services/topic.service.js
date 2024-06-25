@@ -63,6 +63,45 @@ class TopicService {
       .lean();
     return listTopicByParentId;
   }
+  async changeIsPublished({
+    isPublished = true,
+    topic_id,
+  }) {
+    const topic = await TopicModel.findOne({
+      _id: topic_id,
+    })
+    if (isPublished == true) {
+      topic.isDraft = false
+      topic.isDeleted = false
+    }
+    if (isPublished == false) {
+      topic.isDraft = true
+      topic.isDeleted = false
+    }
+    topic.isPublished = isPublished
+
+    return await topic.updateOne(topic)
+  }
+
+  async isTrashTopic({
+    isDeleted = true,
+    topic_id,
+  }) {
+    const topic = await TopicModel.findOne({
+      _id: topic_id,
+    })
+    if (isDeleted == true) {
+      topic.isDraft = false
+      topic.isPublished = false
+    }
+    if (isDeleted == false) {
+      topic.isDraft = true
+      topic.isPublished = false
+    }
+    topic.isDeleted = isDeleted
+
+    return await topic.updateOne(topic)
+  }
 }
 
 module.exports = TopicService;
