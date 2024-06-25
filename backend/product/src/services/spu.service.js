@@ -586,5 +586,5 @@ module.exports = {
   productFromCart,
   AllProductsOption,
   findProductBestSelling,
-  isTrash
+  isTrashProduct
 };
