@@ -107,8 +107,59 @@ const oneSpu = async ({ spu_id, isPublished = true }) => {
     if (!spu) throw new errorResponse.NotFoundRequestError("spu not found");
     const skus = await allSkuBySpuId({ product_id: spu._id });
 
+    // const product_brand = await new BrandService().findBrandById({
+    //   brand_id: spu.product_brand,
+    // });
+    // const product_attributes = await new AttributeService().findAttributesByProductAttributes({
+    //   product_attributes: spu.product_attributes,
+    // });
+    // const product_categories = await RPCRequest("CATEGORY_RPC", {
+    //   type: "FIND_CATEGORY_BY_ID_LIST",
+    //   data: {
+    //     isPublished: true,
+    //     category_id_list: spu.product_category,
+    //   },
+    // });
     return {
       spu_info: _.omit(spu, ["__v", "updateAt"]),
+      // product_brand,
+      // product_categories,
+      // product_attributes,
+      sku_list: skus.map((sku) =>
+        _.omit(sku, ["__v", "updateAt", "createAt", "isDeleted"])
+      ),
+    };
+  } catch (error) {
+    return null;
+  }
+};
+const OneProductDetail = async ({ spu_id, isPublished = true }) => {
+  try {
+    const spu = await SpuModel.findOne({
+      _id: Types.ObjectId(spu_id),
+      isPublished,
+    });
+    if (!spu) throw new errorResponse.NotFoundRequestError("spu not found");
+    const skus = await allSkuBySpuId({ product_id: spu._id });
+
+    const product_brand = await new BrandService().findBrandById({
+      brand_id: spu.product_brand,
+    });
+    const product_attributes = await new AttributeService().findAttributesByProductAttributes({
+      product_attributes: spu.product_attributes,
+    });
+    const product_categories = await RPCRequest("CATEGORY_RPC", {
+      type: "FIND_CATEGORY_BY_ID_LIST",
+      data: {
+        isPublished: true,
+        category_id_list: spu.product_category,
+      },
+    });
+    return {
+      spu_info: _.omit(spu, ["__v", "updateAt"]),
+      product_brand,
+      product_categories,
+      product_attributes,
       sku_list: skus.map((sku) =>
         _.omit(sku, ["__v", "updateAt", "createAt", "isDeleted"])
       ),
@@ -135,11 +186,11 @@ const isTrashProduct = async ({ product_id, isDeleted = false }) => {
     spuFound.isDraft = false
     spuFound.isPublished = false
   }
-  if (isDeleted === false){
+  if (isDeleted === false) {
     spuFound.isDraft = true
     spuFound.isPublished = false
   }
-    spuFound.isDeleted = isDeleted
+  spuFound.isDeleted = isDeleted
 
 
   const { modifiedCount } = await spuFound.updateOne(spuFound);
@@ -586,5 +637,6 @@ module.exports = {
   productFromCart,
   AllProductsOption,
   findProductBestSelling,
-  isTrashProduct
+  isTrashProduct,
+  OneProductDetail
 };

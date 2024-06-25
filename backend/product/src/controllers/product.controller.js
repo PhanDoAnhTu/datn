@@ -68,7 +68,12 @@ class spuController {
       metaData: await SpuService.isTrashProduct(req.body),
     }).send(res);
   };
-
+  OneProductDetail = async (req, res, next) => {
+    return new successResponse.SuccessResponse({
+      message: "OneProductDetail",
+      metaData: await SpuService.OneProductDetail(req.body),
+    }).send(res);
+  };
   newSpuAttribute = async (req, res, next) => {
     new successResponse.SuccessResponse({
       message: 'newSpuAttribute success',
