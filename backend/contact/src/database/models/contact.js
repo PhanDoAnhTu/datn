@@ -11,8 +11,9 @@ const contactSchema = new Schema({
     customer_email: { type: String, required: true },
     contact_title: { type: String, required: true },
     contact_content: { type: String, required: true },
-    isPublished: { type: Boolean, default: true, index: true},
-    isDeleted: { type: Boolean, default: false, index: true }
+    isReply: { type: Boolean, default: false, index: true },
+    // isPublished: { type: Boolean, default: true, index: true },
+    // isDeleted: { type: Boolean, default: false, index: true }
 },
     {
         timestamps: {

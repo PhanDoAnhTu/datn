@@ -240,7 +240,7 @@ class CheckoutService {
 
   async changeStatusOrderByOrderId({ order_id, order_status }) {
     if (
-      ["pending", "confirmed", "shipped", "cancelled", "successful", "review"].includes(order_status) ==
+      ["pending", "confirmed", "shipping", "cancelled", "successful", "review"].includes(order_status) ==
       false
     )
       throw new errorResponse.BadRequestError("status not exitsts");

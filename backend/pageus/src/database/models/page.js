@@ -12,8 +12,8 @@ const pageUsSchema = new Schema({
     page_us_icon: { type: String, default: null },
     page_us_image: { type: String, default: null },
     page_us_slug: String,
-    isPublished: { type: Boolean, default: false, index: true, select: false },
-    isDeleted: { type: Boolean, default: false, index: true, select: false }
+    isPublished: { type: Boolean, default: false, index: true },
+    isDeleted: { type: Boolean, default: false, index: true }
 
 },
     {

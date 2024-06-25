@@ -32,6 +32,8 @@ const publishProduct = async ({ product_id }) => {
   if (!foundProduct) return null;
   foundProduct.isDraft = false;
   foundProduct.isPublished = true;
+  foundProduct.isDeleted = false;
+
 
   // console.log(foundProduct);
 
@@ -46,6 +48,7 @@ const unPublishProduct = async ({ product_id }) => {
   if (!foundProduct) return null;
   foundProduct.isDraft = true;
   foundProduct.isPublished = false;
+  foundProduct.isDeleted = false;
 
   // console.log(foundProduct);
 

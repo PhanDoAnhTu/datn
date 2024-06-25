@@ -126,6 +126,26 @@ const PublishProduct = async ({ product_id }) => {
   return await spuRepository.publishProduct({ product_id });
 };
 
+const isTrashProduct = async ({ product_id, isDeleted = false }) => {
+  const spuFound = await SpuModel.findOne({
+    _id: Types.ObjectId(product_id),
+  });
+  if (!spuFound) throw new errorResponse.NotFoundRequestError("spu not found");
+  if (isDeleted === true) {
+    spuFound.isDraft = false
+    spuFound.isPublished = false
+  }
+  if (isDeleted === false){
+    spuFound.isDraft = true
+    spuFound.isPublished = false
+  }
+    spuFound.isDeleted = isDeleted
+
+
+  const { modifiedCount } = await spuFound.updateOne(spuFound);
+  return modifiedCount;
+};
+
 const UnPublishProduct = async ({ product_id }) => {
   const spuFound = await SpuModel.findOne({
     _id: Types.ObjectId(product_id),
@@ -566,4 +586,5 @@ module.exports = {
   productFromCart,
   AllProductsOption,
   findProductBestSelling,
+  isTrash
 };

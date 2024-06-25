@@ -62,6 +62,12 @@ class spuController {
       metaData: await SpuService.UnPublishProduct(req.body),
     }).send(res);
   };
+  isTrashProduct = async (req, res, next) => {
+    return new successResponse.SuccessResponse({
+      message: "isTrashProduct",
+      metaData: await SpuService.isTrashProduct(req.body),
+    }).send(res);
+  };
 
   newSpuAttribute = async (req, res, next) => {
     new successResponse.SuccessResponse({

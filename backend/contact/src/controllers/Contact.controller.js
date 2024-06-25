@@ -28,6 +28,12 @@ class ContactController {
             metaData: await this.service.getAllContact(req.body),
         }).send(res);
     };
+    findIsReply = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: "findIsReply",
+            metaData: await this.service.findIsReply(req.body),
+        }).send(res);
+    };
 
 
 }

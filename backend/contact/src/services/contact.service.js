@@ -20,11 +20,10 @@ class contactService {
             contact_title,
             contact_content
         })
-
         return contact
     }
 
-    async getAllContact({ isPublished = true, limit = 50, page = 1, sort = 'ctime' }) {
+    async getAllContact({limit = 50, page = 1, sort = 'ctime' }) {
         const skip = (page - 1) * limit;
         const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
         const contact = await ContactModel.find({
@@ -33,15 +32,20 @@ class contactService {
 
         return contact
     }
-    async findOneContact({ isPublished = true, contact_id }) {
+    async findOneContact({ contact_id }) {
         const contact = await ContactModel.findOne({
             isPublished, _id: contact_id
         }).lean()
-
         return contact
     }
 
-    
+    async findIsReply({ isReply = false }) {
+        const contact = await ContactModel.find({
+            isPublished, _id: isReply
+        }).lean()
+        return contact
+    }
+
 }
 
 module.exports = contactService
