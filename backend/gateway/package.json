@@ -10,6 +10,7 @@
     "cart": "npm run dev --prefix ../cart",
     "category": "npm run dev --prefix ../category",
     "discount": "npm run dev --prefix ../discount",
+    "contact": "npm run dev --prefix ../contact",
     "menu": "npm run dev --prefix ../menu",
     "order": "npm run dev --prefix ../order",
     "pageus": "npm run dev --prefix ../pageus",
@@ -20,7 +21,7 @@
     "upload": "npm run dev --prefix ../upload",
     "user": "npm run dev --prefix ../user",
     "wish-list": "npm run dev --prefix ../wish-list",
-    "dev": "concurrently \"npm run backend\"  \"npm run banner\" \"npm run blog\" \"npm run cart\" \"npm run category\" \"npm run discount\" \"npm run menu\" \"npm run order\" \"npm run pageus\" \"npm run payment\" \"npm run product\" \"npm run social-authentication\" \"npm run special-offer\" \"npm run upload\" \"npm run user\" \"npm run wish-list\" "
+    "dev": "concurrently \"npm run backend\"  \"npm run banner\" \"npm run contact\" \"npm run blog\" \"npm run cart\" \"npm run category\" \"npm run discount\" \"npm run menu\" \"npm run order\" \"npm run pageus\" \"npm run payment\" \"npm run product\" \"npm run social-authentication\" \"npm run special-offer\" \"npm run upload\" \"npm run user\" \"npm run wish-list\" "
   },
   "keywords": [],
   "author": "phandoanhtu",

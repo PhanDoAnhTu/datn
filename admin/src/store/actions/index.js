@@ -1,13 +1,12 @@
-export * from './user-actions';
-export * from './product-actions';
-export * from './cart-actions';
-export * from './spicial-offer-actions';
-export * from './upload-actions';
-export * from './category-action';
-export * from './brand-actions';
-export * from './attribute-actions';
-export * from './discount-actions';
-
+export * from "./user-actions";
+export * from "./product-actions";
+export * from "./cart-actions";
+export * from "./spicial-offer-actions";
+export * from "./upload-actions";
+export * from "./category-action";
+export * from "./brand-actions";
+export * from "./attribute-actions";
+export * from "./discount-actions";
 
 export const Action = {
   //auth
@@ -39,7 +38,6 @@ export const Action = {
   CATEGORY_ALL: "CATEGORY_ALL",
   CATEGORY_CREATE: "CATEGORY_CREATE",
 
-
   //spicial-offer
   SPICIAL_OFFER_BY_PRODUCT: "SPICIAL_OFFER_BY_PRODUCT",
   CREATE_SPECIAL_OFFER: "CREATE_SPECIAL_OFFER",
@@ -62,6 +60,7 @@ export const Action = {
   AMOUNT_DISCOUNT: "AMOUNT_DISCOUNT",
   DISCOUNT_BY_ID: "DISCOUNT_BY_ID",
 
+  //contact
 
 
 //contact
