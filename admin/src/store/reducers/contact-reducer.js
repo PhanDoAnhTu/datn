@@ -7,16 +7,17 @@ const initialState = {
 
 const ContactReducer = (state = initialState, action) => {
   switch (action.type) {
-    case Action.GET_ALL_CONTACT:
+    case Action.ALL_CONTACT:
       return {
         ...state,
         all_contact: action.payload.metaData,
       };
-    case Action.GET_ONE_CONTACT:
+    case Action.FIND_CONTACT:
       return {
         ...state,
         current_contact: action.payload.metaData,
       };
+
     default:
       return state;
   }

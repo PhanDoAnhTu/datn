@@ -12,13 +12,10 @@ import usePagination from "@hooks/usePagination";
 import { useWindowSize } from "react-use";
 
 // constants
-import {
-  MANAGEMENT_OPTIONS,
-  ADDITIONAL_OPTIONS,
-  SELECT_OPTIONS,
-} from "@constants/options";
-import contacts_management from "@db/contacts_management";
+import { SELECT_OPTIONS } from "@constants/options";
 import { CONTACTS_MANAGEMENT_COLUMN_DEFS } from "@constants/columnDefs";
+import { useDispatch } from "react-redux";
+import { getAllContact } from "../../store/actions/contact-actions";
 
 // data placeholder
 
@@ -26,18 +23,32 @@ const ContactManagementTable = ({ searchQuery }) => {
   const { width } = useWindowSize();
 
   const defaultSort = {
-    sortBy: ADDITIONAL_OPTIONS[0],
+    sortBy: { label: "Tiêu đề", value: "contact_title" },
     sortOrder: SELECT_OPTIONS[0],
   };
 
-  const [data, setData] = useState(contacts_management);
-  const [category, setCategory] = useState("all");
+  const [data, setData] = useState([]);
+  const [category, setCategory] = useState(false);
   const [sorts, setSorts] = useState(defaultSort);
   const [activeCollapse, setActiveCollapse] = useState("");
 
+  const dispatch = useDispatch();
+
+  const fetchData = async () => {
+    const responseProducts = await dispatch(getAllContact());
+    if (responseProducts) {
+      setData(responseProducts.payload.metaData);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const getQty = (category) => {
-    if (category === "all") return data.length;
-    return data.filter((product) => product.status === category).length;
+    if (category === false)
+      return data.filter((item) => item.isReply === false).length;
+    return data.filter((item) => item.isReply === true).length;
   };
 
   const handleSortChange = ({ value, label }, name) => {
@@ -47,46 +58,46 @@ const ContactManagementTable = ({ searchQuery }) => {
     }));
   };
   useEffect(() => {
-    if (sorts.sortBy.value === "label") {
+    if (sorts.sortBy.value === "contact_title") {
       setData(
         data
           .slice()
           .sort((a, b) =>
             sorts.sortOrder.value === "ascending"
-              ? a.label.toLowerCase() > b.label.toLowerCase()
+              ? a.contact_title.toLowerCase() > b.contact_title.toLowerCase()
                 ? 1
                 : -1
-              : a.label.toLowerCase() < b.label.toLowerCase()
+              : a.contact_title.toLowerCase() < b.contact_title.toLowerCase()
               ? 1
               : -1
           )
       );
     }
-    if (sorts.sortBy.value === "date-modified") {
+    if (sorts.sortBy.value === "modifiedOn") {
       setData(
         data
           .slice()
           .sort((a, b) =>
             sorts.sortOrder.value === "ascending"
-              ? new Date(a.dateModified) < new Date(b.dateModified)
+              ? new Date(a.modifiedOn) < new Date(b.modifiedOn)
                 ? 1
                 : -1
-              : new Date(a.dateModified) > new Date(b.dateModified)
+              : new Date(a.modifiedOn) > new Date(b.modifiedOn)
               ? 1
               : -1
           )
       );
     }
-    if (sorts.sortBy.value === "date-added") {
+    if (sorts.sortBy.value === "createdOn") {
       setData(
         data
           .slice()
           .sort((a, b) =>
             sorts.sortOrder.value === "ascending"
-              ? new Date(a.dateAdded) < new Date(b.dateAdded)
+              ? new Date(a.createdOn) < new Date(b.createdOn)
                 ? 1
                 : -1
-              : new Date(a.dateAdded) > new Date(b.dateAdded)
+              : new Date(a.createdOn) > new Date(b.createdOn)
               ? 1
               : -1
           )
@@ -99,21 +110,22 @@ const ContactManagementTable = ({ searchQuery }) => {
     if (searchQuery !== "") {
       setData(
         data.filter((item) =>
-          item.label.toLowerCase().includes(searchQuery.toLowerCase())
+          item.contact_title.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
     } else {
-      setData(contacts_management);
+      fetchData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
-  const dataByStatus = () => {
-    if (category === "all") return data;
-    return data.filter((item) => item.status === category);
+  const dataByStatus = (category) => {
+    if (category === false)
+      return data.filter((item) => item.isReply === false);
+    return data.filter((item) => item.isReply === true);
   };
 
-  const pagination = usePagination(dataByStatus(), 8);
+  const pagination = usePagination(dataByStatus(category), 8);
 
   // reset active collapse when page or window width changes
   useEffect(() => {
@@ -133,7 +145,10 @@ const ContactManagementTable = ({ searchQuery }) => {
       <div className="flex flex-wrap gap-2 mb-4">
         <span className="text-header">Liên hệ:</span>
         <div>
-          {MANAGEMENT_OPTIONS.map((option, index) => (
+          {[
+            { value: false, label: "Chưa phản hồi" },
+            { value: true, label: "Đã phản hồi" },
+          ].map((option, index) => (
             <FilterItem
               key={`filter-${index}`}
               text={option.label}
@@ -150,7 +165,11 @@ const ContactManagementTable = ({ searchQuery }) => {
 
         <div className="md:min-w-[560px] grid md:grid-cols-2 gap-4">
           <Select
-            options={ADDITIONAL_OPTIONS}
+            options={[
+              { label: "Tiêu đề", value: "contact_title" },
+              { label: "Ngày tạo", value: "createdOn" },
+              { label: "Ngày phản hồi", value: "modifiedOn" },
+            ]}
             value={sorts.sortBy}
             placeholder="Sort by"
             onChange={(e) => handleSortChange(e, "sortBy")}
@@ -168,9 +187,9 @@ const ContactManagementTable = ({ searchQuery }) => {
           <StyledTable
             columns={CONTACTS_MANAGEMENT_COLUMN_DEFS}
             dataSource={pagination.currentItems()}
-            rowKey={(record) => record.id}
+            rowKey={(record) => record._id}
             locale={{
-              emptyText: <Empty text="No products found" />,
+              emptyText: <Empty text="Không tìm thấy dữ liệu" />,
             }}
             rowSelection={{
               type: "checkbox",
