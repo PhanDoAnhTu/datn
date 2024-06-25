@@ -12,8 +12,10 @@ export default function EditBtn({ link, record, title }) {
         })
       }
       aria-label="Edit"
+      className="menu-btn subheading-2"
     >
       <i className="icon icon-pen-to-square-regular text-lg leading-none" />
+      Sửa
     </button>
   );
 }

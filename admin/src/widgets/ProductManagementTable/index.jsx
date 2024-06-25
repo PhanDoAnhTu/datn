@@ -159,7 +159,7 @@ const ProductManagementTable = () => {
       dataIndex: "actions",
       render: (text, record) => (
         <div className="flex items-center justify-end gap-11">
-          <EditBtn link={`/product-editor/${record._id}`} record={record} />
+          {/* <EditBtn link={`/product-editor/${record._id}`} record={record} /> */}
           <Actions record={record} table={"product"} />
         </div>
       ),

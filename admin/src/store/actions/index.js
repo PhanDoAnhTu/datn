@@ -7,7 +7,8 @@ export * from "./category-action";
 export * from "./brand-actions";
 export * from "./attribute-actions";
 export * from "./discount-actions";
-
+export * from "./slider-actions";
+export * from "./contact-actions";
 export const Action = {
   //auth
   ERROR: "ERROR",

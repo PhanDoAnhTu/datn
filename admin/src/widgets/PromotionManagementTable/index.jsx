@@ -20,11 +20,14 @@ import {
   onGetAllSpecialOffer,
   onChangeStatusSpecialOfferById,
   removeSpecialOfferById,
+  isTrashPromotion
+
 } from "../../store/actions";
 import { Link } from "react-router-dom";
 import { Switch } from "antd";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
+import Actions from "@components/Actions";
 
 // data placeholder
 
@@ -71,32 +74,33 @@ const PromotionMangementTable = () => {
       title: "Hoạt động",
       dataIndex: "status",
       render: (text, record) => (
-        <div>
-          <Switch
-            checkedChildren={"ON"}
-            unCheckedChildren={"OFF"}
-            onChange={(e) => handleChangeStatus(e, record?._id)}
-            loading={false}
-            checked={record?.special_offer_is_active}
-          />
+        <div>{
+          record.isDeleted === false
+            ? <Switch
+              checkedChildren={"ON"}
+              unCheckedChildren={"OFF"}
+              onChange={(e) => handleChangeStatus(e, record?._id)}
+              loading={false}
+              checked={record?.isPublished}
+            />
+            : <Switch
+              disabled
+              checkedChildren={"ON"}
+              unCheckedChildren={"OFF"}
+              loading={false}
+              checked={false}
+            />
+        }
         </div>
       ),
     },
     {
       title: "Chức năng",
-      dataIndex: "category",
+      dataIndex: "actions",
       render: (text, record) => {
         return (
-          <div className="flex items-center justify-end">
-            <Link className="btn info-btn" to={"/test"}>
-              <i className="icon icon-circle-info-solid text-lg" />
-            </Link>
-            <Link
-              className="btn info-btn"
-              onClick={() => onRemovePromotion(record._id)}
-            >
-              <i className="icon icon-trash-regular text-lg hover:text-red" />
-            </Link>
+          <div className="flex items-center justify-end gap-11">
+            <Actions record={record} table={"Promotion"} handleTrash={() => record.isDeleted === true ? onRemovePromotion(record._id, false) : onRemovePromotion(record._id, true)} />
           </div>
         );
       },
@@ -133,14 +137,13 @@ const PromotionMangementTable = () => {
     const changeStatus = await dispatch(
       onChangeStatusSpecialOfferById({
         special_offer_id: promotion_id,
-        special_offer_is_active: e,
+        isPublished: e,
       })
     );
     if (changeStatus?.payload?.status === (200 || 201)) {
       toast.update(id, {
-        render: `Chương trình giảm giá đã được ${
-          e === false ? "tắt" : "áp dụng"
-        }`,
+        render: `Chương trình giảm giá đã được ${e === false ? "tắt" : "áp dụng"
+          }`,
         type: "success",
         isLoading: false,
         closeOnClick: true,
@@ -157,17 +160,17 @@ const PromotionMangementTable = () => {
     }
     setIsLoad(!isLoad);
   };
-  const onRemovePromotion = async (special_offer_id) => {
+  const onRemovePromotion = async (special_offer_id, isDeleted) => {
     const id = toast.loading("Vui lòng đợi...");
     const changeStatus = await dispatch(
-      removeSpecialOfferById({ special_offer_id: special_offer_id })
+      isTrashPromotion({ special_offer_id: special_offer_id, isDeleted: isDeleted })
     );
     if (
       (changeStatus?.payload?.status === (200 || 201)) &
-      (changeStatus?.payload?.metaData?.deletedCount === 1)
+      (changeStatus?.payload?.metaData?.nModified === 1)
     ) {
       toast.update(id, {
-        render: `Đã xóa chương trình giảm giá này`,
+        render: `Đã chuyển chương trình giảm giá này vào thùng rác`,
         type: "success",
         isLoading: false,
         closeOnClick: true,
@@ -185,10 +188,10 @@ const PromotionMangementTable = () => {
     setIsLoad(!isLoad);
   };
   const getQty = (category) => {
-    if (category === "all") return data.length;
-    return data.filter(
-      (product) => product.special_offer_is_active === category
-    ).length;
+    if (category === "all") return data.filter((product) => product.isDeleted === false).length;
+    if (category === "isPublished") return data.filter((product) => product.isPublished === true).length;
+    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true).length;
+
   };
 
   const handleSortChange = ({ value, label }, name) => {
@@ -210,8 +213,8 @@ const PromotionMangementTable = () => {
                 : -1
               : a.special_offer_name.toLowerCase() <
                 b.special_offer_name.toLowerCase()
-              ? 1
-              : -1
+                ? 1
+                : -1
           )
       );
     }
@@ -227,8 +230,8 @@ const PromotionMangementTable = () => {
                 : -1
               : new Date(a.special_offer_start_date) >
                 new Date(b.special_offer_start_date)
-              ? 1
-              : -1
+                ? 1
+                : -1
           )
       );
     }
@@ -244,22 +247,21 @@ const PromotionMangementTable = () => {
                 : -1
               : new Date(a.special_offer_end_date) >
                 new Date(b.special_offer_end_date)
-              ? 1
-              : -1
+                ? 1
+                : -1
           )
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sorts.sortBy.value, sorts.sortOrder.value]);
 
-  const dataByStatus = () => {
-    if (category === "all") return data;
-    return data.filter(
-      (product) => product.special_offer_is_active === category
-    );
+  const dataByStatus = (category) => {
+    if (category === "all") return data.filter((product) => product.isDeleted === false);
+    if (category === "isPublished") return data.filter((product) => product.isPublished === true);
+    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true);
   };
 
-  const pagination = usePagination(dataByStatus(), 8);
+  const pagination = usePagination(dataByStatus(category), 8);
 
   // reset active collapse when page or window width changes
   useEffect(() => {
@@ -281,8 +283,8 @@ const PromotionMangementTable = () => {
         <div>
           {[
             { value: "all", label: "Tất cả" },
-            { value: true, label: "Đang hoạt động" },
-            { value: false, label: "Không hoạt động" },
+            { value: "isPublished", label: "Đang hoạt động" },
+            { value: "isDeleted", label: "Thùng rác" },
           ].map((option, index) => (
             <FilterItem
               key={`filter-${index}`}
