@@ -59,9 +59,29 @@ export const getOneTopic = (data) => async (dispatch) => {
   }
 };
 
+export const getOnePost = (data) => async (dispatch) => {
+  try {
+    const response = await PostData("/blog/v1/post/getOnePost", data);
+    console.log("response:", response);
+    return dispatch({ type: Action.GET_ONE_TOPIC, payload: response.data });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export const updateOneTopic = (data) => async (dispatch) => {
   try {
     const response = await PostData("/blog/v1/topic/updateOneTopic", data);
+    console.log("response:", response);
+    return dispatch({ type: Action.UPDATE_ONE_TOPIC, payload: response.data });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const updateOnePost = (data) => async (dispatch) => {
+  try {
+    const response = await PostData("/blog/v1/post/updateOnePost", data);
     console.log("response:", response);
     return dispatch({ type: Action.UPDATE_ONE_TOPIC, payload: response.data });
   } catch (err) {

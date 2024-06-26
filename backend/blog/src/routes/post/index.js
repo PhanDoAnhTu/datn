@@ -8,12 +8,17 @@ const { postController } = require("../../controllers");
 
 router.post("/create", asynchandler(postController.createPost));
 router.post("/getListPosts", asynchandler(postController.getListPosts));
+router.post("/updateOnePost", asynchandler(postController.updateOnePost));
+router.post("/getOnePost", asynchandler(postController.getOnePost));
 router.post(
   "/getListPostsByTopicId",
   asynchandler(postController.getListPostsByTopicId)
 );
 router.post("/getSinglePost", asynchandler(postController.getSinglePost));
-router.post("/changeIsPublished", asynchandler(postController.changeIsPublished));
+router.post(
+  "/changeIsPublished",
+  asynchandler(postController.changeIsPublished)
+);
 router.post("/isTrashPost", asynchandler(postController.isTrashPost));
 
 module.exports = router;

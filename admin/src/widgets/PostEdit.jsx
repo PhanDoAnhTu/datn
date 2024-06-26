@@ -12,11 +12,17 @@ import MediaDropPlaceholder from "@ui/MediaDropPlaceholder";
 import DropFiles from "@components/DropFiles";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { createPost, getListTopic } from "../store/actions/blog-actions";
+import {
+  createPost,
+  getListTopic,
+  getOnePost,
+  updateOnePost,
+} from "../store/actions/blog-actions";
 import { upLoadImageSingle } from "../store/actions/upload-actions";
 
-const PostEditor = () => {
+const PostEdit = ({ id }) => {
   const dispatch = useDispatch();
+  const [data, setData] = useState({});
   const [topics_management, setTopicsManagement] = useState([]);
   const defaultValues = {
     content: "",
@@ -30,10 +36,18 @@ const PostEditor = () => {
     register,
     control,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: defaultValues,
   });
+
+  const post_title = watch("postTitle");
+  const post_content = watch("content");
+  const post_short_description = watch("summary");
+  const post_topic = watch("topic");
+
   useEffect(() => {
     const fetchData = async () => {
       const result = await dispatch(getListTopic());
@@ -44,54 +58,24 @@ const PostEditor = () => {
           })
         );
       }
+      const result2 = await dispatch(getOnePost({ post_id: id }));
+      if (result2) {
+        setData(result2.payload.metaData);
+      }
     };
     fetchData();
-  }, []);
+  }, [id]);
 
-  // do something with the data
-  const handleSave = async (data) => {
-    const signal = toast.loading("Vui lòng chờ...");
-    let imageSingle = null;
-    if (data?.image?.length > 0) {
-      const image = new FormData();
-      image.append("file", data.image[0]);
-      image.append("folderName", "outrunner/images/post");
-      const uploadImageSingle = await dispatch(upLoadImageSingle(image));
-      imageSingle =
-        uploadImageSingle && uploadImageSingle?.payload?.metaData?.thumb_url;
-    }
-    const newPost = await dispatch(
-      createPost({
-        post_name: data.postTitle,
-        post_title: data.postTitle,
-        post_content: data.content,
-        post_short_description: data.summary,
-        topic_id: data.topic?.value,
-        post_image: imageSingle,
-        isDraft: true,
-      })
+  useEffect(() => {
+    setValue("postTitle", data && data.post_title);
+    setValue("content", data && data.post_content);
+    setValue("summary", data && data.post_short_description);
+    setValue(
+      "topic",
+      data &&
+        topics_management?.slice().find((item) => item.value === data.topic_id)
     );
-
-    // console.log(newPost);
-
-    if (newPost?.payload?.status === (200 || 201)) {
-      toast.update(signal, {
-        render: "Tạo bài viết thành công",
-        type: "success",
-        isLoading: false,
-        closeOnClick: true,
-        autoClose: 3000,
-      });
-    } else {
-      toast.update(signal, {
-        render: "Tạo bài viết không thành công",
-        type: "error",
-        isLoading: false,
-        closeOnClick: true,
-        autoClose: 3000,
-      });
-    }
-  };
+  }, [data]);
 
   // do something with the data
   const handlePublish = async (data) => {
@@ -105,8 +89,9 @@ const PostEditor = () => {
       imageSingle =
         uploadImageSingle && uploadImageSingle?.payload?.metaData?.thumb_url;
     }
-    const newPost = await dispatch(
-      createPost({
+    const updatedPost = await dispatch(
+      updateOnePost({
+        post_id: id,
         post_name: data.postTitle,
         post_title: data.postTitle,
         post_content: data.content,
@@ -117,11 +102,11 @@ const PostEditor = () => {
       })
     );
 
-    // console.log(newPost);
+    // console.log(updatedPost);
 
-    if (newPost?.payload?.status === (200 || 201)) {
+    if (updatedPost?.payload?.status === (200 || 201)) {
       toast.update(signal, {
-        render: "Tao bài viết thành công",
+        render: "Cập nhật bài viết thành công",
         type: "success",
         isLoading: false,
         closeOnClick: true,
@@ -129,7 +114,7 @@ const PostEditor = () => {
       });
     } else {
       toast.update(signal, {
-        render: "Tao bài viết không thành công",
+        render: "Cập nhật bài viết không thành công",
         type: "error",
         isLoading: false,
         closeOnClick: true,
@@ -171,6 +156,7 @@ const PostEditor = () => {
               className={classNames("field-input", {
                 "field-input--error": errors.postTitle,
               })}
+              value={post_title}
               id="postTitle"
               defaultValue={defaultValues.postTitle}
               placeholder="Nhập tiêu đề bài viết"
@@ -186,6 +172,7 @@ const PostEditor = () => {
                 "field-input--error": errors.summary,
               })}
               id="summary"
+              value={post_short_description}
               defaultValue={defaultValues.summary}
               placeholder="Nhập tóm tắt bài viết"
               {...register("summary", { required: true })}
@@ -223,6 +210,7 @@ const PostEditor = () => {
                   { "field-input--error": errors.content }
                 )}
                 id="content"
+                value={post_content}
                 defaultValue={defaultValues.content}
                 {...register("content", { required: true })}
               />
@@ -230,18 +218,12 @@ const PostEditor = () => {
           </div>
         </div>
 
-        <div className="grid gap-2 mt-5 sm:grid-cols-2 sm:mt-10 md:mt-11">
-          <button
-            className="btn btn--secondary"
-            onClick={handleSubmit(handleSave)}
-          >
-            Lưu thành bản nháp
-          </button>
+        <div className="grid gap-2 mt-5 sm:mt-10 md:mt-11">
           <button
             className="btn btn--primary"
             onClick={handleSubmit(handlePublish)}
           >
-            Xuất bản
+            Cập nhật
           </button>
         </div>
       </form>
@@ -249,4 +231,4 @@ const PostEditor = () => {
   );
 };
 
-export default PostEditor;
+export default PostEdit;

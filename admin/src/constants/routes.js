@@ -22,11 +22,6 @@ const ROUTES = [
     ],
   },
   {
-    name: "Trang đơn",
-    icon: "list-check-solid",
-    path: "/pages-management",
-  },
-  {
     name: "Marketing",
     icon: "percent-solid",
     links: [

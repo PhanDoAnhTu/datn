@@ -85,6 +85,54 @@ class PostService {
     }
   }
 
+  async getOnePost({ post_id }) {
+    try {
+      const post = await PostModel.findOne({
+        _id: post_id,
+      });
+      return post;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async updateOnePost({
+    post_id,
+    post_name,
+    topic_id,
+    post_short_description,
+    post_image,
+    post_title,
+    post_content,
+  }) {
+    try {
+      const topic = await PostModel.findOneAndUpdate(
+        {
+          _id: post_id,
+        },
+        post_image
+          ? {
+              post_name: post_name,
+              topic_id: topic_id,
+              post_short_description: post_short_description,
+              post_image: post_image,
+              post_title: post_title,
+              post_content: post_content,
+            }
+          : {
+              post_name: post_name,
+              topic_id: topic_id,
+              post_short_description: post_short_description,
+              post_title: post_title,
+              post_content: post_content,
+            },
+        { new: true }
+      );
+      return topic;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async getListPostsByTopicId({
     limit = 10,
     page = 1,

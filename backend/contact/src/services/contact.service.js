@@ -7,7 +7,6 @@ const mongoose = require("mongoose");
 
 class contactService {
   async newContact({
-    reply_id = null,
     reply_by = "0",
     isReply = false,
     customer_email,
@@ -16,7 +15,6 @@ class contactService {
     contact_content,
   }) {
     const contact = await ContactModel.create({
-      reply_id,
       reply_by,
       isReply,
       customer_email,
