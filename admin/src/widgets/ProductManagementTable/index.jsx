@@ -13,20 +13,22 @@ import { useWindowSize } from "react-use";
 
 // constants
 import {
-  PRODUCT_MANAGEMENT_OPTIONS,
-  STOCK_STATUS_OPTIONS,
-  ADDITIONAL_OPTIONS,
+  // PRODUCT_MANAGEMENT_OPTIONS,
+  // STOCK_STATUS_OPTIONS,
+  // ADDITIONAL_OPTIONS,
   SELECT_OPTIONS,
 } from "@constants/options";
 
 // data placeholder
 import { useDispatch } from "react-redux";
-import { findAllCategory, onAllProductsOption } from "../../store/actions";
-import EditBtn from "@components/EditBtn";
+import { findAllCategory, onAllProductsOption, PublishProduct, UnPublishProduct, isTrashProduct } from "../../store/actions";
+// import EditBtn from "@components/EditBtn";
 import Actions from "@components/Actions";
 import dayjs from "dayjs";
 import { CSVLink } from "react-csv";
 import { NumericFormat } from "react-number-format";
+import { Switch } from "antd";
+import { toast } from "react-toastify";
 
 const ProductManagementTable = () => {
   const PRODUCTS_MANAGEMENT_COLUMN_DEFS = [
@@ -64,9 +66,8 @@ const ProductManagementTable = () => {
           ) : (
             <span>
               <span
-                className={`${
-                  product_quantity !== 0 ? "text-green" : "text-red"
-                }`}
+                className={`${product_quantity !== 0 ? "text-green" : "text-red"
+                  }`}
               >
                 {product_quantity !== 0
                   ? product_quantity >= 10
@@ -102,17 +103,17 @@ const ProductManagementTable = () => {
       width: 200,
       render: (categories) => (
         <div className="flex flex-wrap gap-x-0.5">
-          {categories && categories.length
+          {categories && categories.length > 0
             ? categories.map((tag, index) => (
-                <span className="tag text-accent capitalize" key={tag}>
-                  {
-                    categories_management
-                      ?.slice()
-                      .find((item) => item.value === tag)?.label
-                  }
-                  {index !== categories.length - 1 && " | "}
-                </span>
-              ))
+              <span className="tag text-accent capitalize" key={tag}>
+                {
+                  categories_management
+                    ?.slice()
+                    .find((item) => item.value === tag)?.label
+                }
+                {index !== categories.length - 1 && " | "}
+              </span>
+            ))
             : "-"}
         </div>
       ),
@@ -143,12 +144,36 @@ const ProductManagementTable = () => {
       responsive: ["lg"],
     },
     {
+      title: "Hoạt động",
+      dataIndex: "isPublished",
+      render: (status, record) => (
+        <div>
+          {
+            record.isDeleted === false
+              ? <Switch
+                checkedChildren={"ON"}
+                unCheckedChildren={"OFF"}
+                onChange={(e) => handleChangeStatus(record?._id, e)}
+                loading={false}
+                checked={record?.isPublished}
+              />
+              : <Switch
+                disabled
+                checkedChildren={"ON"}
+                unCheckedChildren={"OFF"}
+                loading={false}
+                checked={false}
+              />
+          }
+        </div>
+      ),
+    },
+    {
       title: "Chức năng",
       dataIndex: "actions",
       render: (text, record) => (
         <div className="flex items-center justify-end gap-11">
-          {/* <EditBtn link={`/product-editor/${record._id}`} record={record} /> */}
-          <Actions record={record} table={"product"} />
+          <Actions record={record} table={"product"} handleTrash={() => record.isDeleted === true ? onRemove(record._id, false) : onRemove(record._id, true)} handleDraft={() => handleChangeStatus(record._id, false)} />
         </div>
       ),
     },
@@ -175,13 +200,13 @@ const ProductManagementTable = () => {
   const [isLoad, setIsLoad] = useState(false);
 
   const fetchDataProductsManagement = async () => {
-    const responseProducts = await dispatch(onAllProductsOption());
+    const responseProducts = await dispatch(onAllProductsOption({}));
     if (responseProducts) {
-      setData(responseProducts.payload.metaData);
-      setProductsManagement(responseProducts.payload.metaData);
+      setData(responseProducts.payload.metaData)
+      // setProductsManagement(responseProducts.payload.metaData);
     }
     const responseCategory = await dispatch(
-      findAllCategory({ isPublished: true })
+      findAllCategory({})
     );
     if (responseCategory) {
       setCategoriesManagement(
@@ -196,14 +221,16 @@ const ProductManagementTable = () => {
     fetchDataProductsManagement();
   }, [isLoad]);
 
+  // useEffect(() => {
+  //   setData(products_management);
+  // }, [products_management]);
+
   const getQty = (category) => {
-    if (category === "all") return data.length;
-    if (category === "isPublished")
-      return data.filter((product) => product.isPublished === true).length;
-    if (category === "isDraft")
-      return data.filter((product) => product.isDraft === true).length;
-    if (category === "isDeleted")
-      return data.filter((product) => product.isDeleted === true).length;
+    if (category === "all") return data.filter((product) => product.isDeleted === false).length;
+    if (category === "isPublished") return data.filter((product) => product.isPublished === true).length;
+    if (category === "UnPublished") return data.filter((product) => product.isPublished === false & product.isDeleted === false).length;
+    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true).length;
+    if (category === "isDraft") return data.filter((product) => product.isDraft === true).length;
   };
 
   const handleFilterSelect = ({ value, label }, name) => {
@@ -230,8 +257,8 @@ const ProductManagementTable = () => {
                 ? 1
                 : -1
               : a.product_name.toLowerCase() < b.product_name.toLowerCase()
-              ? 1
-              : -1
+                ? 1
+                : -1
           )
       );
     }
@@ -245,8 +272,8 @@ const ProductManagementTable = () => {
                 ? 1
                 : -1
               : new Date(a.updatedAt) > new Date(b.updatedAt)
-              ? 1
-              : -1
+                ? 1
+                : -1
           )
       );
     }
@@ -260,8 +287,8 @@ const ProductManagementTable = () => {
                 ? 1
                 : -1
               : new Date(a.createdAt) > new Date(b.createdAt)
-              ? 1
-              : -1
+                ? 1
+                : -1
           )
       );
     }
@@ -271,7 +298,7 @@ const ProductManagementTable = () => {
   const handleApplyFilters = () => {
     if (filters.parentCategory != null) {
       setData(
-        products_management.filter((item) =>
+        data.filter((item) =>
           item.product_category.includes(filters.parentCategory.value)
         )
       );
@@ -279,21 +306,21 @@ const ProductManagementTable = () => {
     if (filters.stockStatus != null) {
       if (filters.stockStatus.value === "low") {
         setData(
-          products_management
+          data
             .slice()
             .filter((item) => item.product_quantity < 10)
         );
       }
       if (filters.stockStatus.value === "high") {
         setData(
-          products_management
+          data
             .slice()
             .filter((item) => item.product_quantity >= 10)
         );
       }
       if (filters.stockStatus.value === "out") {
         setData(
-          products_management
+          data
             .slice()
             .filter((item) => item.product_quantity === 0)
         );
@@ -303,17 +330,15 @@ const ProductManagementTable = () => {
 
   const handleClearFilters = () => {
     setFilters(defaultFilters);
-    setData(products_management);
+    setData(data);
   };
 
   const dataByStatus = (category) => {
-    if (category === "all") return data;
-    if (category === "isPublished")
-      return data.filter((product) => product.isPublished === true);
-    if (category === "isDraft")
-      return data.filter((product) => product.isDraft === true);
-    if (category === "isDeleted")
-      return data.filter((product) => product.isDeleted === true);
+    if (category === "all") return data.filter((product) => product.isDeleted === false);
+    if (category === "isPublished") return data.filter((product) => product.isPublished === true);
+    if (category === "UnPublished") return data.filter((product) => product.isPublished === false & product.isDeleted === false);
+    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true);
+    if (category === "isDraft") return data.filter((product) => product.isDraft === true);
   };
 
   const pagination = usePagination(dataByStatus(category), 8);
@@ -323,20 +348,107 @@ const ProductManagementTable = () => {
     setActiveCollapse("");
   }, [pagination.currentPage, width]);
 
-  const handleCollapse = (sku) => {
-    if (activeCollapse === sku) {
+  const handleCollapse = (id) => {
+    if (activeCollapse === id) {
       setActiveCollapse("");
     } else {
-      setActiveCollapse(sku);
+      setActiveCollapse(id);
     }
   };
 
+  const handleChangeStatus = async (product_id, e) => {
+    const id = toast.loading("Vui lòng đợi...");
+    if (e === true) {
+      const changeStatus = await dispatch(
+        PublishProduct({
+          product_id: product_id,
+          isPublished: e,
+        })
+      );
+      if (changeStatus?.payload?.status === (200 || 201)) {
+        toast.update(id, {
+          render: `Đã ${e === false ? "tắt" : "áp dụng"}`,
+          type: "success",
+          isLoading: false,
+          closeOnClick: true,
+          autoClose: 3000,
+        });
+      } else {
+        toast.update(id, {
+          render: "Thay đổi trạng thái không thành công",
+          type: "error",
+          isLoading: false,
+          closeOnClick: true,
+          autoClose: 3000,
+        });
+      }
+    }
+    if (e === false) {
+      const changeStatus = await dispatch(
+        UnPublishProduct({
+          product_id: product_id,
+          isPublished: e,
+        })
+      );
+      if (changeStatus?.payload?.status === (200 || 201)) {
+        toast.update(id, {
+          render: `Đã ${e === false ? "tắt" : "áp dụng"}`,
+          type: "success",
+          isLoading: false,
+          closeOnClick: true,
+          autoClose: 3000,
+        });
+      } else {
+        toast.update(id, {
+          render: "Thay đổi trạng thái không thành công",
+          type: "error",
+          isLoading: false,
+          closeOnClick: true,
+          autoClose: 3000,
+        });
+      }
+    }
+
+    setIsLoad(!isLoad);
+  };
+  const onRemove = async (product_id, isDeleted) => {
+    const id = toast.loading("Vui lòng đợi...");
+    const changeStatus = await dispatch(
+      isTrashProduct({ product_id: product_id, isDeleted: isDeleted })
+    );
+    if (
+      (changeStatus?.payload?.status === (200 || 201)) &
+      (changeStatus?.payload?.metaData?.nModified === 1)
+    ) {
+      toast.update(id, {
+        render: `Đã chuyển vào thùng rác`,
+        type: "success",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    } else {
+      toast.update(id, {
+        render: "Xóa không thành công",
+        type: "error",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    }
+    setIsLoad(!isLoad);
+  };
   return (
     <div className="flex flex-col flex-1">
       <div className="flex flex-wrap gap-2 mb-4">
         <span className="text-header">Sản phẩm:</span>
         <div>
-          {PRODUCT_MANAGEMENT_OPTIONS.map((option, index) => (
+          {[{ value: "all", label: "Tất cả" },
+          { value: "isPublished", label: "Đang hoạt động" },
+          { value: "UnPublished", label: "Không hoạt động" },
+          { value: "isDraft", label: "Bản nháp" },
+          { value: "isDeleted", label: "Thùng rác" },
+          ].map((option, index) => (
             <FilterItem
               key={`filter-${index}`}
               text={option.label}

@@ -43,7 +43,13 @@ const TopicManagementTable = ({ searchQuery }) => {
       render: (date) => (
         <div>
           <span className="font-bold text-header">
-            {date && dayjs(date).format("DD/MM/YYYY")}
+            {date && dayjs(date).format("hh:mm DD/MM/YYYY")
+              ? dayjs().diff(dayjs(date), "minute") < 60
+                ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
+                : dayjs().diff(dayjs(date), "hour") < 24
+                  ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+                  : dayjs(date).format("hh:mmA DD/MM/YYYY")
+              : ""}
           </span>
         </div>
       ),
@@ -117,7 +123,7 @@ const TopicManagementTable = ({ searchQuery }) => {
 
   const [isLoad, setIsLoad] = useState(false);
 
-  const fetchDataList= async () => {
+  const fetchDataList = async () => {
     const response = await dispatch(getListTopic());
     if (response) {
       setData(response.payload.metaData);

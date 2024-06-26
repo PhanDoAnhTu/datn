@@ -45,7 +45,8 @@ const Actions = ({ record, table, handleTrash, handleDraft }) => {
                   Khôi phục
                 </button>
               )
-              : (
+              : (record.isPublished === false
+                &&
                 <button
                   className="menu-btn subheading-2"
                   onClick={() =>

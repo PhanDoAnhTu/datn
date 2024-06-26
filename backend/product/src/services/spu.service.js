@@ -192,9 +192,7 @@ const isTrashProduct = async ({ product_id, isDeleted = false }) => {
   }
   spuFound.isDeleted = isDeleted
 
-
-  const { modifiedCount } = await spuFound.updateOne(spuFound);
-  return modifiedCount;
+  return await spuFound.updateOne(spuFound);
 };
 
 const UnPublishProduct = async ({ product_id }) => {
@@ -465,20 +463,18 @@ const productFromCart = async ({ spu_id, isPublished = true }) => {
     return null;
   }
 };
-const AllProductsOption = async ({ sort = "ctime", isPublished  }) => {
+const AllProductsOption = async ({ sort = "ctime", isPublished }) => {
   let all_Products = []
-  if (isPublished) {
+  if (isPublished !== undefined) {
     all_Products = await spuRepository.getAllProducts({
       sort,
       isPublished,
     });
   } else {
-    all_Products = await spuRepository.getAllProducts({
-      sort
-    });
+    all_Products = await SpuModel.find().lean()
   }
 
-  if (all_Products.length == 0) return null;
+  if (all_Products.length == 0) return [];
   let product_list = {
     all_Products: [],
   };
