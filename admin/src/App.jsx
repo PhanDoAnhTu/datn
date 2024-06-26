@@ -64,6 +64,7 @@ const PageDetail = lazy(() => import("@pages/PageDetail"));
 const PageEdit = lazy(() => import("@pages/PageEdit"));
 const TopicsManagement = lazy(() => import("@pages/TopicsManagement"));
 const TopicEditor = lazy(() => import("@pages/EditTopic"));
+const TopicEdit = lazy(() => import("@pages/TopicEdit"));
 const TopicDetail = lazy(() => import("@pages/TopicDetail"));
 const PostsManagement = lazy(() => import("@pages/PostsManagement"));
 const PostEditor = lazy(() => import("@pages/EditPost"));
@@ -160,6 +161,7 @@ const App = () => {
                   />
                   <Route path="topic-editor" element={<TopicEditor />} />
                   <Route path="topic-detail/:id" element={<TopicDetail />} />
+                  <Route path="topic-editor/:id" element={<TopicEdit />} />
                   {/* Post */}
                   <Route
                     path="posts-management"

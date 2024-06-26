@@ -22,20 +22,14 @@ const PostsManagement = () => {
             }
             className="btn btn--primary"
           >
-            Add new post <i className="icon-circle-plus-regular" />
+            Tạo bài đăng <i className="icon-circle-plus-regular" />
           </button>
-          <CSVLink
-            className="btn btn--outline blue !h-[44px]"
-            data={posts_managements}
-          >
-            Export CSV <i className="icon-file-export-solid" />
-          </CSVLink>
         </div>
         <Search
           wrapperClass="lg:w-[326px]"
           query={query}
           setQuery={setQuery}
-          placeholder="Search Category"
+          placeholder="Tìm kiếm bài đăng"
         />
       </div>
       <PostManagementTable searchQuery={query} />

@@ -12,26 +12,22 @@ import { capitalize } from "@mui/material";
 
 const TopicInfo = ({ item }) => {
   const navigate = useNavigate();
-  const productDescription = `Ut tortor ex, pellentesque nec volutpat vel, congue eu nibh. Sed posuere ipsum ut ornare ultrices. Aliquam condimentum ultricies lacinia. Aenean ac dolor mauris. Curabitur cursus mi ac urna vestibulum consectetur. Praesent vulputate eleifend ipsum at ultrices. Proin sed elementum diam, in ullamcorper risus`;
 
   const defaultValues = {
-    description: item ? item.description : productDescription,
-    topicName: item ? item.label : "",
+    description: item ? item.topic_description : "",
+    topicName: item ? item.topic_name : "",
     dateAdded:
-      item && dayjs(item.dateAdded).format("hh:mm DD/MM/YYYY")
-        ? dayjs().diff(dayjs(item.dateAdded), "minute") < 60
-          ? `${dayjs().diff(dayjs(item.dateAdded), "minute")} Minutes ago`
-          : dayjs().diff(dayjs(item.dateAdded), "hour") < 24
-          ? `${dayjs().diff(dayjs(item.dateAdded), "hour")} Hours ago`
-          : dayjs(item.dateAdded).format("hh:mmA DD/MM/YYYY")
+      item && dayjs(item.createdAt).format("hh:mm DD/MM/YYYY")
+        ? dayjs().diff(dayjs(item.createdAt), "minute") < 60
+          ? `${dayjs().diff(dayjs(item.createdAt), "minute")} Minutes ago`
+          : dayjs().diff(dayjs(item.createdAt), "hour") < 24
+          ? `${dayjs().diff(dayjs(item.createdAt), "hour")} Hours ago`
+          : dayjs(item.createdAt).format("hh:mmA DD/MM/YYYY")
         : "",
     dateModified:
-      item && dayjs(item.dateModified).format("hh:mm DD/MM/YYYY")
-        ? dayjs(item.dateModified).format("hh:mmA DD/MM/YYYY")
+      item && dayjs(item.updatedAt).format("hh:mm DD/MM/YYYY")
+        ? dayjs(item.updatedAt).format("hh:mmA DD/MM/YYYY")
         : "",
-    modifiedBy: item ? item.modifiedBy : "",
-    addedBy: item ? item.addedBy : "",
-    status: item ? capitalize(item.status) : "",
   };
   const {
     register,
@@ -97,25 +93,6 @@ const TopicInfo = ({ item }) => {
               />
             </div>
             <div className="field-wrapper">
-              <label className="field-label" htmlFor="addedBy">
-                Tạo bởi
-              </label>
-              <input
-                className={classNames("field-input", {
-                  "field-input--error": errors.addedBy,
-                })}
-                id="addedBy"
-                defaultValue={defaultValues.addedBy}
-                placeholder="Eg. test"
-                disabled
-                {...register("addedBy", {
-                  required: true,
-                })}
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
-            <div className="field-wrapper">
               <label className="field-label" htmlFor="dateModified">
                 Ngày chỉnh sửa
               </label>
@@ -132,39 +109,8 @@ const TopicInfo = ({ item }) => {
                 })}
               />
             </div>
-            <div className="field-wrapper">
-              <label className="field-label" htmlFor="modifiedBy">
-                Chỉnh sửa bởi
-              </label>
-              <input
-                className={classNames("field-input", {
-                  "field-input--error": errors.modifiedBy,
-                })}
-                id="modifiedBy"
-                defaultValue={defaultValues.modifiedBy}
-                placeholder="Eg. test"
-                disabled
-                {...register("modifiedBy", {
-                  required: true,
-                })}
-              />
-            </div>
           </div>
-          <div className="field-wrapper">
-            <label className="field-label" htmlFor="status">
-              Status
-            </label>
-            <input
-              className={classNames("field-input", {
-                "field-input--error": errors.status,
-              })}
-              id="status"
-              disabled={true}
-              defaultValue={defaultValues.status}
-              placeholder="Enter category name"
-              {...register("status", { required: true })}
-            />
-          </div>
+
           <div className="grid gap-2 mt-5 sm:mt-10 md:mt-11">
             <button
               className="btn btn--secondary"
@@ -175,7 +121,7 @@ const TopicInfo = ({ item }) => {
                 });
               }}
             >
-              Edit
+              Chỉnh sửa
             </button>
           </div>
         </div>

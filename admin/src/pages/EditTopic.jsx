@@ -3,7 +3,7 @@ import PageHeader from "@layout/PageHeader";
 import TopicEditor from "@widgets/TopicEditor";
 import { useLocation } from "react-router-dom";
 
-const EditCategory = () => {
+const EditTopic = () => {
   const location = useLocation();
   return (
     <>
@@ -16,4 +16,4 @@ const EditCategory = () => {
   );
 };
 
-export default EditCategory;
+export default EditTopic;

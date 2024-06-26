@@ -37,7 +37,7 @@ const TopicsManagement = () => {
           wrapperClass="lg:w-[326px]"
           query={query}
           setQuery={setQuery}
-          placeholder="Search Category"
+          placeholder="Tìm kiếm chủ đề"
         />
       </div>
       <TopicManagementTable searchQuery={query} />

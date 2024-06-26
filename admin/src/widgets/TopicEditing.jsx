@@ -6,11 +6,14 @@ import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 
 // utils
-import classNames from "classnames";
-import { createTopic } from "../store/actions/blog-actions";
-import { useDispatch } from "react-redux";
 
-const TopicEditor = () => {
+import { getOneTopic, updateOneTopic } from "../store/actions/blog-actions";
+import classNames from "classnames";
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+
+const TopicEditing = ({ id }) => {
+  const [data, setData] = useState({});
   const defaultValues = {
     description: "",
     topicName: "",
@@ -18,21 +21,39 @@ const TopicEditor = () => {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: defaultValues,
   });
 
+  const topic_name = watch("topicName");
+  const topic_description = watch("description");
+
   const dispatch = useDispatch();
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await dispatch(getOneTopic({ topic_id: id }));
+      if (result) {
+        setData(result.payload.metaData);
+      }
+    };
+    fetchData();
+  }, [id]);
+  useEffect(() => {
+    setValue("topicName", data && data.topic_name);
+    setValue("description", data && data.topic_description);
+  }, [data]);
 
   // do something with the data
   const handlePublish = async (data) => {
     const signal = toast.loading("Vui lòng chờ...");
     const newTopic = await dispatch(
-      createTopic({
+      updateOneTopic({
+        topic_id: id,
         topic_name: data.topicName,
         topic_description: data.description,
-        isPublished: true,
       })
     );
 
@@ -40,7 +61,7 @@ const TopicEditor = () => {
 
     if (newTopic?.payload?.status === (200 || 201)) {
       toast.update(signal, {
-        render: "Tao chủ đề thành công",
+        render: "Cập nhật chủ đề thành công",
         type: "success",
         isLoading: false,
         closeOnClick: true,
@@ -48,39 +69,7 @@ const TopicEditor = () => {
       });
     } else {
       toast.update(signal, {
-        render: "Tao chủ đề không thành công",
-        type: "error",
-        isLoading: false,
-        closeOnClick: true,
-        autoClose: 3000,
-      });
-    }
-  };
-
-  // do something with the data
-  const handleSave = async (data) => {
-    const signal = toast.loading("Vui lòng chờ...");
-    const newTopic = await dispatch(
-      createTopic({
-        topic_name: data.topicName,
-        topic_description: data.description,
-        isDraft: true,
-      })
-    );
-
-    // console.log(newTopic);
-
-    if (newTopic?.payload?.status === (200 || 201)) {
-      toast.update(signal, {
-        render: "Tao chủ đề thành công",
-        type: "success",
-        isLoading: false,
-        closeOnClick: true,
-        autoClose: 3000,
-      });
-    } else {
-      toast.update(signal, {
-        render: "Tao chủ đề không thành công",
+        render: "Cập nhật chủ đề không thành công",
         type: "error",
         isLoading: false,
         closeOnClick: true,
@@ -103,6 +92,7 @@ const TopicEditor = () => {
                   `field-input !h-[160px] !py-[15px] !overflow-y-auto`,
                   { "field-input--error": errors.description }
                 )}
+                value={topic_description}
                 id="description"
                 defaultValue={defaultValues.description}
                 {...register("description", { required: true })}
@@ -120,24 +110,19 @@ const TopicEditor = () => {
                 "field-input--error": errors.topicName,
               })}
               id="topicName"
+              value={topic_name}
               defaultValue={defaultValues.topicName}
               placeholder="VD: Thời trang, Chuỗi cung ứng"
               {...register("topicName", { required: true })}
             />
           </div>
 
-          <div className="grid gap-2 mt-5 sm:grid-cols-2 sm:mt-10 md:mt-11">
-            <button
-              className="btn btn--secondary"
-              onClick={handleSubmit(handleSave)}
-            >
-              Lưu thành bản nháp
-            </button>
+          <div className="grid gap-2 mt-5 sm:mt-10 md:mt-11">
             <button
               className="btn btn--primary"
               onClick={handleSubmit(handlePublish)}
             >
-              Xuất bản
+              Cập nhật
             </button>
           </div>
         </div>
@@ -146,4 +131,4 @@ const TopicEditor = () => {
   );
 };
 
-export default TopicEditor;
+export default TopicEditing;

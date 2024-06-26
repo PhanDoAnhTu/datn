@@ -7,7 +7,7 @@ const EditPost = () => {
   const location = useLocation();
   return (
     <>
-      <PageHeader title="Edit Post" />
+      <PageHeader title="Tạo bài viết" />
       <PostEditor item={location.state ? location.state.record : ""} />
     </>
   );

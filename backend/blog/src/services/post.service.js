@@ -17,6 +17,7 @@ class PostService {
       post_title,
       post_content,
       isPublished = false,
+      isDraft = false,
     } = payload;
 
     try {
@@ -28,6 +29,7 @@ class PostService {
         post_title: post_title,
         post_content: post_content,
         isPublished: isPublished,
+        isDraft: isDraft,
       });
       return newpost;
     } catch (error) {
@@ -35,12 +37,7 @@ class PostService {
     }
   }
 
-  async getListPosts({
-    limit = 10,
-    page = 1,
-    sort = "ctime",
-    isPublished,
-  }) {
+  async getListPosts({ limit = 10, page = 1, sort = "ctime", isPublished }) {
     if (isPublished == true || isPublished == false) {
       const skip = (page - 1) * limit;
       const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
@@ -53,8 +50,7 @@ class PostService {
         .lean();
       return listpost;
     } else {
-      const listpost = await PostModel.find()
-        .lean();
+      const listpost = await PostModel.find().lean();
       return listpost;
     }
   }
@@ -80,8 +76,9 @@ class PostService {
       return {
         post: _.omit(post, ["__v", "updateAt"]),
         related_posts: related_posts.map((post) =>
-          _.omit(post, ["__v", "updateAt"])),
-        topic
+          _.omit(post, ["__v", "updateAt"])
+        ),
+        topic,
       };
     } catch (error) {
       return null;
@@ -108,48 +105,39 @@ class PostService {
     return listpost;
   }
 
-
-
-  async changeIsPublished({
-    isPublished = true,
-    post_id,
-  }) {
+  async changeIsPublished({ isPublished = true, post_id }) {
     const post = await PostModel.findOne({
       _id: post_id,
-    })
+    });
     if (isPublished == true) {
-      post.isDraft = false
-      post.isDeleted = false
+      post.isDraft = false;
+      post.isDeleted = false;
     }
     if (isPublished == false) {
-      post.isDraft = true
-      post.isDeleted = false
+      post.isDraft = true;
+      post.isDeleted = false;
     }
-    post.isPublished = isPublished
+    post.isPublished = isPublished;
 
-    return await post.updateOne(post)
+    return await post.updateOne(post);
   }
 
-  async isTrashPost({
-    isDeleted = true,
-    post_id,
-  }) {
+  async isTrashPost({ isDeleted = true, post_id }) {
     const post = await PostModel.findOne({
       _id: post_id,
-    })
+    });
     if (isDeleted == true) {
-      post.isDraft = false
-      post.isPublished = false
+      post.isDraft = false;
+      post.isPublished = false;
     }
     if (isDeleted == false) {
-      post.isDraft = true
-      post.isPublished = false
+      post.isDraft = true;
+      post.isPublished = false;
     }
-    post.isDeleted = isDeleted
+    post.isDeleted = isDeleted;
 
-    return await post.updateOne(post)
+    return await post.updateOne(post);
   }
-
 }
 
 module.exports = PostService;

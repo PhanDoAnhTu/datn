@@ -11,7 +11,6 @@ export * from "./slider-actions";
 export * from "./contact-actions";
 export * from "./blog-actions";
 
-
 export const Action = {
   //auth
   ERROR: "ERROR",
@@ -79,13 +78,18 @@ export const Action = {
   ADD_SLIDER: "ADD_SLIDER",
   UPDATE_SLIDER: "UPDATE_SLIDER",
   GET_ALL_SLIDER: "GET_ALL_SLIDER",
+  GET_ONE_SLIDER: "GET_ONE_SLIDER",
+  UPDATE_ONE_SLIDER: "UPDATE_ONE_SLIDER",
 
   ///blog
 
   ADD_TOPIC: "ADD_TOPIC",
   ADD_POST: "ADD_POST",
+  GET_ONE_TOPIC: "GET_ONE_TOPIC",
+  UPDATE_ONE_TOPIC: "UPDATE_ONE_TOPIC",
   GET_ALL_TOPIC: "GET_ALL_TOPIC",
   GET_ALL_POST: "GET_ALL_POST",
   UPDATE_TOPIC: "UPDATE_TOPIC",
   UPDATE_POST: "UPDATE_POST",
+  GET_ONE_POST: "GET_ONE_POST",
 };

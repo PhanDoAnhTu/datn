@@ -12,8 +12,9 @@ class TopicService {
       topic_parent_id = null,
       topic_name,
       topic_description,
-      topic_image,
+      topic_image = null,
       isPublished = false,
+      isDraft = false,
     } = payload;
 
     const newTopic = await TopicModel.create({
@@ -22,15 +23,11 @@ class TopicService {
       topic_description: topic_description,
       topic_image: topic_image,
       isPublished: isPublished,
+      isDraft: isDraft,
     });
     return newTopic;
   }
-  async getListTopic({
-    limit = 10,
-    page = 1,
-    sort = "ctime",
-    isPublished,
-  }) {
+  async getListTopic({ limit = 10, page = 1, sort = "ctime", isPublished }) {
     if (isPublished) {
       const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
       const skip = (page - 1) * limit;
@@ -44,8 +41,7 @@ class TopicService {
         .lean();
       return listTopic;
     } else {
-      const listTopic = await TopicModel.find()
-        .lean();
+      const listTopic = await TopicModel.find().lean();
       return listTopic;
     }
   }
@@ -69,44 +65,63 @@ class TopicService {
       .lean();
     return listTopicByParentId;
   }
-  async changeIsPublished({
-    isPublished = true,
-    topic_id,
-  }) {
+  async changeIsPublished({ isPublished = true, topic_id }) {
     const topic = await TopicModel.findOne({
       _id: topic_id,
-    })
+    });
     if (isPublished == true) {
-      topic.isDraft = false
-      topic.isDeleted = false
+      topic.isDraft = false;
+      topic.isDeleted = false;
     }
     if (isPublished == false) {
-      topic.isDraft = true
-      topic.isDeleted = false
+      topic.isDraft = true;
+      topic.isDeleted = false;
     }
-    topic.isPublished = isPublished
+    topic.isPublished = isPublished;
 
-    return await topic.updateOne(topic)
+    return await topic.updateOne(topic);
   }
 
-  async isTrashTopic({
-    isDeleted = true,
-    topic_id,
-  }) {
+  async getOneTopic({ topic_id }) {
+    try {
+      const topic = await TopicModel.findOne({
+        _id: topic_id,
+      });
+      return topic;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async updateOneTopic({ topic_id, topic_name, topic_description }) {
+    try {
+      const topic = await TopicModel.findOneAndUpdate(
+        {
+          _id: topic_id,
+        },
+        { topic_name: topic_name, topic_description: topic_description },
+        { new: true }
+      );
+      return topic;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async isTrashTopic({ isDeleted = true, topic_id }) {
     const topic = await TopicModel.findOne({
       _id: topic_id,
-    })
+    });
     if (isDeleted == true) {
-      topic.isDraft = false
-      topic.isPublished = false
+      topic.isDraft = false;
+      topic.isPublished = false;
     }
     if (isDeleted == false) {
-      topic.isDraft = true
-      topic.isPublished = false
+      topic.isDraft = true;
+      topic.isPublished = false;
     }
-    topic.isDeleted = isDeleted
+    topic.isDeleted = isDeleted;
 
-    return await topic.updateOne(topic)
+    return await topic.updateOne(topic);
   }
 }
 
