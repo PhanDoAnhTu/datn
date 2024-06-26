@@ -20,8 +20,8 @@ const TotalBalance = ({wrapperClass, imgClass}) => {
                      src={balance}
                      alt="balance"/>
                 <div className="flex flex-col gap-1.5 ml-4 lg:text-center xl:text-left">
-                    <span className="h1">$476,3k</span>
-                    <span className="h6">Total Balance</span>
+                    <span className="h1">0đ</span>
+                    <span className="h6">Tổng tài chính</span>
                 </div>
             </div>
         </Spring>

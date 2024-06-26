@@ -227,7 +227,6 @@ class CustomerService {
         if (!match) {
             throw new errorResponse.ForbiddenRequestError("auth err not math")
         }
-        console.log(customer_email, customer_password, match, "ssssssssssssssss")
         return true
     }
 
