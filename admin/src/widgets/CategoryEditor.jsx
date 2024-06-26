@@ -38,7 +38,7 @@ const CategoryEditor = ({ item }) => {
 
   const defaultValues = {
     category_image: item ? item.category_image : undefined,
-    category_description: item ? item.category_description : productDescription,
+    category_description: item ? item.category_description : "",
     category_name: item ? item.category_name : "",
     parent_id: item
       ? item.parent_id

@@ -303,7 +303,7 @@ const TopicManagementTable = ({ searchQuery }) => {
         </div>
       </div>
       <div className="flex flex-col-reverse gap-4 mt-4 mb-5 md:flex-row md:justify-between md:items-end md:mt-5 md:mb-6">
-        <p>View topics: {pagination.showingOf()}</p>
+        <p>Hiển thị: {pagination.showingOf()}</p>
 
         <div className="md:min-w-[560px] grid md:grid-cols-2 gap-4">
           <Select

@@ -31,5 +31,17 @@ class BrandController {
       metaData: await this.service.updateOneBrand(req.body),
     }).send(res);
   };
+  isTrash = async (req, res, next) => {
+    new successResponse.SuccessResponse({
+      message: "isTrash success",
+      metaData: await this.service.isTrash(req.body),
+    }).send(res);
+  };
+  changeIsPublished = async (req, res, next) => {
+    new successResponse.SuccessResponse({
+      message: "changeIsPublished success",
+      metaData: await this.service.changeIsPublished(req.body),
+    }).send(res);
+  };
 }
 module.exports = new BrandController();
