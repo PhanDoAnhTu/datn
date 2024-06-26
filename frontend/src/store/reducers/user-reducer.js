@@ -2,6 +2,7 @@ import { Action } from '../actions'
 
 const initialState = {
     userInfo: localStorage.getItem("userInfo") ? JSON.parse(localStorage.getItem("userInfo")) : null,
+    info_review_user: null
 }
 
 const UserReducer = (state = initialState, action) => {
@@ -35,6 +36,11 @@ const UserReducer = (state = initialState, action) => {
             }
         case Action.PASSWORD_USER:
             return state
+        case Action.NAME_AVATAR:
+            return {
+                ...state,
+                info_review_user: action?.payload?.metaData
+            }
         case Action.LOGOUT:
 
             return {

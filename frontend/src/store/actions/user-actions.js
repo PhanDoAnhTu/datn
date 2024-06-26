@@ -236,3 +236,16 @@ export const onChangePassword = (data) => async (dispatch) => {
 
   }
 };
+export const getNameAndAvatarCustomer = () => async (dispatch) => {
+  try {
+    const response = await GetData('/user/v1/customer/getNameAndAvatarCustomer')
+    console.log("response", response)
+
+    return dispatch({ type: Action.NAME_AVATAR, payload: response.data });
+  } catch (err) {
+    console.log(err)
+
+  }
+};
+
+

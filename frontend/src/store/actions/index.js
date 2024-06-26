@@ -103,8 +103,8 @@ export const Action = {
     ///
 
     UPDATE_USER: "UPDATE_USER",
-    PASSWORD_USER: "PASSWORD_USER"
-
+    PASSWORD_USER: "PASSWORD_USER",
+    NAME_AVATAR: ""
 
 
 };

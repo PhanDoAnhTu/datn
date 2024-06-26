@@ -83,6 +83,12 @@ class CustomerController {
             metaData: await this.service.changePassword(req.body)
         }).send(res)
     }
+    getNameAndAvatarCustomer = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: "getNameAndAvatarCustomer",
+            metaData: await this.service.getNameAndAvatarCustomer()
+        }).send(res)
+    }
 }
 
 module.exports = new CustomerController

@@ -18,6 +18,7 @@ export default function Home() {
     const { all_products } = useSelector((state) => state.productReducer);
     const { category } = useSelector((state) => state.categoryReducer);
     const { slider } = useSelector((state) => state.sliderReducer);
+
     const { product_best_selling } = useSelector(
         (state) => state.productReducer
     );
@@ -94,7 +95,7 @@ export default function Home() {
                                 (item?.slider_link ===
                                     '/san-pham-theo-danh-muc/nam' ||
                                     item?.slider_link ===
-                                        '/san-pham-theo-danh-muc/nu')
+                                    '/san-pham-theo-danh-muc/nu')
                         );
                     return fetchedSlider?.map((item) => (
                         <CategorySection item={item} key={item._id} />
@@ -134,7 +135,7 @@ export default function Home() {
                                 (item?.slider_link ===
                                     '/san-pham-theo-danh-muc/nu/trang-suc-and-phu-kien/mu-and-mu-len' ||
                                     item?.slider_link ===
-                                        '/san-pham-theo-danh-muc/nu/thoi-trang/quan-djui')
+                                    '/san-pham-theo-danh-muc/nu/thoi-trang/quan-djui')
                         );
                     return fetchedSlider?.map((item) => (
                         <CategorySection item={item} key={item._id} />
@@ -144,34 +145,34 @@ export default function Home() {
             <div className="px-4 sm:px-6 lg:px-8">
                 {all_products
                     ? (() => {
-                          // eslint-disable-next-line no-unused-vars
-                          const newProducts = all_products
-                              ?.slice()
-                              ?.filter((item) =>
-                                  item?.product_category?.some((UUID) =>
-                                      category
-                                          ?.slice()
-                                          ?.filter(
-                                              (item) =>
-                                                  item?.category_slug ===
-                                                  'ao-thun'
-                                          )
-                                          ?.map((item) => {
-                                              return item?._id;
-                                          })
-                                          ?.includes(UUID)
-                                  )
-                              );
-                          return (
-                              <ProductList
-                                  title={'Áo thun'}
-                                  summary={
-                                      'Những chiếc áo thun không ngại thời gian'
-                                  }
-                                  products={newProducts}
-                              />
-                          );
-                      })()
+                        // eslint-disable-next-line no-unused-vars
+                        const newProducts = all_products
+                            ?.slice()
+                            ?.filter((item) =>
+                                item?.product_category?.some((UUID) =>
+                                    category
+                                        ?.slice()
+                                        ?.filter(
+                                            (item) =>
+                                                item?.category_slug ===
+                                                'ao-thun'
+                                        )
+                                        ?.map((item) => {
+                                            return item?._id;
+                                        })
+                                        ?.includes(UUID)
+                                )
+                            );
+                        return (
+                            <ProductList
+                                title={'Áo thun'}
+                                summary={
+                                    'Những chiếc áo thun không ngại thời gian'
+                                }
+                                products={newProducts}
+                            />
+                        );
+                    })()
                     : ''}
             </div>
             {(() => {
@@ -183,40 +184,40 @@ export default function Home() {
             <div className="px-4 sm:px-6 lg:px-8">
                 {all_products
                     ? (() => {
-                          // eslint-disable-next-line no-unused-vars
-                          const newProducts = all_products
-                              ?.slice()
-                              .filter((item) =>
-                                  item?.product_category?.some((UUID) =>
-                                      category
-                                          ?.slice()
-                                          ?.filter(
-                                              (item) =>
-                                                  item?.parent_id ===
-                                                  category
-                                                      ?.slice()
-                                                      ?.find(
-                                                          (item) =>
-                                                              item?.category_slug ===
-                                                              'balo'
-                                                      )?._id
-                                          )
-                                          ?.map((item) => {
-                                              return item?._id;
-                                          })
-                                          ?.includes(UUID)
-                                  )
-                              );
-                          return (
-                              <ProductList
-                                  title={'Balo'}
-                                  summary={
-                                      'Người bạn đồng hành không thể thiếu trên mọi nẽo đường'
-                                  }
-                                  products={newProducts}
-                              />
-                          );
-                      })()
+                        // eslint-disable-next-line no-unused-vars
+                        const newProducts = all_products
+                            ?.slice()
+                            .filter((item) =>
+                                item?.product_category?.some((UUID) =>
+                                    category
+                                        ?.slice()
+                                        ?.filter(
+                                            (item) =>
+                                                item?.parent_id ===
+                                                category
+                                                    ?.slice()
+                                                    ?.find(
+                                                        (item) =>
+                                                            item?.category_slug ===
+                                                            'balo'
+                                                    )?._id
+                                        )
+                                        ?.map((item) => {
+                                            return item?._id;
+                                        })
+                                        ?.includes(UUID)
+                                )
+                            );
+                        return (
+                            <ProductList
+                                title={'Balo'}
+                                summary={
+                                    'Người bạn đồng hành không thể thiếu trên mọi nẽo đường'
+                                }
+                                products={newProducts}
+                            />
+                        );
+                    })()
                     : ''}
             </div>
 

@@ -11,6 +11,7 @@ const { sendEmailToken, sendEmailOTP } = require('./email.service');
 const { CustomerModel } = require('../database/models');
 const { checkEmailToken, newOtp, checkEmailOtp } = require('./otp.service');
 const jwt = require("jsonwebtoken");
+const _ = require("lodash");
 
 class CustomerService {
 
@@ -264,10 +265,16 @@ class CustomerService {
             }
         }, options = {
             upsert: true,
-            new: true 
+            new: true
         }
         const cus = await CustomerModel.findOneAndUpdate(query, updateSet, options)
         return { customer: cus }
+    }
+
+    async getNameAndAvatarCustomer() {
+
+        const foundCustomer = await CustomerModel.find().lean()
+        return foundCustomer
     }
 
     async serverRPCRequest(payload) {

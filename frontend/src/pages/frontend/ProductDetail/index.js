@@ -11,6 +11,7 @@ import {
     removeFromWishList,
     addToWishList,
     onProductDetail,
+    getNameAndAvatarCustomer,
 } from '../../../store/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { NumericFormat } from 'react-number-format';
@@ -27,7 +28,8 @@ import DocumentTitle from '../../../components/frontend/DocumentTitle.js';
 
 export default function ProductDetail() {
     const { userInfo } = useSelector((state) => state.userReducer);
-
+    const { info_review_user } = useSelector((state) => state.userReducer);
+    console.log("info_review_user", info_review_user)
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { all_products } = useSelector((state) => state.productReducer);
@@ -65,6 +67,8 @@ export default function ProductDetail() {
         const responseProductDetail = await dispatch(
             onProductDetail({ spu_id: product_id })
         );
+        !info_review_user && dispatch(getNameAndAvatarCustomer())
+
 
         if (responseProductDetail) {
             const resultProduct =
@@ -346,8 +350,8 @@ export default function ProductDetail() {
                     <div className="flex flex-col-reverse lg:col-span-2 lg:h-square lg:flex-row lg:space-x-5 lg:border-r lg:border-gray-300 lg:pr-8 dark:lg:border-stone-700">
                         <div className="no-scrollbar flex w-full flex-row overflow-hidden max-lg:mt-3 max-lg:space-x-3 max-lg:overflow-x-scroll max-lg:pb-1 lg:w-44 lg:flex-col lg:space-y-3 lg:overflow-y-scroll">
                             {product_images &&
-                            reload === false &&
-                            product_images?.length > 0 ? (
+                                reload === false &&
+                                product_images?.length > 0 ? (
                                 product_images?.map((item, index) => (
                                     <button
                                         onClick={() => HandleImageChoose(item)}
@@ -757,8 +761,11 @@ export default function ProductDetail() {
                                         key={`review-${index}`}
                                         className="grid gap-2 overflow-hidden rounded-md bg-zinc-200 p-4 shadow-md shadow-gray-400 dark:bg-zinc-800 dark:shadow-inner"
                                     >
+                                        
                                         <div className="text-lg font-bold text-gray-900 dark:text-white">
-                                            {rv.customer_id}
+                                            {info_review_user && info_review_user.length > 0 && info_review_user.find((u) => u._id == rv.customer_id)?.customer_name
+
+                                            }
                                         </div>
                                         <div className="flex">
                                             {[1, 2, 3, 4, 5].map((rating) => (
