@@ -26,6 +26,18 @@ class PostController {
       metaData: await this.service.getListPostsByTopicId(req.body),
     }).send(res);
   };
+  getOnePost = async (req, res, next) => {
+    return new successResponse.SuccessResponse({
+      message: "getOnePost success",
+      metaData: await this.service.getOnePost(req.body),
+    }).send(res);
+  };
+  updateOnePost = async (req, res, next) => {
+    return new successResponse.SuccessResponse({
+      message: "updateOnePost success",
+      metaData: await this.service.updateOnePost(req.body),
+    }).send(res);
+  };
   getSinglePost = async (req, res, next) => {
     return new successResponse.SuccessResponse({
       message: "getSinglePost success",

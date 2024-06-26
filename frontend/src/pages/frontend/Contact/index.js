@@ -3,8 +3,11 @@ import { useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { toast } from 'react-toastify';
 import DocumentTitle from '../../../components/frontend/DocumentTitle';
+import { useDispatch } from 'react-redux';
+import { newContact } from '../../../store/actions/contact-actions';
 
 export default function Contact() {
+    const dispatch = useDispatch();
     const [emailContent, setEmailContent] = useState('');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -13,6 +16,8 @@ export default function Contact() {
     // eslint-disable-next-line no-unused-vars
     const handleSendMail = (e) => {
         e.preventDefault();
+
+        const signal = toast.loading('Vui lòng chờ...');
 
         // Your EmailJS service ID, template ID, and Public Key
         const serviceId = 'service_xr0116g';
@@ -27,26 +32,47 @@ export default function Contact() {
             message: emailContent,
             title: title,
         };
-
-        // Send the email using EmailJS
-        emailjs
-            .send(serviceId, templateId, templateParams, publicKey)
-            .then((response) => {
-                toast.success('Email sent successfully!', response);
-                //thanh cong thi minh them moi vao database
-                setName('');
-                setEmail('');
-                setEmailContent('');
-                setTitle('');
-            })
-            .catch((error) => {
-                toast.error('Error sending email:', error);
+        try {
+            emailjs
+                .send(serviceId, templateId, templateParams, publicKey)
+                .then(async () => {
+                    const result = await dispatch(
+                        newContact({
+                            customer_email: email,
+                            contact_title: title,
+                            customer_name: name,
+                            contact_content: emailContent,
+                        })
+                    );
+                    setName('');
+                    setEmail('');
+                    setEmailContent('');
+                    setTitle('');
+                    if (result) {
+                        toast.update(signal, {
+                            render: 'Gửi liên hệ thành công',
+                            type: 'success',
+                            isLoading: false,
+                            closeOnClick: true,
+                            autoClose: 3000,
+                        });
+                    }
+                });
+        } catch (error) {
+            toast.update(signal, {
+                render: 'Đã có lỗi xảy ra: ' + error,
+                type: 'error',
+                isLoading: false,
+                closeOnClick: true,
+                autoClose: 3000,
             });
+        }
+        // Send the email using EmailJS
     };
 
     return (
         <div className="flex justify-center pb-16 pt-10 md:pt-24">
-                        <DocumentTitle title="Liên hệ" />
+            <DocumentTitle title="Liên hệ" />
 
             <div className="w-9/12 md:w-10/12">
                 <h1 className="pl-9 text-3xl font-bold tracking-wide text-gray-900 md:pl-14 md:text-4xl dark:text-white">

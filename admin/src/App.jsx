@@ -69,6 +69,7 @@ const TopicDetail = lazy(() => import("@pages/TopicDetail"));
 const PostsManagement = lazy(() => import("@pages/PostsManagement"));
 const PostEditor = lazy(() => import("@pages/EditPost"));
 const PostDetail = lazy(() => import("@pages/DetailPost"));
+const PostEdit = lazy(() => import("@pages/PostEditing"));
 const ContactsManagement = lazy(() => import("@pages/ContactsManagement"));
 const ContactResponse = lazy(() => import("@pages/ContactResponse"));
 const BrandsManagement = lazy(() => import("@pages/BrandsManagement"));
@@ -169,6 +170,7 @@ const App = () => {
                   />
                   <Route path="post-editor" element={<PostEditor />} />
                   <Route path="post-detail/:id" element={<PostDetail />} />
+                  <Route path="post-editor/:id" element={<PostEdit />} />
                   {/* Contact */}
                   <Route path="support" element={<ContactsManagement />} />
                   <Route path="support/res" element={<ContactResponse />} />

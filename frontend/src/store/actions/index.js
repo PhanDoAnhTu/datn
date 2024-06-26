@@ -28,6 +28,9 @@ export const Action = {
     PRODUCT_BEST_SELLING: 'PRODUCT_BEST_SELLING',
     PRODUCT_FROM_CART: 'PRODUCT_FROM_CART',
 
+    //contact
+    NEW_CONTACT: 'NEW_CONTACT',
+
     ///cart
     GET_CART: 'GET_CART',
     ADD_TO_CART: 'ADD_TO_CART',
