@@ -13,9 +13,12 @@ import { useWindowSize } from "react-use";
 
 // constants
 import { ADDITIONAL_OPTIONS, SELECT_OPTIONS } from "@constants/options";
-// import { SLIDERS_MANAGEMENT_COLUMN_DEFS } from "@constants/columnDefs";
 import sliders_managements from "@db/sliders_managements";
-import { getAllSlider, changeActiveSlider, isTrashSlider } from "../../store/actions";
+import {
+  getAllSlider,
+  changeActiveSlider,
+  isTrashSlider,
+} from "../../store/actions";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import Actions from "@components/Actions";
@@ -71,8 +74,8 @@ const SliderManagementTable = ({ searchQuery }) => {
               ? dayjs().diff(dayjs(date), "minute") < 60
                 ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
                 : dayjs().diff(dayjs(date), "hour") < 24
-                  ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
-                  : dayjs(date).format("hh:mmA DD/MM/YYYY")
+                ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+                : dayjs(date).format("hh:mmA DD/MM/YYYY")
               : ""}
           </span>
         </div>
@@ -84,23 +87,23 @@ const SliderManagementTable = ({ searchQuery }) => {
       dataIndex: "isPublished",
       render: (status, record) => (
         <div>
-          {
-            record.isDeleted === false
-              ? <Switch
-                checkedChildren={"ON"}
-                unCheckedChildren={"OFF"}
-                onChange={(e) => handleChangeStatus(e, record?._id)}
-                loading={false}
-                checked={record?.isPublished}
-              />
-              : <Switch
-                disabled
-                checkedChildren={"ON"}
-                unCheckedChildren={"OFF"}
-                loading={false}
-                checked={false}
-              />
-          }
+          {record.isDeleted === false ? (
+            <Switch
+              checkedChildren={"ON"}
+              unCheckedChildren={"OFF"}
+              onChange={(e) => handleChangeStatus(e, record?._id)}
+              loading={false}
+              checked={record?.isPublished}
+            />
+          ) : (
+            <Switch
+              disabled
+              checkedChildren={"ON"}
+              unCheckedChildren={"OFF"}
+              loading={false}
+              checked={false}
+            />
+          )}
         </div>
       ),
     },
@@ -109,7 +112,15 @@ const SliderManagementTable = ({ searchQuery }) => {
       dataIndex: "ontions",
       render: (text, record) => (
         <div className="flex items-center justify-end gap-11">
-          <Actions record={record} table={"slider"} handleTrash={() => record.isDeleted === true ? onRemove(record._id, false) : onRemove(record._id, true)} />
+          <Actions
+            record={record}
+            table={"slider"}
+            handleTrash={() =>
+              record.isDeleted === true
+                ? onRemove(record._id, false)
+                : onRemove(record._id, true)
+            }
+          />
         </div>
       ),
     },
@@ -125,7 +136,7 @@ const SliderManagementTable = ({ searchQuery }) => {
   const [category, setCategory] = useState("all");
   const [sorts, setSorts] = useState(defaultSort);
   const [activeCollapse, setActiveCollapse] = useState("");
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const [isLoad, setIsLoad] = useState(false);
 
@@ -141,11 +152,14 @@ const SliderManagementTable = ({ searchQuery }) => {
   }, [isLoad]);
 
   const getQty = (category) => {
-    if (category === "all") return data.filter((product) => product.isDeleted === false).length;
-    if (category === "isPublished") return data.filter((product) => product.isPublished === true).length;
-    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true).length;
-    if (category === "isDraft") return data.filter((product) => product.isPublished === false).length;
-
+    if (category === "all")
+      return data.filter((product) => product.isDeleted === false).length;
+    if (category === "isPublished")
+      return data.filter((product) => product.isPublished === true).length;
+    if (category === "isDeleted")
+      return data.filter((product) => product.isDeleted === true).length;
+    if (category === "isDraft")
+      return data.filter((product) => product.isPublished === false).length;
   };
 
   const handleSortChange = ({ value, label }, name) => {
@@ -165,8 +179,8 @@ const SliderManagementTable = ({ searchQuery }) => {
                 ? 1
                 : -1
               : a.slider_name.toLowerCase() < b.slider_name.toLowerCase()
-                ? 1
-                : -1
+              ? 1
+              : -1
           )
       );
     }
@@ -180,8 +194,8 @@ const SliderManagementTable = ({ searchQuery }) => {
                 ? 1
                 : -1
               : new Date(a.updatedAt) > new Date(b.updatedAt)
-                ? 1
-                : -1
+              ? 1
+              : -1
           )
       );
     }
@@ -195,8 +209,8 @@ const SliderManagementTable = ({ searchQuery }) => {
                 ? 1
                 : -1
               : new Date(a.createdAt) > new Date(b.createdAt)
-                ? 1
-                : -1
+              ? 1
+              : -1
           )
       );
     }
@@ -217,10 +231,14 @@ const SliderManagementTable = ({ searchQuery }) => {
   }, [searchQuery]);
 
   const dataByStatus = () => {
-    if (category === "all") return data.filter((product) => product.isDeleted === false);
-    if (category === "isPublished") return data.filter((product) => product.isPublished === true);
-    if (category === "isDraft") return data.filter((product) => product.isPublished === false);
-    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true);
+    if (category === "all")
+      return data.filter((product) => product.isDeleted === false);
+    if (category === "isPublished")
+      return data.filter((product) => product.isPublished === true);
+    if (category === "isDraft")
+      return data.filter((product) => product.isPublished === false);
+    if (category === "isDeleted")
+      return data.filter((product) => product.isDeleted === true);
   };
 
   const pagination = usePagination(dataByStatus(category), 8);
@@ -316,7 +334,7 @@ const SliderManagementTable = ({ searchQuery }) => {
         </div>
       </div>
       <div className="flex flex-col-reverse gap-4 mt-4 mb-5 md:flex-row md:justify-between md:items-end md:mt-5 md:mb-6">
-        <p>View topics: {pagination.showingOf()}</p>
+        <p>Dữ liệu đang xem: {pagination.showingOf()}</p>
 
         <div className="md:min-w-[560px] grid md:grid-cols-2 gap-4">
           <Select
@@ -338,9 +356,9 @@ const SliderManagementTable = ({ searchQuery }) => {
           <StyledTable
             columns={SLIDERS_MANAGEMENT_COLUMN_DEFS}
             dataSource={pagination.currentItems()}
-            rowKey={(record) => record.id}
+            rowKey={(record) => record._id}
             locale={{
-              emptyText: <Empty text="No products found" />,
+              emptyText: <Empty text="Không có dữ liệu để hiển thị" />,
             }}
             rowSelection={{
               type: "checkbox",

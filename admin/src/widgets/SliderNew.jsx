@@ -9,9 +9,12 @@ import { Controller, useForm } from "react-hook-form";
 import classNames from "classnames";
 import MediaDropPlaceholder from "@ui/MediaDropPlaceholder";
 import DropFiles from "@components/DropFiles";
-import { Switch } from "antd";
+import { useDispatch } from "react-redux";
+import { upLoadImageSingle } from "../store/actions/upload-actions";
+import { createSlider } from "../store/actions/slider-actions";
 
 const SliderNew = () => {
+  const dispatch = useDispatch();
   const defaultValues = {
     slider_name: "",
     slider_link: "",
@@ -19,26 +22,60 @@ const SliderNew = () => {
     slider_summary: "",
     slider_position: "",
     slider_image: null,
-    slider_is_active: false,
   };
 
   const {
     register,
     control,
     handleSubmit,
-    watch,
-    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: defaultValues,
   });
 
-  const is_active = watch("slider_is_active");
-
   // do something with the data
-  const handlePublish = (data) => {
-    console.log(data);
-    toast.success("Product published successfully");
+  const handlePublish = async (data) => {
+    const signal = toast.loading("Vui lòng chờ...");
+    let imageSingle = null;
+    if (data?.slider_image?.length > 0) {
+      const image = new FormData();
+      image.append("file", data.slider_image[0]);
+      image.append("folderName", "outrunner/images/slider");
+      const uploadImageSingle = await dispatch(upLoadImageSingle(image));
+      imageSingle =
+        uploadImageSingle && uploadImageSingle?.payload?.metaData?.thumb_url;
+    }
+    const newSlider = await dispatch(
+      createSlider({
+        slider_name: data.slider_name,
+        slider_image: imageSingle,
+        slider_description: data.slider_description,
+        slider_link: data.slider_link,
+        slider_summary: data.slider_summary,
+        slider_position: data.slider_position,
+        isPublished: true,
+      })
+    );
+
+    // console.log(newSlider);
+
+    if (newSlider?.payload?.status === (200 || 201)) {
+      toast.update(signal, {
+        render: "Thêm slider thành công",
+        type: "success",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    } else {
+      toast.update(signal, {
+        render: "Thêm slider không thành công",
+        type: "error",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    }
   };
 
   return (
@@ -137,18 +174,6 @@ const SliderNew = () => {
               defaultValue={defaultValues.slider_summary}
               placeholder="Nhập tóm tắt của slider"
               {...register("slider_summary", { required: true })}
-            />
-          </div>
-          <div className="flex justify-end items-center space-x-3">
-            <label className="field-label" htmlFor={`is-active-`}>
-              Hiện cho người dùng?
-            </label>
-            <Switch
-              checkedChildren={"ON"}
-              unCheckedChildren={"OFF"}
-              onClick={(e) => setValue("slider_is_active", !is_active)}
-              loading={false}
-              checked={is_active}
             />
           </div>
         </div>

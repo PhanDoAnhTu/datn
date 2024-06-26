@@ -10,7 +10,7 @@ const NewSlider = () => {
   return (
     <>
       <PageHeader title="Cập nhật slider" />
-      <SliderEdit item={location.state ? location.state.record : ""} />
+      <SliderEdit id={location.state ? location.state.record._id : ""} />
     </>
   );
 };

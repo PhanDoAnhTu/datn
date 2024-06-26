@@ -67,16 +67,28 @@ const DiscountManagementTable = () => {
     },
     {
       title: "Ngày bắt đầu - Ngày kêt thúc",
-      dataIndex: "dateAdded",
+      dataIndex: "date",
       render: (date, record) => (
         <div>
           <div className="font-bold text-header">
             Bắt đầu:{" "}
-            {record && dayjs(record.discount_start_date).format("DD/MM/YYYY")}
+            {record && dayjs(record.discount_start_date).format("hh:mm DD/MM/YYYY")
+              ? dayjs().diff(dayjs(record.discount_start_date), "minute") < 60
+                ? `${dayjs().diff(dayjs(record.discount_start_date), "minute")} phút trước`
+                : dayjs().diff(dayjs(record.discount_start_date), "hour") < 24
+                  ? `${dayjs().diff(dayjs(record.discount_start_date), "hour")} giờ trước`
+                  : dayjs(record.discount_start_date).format("hh:mmA DD/MM/YYYY")
+              : ""}
           </div>
           <div className="font-bold text-header">
             Kết thúc:{" "}
-            {record && dayjs(record.discount_end_date).format("DD/MM/YYYY")}
+            {record && dayjs(record.discount_end_date).format("hh:mm DD/MM/YYYY")
+              ? dayjs().diff(dayjs(record.discount_end_date), "minute") < 60
+                ? `${dayjs().diff(dayjs(record.discount_end_date), "minute")} phút trước`
+                : dayjs().diff(dayjs(record.discount_end_date), "hour") < 24
+                  ? `${dayjs().diff(dayjs(record.discount_end_date), "hour")} giờ trước`
+                  : dayjs(record.discount_end_date).format("hh:mmA DD/MM/YYYY")
+              : ""}
           </div>
         </div>
       ),
@@ -146,7 +158,7 @@ const DiscountManagementTable = () => {
   useEffect(() => {
     fetchDataPromotionManagement();
   }, [isLoad]);
-  
+
   const getQty = (category) => {
     if (category === "all") return data.filter((product) => product.isDeleted === false).length;
     if (category === "isPublished") return data.filter((product) => product.isPublished === true).length;

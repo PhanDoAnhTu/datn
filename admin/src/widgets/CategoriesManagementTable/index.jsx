@@ -62,10 +62,16 @@ const CategoryManagementTable = ({ searchQuery }) => {
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
-      render: (createdAt) => (
+      render: (date) => (
         <div>
-          <span className="font-bold text-header">
-            {createdAt && dayjs(createdAt).format("DD/MM/YYYY")}
+        <span className="font-bold text-header">
+            {date && dayjs(date).format("hh:mm DD/MM/YYYY")
+              ? dayjs().diff(dayjs(date), "minute") < 60
+                ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
+                : dayjs().diff(dayjs(date), "hour") < 24
+                  ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+                  : dayjs(date).format("hh:mmA DD/MM/YYYY")
+              : ""}
           </span>
         </div>
       ),

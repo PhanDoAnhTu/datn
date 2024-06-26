@@ -55,28 +55,75 @@ class SliderService {
   changeActive = async ({ slider_id, isPublished = false }) => {
     try {
       const slider = await SliderModel.findOne({
-        _id: slider_id
+        _id: slider_id,
       });
-      slider.isPublished = isPublished
+      slider.isPublished = isPublished;
 
       return await slider.updateOne(slider);
     } catch (error) {
       console.log(error);
-      throw new errorResponse.NotFoundRequestError("not found")
+      throw new errorResponse.NotFoundRequestError("not found");
+    }
+  };
+
+  getOneSlider = async ({ slider_id }) => {
+    try {
+      const slider = await SliderModel.findOne({ _id: slider_id });
+      return slider;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  };
+
+  updateOneSlider = async ({
+    slider_id,
+    slider_name,
+    slider_link,
+    slider_description,
+    slider_summary,
+    slider_position,
+    slider_image,
+  }) => {
+    try {
+      const slider = await SliderModel.findOneAndUpdate(
+        { _id: slider_id },
+        slider_image
+          ? {
+              slider_name: slider_name,
+              slider_link: slider_link,
+              slider_description: slider_description,
+              slider_summary: slider_summary,
+              slider_position: slider_position,
+              slider_image: slider_image,
+            }
+          : {
+              slider_name: slider_name,
+              slider_link: slider_link,
+              slider_description: slider_description,
+              slider_summary: slider_summary,
+              slider_position: slider_position,
+            },
+        { new: true }
+      ).lean();
+      return slider;
+    } catch (error) {
+      console.log(error);
+      throw new errorResponse.NotFoundRequestError("not found");
     }
   };
 
   isTrash = async ({ slider_id, isDeleted = false }) => {
     try {
       const slider = await SliderModel.findOne({
-        _id: slider_id
+        _id: slider_id,
       });
-      slider.isDeleted = isDeleted
-      slider.isPublished = false
+      slider.isDeleted = isDeleted;
+      slider.isPublished = false;
       return await slider.updateOne(slider);
     } catch (error) {
       console.log(error);
-      throw new errorResponse.NotFoundRequestError("not found")
+      throw new errorResponse.NotFoundRequestError("not found");
     }
   };
 

@@ -28,7 +28,7 @@ const SliderDetail = ({ item }) => {
     slider_description: "",
     slider_summary: "",
     slider_position: "",
-    slider_image: null,
+    slider_image: item ? item.slider_image : "",
     slider_is_active: false,
   };
 
@@ -163,19 +163,6 @@ const SliderDetail = ({ item }) => {
               value={summary}
               placeholder="Nhập tóm tắt của slider"
               {...register("slider_summary", { required: true })}
-            />
-          </div>
-          <div className="flex justify-end items-center space-x-3">
-            <label className="field-label" htmlFor={`is-active-`}>
-              Hiện cho người dùng?
-            </label>
-            <Switch
-              checkedChildren={"ON"}
-              unCheckedChildren={"OFF"}
-              disabled
-              onClick={(e) => setValue("slider_is_active", !is_active)}
-              loading={false}
-              checked={is_active}
             />
           </div>
         </div>

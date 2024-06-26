@@ -9,26 +9,21 @@ import { Controller, useForm } from "react-hook-form";
 import classNames from "classnames";
 import MediaDropPlaceholder from "@ui/MediaDropPlaceholder";
 import DropFiles from "@components/DropFiles";
-import { Switch } from "antd";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { getOneSlider, updateOneSlider } from "../store/actions/slider-actions";
+import { upLoadImageSingle } from "../store/actions/upload-actions";
 
-const SliderEdit = ({ item }) => {
-  useEffect(() => {
-    setValue("slider_name", item.slider_name);
-    setValue("slider_link", item.slider_link);
-    setValue("slider_summary", item.slider_summary);
-    setValue("slider_position", item.slider_position);
-    setValue("slider_image", item.slider_image);
-    setValue("slider_is_active", item.slider_is_active);
-    setValue("slider_description", item.slider_description);
-  }, [item]);
+const SliderEdit = ({ id }) => {
+  const [data, setData] = useState(null);
+
   const defaultValues = {
     slider_name: "",
     slider_link: "",
     slider_description: "",
     slider_summary: "",
     slider_position: "",
-    slider_image: item ? item.slider_image : null,
+    slider_image: null,
     slider_is_active: false,
   };
 
@@ -49,12 +44,70 @@ const SliderEdit = ({ item }) => {
   const summary = watch("slider_summary");
   const position = watch("slider_position");
   const image = watch("slider_image");
-  const is_active = watch("slider_is_active");
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await dispatch(getOneSlider({ slider_id: id }));
+      if (result) {
+        setData(result.payload.metaData);
+      }
+    };
+    fetchData();
+  }, [id]);
+
+  useEffect(() => {
+    setValue("slider_name", data && data.slider_name);
+    setValue("slider_link", data && data.slider_link);
+    setValue("slider_summary", data && data.slider_summary);
+    setValue("slider_position", data && data.slider_position);
+    setValue("slider_description", data && data.slider_description);
+  }, [data]);
 
   // do something with the data
-  const handlePublish = (data) => {
-    console.log(data);
-    toast.success("Product published successfully");
+  const handlePublish = async (data) => {
+    const signal = toast.loading("Vui lòng chờ...");
+    let imageSingle = null;
+    if (data?.slider_image?.length > 0) {
+      const image = new FormData();
+      image.append("file", data.slider_image[0]);
+      image.append("folderName", "outrunner/images/slider");
+      const uploadImageSingle = await dispatch(upLoadImageSingle(image));
+      imageSingle =
+        uploadImageSingle && uploadImageSingle?.payload?.metaData?.thumb_url;
+    }
+    const updatedSlider = await dispatch(
+      updateOneSlider({
+        slider_id: id,
+        slider_name: data.slider_name,
+        slider_image: imageSingle,
+        slider_description: data.slider_description,
+        slider_link: data.slider_link,
+        slider_summary: data.slider_summary,
+        slider_position: data.slider_position,
+      })
+    );
+
+    // console.log(updatedSlider);
+
+    if (updatedSlider?.payload?.status === (200 || 201)) {
+      toast.update(signal, {
+        render: "Chỉnh sửa slider thành công",
+        type: "success",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    } else {
+      toast.update(signal, {
+        render: "Chỉnh sửa slider không thành công",
+        type: "error",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    }
   };
 
   return (
@@ -158,18 +211,6 @@ const SliderEdit = ({ item }) => {
               value={summary}
               placeholder="Nhập tóm tắt của slider"
               {...register("slider_summary", { required: true })}
-            />
-          </div>
-          <div className="flex justify-end items-center space-x-3">
-            <label className="field-label" htmlFor={`is-active-`}>
-              Hiện cho người dùng?
-            </label>
-            <Switch
-              checkedChildren={"ON"}
-              unCheckedChildren={"OFF"}
-              onClick={(e) => setValue("slider_is_active", !is_active)}
-              loading={false}
-              checked={is_active}
             />
           </div>
         </div>

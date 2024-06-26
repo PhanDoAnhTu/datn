@@ -7,19 +7,23 @@ import { Controller, useForm } from "react-hook-form";
 
 // utils
 import classNames from "classnames";
-import topics_management from "@db/topics_management";
 import Select from "@ui/Select";
 import MediaDropPlaceholder from "@ui/MediaDropPlaceholder";
 import DropFiles from "@components/DropFiles";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { createPost, getListTopic } from "../store/actions/blog-actions";
+import { upLoadImageSingle } from "../store/actions/upload-actions";
 
-const PostEditor = ({ item }) => {
+const PostEditor = () => {
+  const dispatch = useDispatch();
+  const [topics_management, setTopicsManagement] = useState([]);
   const defaultValues = {
-    content: item ? item.content : "",
-    postTitle: item ? item.label : "",
-    image: item ? item.image : "",
-    topic: item
-      ? topics_management.slice().find((item) => item.id === item.topicID)
-      : topics_management[0],
+    content: "",
+    postTitle: "",
+    summary: "",
+    image: "",
+    topic: null,
   };
 
   const {
@@ -30,17 +34,108 @@ const PostEditor = ({ item }) => {
   } = useForm({
     defaultValues: defaultValues,
   });
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await dispatch(getListTopic());
+      if (result) {
+        setTopicsManagement(
+          result.payload.metaData?.map((item) => {
+            return { label: item.topic_name, value: item._id };
+          })
+        );
+      }
+    };
+    fetchData();
+  }, []);
 
   // do something with the data
-  const handleSave = (data) => {
-    console.log(data);
-    toast.success("Product saved successfully");
+  const handleSave = async (data) => {
+    const signal = toast.loading("Vui lòng chờ...");
+    let imageSingle = null;
+    if (data?.image?.length > 0) {
+      const image = new FormData();
+      image.append("file", data.image[0]);
+      image.append("folderName", "outrunner/images/post");
+      const uploadImageSingle = await dispatch(upLoadImageSingle(image));
+      imageSingle =
+        uploadImageSingle && uploadImageSingle?.payload?.metaData?.thumb_url;
+    }
+    const newPost = await dispatch(
+      createPost({
+        post_name: data.postTitle,
+        post_title: data.postTitle,
+        post_content: data.content,
+        post_short_description: data.summary,
+        topic_id: data.topic?.value,
+        post_image: imageSingle,
+        isDraft: true,
+      })
+    );
+
+    // console.log(newPost);
+
+    if (newPost?.payload?.status === (200 || 201)) {
+      toast.update(signal, {
+        render: "Tao chủ đề thành công",
+        type: "success",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    } else {
+      toast.update(signal, {
+        render: "Tao chủ đề không thành công",
+        type: "error",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    }
   };
 
   // do something with the data
-  const handlePublish = (data) => {
-    console.log(data);
-    toast.success("Product published successfully");
+  const handlePublish = async (data) => {
+    const signal = toast.loading("Vui lòng chờ...");
+    let imageSingle = null;
+    if (data?.image?.length > 0) {
+      const image = new FormData();
+      image.append("file", data.brand_image[0]);
+      image.append("folderName", "outrunner/images/post");
+      const uploadImageSingle = await dispatch(upLoadImageSingle(image));
+      imageSingle =
+        uploadImageSingle && uploadImageSingle?.payload?.metaData?.thumb_url;
+    }
+    const newPost = await dispatch(
+      createPost({
+        post_name: data.postTitle,
+        post_title: data.postTitle,
+        post_content: data.content,
+        post_short_description: data.summary,
+        topic_id: data.topic?.value,
+        post_image: imageSingle,
+        isPublished: true,
+      })
+    );
+
+    // console.log(newPost);
+
+    if (newPost?.payload?.status === (200 || 201)) {
+      toast.update(signal, {
+        render: "Tao bài viết thành công",
+        type: "success",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    } else {
+      toast.update(signal, {
+        render: "Tao bài viết không thành công",
+        type: "error",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    }
   };
 
   return (
@@ -80,6 +175,20 @@ const PostEditor = ({ item }) => {
               defaultValue={defaultValues.postTitle}
               placeholder="Nhập tiêu đề bài viết"
               {...register("postTitle", { required: true })}
+            />
+          </div>
+          <div className="field-wrapper">
+            <label className="field-label" htmlFor="summary">
+              Tóm tắt bài viết
+            </label>
+            <input
+              className={classNames("field-input", {
+                "field-input--error": errors.summary,
+              })}
+              id="summary"
+              defaultValue={defaultValues.summary}
+              placeholder="Nhập tóm tắt bài viết"
+              {...register("summary", { required: true })}
             />
           </div>
           <div className="field-wrapper">

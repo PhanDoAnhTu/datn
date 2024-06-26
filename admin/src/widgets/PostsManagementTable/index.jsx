@@ -12,14 +12,15 @@ import usePagination from "@hooks/usePagination";
 import { useWindowSize } from "react-use";
 
 // constants
-import {
-  MANAGEMENT_OPTIONS,
-  ADDITIONAL_OPTIONS,
-  SELECT_OPTIONS,
-} from "@constants/options";
+import { ADDITIONAL_OPTIONS, SELECT_OPTIONS } from "@constants/options";
 // import posts_managements from "@db/posts_manangement";
 // import { POSTS_MANAGEMENT_COLUMN_DEFS } from "@constants/columnDefs";
-import { getListPosts, isTrashPost, changeIsPublishedPost } from "../../store/actions";
+import {
+  getListPosts,
+  isTrashPost,
+  changeIsPublishedPost,
+  getListTopic,
+} from "../../store/actions";
 import dayjs from "dayjs";
 import Actions from "@components/Actions";
 import { useDispatch } from "react-redux";
@@ -29,6 +30,9 @@ import { Switch } from "antd";
 // data placeholder
 
 const PostManagementTable = ({ searchQuery }) => {
+  const [topics_management, setTopicManagement] = useState([]);
+  const [og_data, setOGData] = useState([]);
+
   const POSTS_MANAGEMENT_COLUMN_DEFS = [
     {
       title: "Tên",
@@ -39,16 +43,16 @@ const PostManagementTable = ({ searchQuery }) => {
     },
     {
       title: "Chủ đề",
-      dataIndex: "post_title",
+      dataIndex: "topic_id",
       render: (topicID) => {
         if (topicID) {
           return (
-            <button
-              className="text-accent capitalize"
-              onClick={() => alert("navigate to " + topicID)}
-            >
-              {topicID}
-            </button>
+            <span className="text-accent capitalize">
+              {
+                topics_management?.slice().find((item) => item._id === topicID)
+                  ?.topic_name
+              }
+            </span>
           );
         } else {
           return <span className="capitalize">-</span>;
@@ -77,8 +81,8 @@ const PostManagementTable = ({ searchQuery }) => {
               ? dayjs().diff(dayjs(date), "minute") < 60
                 ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
                 : dayjs().diff(dayjs(date), "hour") < 24
-                  ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
-                  : dayjs(date).format("hh:mmA DD/MM/YYYY")
+                ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+                : dayjs(date).format("hh:mmA DD/MM/YYYY")
               : ""}
           </span>
         </div>
@@ -90,23 +94,23 @@ const PostManagementTable = ({ searchQuery }) => {
       dataIndex: "isPublished",
       render: (status, record) => (
         <div>
-          {
-            record.isDeleted === false
-              ? <Switch
-                checkedChildren={"ON"}
-                unCheckedChildren={"OFF"}
-                onChange={(e) => handleChangeStatus(record?._id, e)}
-                loading={false}
-                value={record?.isPublished}
-              />
-              : <Switch
-                disabled
-                checkedChildren={"ON"}
-                unCheckedChildren={"OFF"}
-                loading={false}
-                checked={false}
-              />
-          }
+          {record.isDeleted === false ? (
+            <Switch
+              checkedChildren={"ON"}
+              unCheckedChildren={"OFF"}
+              onChange={(e) => handleChangeStatus(record?._id, e)}
+              loading={false}
+              value={record?.isPublished}
+            />
+          ) : (
+            <Switch
+              disabled
+              checkedChildren={"ON"}
+              unCheckedChildren={"OFF"}
+              loading={false}
+              checked={false}
+            />
+          )}
         </div>
       ),
     },
@@ -115,7 +119,16 @@ const PostManagementTable = ({ searchQuery }) => {
       dataIndex: "actions",
       render: (text, record) => (
         <div className="flex items-center justify-end gap-11">
-          <Actions record={record} table={"post"} handleTrash={() => record.isDeleted === true ? onRemove(record._id, false) : onRemove(record._id, true)} handleDraft={() => handleChangeStatus(record._id, false)} />
+          <Actions
+            record={record}
+            table={"post"}
+            handleTrash={() =>
+              record.isDeleted === true
+                ? onRemove(record._id, false)
+                : onRemove(record._id, true)
+            }
+            handleDraft={() => handleChangeStatus(record._id, false)}
+          />
         </div>
       ),
     },
@@ -133,7 +146,7 @@ const PostManagementTable = ({ searchQuery }) => {
   const [sorts, setSorts] = useState(defaultSort);
   const [activeCollapse, setActiveCollapse] = useState("");
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const [isLoad, setIsLoad] = useState(false);
 
@@ -141,6 +154,11 @@ const PostManagementTable = ({ searchQuery }) => {
     const response = await dispatch(getListPosts());
     if (response) {
       setData(response.payload.metaData);
+      setOGData(response.payload.metaData);
+    }
+    const response1 = await dispatch(getListTopic());
+    if (response1) {
+      setTopicManagement(response1.payload.metaData);
     }
   };
 
@@ -149,14 +167,16 @@ const PostManagementTable = ({ searchQuery }) => {
   }, [isLoad]);
 
   const getQty = (category) => {
-    if (category === "all") return data.filter((product) => product.isDeleted === false).length;
-    if (category === "isPublished") return data.filter((product) => product.isPublished === true).length;
+    if (category === "all")
+      return data.filter((product) => product.isDeleted === false).length;
+    if (category === "isPublished")
+      return data.filter((product) => product.isPublished === true).length;
     // if (category === "UnPublished") return data.filter((product) => product.isPublished === false & product.isDeleted === false).length;
-    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true).length;
-    if (category === "isDraft") return data.filter((product) => product.isDraft === true).length;
-
+    if (category === "isDeleted")
+      return data.filter((product) => product.isDeleted === true).length;
+    if (category === "isDraft")
+      return data.filter((product) => product.isDraft === true).length;
   };
-
 
   const handleSortChange = ({ value, label }, name) => {
     setSorts((prevState) => ({
@@ -171,12 +191,12 @@ const PostManagementTable = ({ searchQuery }) => {
           .slice()
           .sort((a, b) =>
             sorts.sortOrder.value === "ascending"
-              ? a.label.toLowerCase() > b.label.toLowerCase()
+              ? a.post_name.toLowerCase() > b.post_name.toLowerCase()
                 ? 1
                 : -1
-              : a.label.toLowerCase() < b.label.toLowerCase()
-                ? 1
-                : -1
+              : a.post_name.toLowerCase() < b.post_name.toLowerCase()
+              ? 1
+              : -1
           )
       );
     }
@@ -186,12 +206,12 @@ const PostManagementTable = ({ searchQuery }) => {
           .slice()
           .sort((a, b) =>
             sorts.sortOrder.value === "ascending"
-              ? new Date(a.dateModified) < new Date(b.dateModified)
+              ? new Date(a.updatedAt) < new Date(b.updatedAt)
                 ? 1
                 : -1
-              : new Date(a.dateModified) > new Date(b.dateModified)
-                ? 1
-                : -1
+              : new Date(a.updatedAt) > new Date(b.updatedAt)
+              ? 1
+              : -1
           )
       );
     }
@@ -201,12 +221,12 @@ const PostManagementTable = ({ searchQuery }) => {
           .slice()
           .sort((a, b) =>
             sorts.sortOrder.value === "ascending"
-              ? new Date(a.dateAdded) < new Date(b.dateAdded)
+              ? new Date(a.createdAt) < new Date(b.createdAt)
                 ? 1
                 : -1
-              : new Date(a.dateAdded) > new Date(b.dateAdded)
-                ? 1
-                : -1
+              : new Date(a.createdAt) > new Date(b.createdAt)
+              ? 1
+              : -1
           )
       );
     }
@@ -216,22 +236,26 @@ const PostManagementTable = ({ searchQuery }) => {
   useEffect(() => {
     if (searchQuery !== "") {
       setData(
-        data.filter((item) =>
+        og_data.filter((item) =>
           item.post_name.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
     } else {
-      setData(data);
+      setData(og_data);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const dataByStatus = (category) => {
-    if (category === "all") return data.filter((product) => product.isDeleted === false);
-    if (category === "isPublished") return data.filter((product) => product.isPublished === true);
+    if (category === "all")
+      return data.filter((product) => product.isDeleted === false);
+    if (category === "isPublished")
+      return data.filter((product) => product.isPublished === true);
     // if (category === "UnPublished") return data.filter((product) => product.isPublished === false & product.isDeleted === false);
-    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true);
-    if (category === "isDraft") return data.filter((product) => product.isDraft === true);
+    if (category === "isDeleted")
+      return data.filter((product) => product.isDeleted === true);
+    if (category === "isDraft")
+      return data.filter((product) => product.isDraft === true);
   };
 
   const pagination = usePagination(dataByStatus(category), 8);
@@ -308,13 +332,14 @@ const PostManagementTable = ({ searchQuery }) => {
   return (
     <div className="flex flex-col flex-1">
       <div className="flex flex-wrap gap-2 mb-4">
-        <span className="text-header">Categories:</span>
+        <span className="text-header">Bài viết:</span>
         <div>
-          {[{ value: "all", label: "Tất cả" },
-          { value: "isPublished", label: "Đang hoạt động" },
-          // { value: "UnPublished", label: "Không hoạt động" },
-          { value: "isDraft", label: "Bản nháp" },
-          { value: "isDeleted", label: "Thùng rác" },
+          {[
+            { value: "all", label: "Tất cả" },
+            { value: "isPublished", label: "Đang hoạt động" },
+            // { value: "UnPublished", label: "Không hoạt động" },
+            { value: "isDraft", label: "Bản nháp" },
+            { value: "isDeleted", label: "Thùng rác" },
           ].map((option, index) => (
             <FilterItem
               key={`filter-${index}`}
@@ -328,7 +353,7 @@ const PostManagementTable = ({ searchQuery }) => {
         </div>
       </div>
       <div className="flex flex-col-reverse gap-4 mt-4 mb-5 md:flex-row md:justify-between md:items-end md:mt-5 md:mb-6">
-        <p>Hiển thị: {pagination.showingOf()}</p>
+        <p>Dữ liệu đang xem: {pagination.showingOf()}</p>
 
         <div className="md:min-w-[560px] grid md:grid-cols-2 gap-4">
           <Select
