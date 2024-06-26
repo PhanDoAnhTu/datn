@@ -28,19 +28,36 @@ export default function Checkout() {
     const [step, setStep] = useState(1);
     const { discount } = useSelector((state) => state.discountReducer);
     const { userInfo } = useSelector((state) => state.userReducer);
-    const { addressDefault = null } = useSelector((state) => state.addressReducer);
+    const { addressDefault = null } = useSelector(
+        (state) => state.addressReducer
+    );
 
     useEffect(() => {
         dispatch(getAllDiscount());
     }, []);
     useEffect(() => {
-        dispatch(findOneAddressByCustomerIdAndIsDefault({ customer_id: userInfo._id, isDeault: true }));
+        dispatch(
+            findOneAddressByCustomerIdAndIsDefault({
+                customer_id: userInfo._id,
+                isDefault: true,
+            })
+        );
     }, []);
 
     const [email, setEmail] = useState(userInfo?.customer_email);
-    const [fullname, setFullName] = useState(addressDefault ? addressDefault?.customer_name : "");
-    const [phonenumber, setPhoneNumber] = useState(addressDefault ? addressDefault?.phone_number : (userInfo?.customer_phone ? userInfo?.customer_phone : ""));
-    const [address, setAddress] = useState(addressDefault ? addressDefault?.street : "");
+    const [fullname, setFullName] = useState(
+        addressDefault ? addressDefault?.customer_name : ''
+    );
+    const [phonenumber, setPhoneNumber] = useState(
+        addressDefault
+            ? addressDefault?.phone_number
+            : userInfo?.customer_phone
+              ? userInfo?.customer_phone
+              : ''
+    );
+    const [address, setAddress] = useState(
+        addressDefault ? addressDefault?.street : ''
+    );
     // const [cancelDiscount, setCancelDiscount] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState('COD');
     const [selectedProductFromCart] = useState(getSelectedListFromCart);
@@ -104,7 +121,11 @@ export default function Checkout() {
         setPrice(
             selectedProductFromCart?.reduce(
                 (accumulator, currentValue) =>
-                    accumulator + (currentValue.price_sale ? currentValue.price_sale : currentValue.price) * currentValue.quantity,
+                    accumulator +
+                    (currentValue.price_sale
+                        ? currentValue.price_sale
+                        : currentValue.price) *
+                        currentValue.quantity,
                 0
             )
         );
@@ -167,23 +188,24 @@ export default function Checkout() {
                                                                     </Link>
                                                                 </h3>
                                                                 <p className=" text-gray-900 transition-colors duration-200 ease-out dark:text-white">
-                                                                    {product.price_sale ? <NumericFormat
-                                                                        value={
-                                                                            product.price_sale
-                                                                        }
-                                                                        displayType="text"
-                                                                        thousandSeparator={
-                                                                            true
-                                                                        }
-                                                                        decimalScale={
-                                                                            0
-                                                                        }
-                                                                        id="price"
-                                                                        suffix={
-                                                                            'đ'
-                                                                        }
-                                                                    />
-                                                                        :
+                                                                    {product.price_sale ? (
+                                                                        <NumericFormat
+                                                                            value={
+                                                                                product.price_sale
+                                                                            }
+                                                                            displayType="text"
+                                                                            thousandSeparator={
+                                                                                true
+                                                                            }
+                                                                            decimalScale={
+                                                                                0
+                                                                            }
+                                                                            id="price"
+                                                                            suffix={
+                                                                                'đ'
+                                                                            }
+                                                                        />
+                                                                    ) : (
                                                                         <NumericFormat
                                                                             value={
                                                                                 product.price
@@ -199,25 +221,29 @@ export default function Checkout() {
                                                                             suffix={
                                                                                 'đ'
                                                                             }
-                                                                        />}
+                                                                        />
+                                                                    )}
                                                                 </p>
-                                                                {product.price_sale && <s className='text-red-500 ml-2'>
-                                                                    <NumericFormat
-                                                                        value={
-                                                                            product.price
-                                                                        }
-                                                                        displayType="text"
-                                                                        thousandSeparator={
-                                                                            true
-                                                                        }
-                                                                        decimalScale={
-                                                                            0
-                                                                        }
-                                                                        id="price"
-                                                                        suffix={
-                                                                            'đ'
-                                                                        }
-                                                                    /></s>}
+                                                                {product.price_sale && (
+                                                                    <s className="ml-2 text-red-500">
+                                                                        <NumericFormat
+                                                                            value={
+                                                                                product.price
+                                                                            }
+                                                                            displayType="text"
+                                                                            thousandSeparator={
+                                                                                true
+                                                                            }
+                                                                            decimalScale={
+                                                                                0
+                                                                            }
+                                                                            id="price"
+                                                                            suffix={
+                                                                                'đ'
+                                                                            }
+                                                                        />
+                                                                    </s>
+                                                                )}
                                                             </div>
                                                             <div className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
                                                                 {product.product_option.map(
@@ -235,10 +261,10 @@ export default function Checkout() {
                                                                                 {
                                                                                     option
                                                                                         .options[
-                                                                                    product
-                                                                                        .product_variation[
-                                                                                    index
-                                                                                    ]
+                                                                                        product
+                                                                                            .product_variation[
+                                                                                            index
+                                                                                        ]
                                                                                     ]
                                                                                 }
                                                                             </p>
@@ -278,29 +304,31 @@ export default function Checkout() {
                                                         <Listbox.Button className="relative w-full cursor-default py-2 pl-5 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-magenta-300 ui-disabled:brightness-50 sm:text-sm ">
                                                             <span className="block truncate font-semibold text-gray-900 dark:text-white">
                                                                 {selectedDiscount ==
-                                                                    null
+                                                                null
                                                                     ? 'Mã giảm giá'
-                                                                    : `${discount
-                                                                        ?.slice()
-                                                                        .find(
-                                                                            (
-                                                                                item
-                                                                            ) =>
-                                                                                item.discount_code ===
-                                                                                selectedDiscount.discount_code
-                                                                        )
-                                                                        .discount_code
-                                                                    } | ${discount
-                                                                        ?.slice()
-                                                                        .find(
-                                                                            (
-                                                                                item
-                                                                            ) =>
-                                                                                item.discount_code ===
-                                                                                selectedDiscount.discount_code
-                                                                        )
-                                                                        .discount_description
-                                                                    }`}
+                                                                    : `${
+                                                                          discount
+                                                                              ?.slice()
+                                                                              .find(
+                                                                                  (
+                                                                                      item
+                                                                                  ) =>
+                                                                                      item.discount_code ===
+                                                                                      selectedDiscount.discount_code
+                                                                              )
+                                                                              .discount_code
+                                                                      } | ${
+                                                                          discount
+                                                                              ?.slice()
+                                                                              .find(
+                                                                                  (
+                                                                                      item
+                                                                                  ) =>
+                                                                                      item.discount_code ===
+                                                                                      selectedDiscount.discount_code
+                                                                              )
+                                                                              .discount_description
+                                                                      }`}
                                                             </span>
                                                             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                                                 <ChevronUpIcon
@@ -320,9 +348,10 @@ export default function Checkout() {
                                                                     className={({
                                                                         active,
                                                                     }) =>
-                                                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${active
-                                                                            ? 'bg-magenta-900    text-zinc-700'
-                                                                            : 'text-gray-900'
+                                                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                                                            active
+                                                                                ? 'bg-magenta-900    text-zinc-700'
+                                                                                : 'text-gray-900'
                                                                         }`
                                                                     }
                                                                     value={null}
@@ -332,10 +361,11 @@ export default function Checkout() {
                                                                     }) => (
                                                                         <>
                                                                             <span
-                                                                                className={`block truncate ${selected
-                                                                                    ? 'font-medium'
-                                                                                    : 'font-normal'
-                                                                                    }`}
+                                                                                className={`block truncate ${
+                                                                                    selected
+                                                                                        ? 'font-medium'
+                                                                                        : 'font-normal'
+                                                                                }`}
                                                                             >
                                                                                 Không
                                                                                 áp
@@ -369,12 +399,12 @@ export default function Checkout() {
                                                                                         'millisecond'
                                                                                     ) <
                                                                                         0 &&
-                                                                                        dayjs(
-                                                                                            item.discount_end_date
-                                                                                        ).diff(
-                                                                                            dayjs(),
-                                                                                            'millisecond'
-                                                                                        ) >
+                                                                                    dayjs(
+                                                                                        item.discount_end_date
+                                                                                    ).diff(
+                                                                                        dayjs(),
+                                                                                        'millisecond'
+                                                                                    ) >
                                                                                         0
                                                                                         ? false
                                                                                         : true
@@ -382,9 +412,10 @@ export default function Checkout() {
                                                                                 className={({
                                                                                     active,
                                                                                 }) =>
-                                                                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${active
-                                                                                        ? 'bg-magenta-900    text-zinc-700'
-                                                                                        : 'text-gray-900'
+                                                                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                                                                        active
+                                                                                            ? 'bg-magenta-900    text-zinc-700'
+                                                                                            : 'text-gray-900'
                                                                                     } ui-disabled:opacity-50`
                                                                                 }
                                                                                 value={
@@ -396,30 +427,33 @@ export default function Checkout() {
                                                                                 }) => (
                                                                                     <>
                                                                                         <span
-                                                                                            className={`block truncate ${selected
-                                                                                                ? 'font-medium'
-                                                                                                : 'font-normal'
-                                                                                                }`}
+                                                                                            className={`block truncate ${
+                                                                                                selected
+                                                                                                    ? 'font-medium'
+                                                                                                    : 'font-normal'
+                                                                                            }`}
                                                                                         >
                                                                                             {
                                                                                                 item.discount_code
                                                                                             }
                                                                                         </span>
                                                                                         <span
-                                                                                            className={`block truncate ${selected
-                                                                                                ? 'font-medium'
-                                                                                                : 'font-normal'
-                                                                                                }`}
+                                                                                            className={`block truncate ${
+                                                                                                selected
+                                                                                                    ? 'font-medium'
+                                                                                                    : 'font-normal'
+                                                                                            }`}
                                                                                         >
                                                                                             {
                                                                                                 item.discount_description
                                                                                             }
                                                                                         </span>
                                                                                         <span
-                                                                                            className={`block truncate ${selected
-                                                                                                ? 'font-medium'
-                                                                                                : 'font-normal'
-                                                                                                }`}
+                                                                                            className={`block truncate ${
+                                                                                                selected
+                                                                                                    ? 'font-medium'
+                                                                                                    : 'font-normal'
+                                                                                            }`}
                                                                                         >
                                                                                             Giá
                                                                                             trị

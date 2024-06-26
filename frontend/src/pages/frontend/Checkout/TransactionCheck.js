@@ -7,11 +7,11 @@ import {
     checkOrderByZaloPay,
 } from '../../../store/actions/payment-actions.js';
 import { useNavigate } from 'react-router';
-import { toast } from 'react-toastify';
 import DocumentTitle from '../../../components/frontend/DocumentTitle.js';
 
 export default function TransactionCheck() {
     const searchParams = new URLSearchParams(window.location.search);
+    // eslint-disable-next-line no-unused-vars
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const { status } = useSelector((state) => state.paymentReducer);
@@ -44,7 +44,7 @@ export default function TransactionCheck() {
     // &signature=bbb84ba6afe4144bf8d783c1591910bea0a38a873fc04ef9a8b85a57b80e4123
 
     useEffect(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         if (status == null) {
             searchParams.get('orderId') &&
                 dispatch(
@@ -68,14 +68,14 @@ export default function TransactionCheck() {
     useEffect(() => {
         if (isLoading === true) {
             setTimeout(() => {
-                navigate('/');
+                window.location.replace('/');
             }, 2000);
         }
         if (isLoading === false) {
             setTimeout(() => {
-                navigate('/');
-                toast.error('Thanh toán thất bại');
-            }, 5000);
+                // navigate('/');
+                // toast.error('Thanh toán thất bại');
+            }, 10000);
         }
     }, [isLoading]);
 

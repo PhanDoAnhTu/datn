@@ -5,7 +5,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import ProductSingle from './ProductSingle';
 
-export default function ProductList({ title, summary, products }) {
+export default function ProductList({ title, summary, products, className }) {
     const maxScrollWidth = useRef(0);
     const [currentIndex, setCurrentIndex] = useState(0);
     const carousel = useRef(null);
@@ -55,14 +55,14 @@ export default function ProductList({ title, summary, products }) {
 
     return (
         <div
-            className={`mx-auto max-w-screen-2xl py-4 sm:py-8 lg:max-w-screen-2xl`}
+            className={`mx-auto max-w-screen-2xl py-4 sm:py-8 lg:max-w-screen-2xl ${className}`}
         >
             <div className="flex items-center">
                 <div className="flex-1">
                     <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                         {title}
                     </h2>
-                    <h3 className="text-sm text-gray-500 lg:text-lg dark:text-gray-300">
+                    <h3 className="text-sm text-gray-600 lg:text-lg dark:text-gray-300">
                         {summary}
                     </h3>
                 </div>
@@ -87,7 +87,7 @@ export default function ProductList({ title, summary, products }) {
 
             <div
                 ref={carousel}
-                className="no-scrollbar touch-snap-x mt-6 flex w-full snap-x snap-mandatory flex-row flex-nowrap space-x-2 overflow-x-scroll scroll-smooth lg:space-x-3"
+                className="no-scrollbar mt-6 flex w-full max-w-full  touch-pan-x snap-x snap-mandatory flex-row flex-nowrap space-x-2 overflow-x-scroll scroll-smooth lg:space-x-3"
             >
                 {products?.map((product) => {
                     return (

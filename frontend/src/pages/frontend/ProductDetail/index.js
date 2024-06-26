@@ -6,6 +6,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import HeartSlashIcon from '../../../assets/HeartSlashIcon.js';
 import ProductList from '../../../components/frontend/ProductList';
 import Skeleton from 'react-loading-skeleton';
+// eslint-disable-next-line no-unused-vars
+import parse from 'html-react-parser';
 import {
     addToCart,
     removeFromWishList,
@@ -25,6 +27,7 @@ import {
 } from '../../../utils';
 import HeartIcon from '../../../assets/HeartIcon.js';
 import DocumentTitle from '../../../components/frontend/DocumentTitle.js';
+import { Editor } from '@tinymce/tinymce-react';
 
 export default function ProductDetail() {
     const { userInfo } = useSelector((state) => state.userReducer);
@@ -736,9 +739,33 @@ export default function ProductDetail() {
                     <h1 className="border-b border-stone-500 py-5 text-4xl font-bold dark:text-white">
                         Mô tả sản phẩm
                     </h1>
-                    <p className="text-justify dark:text-white">
-                        {description}
-                    </p>
+                    <Editor
+                        apiKey="b6ic198ke2qcqbou4w6gx76a7tz5fx69qmclac76acprbgt4"
+                        value={description}
+                        init={{
+                            plugins:
+                                'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+                            toolbar: false,
+
+                            tinycomments_mode: 'embedded',
+                            tinycomments_author: 'Author name',
+                            mergetags_list: [
+                                {
+                                    value: 'First.Name',
+                                    title: 'First Name',
+                                },
+                                { value: 'Email', title: 'Email' },
+                            ],
+
+                            skin: 'material-outline',
+                            icons: 'material',
+                            language: 'vi',
+                            statusbar: false,
+                            menubar: false,
+                        }}
+                        disabled
+                    />
+
                     <div className="w-full">
                         <ProductList
                             title={'Sản phẩm liên quan'}

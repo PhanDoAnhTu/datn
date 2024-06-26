@@ -1,6 +1,7 @@
 import { EnvelopeIcon, HomeIcon, PhoneIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
+import { Editor } from '@tinymce/tinymce-react';
 import { toast } from 'react-toastify';
 import DocumentTitle from '../../../components/frontend/DocumentTitle';
 import { useDispatch } from 'react-redux';
@@ -8,6 +9,8 @@ import { newContact } from '../../../store/actions/contact-actions';
 
 export default function Contact() {
     const dispatch = useDispatch();
+    // eslint-disable-next-line no-unused-vars
+    const editorRef = useRef(null);
     const [emailContent, setEmailContent] = useState('');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -68,6 +71,10 @@ export default function Contact() {
             });
         }
         // Send the email using EmailJS
+    };
+
+    const editorChange = (content) => {
+        setEmailContent(content);
     };
 
     return (
@@ -154,13 +161,30 @@ export default function Contact() {
                         </div>
                         <div className="flex flex-col space-y-1 text-gray-900 dark:text-white">
                             <span className="text-sm">Chi tiết liên hệ*</span>
-                            <textarea
+                            <Editor
+                                apiKey="b6ic198ke2qcqbou4w6gx76a7tz5fx69qmclac76acprbgt4"
                                 value={emailContent}
-                                onChange={(e) =>
-                                    setEmailContent(e.target.value)
-                                }
-                                className="h-80 resize-none border-2 border-gray-900 bg-transparent text-justify text-sm transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 dark:border-white"
-                            ></textarea>
+                                init={{
+                                    plugins:
+                                        'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+                                    toolbar:
+                                        'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                                    tinycomments_mode: 'embedded',
+                                    tinycomments_author: 'Author name',
+                                    mergetags_list: [
+                                        {
+                                            value: 'First.Name',
+                                            title: 'First Name',
+                                        },
+                                        { value: 'Email', title: 'Email' },
+                                    ],
+
+                                    skin: 'material-outline',
+                                    icons: 'material',
+                                    language: 'vi',
+                                }}
+                                onEditorChange={editorChange}
+                            />
                         </div>
                         <div className="flex justify-end">
                             <button

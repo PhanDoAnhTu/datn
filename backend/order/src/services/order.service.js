@@ -6,9 +6,7 @@ const { RPCRequest, get_old_day_of_time } = require("../utils");
 const { v4: uuidv4 } = require("uuid");
 
 class CheckoutService {
-
   async checkoutReview({ cartId, userId, order_ids }) {
-
     // const foundCart = await findCartById(cartId)
 
     // if (!foundCart) {
@@ -16,13 +14,13 @@ class CheckoutService {
     // }
     const checkout_oder = {
       totalPrice: 0,
-      feeShip: 0,//phi ship
-      totalSpecialOffer: 0,//tong promotion
-      totalDiscount: 0,//tong discount
-      totalCheckout: 0,//tong thanh toan
-    }
+      feeShip: 0, //phi ship
+      totalSpecialOffer: 0, //tong promotion
+      totalDiscount: 0, //tong discount
+      totalCheckout: 0, //tong thanh toan
+    };
 
-    const { shop_discounts = [], item_products = [] } = order_ids
+    const { shop_discounts = [], item_products = [] } = order_ids;
 
     // console.log("item_products:  ", item_products)
     //checkout product available
@@ -30,26 +28,27 @@ class CheckoutService {
     const checkProductServer = await RPCRequest("SPU_RPC", {
       type: "CHECK_PRODUCT_BY_SERVER",
       data: {
-        products: item_products
-      }
-    })
+        products: item_products,
+      },
+    });
     // console.log('checkProductServer', checkProductServer)
-    if (!checkProductServer[0]) throw new errorResponse.BadRequestError('order wrong')
+    if (!checkProductServer[0])
+      throw new errorResponse.BadRequestError("order wrong");
     //tong don hang
 
     const checkoutPrice = checkProductServer.reduce((acc, product) => {
-      return acc + (product.quantity * product.price)
-    }, 0)
+      return acc + product.quantity * product.price;
+    }, 0);
     //tong tien truoc khi xuly
-    checkout_oder.totalPrice = checkoutPrice
+    checkout_oder.totalPrice = checkoutPrice;
     const itemCheckout = {
-      shop_discounts,//hmmmm
-      priceRaw: checkoutPrice,//tien truoc khi giam gia
+      shop_discounts, //hmmmm
+      priceRaw: checkoutPrice, //tien truoc khi giam gia
       priceApplySpecialOffer: checkoutPrice,
       priceApplyPromotionAndDiscount: checkoutPrice,
-      item_products: checkProductServer
-    }
-    let checkProductServerSpecialOffer = []
+      item_products: checkProductServer,
+    };
+    let checkProductServerSpecialOffer = [];
     const checkDateNow = await RPCRequest("SPECIAL_OFFER_RPC", {
       type: "FIND_SPECIAL_OFFER_BY_DATE",
       data: {
@@ -59,31 +58,49 @@ class CheckoutService {
     });
     if (checkDateNow) {
       checkProductServer.forEach((prod) => {
-        const spu_sale = checkDateNow.special_offer_spu_list.find((spu) => spu.product_id == prod.productId)
+        const spu_sale = checkDateNow.special_offer_spu_list.find(
+          (spu) => spu.product_id == prod.productId
+        );
         if (spu_sale) {
           checkDateNow.special_offer_spu_list?.filter((spu_sale) => {
             if (prod.sku_id === null) {
-              checkProductServerSpecialOffer.push({ ...prod, price_sale: spu_sale.price_sale })
-              return
+              checkProductServerSpecialOffer.push({
+                ...prod,
+                price_sale: spu_sale.price_sale,
+              });
+              return;
             }
             if (prod.sku_id !== null && spu_sale.sku_list.length > 0) {
-              const sku_sale = spu_sale.sku_list.find((sku) => sku.sku_id == prod.sku_id)
+              const sku_sale = spu_sale.sku_list.find(
+                (sku) => sku.sku_id == prod.sku_id
+              );
 
               if (sku_sale) {
-                checkProductServerSpecialOffer.push({ ...prod, price_sale: sku_sale.price_sale })
-                return
+                checkProductServerSpecialOffer.push({
+                  ...prod,
+                  price_sale: sku_sale.price_sale,
+                });
+                return;
               }
             }
-          })
+          });
         } else {
-          checkProductServerSpecialOffer.push(prod)
+          checkProductServerSpecialOffer.push(prod);
         }
-      })
+      });
     }
-    itemCheckout.priceApplySpecialOffer = checkProductServerSpecialOffer.reduce((acc, product) => {
-      return acc + (product.quantity * (product.price_sale ? product.price_sale : product.price))
-    }, 0)
-    checkout_oder.totalSpecialOffer = itemCheckout.priceRaw - itemCheckout.priceApplySpecialOffer
+    itemCheckout.priceApplySpecialOffer = checkProductServerSpecialOffer.reduce(
+      (acc, product) => {
+        return (
+          acc +
+          product.quantity *
+            (product.price_sale ? product.price_sale : product.price)
+        );
+      },
+      0
+    );
+    checkout_oder.totalSpecialOffer =
+      itemCheckout.priceRaw - itemCheckout.priceApplySpecialOffer;
 
     if (shop_discounts.length > 0) {
       const { discount = 0 } = await RPCRequest("DISCOUNT_RPC", {
@@ -91,26 +108,33 @@ class CheckoutService {
         data: {
           codeId: shop_discounts[0].codeId,
           userId,
-          products: checkProductServerSpecialOffer.length > 0 ? checkProductServerSpecialOffer : checkProductServer,
+          products:
+            checkProductServerSpecialOffer.length > 0
+              ? checkProductServerSpecialOffer
+              : checkProductServer,
         },
       });
-      //tong discount 
-      checkout_oder.totalDiscount = discount
+      //tong discount
+      checkout_oder.totalDiscount = discount;
       //neu tien giam gia >0
-      itemCheckout.priceApplyPromotionAndDiscount = itemCheckout.priceRaw - checkout_oder.totalSpecialOffer - discount
+      itemCheckout.priceApplyPromotionAndDiscount =
+        itemCheckout.priceRaw - checkout_oder.totalSpecialOffer - discount;
     }
     if (checkProductServerSpecialOffer.length > 0) {
-      itemCheckout.item_products = checkProductServerSpecialOffer
+      itemCheckout.item_products = checkProductServerSpecialOffer;
     }
 
     //tong thanh toan
-    checkout_oder.totalCheckout = checkout_oder.totalPrice - checkout_oder.totalSpecialOffer - checkout_oder.totalDiscount
+    checkout_oder.totalCheckout =
+      checkout_oder.totalPrice -
+      checkout_oder.totalSpecialOffer -
+      checkout_oder.totalDiscount;
 
     return {
       order_ids,
       order_ids_new: itemCheckout,
-      checkout_oder
-    }
+      checkout_oder,
+    };
   }
 
   async orderByUser({
@@ -162,21 +186,25 @@ class CheckoutService {
     return newOrder;
   }
 
-
-
   async changeStatusOrderByOrderId({ order_id, order_status }) {
     if (
-      ["pending", "confirmed", "shipping", "cancelled", "successful", "review"].includes(order_status) ==
-      false
+      [
+        "pending",
+        "confirmed",
+        "shipping",
+        "cancelled",
+        "successful",
+        "review",
+      ].includes(order_status) == false
     )
       throw new errorResponse.BadRequestError("status not exitsts");
 
     const query = { _id: order_id };
     const updateOrInsert = {
-      $set: {
-        order_status: order_status,
+        $set: {
+          order_status: order_status,
+        },
       },
-    },
       options = {
         upsert: true,
         new: true,
@@ -197,17 +225,12 @@ class CheckoutService {
   }
 
   async findOrderByTrackingNumber({ order_trackingNumber }) {
-
     const foundOrder = await OrderModel.findOne({ order_trackingNumber });
     if (!foundOrder)
       throw new errorResponse.BadRequestError("order not exitsts");
 
-    
-
     return foundOrder;
   }
-
-
 
   async findOrderByStatus({ order_status }) {
     const foundOrder = await OrderModel.find({ order_status });
@@ -215,11 +238,12 @@ class CheckoutService {
   }
   async findOrderByStatusAndAroundDay({ order_status, numberDay }) {
     let today = new Date();
-    let old_day = get_old_day_of_time(numberDay, today)
+    let old_day = get_old_day_of_time(numberDay, today);
     const foundOrder = await OrderModel.find({
-      order_status, modifiedOn: {
-        $lte: old_day
-      }
+      order_status,
+      modifiedOn: {
+        $lte: old_day,
+      },
     });
     return foundOrder;
   }
@@ -228,7 +252,6 @@ class CheckoutService {
     const foundOrder = await OrderModel.find();
     return foundOrder;
   }
-
 
   async serverRPCRequest(payload) {
     const { type, data } = payload;
@@ -242,8 +265,7 @@ class CheckoutService {
       default:
         break;
     }
-  };
-
+  }
 }
 
 module.exports = CheckoutService;

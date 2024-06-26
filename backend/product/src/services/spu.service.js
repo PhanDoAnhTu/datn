@@ -145,9 +145,10 @@ const OneProductDetail = async ({ spu_id, isPublished = true }) => {
     const product_brand = await new BrandService().findBrandById({
       brand_id: spu.product_brand,
     });
-    const product_attributes = await new AttributeService().findAttributesByProductAttributes({
-      product_attributes: spu.product_attributes,
-    });
+    const product_attributes =
+      await new AttributeService().findAttributesByProductAttributes({
+        product_attributes: spu.product_attributes,
+      });
     const product_categories = await RPCRequest("CATEGORY_RPC", {
       type: "FIND_CATEGORY_BY_ID_LIST",
       data: {
@@ -183,14 +184,14 @@ const isTrashProduct = async ({ product_id, isDeleted = false }) => {
   });
   if (!spuFound) throw new errorResponse.NotFoundRequestError("spu not found");
   if (isDeleted === true) {
-    spuFound.isDraft = false
-    spuFound.isPublished = false
+    spuFound.isDraft = false;
+    spuFound.isPublished = false;
   }
   if (isDeleted === false) {
-    spuFound.isDraft = true
-    spuFound.isPublished = false
+    spuFound.isDraft = true;
+    spuFound.isPublished = false;
   }
-  spuFound.isDeleted = isDeleted
+  spuFound.isDeleted = isDeleted;
 
   return await spuFound.updateOne(spuFound);
 };
@@ -464,14 +465,14 @@ const productFromCart = async ({ spu_id, isPublished = true }) => {
   }
 };
 const AllProductsOption = async ({ sort = "ctime", isPublished }) => {
-  let all_Products = []
+  let all_Products = [];
   if (isPublished !== undefined) {
     all_Products = await spuRepository.getAllProducts({
       sort,
       isPublished,
     });
   } else {
-    all_Products = await SpuModel.find().lean()
+    all_Products = await SpuModel.find().lean();
   }
 
   if (all_Products.length == 0) return [];
@@ -533,7 +534,6 @@ const AllProducts_management = async ({ sort = "ctime" }) => {
   return product_list.all_Products;
 };
 
-
 const findProductBestSelling = async ({
   limit = 50,
   page = 1,
@@ -542,7 +542,7 @@ const findProductBestSelling = async ({
   const ordersBySuccessful = await RPCRequest("ORDER_RPC", {
     type: "FIND_ORDER_BY_STATUS_AND_AROUND_DAY",
     data: {
-      order_status: "successful",
+      order_status: "review",
       numberDay: 30,
     },
   });
@@ -671,7 +671,6 @@ const findAttributeBySpuId = async ({ spu_id }) => {
 
 //      await SpuModel.findOneAndUpdate(query, updateSet, options)
 
-
 //   } catch (error) {
 //     console.log(`error`);
 //     return null;
@@ -709,5 +708,5 @@ module.exports = {
   findProductBestSelling,
   isTrashProduct,
   OneProductDetail,
-  AllProducts_management
+  AllProducts_management,
 };

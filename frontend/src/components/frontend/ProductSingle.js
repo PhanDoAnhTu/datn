@@ -117,13 +117,13 @@ export default function ProductSingle({ product, reload }) {
     return (
         <div
             key={product._id}
-            className="group relative h-fit w-fit max-w-full"
+            className="group relative h-fit w-fit max-w-full rounded-md bg-gray-200 "
         >
-            <div className="h-56 w-56 max-w-full snap-start overflow-hidden rounded-md bg-gray-200 shadow-lg transition-all duration-200 ease-out group-hover:opacity-75 lg:h-56 lg:w-56">
+            <div className="h-56 w-56 max-w-full snap-start overflow-hidden rounded-md bg-gray-200 p-2  transition-all duration-200 ease-out group-hover:opacity-75 lg:h-56 lg:w-56">
                 <img
                     src={product.product_thumb}
                     alt={product.product_slug}
-                    className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                    className="h-full w-full rounded-md object-cover object-center lg:h-full lg:w-full"
                 />
             </div>
 
@@ -182,7 +182,7 @@ export default function ProductSingle({ product, reload }) {
                 </button>
             </div>
 
-            <div className="relative mt-2 flex w-44 flex-col overflow-hidden">
+            <div className="relative mt-2 flex w-44 flex-col overflow-hidden px-2 max-md:w-40">
                 <h3 className="text-md overflow-hidden text-ellipsis font-bold leading-5 tracking-tight text-gray-700 dark:text-white">
                     <Link
                         to={`/san-pham/${product.product_slug}-${product._id}`}
@@ -201,21 +201,21 @@ export default function ProductSingle({ product, reload }) {
                     }
                 </span>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center px-2">
                 {[0, 1, 2, 3, 4].map((rating) => (
                     <StarIcon
                         key={rating}
                         className={classNames(
                             rating_score_avg > rating
                                 ? 'text-xanthous-500'
-                                : 'text-gray-200',
+                                : 'text-gray-300',
                             'h-5 w-5 flex-shrink-0'
                         )}
                         aria-hidden="true"
                     />
                 ))}
             </div>
-            <div className="flex flex-col ">
+            <div className="flex flex-col px-2 pb-1">
                 <p className="text-md font-medium text-gray-900 dark:text-white">
                     {sale ? (
                         <NumericFormat

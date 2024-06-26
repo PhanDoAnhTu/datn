@@ -21,7 +21,13 @@ import {
 
 // data placeholder
 import { useDispatch } from "react-redux";
-import { findAllCategory, onAllProductsOption, PublishProduct, UnPublishProduct, isTrashProduct } from "../../store/actions";
+import {
+  findAllCategory,
+  onAllProductsOption,
+  PublishProduct,
+  UnPublishProduct,
+  isTrashProduct,
+} from "../../store/actions";
 // import EditBtn from "@components/EditBtn";
 import Actions from "@components/Actions";
 import dayjs from "dayjs";
@@ -66,8 +72,9 @@ const ProductManagementTable = () => {
           ) : (
             <span>
               <span
-                className={`${product_quantity !== 0 ? "text-green" : "text-red"
-                  }`}
+                className={`${
+                  product_quantity !== 0 ? "text-green" : "text-red"
+                }`}
               >
                 {product_quantity !== 0
                   ? product_quantity >= 10
@@ -105,15 +112,15 @@ const ProductManagementTable = () => {
         <div className="flex flex-wrap gap-x-0.5">
           {categories && categories.length > 0
             ? categories.map((tag, index) => (
-              <span className="tag text-accent capitalize" key={tag}>
-                {
-                  categories_management
-                    ?.slice()
-                    .find((item) => item.value === tag)?.label
-                }
-                {index !== categories.length - 1 && " | "}
-              </span>
-            ))
+                <span className="tag text-accent capitalize" key={tag}>
+                  {
+                    categories_management
+                      ?.slice()
+                      .find((item) => item.value === tag)?.label
+                  }
+                  {index !== categories.length - 1 && " | "}
+                </span>
+              ))
             : "-"}
         </div>
       ),
@@ -148,23 +155,23 @@ const ProductManagementTable = () => {
       dataIndex: "isPublished",
       render: (status, record) => (
         <div>
-          {
-            record.isDeleted === false
-              ? <Switch
-                checkedChildren={"ON"}
-                unCheckedChildren={"OFF"}
-                onChange={(e) => handleChangeStatus(record?._id, e)}
-                loading={false}
-                checked={record?.isPublished}
-              />
-              : <Switch
-                disabled
-                checkedChildren={"ON"}
-                unCheckedChildren={"OFF"}
-                loading={false}
-                checked={false}
-              />
-          }
+          {record.isDeleted === false ? (
+            <Switch
+              checkedChildren={"ON"}
+              unCheckedChildren={"OFF"}
+              onChange={(e) => handleChangeStatus(record?._id, e)}
+              loading={false}
+              checked={record?.isPublished}
+            />
+          ) : (
+            <Switch
+              disabled
+              checkedChildren={"ON"}
+              unCheckedChildren={"OFF"}
+              loading={false}
+              checked={false}
+            />
+          )}
         </div>
       ),
     },
@@ -173,7 +180,16 @@ const ProductManagementTable = () => {
       dataIndex: "actions",
       render: (text, record) => (
         <div className="flex items-center justify-end gap-11">
-          <Actions record={record} table={"product"} handleTrash={() => record.isDeleted === true ? onRemove(record._id, false) : onRemove(record._id, true)} handleDraft={() => handleChangeStatus(record._id, false)} />
+          <Actions
+            record={record}
+            table={"product"}
+            handleTrash={() =>
+              record.isDeleted === true
+                ? onRemove(record._id, false)
+                : onRemove(record._id, true)
+            }
+            handleDraft={() => handleChangeStatus(record._id, false)}
+          />
         </div>
       ),
     },
@@ -202,12 +218,10 @@ const ProductManagementTable = () => {
   const fetchDataProductsManagement = async () => {
     const responseProducts = await dispatch(onAllProductsOption({}));
     if (responseProducts) {
-      setData(responseProducts.payload.metaData)
-      // setProductsManagement(responseProducts.payload.metaData);
+      setData(responseProducts.payload.metaData);
+      setProductsManagement(responseProducts.payload.metaData);
     }
-    const responseCategory = await dispatch(
-      findAllCategory({})
-    );
+    const responseCategory = await dispatch(findAllCategory({}));
     if (responseCategory) {
       setCategoriesManagement(
         responseCategory.payload.metaData.map((item) => {
@@ -226,11 +240,19 @@ const ProductManagementTable = () => {
   // }, [products_management]);
 
   const getQty = (category) => {
-    if (category === "all") return data.filter((product) => product.isDeleted === false).length;
-    if (category === "isPublished") return data.filter((product) => product.isPublished === true).length;
-    if (category === "UnPublished") return data.filter((product) => product.isPublished === false & product.isDeleted === false).length;
-    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true).length;
-    if (category === "isDraft") return data.filter((product) => product.isDraft === true).length;
+    if (category === "all")
+      return data.filter((product) => product.isDeleted === false).length;
+    if (category === "isPublished")
+      return data.filter((product) => product.isPublished === true).length;
+    if (category === "UnPublished")
+      return data.filter(
+        (product) =>
+          (product.isPublished === false) & (product.isDeleted === false)
+      ).length;
+    if (category === "isDeleted")
+      return data.filter((product) => product.isDeleted === true).length;
+    if (category === "isDraft")
+      return data.filter((product) => product.isDraft === true).length;
   };
 
   const handleFilterSelect = ({ value, label }, name) => {
@@ -257,8 +279,8 @@ const ProductManagementTable = () => {
                 ? 1
                 : -1
               : a.product_name.toLowerCase() < b.product_name.toLowerCase()
-                ? 1
-                : -1
+              ? 1
+              : -1
           )
       );
     }
@@ -272,8 +294,8 @@ const ProductManagementTable = () => {
                 ? 1
                 : -1
               : new Date(a.updatedAt) > new Date(b.updatedAt)
-                ? 1
-                : -1
+              ? 1
+              : -1
           )
       );
     }
@@ -287,8 +309,8 @@ const ProductManagementTable = () => {
                 ? 1
                 : -1
               : new Date(a.createdAt) > new Date(b.createdAt)
-                ? 1
-                : -1
+              ? 1
+              : -1
           )
       );
     }
@@ -298,7 +320,7 @@ const ProductManagementTable = () => {
   const handleApplyFilters = () => {
     if (filters.parentCategory != null) {
       setData(
-        data.filter((item) =>
+        products_management.filter((item) =>
           item.product_category.includes(filters.parentCategory.value)
         )
       );
@@ -306,21 +328,21 @@ const ProductManagementTable = () => {
     if (filters.stockStatus != null) {
       if (filters.stockStatus.value === "low") {
         setData(
-          data
+          products_management
             .slice()
             .filter((item) => item.product_quantity < 10)
         );
       }
       if (filters.stockStatus.value === "high") {
         setData(
-          data
+          products_management
             .slice()
             .filter((item) => item.product_quantity >= 10)
         );
       }
       if (filters.stockStatus.value === "out") {
         setData(
-          data
+          products_management
             .slice()
             .filter((item) => item.product_quantity === 0)
         );
@@ -330,15 +352,23 @@ const ProductManagementTable = () => {
 
   const handleClearFilters = () => {
     setFilters(defaultFilters);
-    setData(data);
+    setData(products_management);
   };
 
   const dataByStatus = (category) => {
-    if (category === "all") return data.filter((product) => product.isDeleted === false);
-    if (category === "isPublished") return data.filter((product) => product.isPublished === true);
-    if (category === "UnPublished") return data.filter((product) => product.isPublished === false & product.isDeleted === false);
-    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true);
-    if (category === "isDraft") return data.filter((product) => product.isDraft === true);
+    if (category === "all")
+      return data.filter((product) => product.isDeleted === false);
+    if (category === "isPublished")
+      return data.filter((product) => product.isPublished === true);
+    if (category === "UnPublished")
+      return data.filter(
+        (product) =>
+          (product.isPublished === false) & (product.isDeleted === false)
+      );
+    if (category === "isDeleted")
+      return data.filter((product) => product.isDeleted === true);
+    if (category === "isDraft")
+      return data.filter((product) => product.isDraft === true);
   };
 
   const pagination = usePagination(dataByStatus(category), 8);
@@ -443,11 +473,12 @@ const ProductManagementTable = () => {
       <div className="flex flex-wrap gap-2 mb-4">
         <span className="text-header">Sản phẩm:</span>
         <div>
-          {[{ value: "all", label: "Tất cả" },
-          { value: "isPublished", label: "Đang hoạt động" },
-          { value: "UnPublished", label: "Không hoạt động" },
-          { value: "isDraft", label: "Bản nháp" },
-          { value: "isDeleted", label: "Thùng rác" },
+          {[
+            { value: "all", label: "Tất cả" },
+            { value: "isPublished", label: "Đang hoạt động" },
+            { value: "UnPublished", label: "Không hoạt động" },
+            { value: "isDraft", label: "Bản nháp" },
+            { value: "isDeleted", label: "Thùng rác" },
           ].map((option, index) => (
             <FilterItem
               key={`filter-${index}`}

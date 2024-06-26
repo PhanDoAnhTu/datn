@@ -14,19 +14,21 @@ import {
 } from "../store/actions";
 // hooks
 import { useForm, Controller } from "react-hook-form";
+import { Editor } from "@tinymce/tinymce-react";
 
 // constants
 // import { UNITS_OPTIONS } from "@constants/options";
 
 // utils
 import classNames from "classnames";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Divider, Empty } from "antd";
 import StyledTable from "./productEditorStyle";
 import { capitalize } from "@mui/material";
 import { useDispatch } from "react-redux";
 // import categories_management from "@db/categories_management";
 import MultipleSelect from "@ui/MultipleSelect";
+import { useTheme } from "@contexts/themeContext";
 
 const ProductEditor = () => {
   const dispact = useDispatch();
@@ -34,6 +36,8 @@ const ProductEditor = () => {
   const [categories_management, seCategories_management] = useState([]);
   const [brand_management, setBrand_management] = useState([]);
   const [brand_options, setBrand_options] = useState([]);
+  const { theme } = useTheme();
+  const [temp_description, setTempDescription] = useState();
 
   const fetchCategoriesOnloadPage = async () => {
     const repoCat = await dispact(findAllCategory({ isPublished: true }));
@@ -203,6 +207,8 @@ const ProductEditor = () => {
 
   const categoriesWatch = watch("product_category");
   const quantity = watch("product_quantity");
+  const description = watch("description");
+  const editorRef = useRef(null);
 
   //---------------------------CATEGORIES----------------------------//
 
@@ -379,11 +385,11 @@ const ProductEditor = () => {
                 <div className="flex flex-col text-center">
                   {item.id === 1
                     ? variations.find((item1) => item1.id === item.id).options[
-                      sku_tier_idx[0]
-                    ]?.value
+                        sku_tier_idx[0]
+                      ]?.value
                     : variations.find((item1) => item1.id === item.id).options[
-                      sku_tier_idx[1]
-                    ]?.value}
+                        sku_tier_idx[1]
+                      ]?.value}
                 </div>
               ),
             });
@@ -398,11 +404,11 @@ const ProductEditor = () => {
                 <div className="flex flex-col text-center">
                   {item.id === 1
                     ? variations.find((item1) => item1.id === item.id).options[
-                      sku_tier_idx[0]
-                    ].value
+                        sku_tier_idx[0]
+                      ].value
                     : variations.find((item1) => item1.id === item.id).options[
-                      sku_tier_idx[1]
-                    ].value}
+                        sku_tier_idx[1]
+                      ].value}
                 </div>
               ),
             };
@@ -479,7 +485,6 @@ const ProductEditor = () => {
 
   // do something with the data
   const handlePublish = async (data) => {
-
     const id = toast.loading("Vui lòng đợi...");
     let inputProductData = {
       product_name: data.productName,
@@ -516,23 +521,23 @@ const ProductEditor = () => {
         );
         inputProductData.sku_list = list_url_thumb?.payload?.metaData
           ? sKUList?.map((sku) => {
-            const skuImageFound = list_url_thumb?.payload?.metaData?.find(
-              (url_thumb) =>
-                sku.sku_tier_idx.toString() ===
-                url_thumb.sku_tier_idx.toString()
-            );
-            if (skuImageFound) {
-              const { image, ...skuNoImage } = sku;
-              return {
-                ...skuNoImage,
-                thumb_url: skuImageFound?.thumb_url,
-                public_id: skuImageFound?.public_id,
-              };
-            } else {
-              const { image, ...skuNoImage } = sku;
-              return { ...skuNoImage, thumb_url: null, public_id: null };
-            }
-          })
+              const skuImageFound = list_url_thumb?.payload?.metaData?.find(
+                (url_thumb) =>
+                  sku.sku_tier_idx.toString() ===
+                  url_thumb.sku_tier_idx.toString()
+              );
+              if (skuImageFound) {
+                const { image, ...skuNoImage } = sku;
+                return {
+                  ...skuNoImage,
+                  thumb_url: skuImageFound?.thumb_url,
+                  public_id: skuImageFound?.public_id,
+                };
+              } else {
+                const { image, ...skuNoImage } = sku;
+                return { ...skuNoImage, thumb_url: null, public_id: null };
+              }
+            })
           : [];
       }
 
@@ -621,7 +626,6 @@ const ProductEditor = () => {
           autoClose: 3000,
         });
       }
-
     }
   };
 
@@ -662,23 +666,23 @@ const ProductEditor = () => {
         );
         inputProductData.sku_list = list_url_thumb?.payload?.metaData
           ? sKUList?.map((sku) => {
-            const skuImageFound = list_url_thumb?.payload?.metaData?.find(
-              (url_thumb) =>
-                sku.sku_tier_idx.toString() ===
-                url_thumb.sku_tier_idx.toString()
-            );
-            if (skuImageFound) {
-              const { image, ...skuNoImage } = sku;
-              return {
-                ...skuNoImage,
-                thumb_url: skuImageFound?.thumb_url,
-                public_id: skuImageFound?.public_id,
-              };
-            } else {
-              const { image, ...skuNoImage } = sku;
-              return { ...skuNoImage, thumb_url: null, public_id: null };
-            }
-          })
+              const skuImageFound = list_url_thumb?.payload?.metaData?.find(
+                (url_thumb) =>
+                  sku.sku_tier_idx.toString() ===
+                  url_thumb.sku_tier_idx.toString()
+              );
+              if (skuImageFound) {
+                const { image, ...skuNoImage } = sku;
+                return {
+                  ...skuNoImage,
+                  thumb_url: skuImageFound?.thumb_url,
+                  public_id: skuImageFound?.public_id,
+                };
+              } else {
+                const { image, ...skuNoImage } = sku;
+                return { ...skuNoImage, thumb_url: null, public_id: null };
+              }
+            })
           : [];
       }
 
@@ -719,26 +723,28 @@ const ProductEditor = () => {
               }),
             };
           }
+        }
+      );
+
+      console.log("inputProductData", inputProductData);
+      const addPrd = await dispact(
+        createSpu({
+          product_name: inputProductData.product_name,
+          isPublished: inputProductData.isPublished,
+          isDraft: inputProductData.isDraft,
+          product_thumb: inputProductData.product_thumb,
+          product_description: inputProductData.product_description,
+          product_price: inputProductData.product_price,
+          product_quantity: inputProductData.product_quantity,
+          product_unit: inputProductData.product_unit,
+          product_weight: inputProductData.product_weight,
+          product_brand: inputProductData.product_brand,
+          product_category: inputProductData.product_category,
+          product_attributes: inputProductData.product_attributes,
+          product_variations: inputProductData.product_variations,
+          sku_list: inputProductData.sku_list,
         })
-
-
-      console.log("inputProductData", inputProductData)
-      const addPrd = await dispact(createSpu({
-        product_name: inputProductData.product_name,
-        isPublished: inputProductData.isPublished,
-        isDraft: inputProductData.isDraft,
-        product_thumb: inputProductData.product_thumb,
-        product_description: inputProductData.product_description,
-        product_price: inputProductData.product_price,
-        product_quantity: inputProductData.product_quantity,
-        product_unit: inputProductData.product_unit,
-        product_weight: inputProductData.product_weight,
-        product_brand: inputProductData.product_brand,
-        product_category: inputProductData.product_category,
-        product_attributes: inputProductData.product_attributes,
-        product_variations: inputProductData.product_variations,
-        sku_list: inputProductData.sku_list
-      }));
+      );
       if (addPrd.payload.status === (200 || 201)) {
         toast.update(id, {
           render: "Thêm sản phẩm thành công",
@@ -764,7 +770,7 @@ const ProductEditor = () => {
         closeOnClick: true,
         autoClose: 3000,
       });
-      console.error(error)
+      console.error(error);
     }
   };
   const [product_images, set_product_images] = useState([]);
@@ -834,15 +840,39 @@ const ProductEditor = () => {
             <label className="field-label" htmlFor="description">
               Mô tả sản phẩm
             </label>
-            <textarea
-              className={classNames(
-                `field-input !h-[160px] !py-[15px] !overflow-y-auto`,
-                { "field-input--error": errors.description }
-              )}
-              id="description"
-              placeholder="Nhập mô tả sản phẩm"
+            <Controller
+              name="description"
+              control={control}
+              rules={{ required: true }}
               defaultValue={defaultValues.description}
-              {...register("description", { required: true })}
+              render={({ field }) => (
+                <Editor
+                  key={theme}
+                  apiKey="b6ic198ke2qcqbou4w6gx76a7tz5fx69qmclac76acprbgt4"
+                  value={description}
+                  ref={editorRef}
+                  init={{
+                    plugins:
+                      "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown",
+                    toolbar:
+                      "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
+                    tinycomments_mode: "embedded",
+                    tinycomments_author: "Author name",
+                    mergetags_list: [
+                      {
+                        value: "First.Name",
+                        title: "First Name",
+                      },
+                      { value: "Email", title: "Email" },
+                    ],
+                    content_css: theme === "dark" ? "dark" : "default",
+                    skin: theme === "dark" ? "oxide-dark" : "oxide",
+                    icons: "material",
+                    language: "vi",
+                  }}
+                  onEditorChange={field.onChange}
+                />
+              )}
             />
           </div>
           <div className="grid grid-cols-1 gap-y-4 gap-x-2 sm:grid-cols-2">
@@ -1040,15 +1070,17 @@ const ProductEditor = () => {
             <button
               onClick={handleToggleIsVariation}
               id="variationBtn"
-              className={` ${isVariation === false ? "btn--social btn block" : "hidden"
-                }`}
+              className={` ${
+                isVariation === false ? "btn--social btn block" : "hidden"
+              }`}
             >
               <i className={`icon icon-circle-plus-regular`} />
               <span>Bật phân loại</span>
             </button>
             <div
-              className={`${isVariation ? "" : "hidden"
-                } grid grid-cols-1 gap-y-4 gap-x-2`}
+              className={`${
+                isVariation ? "" : "hidden"
+              } grid grid-cols-1 gap-y-4 gap-x-2`}
             >
               {variations.map((item, index) => {
                 return (

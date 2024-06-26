@@ -26,6 +26,7 @@
     "@react-google-maps/api": "^2.18.1",
     "@react-spring/web": "^9.6.1",
     "@rollup/plugin-babel": "^6.0.3",
+    "@tinymce/tinymce-react": "^5.1.1",
     "@vitejs/plugin-react": "^4.0.3",
     "antd": "^5.5.0",
     "axios": "^1.7.2",

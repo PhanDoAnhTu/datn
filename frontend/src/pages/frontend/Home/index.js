@@ -11,6 +11,7 @@ import { allProducts, findProductbestSelling } from '../../../store/actions';
 import DocumentTitle from '../../../components/frontend/DocumentTitle';
 import ProductList from '../../../components/frontend/ProductList';
 import { getSliderByActive } from '../../../store/actions/slider-actions';
+import Skeleton from 'react-loading-skeleton';
 // import { findListBrand } from '../../../store/actions/brand-actions';
 
 export default function Home() {
@@ -52,7 +53,7 @@ export default function Home() {
                 })()}
             />
             <div className="px-4 sm:px-6 lg:px-8">
-                {all_products ? (
+                {all_products && all_products?.length > 0 ? (
                     (() => {
                         const listSale =
                             all_products[0]?.special_offer
@@ -75,6 +76,9 @@ export default function Home() {
                                     title={'Sản phẩm khuyến mại'}
                                     summary={'Dựt deal ngay kẻo lỡ'}
                                     products={newProducts}
+                                    className={
+                                        'mt-5 rounded-md bg-zinc-300 bg-[url("https://static.vecteezy.com/system/resources/previews/011/997/862/original/trendy-summer-sale-background-and-banner-design-for-doodle-geometric-background-contemporary-modern-trendy-illustrations-every-background-is-isolated-pastel-colors-free-vector.jpg")] bg-cover bg-no-repeat px-5 shadow-md'
+                                    }
                                 />
                             );
                         } else {
@@ -82,7 +86,7 @@ export default function Home() {
                         }
                     })()
                 ) : (
-                    <></>
+                    <Skeleton count={1} height={400} className="mt-5" />
                 )}
             </div>
             <div className="mx-auto grid max-w-screen-2xl gap-4 px-4 py-8 max-sm:grid-rows-2 sm:px-6 sm:py-8 md:grid-cols-2 lg:gap-8 lg:px-8 ">
@@ -95,7 +99,7 @@ export default function Home() {
                                 (item?.slider_link ===
                                     '/san-pham-theo-danh-muc/nam' ||
                                     item?.slider_link ===
-                                    '/san-pham-theo-danh-muc/nu')
+                                        '/san-pham-theo-danh-muc/nu')
                         );
                     return fetchedSlider?.map((item) => (
                         <CategorySection item={item} key={item._id} />
@@ -103,14 +107,14 @@ export default function Home() {
                 })()}
             </div>
             <div className="px-4 sm:px-6 lg:px-8">
-                {product_best_selling && product_best_selling?.length > 0 ? (
+                {product_best_selling ? (
                     <ProductList
                         title={'Sản phẩm bán chạy'}
                         summary={'Sản phảm hot hit'}
                         products={product_best_selling?.slice(0, 10)}
                     />
                 ) : (
-                    <></>
+                    <Skeleton count={1} height={400} />
                 )}
             </div>
             <div className="px-4 sm:px-6 lg:px-8">
@@ -121,7 +125,7 @@ export default function Home() {
                         products={all_products?.slice(0, 10)}
                     />
                 ) : (
-                    <></>
+                    <Skeleton count={1} height={400} />
                 )}
             </div>
 
@@ -135,7 +139,7 @@ export default function Home() {
                                 (item?.slider_link ===
                                     '/san-pham-theo-danh-muc/nu/trang-suc-and-phu-kien/mu-and-mu-len' ||
                                     item?.slider_link ===
-                                    '/san-pham-theo-danh-muc/nu/thoi-trang/quan-djui')
+                                        '/san-pham-theo-danh-muc/nu/thoi-trang/quan-djui')
                         );
                     return fetchedSlider?.map((item) => (
                         <CategorySection item={item} key={item._id} />
@@ -143,8 +147,8 @@ export default function Home() {
                 })()}
             </div>
             <div className="px-4 sm:px-6 lg:px-8">
-                {all_products
-                    ? (() => {
+                {all_products ? (
+                    (() => {
                         // eslint-disable-next-line no-unused-vars
                         const newProducts = all_products
                             ?.slice()
@@ -173,7 +177,9 @@ export default function Home() {
                             />
                         );
                     })()
-                    : ''}
+                ) : (
+                    <Skeleton count={1} height={400} />
+                )}
             </div>
             {(() => {
                 const filterdCategory = category
@@ -182,8 +188,8 @@ export default function Home() {
                 return <PromoSection category={filterdCategory} />;
             })()}
             <div className="px-4 sm:px-6 lg:px-8">
-                {all_products
-                    ? (() => {
+                {all_products ? (
+                    (() => {
                         // eslint-disable-next-line no-unused-vars
                         const newProducts = all_products
                             ?.slice()
@@ -218,7 +224,9 @@ export default function Home() {
                             />
                         );
                     })()
-                    : ''}
+                ) : (
+                    <Skeleton count={1} height={400} />
+                )}
             </div>
 
             <Blog />
