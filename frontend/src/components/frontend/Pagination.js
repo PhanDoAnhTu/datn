@@ -41,13 +41,13 @@ export default function Pagination({
                 </div>
                 <div>
                     <nav
-                        className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                        className="isolate inline-flex space-x-2 rounded-md shadow-sm"
                         aria-label="Pagination"
                     >
                         <Link
                             to="#"
                             onClick={() => setCurrentPage(currentPage - 1)}
-                            className={`${currentPage === 1 ? 'pointer-events-none relative inline-flex items-center bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 brightness-50 transition duration-200  ease-out hover:bg-gray-50 focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700' : 'relative inline-flex items-center bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 transition duration-200 ease-out hover:bg-gray-50  focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700'}`}
+                            className={`rounded-md shadow-md ${currentPage === 1 ? 'pointer-events-none relative inline-flex items-center bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 brightness-75 transition duration-200  ease-out hover:bg-gray-50 focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700' : 'relative inline-flex items-center bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 transition duration-200 ease-out hover:bg-gray-50  focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700'}`}
                         >
                             <span className="sr-only">Previous</span>
                             <ChevronLeftIcon
@@ -62,7 +62,7 @@ export default function Pagination({
                                     key={index}
                                     to="#"
                                     onClick={() => setCurrentPage(item)}
-                                    className={`${currentPage === item ? 'pointer-events-none relative z-10 inline-flex items-center bg-white px-4 py-2 text-sm font-semibold text-gray-900 brightness-50  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-xanthous-600' : 'relative inline-flex items-center bg-white px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:brightness-90  focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700'}`}
+                                    className={`rounded-md shadow-md ${currentPage === item ? 'pointer-events-none relative z-10 inline-flex items-center bg-white px-4 py-2 text-sm font-semibold text-gray-900 brightness-75  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-xanthous-600' : 'relative inline-flex items-center bg-white px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:brightness-90  focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700'}`}
                                 >
                                     {item}
                                 </Link>
@@ -71,7 +71,7 @@ export default function Pagination({
                         <Link
                             to="#"
                             onClick={() => setCurrentPage(currentPage + 1)}
-                            className={`${currentPage >= data?.length ? 'pointer-events-none relative inline-flex items-center bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 brightness-50 transition duration-200  ease-out hover:bg-gray-50 focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700' : 'relative inline-flex items-center bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 transition duration-200 ease-out hover:bg-gray-50  focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700'}`}
+                            className={`rounded-md shadow-md ${currentPage >= data?.length ? 'pointer-events-none relative inline-flex items-center bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 brightness-75 transition duration-200  ease-out hover:bg-gray-50 focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700' : 'relative inline-flex items-center bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 transition duration-200 ease-out hover:bg-gray-50  focus:outline-offset-0 dark:bg-magenta-500/50 dark:text-white dark:ring-magenta-700 dark:hover:bg-magenta-700'}`}
                         >
                             <span className="sr-only">Next</span>
                             <ChevronRightIcon
