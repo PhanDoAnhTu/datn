@@ -2,9 +2,16 @@ import { Dialog, Tab, Transition } from '@headlessui/react';
 import GenderSelection from '../../../components/frontend/GenderSelection';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { upLoadImageSingle, changeAvatar, checkPassword, onChangePassword } from '../../../store/actions';
+import {
+    upLoadImageSingle,
+    changeAvatar,
+    checkPassword,
+    onChangePassword,
+    updateInfomation,
+} from '../../../store/actions';
 import { toast } from 'react-toastify';
 import { UserIcon } from '@heroicons/react/24/outline';
+import dayjs from 'dayjs';
 
 export default function Information() {
     const [isEditable, setIsEditable] = useState(false);
@@ -12,6 +19,9 @@ export default function Information() {
     const [username, setUsername] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
+    const [birthDay, setBirthDay] = useState('');
+    const [birthMonth, setBirthMonth] = useState('');
+    const [birthYear, setBirthYear] = useState('');
     const [gender, setGender] = useState(0);
     let [isOpen, setIsOpen] = useState(false);
     const [isForgot, setIsForgot] = useState(0);
@@ -20,8 +30,7 @@ export default function Information() {
     const [repassword, setRepassword] = useState('');
     const [image, setImage] = useState(null);
 
-
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     useEffect(() => {
         if (isEditable === false) {
@@ -45,11 +54,16 @@ export default function Information() {
             setOldPassword('');
             setPassword('');
             setRepassword('');
-            return
+            return;
         }
         if (isForgot === 0) {
-            const id = toast.loading("Vui lòng chờ...")
-            const check = await dispatch(checkPassword({ customer_email: userInfo.customer_email, customer_password: oldpassword }))
+            const id = toast.loading('Vui lòng chờ...');
+            const check = await dispatch(
+                checkPassword({
+                    customer_email: userInfo.customer_email,
+                    customer_password: oldpassword,
+                })
+            );
             if (check?.payload?.status === (200 || 201)) {
                 toast.update(id, {
                     render: 'Mật khẩu cũ đúng, hãy nhập mật khẩu mới',
@@ -69,18 +83,21 @@ export default function Information() {
                 });
             }
         }
-
     };
     const changePassword = async () => {
-
         if (password !== repassword) {
-            toast.error("Nhập lại mật khẩu không khớp");
+            toast.error('Nhập lại mật khẩu không khớp');
             return;
         }
         if (isForgot == 1) {
-            const id = toast.loading("Vui lòng chờ...")
+            const id = toast.loading('Vui lòng chờ...');
 
-            const change = await dispatch(onChangePassword({ customer_email: userInfo.customer_email, customer_password: password }))
+            const change = await dispatch(
+                onChangePassword({
+                    customer_email: userInfo.customer_email,
+                    customer_password: password,
+                })
+            );
             if (change?.payload?.status === (200 || 201)) {
                 toast.update(id, {
                     render: 'Đổi mật khẩu thành công',
@@ -94,7 +111,7 @@ export default function Information() {
                 setOldPassword('');
                 setRepassword('');
                 setPassword('');
-                return
+                return;
             }
             toast.update(id, {
                 render: 'Đổi mật khẩu không thành công',
@@ -110,29 +127,31 @@ export default function Information() {
         setOldPassword('');
         setRepassword('');
         setPassword('');
-        return
-
+        return;
     };
     let [open, setOpen] = useState(false);
     const cancelButtonRef = useRef(null);
 
-
     const onChangeAvatar = async (files) => {
-
         if (files?.length > 0) {
-            setImage(files[0])
+            setImage(files[0]);
         }
-    }
+    };
 
     const onSaveChange = async () => {
         if (image) {
-            const id = toast.loading("Đang cập nhật ảnh đại diện")
-            const formData = new FormData()
-            formData.append("file", image)
+            const id = toast.loading('Đang cập nhật ảnh đại diện');
+            const formData = new FormData();
+            formData.append('file', image);
 
-            const uploadImage = await dispatch(upLoadImageSingle(formData))
+            const uploadImage = await dispatch(upLoadImageSingle(formData));
             if (uploadImage?.payload?.status === (200 || 201)) {
-                await dispatch(changeAvatar({ customer_id: userInfo._id, image: uploadImage.payload.metaData.thumb_url }))
+                await dispatch(
+                    changeAvatar({
+                        customer_id: userInfo._id,
+                        image: uploadImage.payload.metaData.thumb_url,
+                    })
+                );
                 toast.update(id, {
                     render: 'Cập nhật ảnh đại diện thành công',
                     type: 'success',
@@ -149,48 +168,67 @@ export default function Information() {
                     autoClose: 2000,
                 });
             }
-            setOpen(false)
+            setOpen(false);
         }
-    }
+    };
 
     const onEditInfo = async () => {
-        // const id = toast.loading("Đang cập nhật...")
-        // const update = await dispatch(updateInfomation({}))
-        // if (update?.payload?.status === (200 || 201)) {
-        //     toast.update(id, {
-        //         render: 'Cập nhật thông tin thành công',
-        //         type: 'success',
-        //         isLoading: false,
-        //         closeOnClick: true,
-        //         autoClose: 2000,
-        //     });
-        // } else {
-        //     toast.update(id, {
-        //         render: 'Cập nhật thông tin không thành công',
-        //         type: 'error',
-        //         isLoading: false,
-        //         closeOnClick: true,
-        //         autoClose: 2000,
-        //     });
-        // }
-        setIsEditable(false)
-    }
+        const id = toast.loading('Đang cập nhật...');
+        const update = await dispatch(
+            updateInfomation({
+                customer_id: userInfo?._id,
+                customer_name: username,
+                customer_phone: phone,
+                customer_sex:
+                    gender === 0
+                        ? 'Nam'
+                        : gender === 1
+                          ? 'Nữ'
+                          : 'Không muốn tiết lộ',
+                customer_date_of_birth:
+                    birthYear + '-' + birthMonth + '-' + birthDay,
+            })
+        );
+        if (update?.payload?.status === (200 || 201)) {
+            toast.update(id, {
+                render: 'Cập nhật thông tin thành công',
+                type: 'success',
+                isLoading: false,
+                closeOnClick: true,
+                autoClose: 2000,
+            });
+        } else {
+            toast.update(id, {
+                render: 'Cập nhật thông tin không thành công',
+                type: 'error',
+                isLoading: false,
+                closeOnClick: true,
+                autoClose: 2000,
+            });
+        }
+        setIsEditable(false);
+
+        setBirthDay('');
+        setBirthYear('');
+        setBirthMonth('');
+    };
 
     return (
         <Tab.Panel className={'flex flex-col space-y-7 p-7 outline-none'}>
             <div className="flex items-center max-sm:flex-col max-sm:justify-center max-sm:space-y-5 sm:space-x-6">
                 <div className="relative">
                     <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-white">
-
-                        {userInfo.customer_avatar
-                            ? <img
+                        {userInfo.customer_avatar ? (
+                            <img
                                 src={userInfo?.customer_avatar}
                                 alt=""
-                                className="object-cover object-center"
+                                className="h-full w-full object-cover object-center"
                             />
-                            : <div className="flex h-20 w-20 items-center justify-center rounded-full bg-stone-300 text-gray-500 dark:bg-magenta-400 dark:text-white">
+                        ) : (
+                            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-stone-300 text-gray-500 dark:bg-magenta-400 dark:text-white">
                                 <UserIcon className="h-10 w-10 drop-shadow-md" />
-                            </div>}
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="flex flex-col justify-center space-y-1 max-sm:items-center">
@@ -247,7 +285,12 @@ export default function Information() {
                                                                 aria-describedby="file_input_help"
                                                                 id="file_input"
                                                                 type="file"
-                                                                onChange={(e) => onChangeAvatar(e.target.files)}
+                                                                onChange={(e) =>
+                                                                    onChangeAvatar(
+                                                                        e.target
+                                                                            .files
+                                                                    )
+                                                                }
                                                             />
                                                             <p
                                                                 className="mt-1 text-sm text-gray-500 dark:text-gray-300"
@@ -298,7 +341,7 @@ export default function Information() {
                     <input
                         type="text"
                         value={email}
-                        className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-white outline-none brightness-50 transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white"
+                        className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-gray-900 outline-none brightness-50 transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white dark:text-white"
                         disabled
                     />
                 </div>
@@ -314,7 +357,7 @@ export default function Information() {
                                 !isEditable ? userInfo?.customer_name : username
                             }
                             onChange={(e) => setUsername(e.target.value)}
-                            className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-white outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white"
+                            className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-gray-900 outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white dark:text-white"
                         />
                     </div>
                     <div className="flex flex-col -space-y-1">
@@ -328,7 +371,7 @@ export default function Information() {
                             }
                             onChange={(e) => setUsername(e.target.value)}
                             disabled={!isEditable}
-                            className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-white outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white"
+                            className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-gray-900 outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white dark:text-white"
                         />
                     </div>
 
@@ -350,14 +393,72 @@ export default function Information() {
                         <input
                             type="text"
                             value={
-                                !isEditable
-                                    ? userInfo?.customer_phone
-                                    : phone
+                                !isEditable ? userInfo?.customer_phone : phone
                             }
                             onChange={(e) => setPhone(e.target.value)}
                             disabled={!isEditable}
-                            className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-white outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white"
+                            className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-gray-900 outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white dark:text-white"
                         />
+                    </div>
+                    <div>
+                        <div className="flex flex-col -space-y-1">
+                            <span className="w-fit border-white pr-1 text-gray-900 dark:text-white">
+                                Ngày sinh
+                            </span>
+                            <div className="grid grid-cols-3 gap-4">
+                                <input
+                                    type="text"
+                                    value={
+                                        !isEditable
+                                            ? userInfo?.customer_date_of_birth
+                                                ? dayjs(
+                                                      userInfo?.customer_date_of_birth
+                                                  ).format('DD')
+                                                : ''
+                                            : birthDay
+                                    }
+                                    onChange={(e) =>
+                                        setBirthDay(e.target.value)
+                                    }
+                                    disabled={!isEditable}
+                                    className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-gray-900 outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white dark:text-white"
+                                />
+                                <input
+                                    type="text"
+                                    value={
+                                        !isEditable
+                                            ? userInfo?.customer_date_of_birth
+                                                ? dayjs(
+                                                      userInfo?.customer_date_of_birth
+                                                  ).format('MM')
+                                                : ''
+                                            : birthMonth
+                                    }
+                                    onChange={(e) =>
+                                        setBirthMonth(e.target.value)
+                                    }
+                                    disabled={!isEditable}
+                                    className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-gray-900 outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white dark:text-white"
+                                />
+                                <input
+                                    type="text"
+                                    value={
+                                        !isEditable
+                                            ? userInfo?.customer_date_of_birth
+                                                ? dayjs(
+                                                      userInfo?.customer_date_of_birth
+                                                  ).format('YYYY')
+                                                : ''
+                                            : birthYear
+                                    }
+                                    onChange={(e) =>
+                                        setBirthYear(e.target.value)
+                                    }
+                                    disabled={!isEditable}
+                                    className="border-x-0 border-b-2 border-t-0 border-gray-900 bg-transparent pl-0 text-gray-900 outline-none transition duration-500 ease-out focus:border-magenta-500 focus:ring-0 disabled:brightness-50 dark:border-white dark:text-white"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -365,15 +466,17 @@ export default function Information() {
             <div className="flex items-center justify-end space-x-2">
                 {!isEditable ? (
                     <>
-                        {userInfo?.customer_provider == 'google' || userInfo?.customer_provider == "facebook"
-                            ? <></>
-                            : <button
+                        {userInfo?.customer_provider == 'google' ||
+                        userInfo?.customer_provider == 'facebook' ? (
+                            <></>
+                        ) : (
+                            <button
                                 onClick={openModal}
                                 className="rounded-md border-2 border-gray-900 px-5 py-1 text-gray-900 transition duration-500 ease-out hover:border-magenta-500 hover:text-magenta-500 dark:border-white dark:text-white"
                             >
                                 Đổi mật khẩu
                             </button>
-                        }
+                        )}
 
                         <Transition appear show={isOpen} as={Fragment}>
                             <Dialog

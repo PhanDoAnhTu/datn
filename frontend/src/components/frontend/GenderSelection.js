@@ -27,7 +27,7 @@ export default function GenderSelection({
 
     return (
         <div
-            className={`border-x-0 border-b-2 border-t-0 transition duration-500 ease-out dark:border-white ${isEditable ? '' : 'brightness-50'}`}
+            className={`border-x-0 border-b-2 border-t-0 transition duration-500 ease-out dark:border-white ${isEditable ? 'border-b-black' : 'brightness-100'}`}
         >
             <Listbox
                 value={isEditable ? people[gender] : people[selectedGender]}
@@ -35,8 +35,8 @@ export default function GenderSelection({
                 disabled={!isEditable}
             >
                 <div className="relative mt-1 ">
-                    <Listbox.Button className="relative w-full cursor-default py-2 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-magenta-300 ui-disabled:brightness-50 sm:text-sm ">
-                        <span className="block truncate text-white">
+                    <Listbox.Button className="relative w-full cursor-default py-2 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-magenta-300 ui-disabled:brightness-100 sm:text-sm ">
+                        <span className="block truncate text-gray-900 dark:text-white">
                             {people[gender]?.gender}
                         </span>
                         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -52,7 +52,7 @@ export default function GenderSelection({
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto bg-zinc-900 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm dark:bg-white">
+                        <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm dark:bg-white">
                             {people.map((person, personIdx) => (
                                 <Listbox.Option
                                     key={personIdx}
