@@ -21,11 +21,11 @@ const TotalReport = () => {
         <Spring className="card flex flex-col lg:col-span-3 xl:col-span-1">
             <div>
                 <div className="flex items-center justify-between">
-                    <h4>Total Report</h4>
+                    <h4>Báo cáo tổng quát</h4>
                     <InfoBtn onClick={handleClick}/>
                 </div>
                 <p className="mt-1.5 mb-4 text-sm md:text-base">
-                    All Periods per 01/01/2022 - 08/28/2023
+                    
                 </p>
             </div>
             <div className="flex flex-col flex-1 gap-6 mb-6">

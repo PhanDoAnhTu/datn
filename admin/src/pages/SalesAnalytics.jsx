@@ -13,7 +13,7 @@ const SalesAnalytics = () => {
 
     return (
         <>
-            <PageHeader title="Sales Analytics"/>
+            <PageHeader title="Biểu đồ"/>
             <div className="widgets-grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-2 2xl:grid-cols-[minmax(0,_951px)_minmax(0,_1fr)]">
                 <MainProfileInfo/>
                 {width >= 1536 && <TotalBalance />}

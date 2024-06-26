@@ -32,11 +32,11 @@ const MainProfileInfo = () => {
             <div className="flex flex-1 flex-col gap-8">
                 <div className="flex flex-col gap-2">
                     <h3>Outrunner Store - Retail</h3>
-                    <p>Aliquam erat volutpat. Duis molestie ultrices tempus. Mauris sem orci, euismod sit amet.</p>
+                    {/* <p>Aliquam erat volutpat. Duis molestie ultrices tempus. Mauris sem orci, euismod sit amet.</p> */}
                 </div>
                 <div className="flex flex-col gap-6">
                     <div className="flex items-center gap-4">
-                        <h5>Average Rate 2023</h5>
+                        <h5></h5>
                         <InfoBtn onClick={handleClick} />
                     </div>
                     <div className="flex-1 grid grid-cols-1 gap-6 md:grid-cols-2 lg:flex justify-between xl:max-w-[670px]">
@@ -46,10 +46,10 @@ const MainProfileInfo = () => {
                             </div>
                             <div>
                                 <Counter className="block -mt-1 font-heading font-semibold leading-[1.1] text-header text-[26px] md:text-[32px]"
-                                    num={15412}
-                                    prefix="$" />
-                                <span className="block label-text mb-2">Income</span>
-                                <Trend value={45.21} />
+                                    num={0}
+                                    prefix="đ" />
+                                <span className="block label-text mb-2">Doanh thu</span>
+                                <Trend value={0} />
                             </div>
                         </div>
                         <div className="flex gap-5">
@@ -58,10 +58,10 @@ const MainProfileInfo = () => {
                             </div>
                             <div>
                                 <Counter className="block -mt-1 font-heading font-semibold leading-[1.1] text-header text-[26px] md:text-[32px]"
-                                    num={53487}
-                                    prefix="$" />
-                                <span className="block label-text mb-2">Expense</span>
-                                <Trend value={-12} />
+                                    num={0}
+                                    prefix="đ" />
+                                <span className="block label-text mb-2">Chi phí</span>
+                                <Trend value={0} />
                             </div>
                         </div>
                         <div className="flex gap-5">
@@ -70,9 +70,9 @@ const MainProfileInfo = () => {
                             </div>
                             <div>
                                 <Counter className="block -mt-1 font-heading font-semibold leading-[1.1] text-header text-[26px] md:text-[32px]"
-                                    num={5412} />
-                                <span className="block label-text mb-2">New Orders</span>
-                                <Trend value={14.36} />
+                                    num={0} />
+                                <span className="block label-text mb-2">Hóa đơn mới</span>
+                                <Trend value={0} />
                             </div>
                         </div>
                     </div>

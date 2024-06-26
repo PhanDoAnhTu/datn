@@ -116,7 +116,6 @@ class DiscountService {
     /**
      * 
      */
-
     async getDiscountAmount({ codeId, userId, products }) {
 
         const foundDiscount = await discountRepository.checkDiscountExists({
