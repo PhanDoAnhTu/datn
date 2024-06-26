@@ -9,5 +9,7 @@ router.post("/create", asynchandler(brandController.createBrand));
 router.post("/findListBrand", asynchandler(brandController.getListBrand));
 router.post("/updateOneBrand", asynchandler(brandController.updateOneBrand));
 router.post("/findBrandById", asynchandler(brandController.findBrandById));
+router.post("/changeIsPublished", asynchandler(brandController.changeIsPublished));
+router.post("/isTrash", asynchandler(brandController.isTrash));
 
 module.exports = router;
