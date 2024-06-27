@@ -8,10 +8,11 @@ import OrdersTable from "@widgets/OrdersTable";
 import { useEffect, useState } from "react";
 
 // constants
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getAllOrder } from "../store/actions/order-actions";
 import FilterItem from "@ui/FilterItem";
 import dayjs from "dayjs";
+import { allProducts } from "../store/actions/product-actions";
 
 const Orders = () => {
   const dispatch = useDispatch();
@@ -19,6 +20,13 @@ const Orders = () => {
   const [og_data, setOGData] = useState([]);
   const [all_data, setAllData] = useState([]);
   const [range, setRange] = useState([dayjs().subtract(1, "month"), dayjs()]);
+  const { all_products } = useSelector((state) => state.productReducer);
+
+  useEffect(() => {
+    if (!all_products) {
+      dispatch(allProducts());
+    }
+  }, [all_products]);
 
   const fetchData = async () => {
     const result = await dispatch(getAllOrder({}));

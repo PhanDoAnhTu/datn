@@ -66,6 +66,8 @@ export const ORDERS_COLUMN_DEFS = [
           ? "Đã xác nhận"
           : status === "successful" || status === "review"
           ? "Đã hoàn thành"
+          : status === "shipping"
+          ? "Đang giao"
           : "Đã hủy"}
       </span>
     ),
@@ -76,7 +78,7 @@ export const ORDERS_COLUMN_DEFS = [
     render: (text, record) => (
       <div className="flex items-center justify-end gap-11">
         <NavLink
-          to={`/order-detail/${record._id}`}
+          to={`/order-detail/${record.order_trackingNumber}`}
           className="btn btn--social"
           aria-label="Edit"
         >
@@ -415,7 +417,7 @@ export const ORDERDETAIL_MANAGEMENT_COLUMN_DEFS = [
         <i className="icon-image-regular text-[26px]" />
       </div>
     ),
-    dataIndex: "product_thumb",
+    dataIndex: "image",
     render: (image) => (
       <div className="img-wrapper w-[45px] h-[45px] flex items-center justify-center">
         <img src={image} alt="product" />
@@ -424,7 +426,7 @@ export const ORDERDETAIL_MANAGEMENT_COLUMN_DEFS = [
   },
   {
     title: "Tên",
-    dataIndex: "productId",
+    dataIndex: "product_name",
     render: (text) => <span className="inline-block h6 !text-sm ">{text}</span>,
   },
   {
