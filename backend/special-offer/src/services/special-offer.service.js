@@ -31,7 +31,7 @@ class SpecialOfferService {
             special_offer_start_date: special_offer_start_date,
             special_offer_end_date: special_offer_end_date,
             special_offer_image: special_offer_image,
-            special_offer_is_active: special_offer_is_active,
+            isPublished: special_offer_is_active,
             special_offer_spu_list: special_offer_spu_list
         })
         return newSpecialOffer

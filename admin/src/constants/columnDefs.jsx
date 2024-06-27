@@ -18,12 +18,12 @@ export const ORDERS_COLUMN_DEFS = [
   {
     title: "# order",
     dataIndex: "order_trackingNumber",
-    width: "100px",
+    width: "200px",
     render: (text) => <span className="subheading-2">#{text}</span>,
   },
   {
     title: "Ngày đặt",
-    dataIndex: "createdAt",
+    dataIndex: "createdOn",
     render: (date) => (
       <div>
         <span className="font-bold text-header">
@@ -31,8 +31,8 @@ export const ORDERS_COLUMN_DEFS = [
             ? dayjs().diff(dayjs(date), "minute") < 60
               ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
               : dayjs().diff(dayjs(date), "hour") < 24
-                ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
-                : dayjs(date).format("hh:mmA DD/MM/YYYY")
+              ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+              : dayjs(date).format("hh:mmA DD/MM/YYYY")
             : ""}
         </span>
       </div>
@@ -41,11 +41,13 @@ export const ORDERS_COLUMN_DEFS = [
   },
   {
     title: "Phương thức thanh toán",
-    dataIndex: "payment",
-    render: (payment) => (
+    dataIndex: "order_payment",
+    render: (order_payment) => (
       <div className="flex flex-col">
         <span className="font-heading font-bold text-header">
-          Thanh toán bằng ví MoMo
+          {order_payment.payment_method === "COD"
+            ? "Thanh toán khi nhận hàng"
+            : "Thanh toán bằng ZaloPay"}
         </span>
       </div>
     ),
@@ -59,12 +61,12 @@ export const ORDERS_COLUMN_DEFS = [
         style={{ backgroundColor: `var(--${getStatusColor(status)})` }}
       >
         {status === "pending"
-          ? "Đợi xác nhận"
+          ? "Chờ xác nhận"
           : status === "confirmed"
-            ? "Đã xác nhận"
-            : status === "shipped"
-              ? "Đã hoàn thành"
-              : "Đã hủy"}
+          ? "Đã xác nhận"
+          : status === "successful" || status === "review"
+          ? "Đã hoàn thành"
+          : "Đã hủy"}
       </span>
     ),
   },
@@ -339,11 +341,11 @@ export const PRODUCTS_MANAGEMENT_COLUMN_DEFS = [
       <div className="flex flex-wrap gap-x-0.5">
         {categories && categories.length
           ? categories.map((tag, index) => (
-            <button className="tag text-accent capitalize" key={tag}>
-              {tag}
-              {index !== categories.length - 1 && ","}
-            </button>
-          ))
+              <button className="tag text-accent capitalize" key={tag}>
+                {tag}
+                {index !== categories.length - 1 && ","}
+              </button>
+            ))
           : "-"}
       </div>
     ),
@@ -357,14 +359,14 @@ export const PRODUCTS_MANAGEMENT_COLUMN_DEFS = [
       <div className="flex flex-wrap gap-x-0.5">
         {categories && categories.length
           ? categories.map((attribute) => {
-            return attribute.attribute_value_list.map((value, subindex) => (
-              <button className="tag text-accent capitalize" key={subindex}>
-                {value.attribute_value}
-                {subindex !== attribute.attribute_value_list.length - 1 &&
-                  ","}
-              </button>
-            ));
-          })
+              return attribute.attribute_value_list.map((value, subindex) => (
+                <button className="tag text-accent capitalize" key={subindex}>
+                  {value.attribute_value}
+                  {subindex !== attribute.attribute_value_list.length - 1 &&
+                    ","}
+                </button>
+              ));
+            })
           : "-"}
       </div>
     ),
@@ -509,8 +511,8 @@ export const CATEGORIES_MANAGEMENT_COLUMN_DEFS = [
             ? dayjs().diff(dayjs(updatedAt), "minute") < 60
               ? `${dayjs().diff(dayjs(updatedAt), "minute")} giờ trước`
               : dayjs().diff(dayjs(updatedAt), "hour") < 24
-                ? `${dayjs().diff(dayjs(updatedAt), "hour")} giờ trước`
-                : dayjs(updatedAt).format("hh:mmA DD/MM/YYYY")
+              ? `${dayjs().diff(dayjs(updatedAt), "hour")} giờ trước`
+              : dayjs(updatedAt).format("hh:mmA DD/MM/YYYY")
             : ""}
         </span>
       </div>
@@ -561,8 +563,8 @@ export const TOPICS_MANAGEMENT_COLUMN_DEFS = [
             ? dayjs().diff(dayjs(date), "minute") < 60
               ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
               : dayjs().diff(dayjs(date), "hour") < 24
-                ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
-                : dayjs(date).format("hh:mmA DD/MM/YYYY")
+              ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+              : dayjs(date).format("hh:mmA DD/MM/YYYY")
             : ""}
         </span>
       </div>
@@ -629,8 +631,8 @@ export const POSTS_MANAGEMENT_COLUMN_DEFS = [
             ? dayjs().diff(dayjs(date), "minute") < 60
               ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
               : dayjs().diff(dayjs(date), "hour") < 24
-                ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
-                : dayjs(date).format("hh:mmA DD/MM/YYYY")
+              ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+              : dayjs(date).format("hh:mmA DD/MM/YYYY")
             : ""}
         </span>
       </div>
@@ -681,8 +683,8 @@ export const BRANDS_MANAGEMENT_COLUMN_DEFS = [
             ? dayjs().diff(dayjs(date), "minute") < 60
               ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
               : dayjs().diff(dayjs(date), "hour") < 24
-                ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
-                : dayjs(date).format("hh:mmA DD/MM/YYYY")
+              ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+              : dayjs(date).format("hh:mmA DD/MM/YYYY")
             : ""}
         </span>
       </div>
@@ -699,8 +701,8 @@ export const BRANDS_MANAGEMENT_COLUMN_DEFS = [
             ? dayjs().diff(dayjs(date), "minute") < 60
               ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
               : dayjs().diff(dayjs(date), "hour") < 24
-                ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
-                : dayjs(date).format("hh:mmA DD/MM/YYYY")
+              ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+              : dayjs(date).format("hh:mmA DD/MM/YYYY")
             : ""}
         </span>
       </div>
@@ -769,8 +771,8 @@ export const SLIDERS_MANAGEMENT_COLUMN_DEFS = [
             ? dayjs().diff(dayjs(date), "minute") < 60
               ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
               : dayjs().diff(dayjs(date), "hour") < 24
-                ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
-                : dayjs(date).format("hh:mmA DD/MM/YYYY")
+              ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+              : dayjs(date).format("hh:mmA DD/MM/YYYY")
             : ""}
         </span>
       </div>
@@ -811,8 +813,8 @@ export const CONTACTS_MANAGEMENT_COLUMN_DEFS = [
             ? dayjs().diff(dayjs(date), "minute") < 60
               ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
               : dayjs().diff(dayjs(date), "hour") < 24
-                ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
-                : dayjs(date).format("hh:mmA DD/MM/YYYY")
+              ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+              : dayjs(date).format("hh:mmA DD/MM/YYYY")
             : ""}
         </span>
       </div>
@@ -829,8 +831,8 @@ export const CONTACTS_MANAGEMENT_COLUMN_DEFS = [
             ? dayjs().diff(dayjs(date), "minute") < 60
               ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
               : dayjs().diff(dayjs(date), "hour") < 24
-                ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
-                : dayjs(date).format("hh:mmA DD/MM/YYYY")
+              ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+              : dayjs(date).format("hh:mmA DD/MM/YYYY")
             : ""}
         </span>
       </div>
@@ -903,8 +905,8 @@ export const PAGES_MANAGEMENT_COLUMN_DEFS = [
             ? dayjs().diff(dayjs(date), "minute") < 60
               ? `${dayjs().diff(dayjs(date), "minute")} Minutes ago`
               : dayjs().diff(dayjs(date), "hour") < 24
-                ? `${dayjs().diff(dayjs(date), "hour")} Hours ago`
-                : dayjs(date).format("hh:mmA DD/MM/YYYY")
+              ? `${dayjs().diff(dayjs(date), "hour")} Hours ago`
+              : dayjs(date).format("hh:mmA DD/MM/YYYY")
             : ""}
         </span>
       </div>
@@ -964,8 +966,8 @@ export const MENUS_MANAGEMENT_COLUMN_DEFS = [
             ? dayjs().diff(dayjs(date), "minute") < 60
               ? `${dayjs().diff(dayjs(date), "minute")} Minutes ago`
               : dayjs().diff(dayjs(date), "hour") < 24
-                ? `${dayjs().diff(dayjs(date), "hour")} Hours ago`
-                : dayjs(date).format("hh:mmA DD/MM/YYYY")
+              ? `${dayjs().diff(dayjs(date), "hour")} Hours ago`
+              : dayjs(date).format("hh:mmA DD/MM/YYYY")
             : ""}
         </span>
       </div>

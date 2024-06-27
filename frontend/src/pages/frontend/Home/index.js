@@ -1,7 +1,5 @@
 import Banner from './Banner';
-// import ProductList from '../../../components/frontend/ProductList';
 import CategorySection from './Category';
-// eslint-disable-next-line no-unused-vars
 import PromoSection from './PromoSection';
 import Blog from './Blog';
 import Subscribe from '../../../components/frontend/home/Subscribe';
@@ -85,7 +83,7 @@ export default function Home() {
                         }
                     })()
                 ) : (
-                    <Skeleton count={1} height={400} className="mt-5" />
+                    <Skeleton count={1} height={350} className="mt-5" />
                 )}
             </div>
             <div className="mx-auto grid max-w-screen-2xl gap-4 px-4 py-8 max-sm:grid-rows-2 sm:px-6 sm:py-8 md:grid-cols-2 lg:gap-8 lg:px-8 ">
@@ -107,13 +105,17 @@ export default function Home() {
             </div>
             <div className="px-4 sm:px-6 lg:px-8">
                 {product_best_selling ? (
-                    <ProductList
-                        title={'Sản phẩm bán chạy'}
-                        summary={'Sản phảm hot hit'}
-                        products={product_best_selling?.slice(0, 10)}
-                    />
+                    product_best_selling?.length > 0 ? (
+                        <ProductList
+                            title={'Sản phẩm bán chạy'}
+                            summary={'Sản phảm hot hit'}
+                            products={product_best_selling?.slice(0, 10)}
+                        />
+                    ) : (
+                        ''
+                    )
                 ) : (
-                    <Skeleton count={1} height={400} />
+                    <Skeleton count={1} height={350} />
                 )}
             </div>
             <div className="px-4 sm:px-6 lg:px-8">
@@ -124,7 +126,7 @@ export default function Home() {
                         products={all_products?.slice(0, 10)}
                     />
                 ) : (
-                    <Skeleton count={1} height={400} />
+                    <Skeleton count={1} height={350} />
                 )}
             </div>
 
@@ -177,7 +179,7 @@ export default function Home() {
                         );
                     })()
                 ) : (
-                    <Skeleton count={1} height={400} />
+                    <Skeleton count={1} height={350} />
                 )}
             </div>
             {(() => {
@@ -224,7 +226,7 @@ export default function Home() {
                         );
                     })()
                 ) : (
-                    <Skeleton count={1} height={400} />
+                    <Skeleton count={1} height={350} />
                 )}
             </div>
 

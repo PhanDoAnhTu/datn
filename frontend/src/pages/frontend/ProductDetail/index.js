@@ -32,10 +32,10 @@ import { Editor } from '@tinymce/tinymce-react';
 export default function ProductDetail() {
     const { userInfo } = useSelector((state) => state.userReducer);
     const { info_review_user } = useSelector((state) => state.userReducer);
-    console.log('info_review_user', info_review_user);
+    // console.log('info_review_user', info_review_user);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { all_products } = useSelector((state) => state.productReducer);
+    // const { all_products } = useSelector((state) => state.productReducer);
     const { product_slug_id } = useParams();
     const product_id = product_slug_id.split('-').pop();
 
@@ -70,7 +70,6 @@ export default function ProductDetail() {
         const responseProductDetail = await dispatch(
             onProductDetail({ spu_id: product_id })
         );
-        !info_review_user && dispatch(getNameAndAvatarCustomer());
 
         if (responseProductDetail) {
             const resultProduct =
@@ -88,23 +87,18 @@ export default function ProductDetail() {
                 setPrice(resultProduct.sku_list[0]?.sku_price);
                 setStock(resultProduct.sku_list[0].sku_stock);
             } else {
+                setStock(resultProduct.product_detail.product_quantity)
+                setSelectedImage(resultProduct.product_detail.product_thumb)
                 setPrice(resultProduct.product_detail.product_price);
             }
             setProductImages(resultProduct?.product_images);
 
             setProductCategories(resultProduct.product_categories);
             setReview(resultProduct.product_review);
-            // setRelated_products(
-            //     resultProduct.related_products
-            // );
             setRelated_products(
-                all_products?.filter(
-                    (prod) =>
-                        prod?.product_category.includes(
-                            resultProduct.product_detail.product_category[0]
-                        ) && prod?._id !== product_id
-                )
+                resultProduct.related_products
             );
+
             if (resultProduct?.product_review?.length > 0) {
                 setRating_score_avg(
                     resultProduct.product_review?.reduce(
@@ -130,9 +124,16 @@ export default function ProductDetail() {
         } catch (error) {
             setTimeout(() => {
                 getProductDetail(product_id);
-            }, 2000);
+            }, 3000);
         }
-    }, [product_id]);
+    }, [product_slug_id]);
+
+    useEffect(() => {
+        !info_review_user && dispatch(getNameAndAvatarCustomer());
+    }, []);
+
+
+
 
     useEffect(() => {
         if (special_offer) {
@@ -185,7 +186,7 @@ export default function ProductDetail() {
                 setSelectedImage(
                     product_images?.find(
                         (item) => item?.sku_id === selected_sku?._id
-                    )
+                    )?.thumb_url
                 );
             }
             if (special_offer) {
@@ -247,10 +248,12 @@ export default function ProductDetail() {
                 //     sku_id: sku_id,
                 //     quantity: quantity
                 // })
+            } else {
+                toast.info('Số lượng sản phẩm còn lại không đủ');
             }
         } else {
-            toast.error('Vui lòng đăng nhập để tiếp tục');
-            navigate('/login');
+            toast.info('Vui lòng đăng nhập để tiếp tục');
+            // navigate('/login');
         }
     };
     ////////////////wishList
@@ -352,11 +355,11 @@ export default function ProductDetail() {
                     <div className="flex flex-col-reverse lg:col-span-2 lg:h-square lg:flex-row lg:space-x-5 lg:border-r lg:border-gray-300 lg:pr-8 dark:lg:border-stone-700">
                         <div className="no-scrollbar flex w-full flex-row overflow-hidden max-lg:mt-3 max-lg:space-x-3 max-lg:overflow-x-scroll max-lg:pb-1 lg:w-44 lg:flex-col lg:space-y-3 lg:overflow-y-scroll">
                             {product_images &&
-                            reload === false &&
-                            product_images?.length > 0 ? (
+                                reload === false &&
+                                product_images?.length > 0 ? (
                                 product_images?.map((item, index) => (
                                     <button
-                                        onClick={() => HandleImageChoose(item)}
+                                        onClick={() => HandleImageChoose(item.thumb_url)}
                                         key={index}
                                         className="h-24 w-24 flex-shrink-0 bg-gray-200 shadow-md sm:overflow-hidden sm:rounded-lg lg:h-36 lg:w-full"
                                     >
@@ -375,10 +378,10 @@ export default function ProductDetail() {
                             {selectedImage && reload === false ? (
                                 <img
                                     src={
-                                        selectedImage && selectedImage.thumb_url
+                                        selectedImage && selectedImage
                                     }
                                     alt={
-                                        selectedImage && selectedImage.thumb_url
+                                        selectedImage && selectedImage
                                     }
                                     className="h-full w-full object-fill object-center"
                                 />
@@ -660,6 +663,7 @@ export default function ProductDetail() {
                                 <div className="flex space-x-2">
                                     {product_detail ? (
                                         <button
+
                                             onClick={() =>
                                                 handleAddToCart(userInfo, {
                                                     productId:
@@ -735,7 +739,7 @@ export default function ProductDetail() {
                         </div>
                     </div>
                 </div>
-                <div className="mx-auto max-w-2xl space-y-4 px-4 pb-16 pt-10 sm:px-6 lg:max-w-7xl lg:px-8 lg:pb-24 lg:pt-16">
+                <div className="mx-auto max-w-2xl space-y-4 px-4 pb-16 pt-5 sm:px-6 lg:max-w-7xl lg:px-8 lg:pb-24 lg:pt-5">
                     <h1 className="border-b border-stone-500 py-5 text-4xl font-bold dark:text-white">
                         Mô tả sản phẩm
                     </h1>
@@ -769,7 +773,7 @@ export default function ProductDetail() {
                     <div className="w-full">
                         <ProductList
                             title={'Sản phẩm liên quan'}
-                            products={related_products}
+                            products={related_products.length > 0 ? related_products : []}
                             summary={
                                 'Những sản phẩm cùng danh mục mà bạn có thể quan tâm'
                             }

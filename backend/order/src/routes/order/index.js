@@ -16,10 +16,10 @@ router.post(
   "/findOrderByUserId",
   asynchandler(orderController.findOrderByUserId)
 );
+router.get("/getAllOrder", asynchandler(orderController.getAllOrder));
 router.post(
   "/findOrderByTrackingNumber",
   asynchandler(orderController.findOrderByTrackingNumber)
 );
-
 
 module.exports = router;

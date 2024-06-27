@@ -325,14 +325,15 @@ const PromotionAdd = () => {
     console.log(promotionInputData)
 
     try {
-      const image = new FormData()
-      image.append("file", data.special_offer_image[0])
-      image.append("folderName", "outrunner/images/promotion")
+      if (data.special_offer_image[0]) {
+        const image = new FormData()
+        image.append("file", data.special_offer_image[0])
+        image.append("folderName", "outrunner/images/promotion")
 
+        const uploadImageSingle = await dispatch(upLoadImageSingle(image))
+        promotionInputData.special_offer_image = uploadImageSingle && uploadImageSingle?.payload?.metaData?.thumb_url
 
-      const uploadImageSingle = await dispatch(upLoadImageSingle(image))
-      promotionInputData.special_offer_image = uploadImageSingle && uploadImageSingle?.payload?.metaData?.thumb_url
-
+      }
       const createPromotion = await dispatch(onCreateSpecialOffer({
         special_offer_name: promotionInputData.special_offer_name,
         special_offer_description: promotionInputData.special_offer_description,

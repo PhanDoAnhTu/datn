@@ -16,11 +16,7 @@ export default function ProductList({ title, summary, products, className }) {
     };
 
     const moveNext = () => {
-        if (
-            carousel.current !== null &&
-            carousel.current.offsetWidth * currentIndex <=
-                maxScrollWidth.current
-        ) {
+        if (currentIndex < products.length - 1) {
             setCurrentIndex((prevState) => prevState + 1);
         }
     };
@@ -30,28 +26,26 @@ export default function ProductList({ title, summary, products, className }) {
             return currentIndex <= 0;
         }
 
-        if (direction === 'next' && carousel.current !== null) {
-            return (
-                carousel.current.offsetWidth * currentIndex >=
-                maxScrollWidth.current
-            );
+        if (direction === 'next') {
+            return currentIndex >= products.length - 1;
         }
 
         return false;
     };
 
     useEffect(() => {
-        if (carousel !== null && carousel.current !== null) {
+        if (carousel.current !== null) {
             carousel.current.scrollLeft =
                 carousel.current.offsetWidth * currentIndex;
         }
     }, [currentIndex]);
 
     useEffect(() => {
-        maxScrollWidth.current = carousel.current
-            ? carousel.current.scrollWidth - carousel.current.offsetWidth
-            : 0;
-    }, []);
+        if (carousel.current !== null) {
+            maxScrollWidth.current =
+                carousel.current.scrollWidth - carousel.current.offsetWidth;
+        }
+    }, [products, currentIndex]);
 
     return (
         <div

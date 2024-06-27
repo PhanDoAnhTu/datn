@@ -31,7 +31,7 @@ class CheckoutService {
         products: item_products,
       },
     });
-    // console.log('checkProductServer', checkProductServer)
+     console.log('checkProductServer', checkProductServer)
     if (!checkProductServer[0])
       throw new errorResponse.BadRequestError("order wrong");
     //tong don hang
@@ -56,6 +56,7 @@ class CheckoutService {
         date: Date.now(),
       },
     });
+    console.log("checkDateNow",checkDateNow)
     if (checkDateNow) {
       checkProductServer.forEach((prod) => {
         const spu_sale = checkDateNow.special_offer_spu_list.find(

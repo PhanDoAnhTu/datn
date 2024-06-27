@@ -102,8 +102,7 @@ export const getCategory = (value) => {
 export const getStatusColor = (status) => {
   switch (status) {
     default:
-    case "approved":
-    case "shipped":
+    case "shipping":
       return "accent";
     case "pending":
       return "badge-status-bg";
@@ -111,7 +110,8 @@ export const getStatusColor = (status) => {
       return "green";
     case "cancelled":
       return "red";
-    case "rejected":
+    case "review":
+      return "green";
     case "refunded":
       return "badge-status-bg";
   }

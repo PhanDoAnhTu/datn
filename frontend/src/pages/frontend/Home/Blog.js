@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { getListPosts } from '../../../store/actions/post-actions';
 import moment from 'moment';
 import 'moment/locale/vi';
+import Skeleton from 'react-loading-skeleton';
 
 export default function Blog() {
     const dispatch = useDispatch();
@@ -31,41 +32,52 @@ export default function Blog() {
                         <ArrowRightIcon className="h-5 w-5" />
                     </Link>
                 </div>
-                <div className="flex  flex-nowrap overflow-hidden py-5 max-sm:flex-col max-sm:space-y-3 sm:mt-8 sm:space-x-2 sm:pt-4 md:space-x-3 lg:mx-0 lg:max-w-none lg:flex-row dark:border-gray-500">
-                    {all_posts?.map((item, index) => {
-                        if (index !== 3) {
-                            return (
-                                <Link
-                                    to={`/bai-viet/${item.post_slug}`}
-                                    key={item._id}
-                                    className={`all-ease group relative flex h-56 w-full snap-start flex-col justify-between overflow-hidden rounded-md p-3 shadow-md transition duration-200`}
-                                >
-                                    <img
-                                        src={item.post_image}
-                                        className="absolute left-0 top-0 h-full w-full object-cover object-center brightness-75 transition duration-500 ease-out group-hover:brightness-50"
-                                    />
-                                    <div className="z-10 flex items-center gap-x-4 text-xs">
-                                        <time className="text-gray-300 dark:text-stone-300">
-                                            {moment()
-                                                .locale('vi')
-                                                .format('DD MMMM YYYY')}
-                                        </time>
-                                    </div>
-                                    <div className="group relative transition duration-500 ease-out">
-                                        <p className="mt-5 line-clamp-3 text-justify text-sm leading-6 text-gray-300 opacity-0 group-hover:opacity-100 dark:text-gray-100">
-                                            {item.post_short_description}
-                                        </p>
-                                        <h3 className="mt-3 text-xl font-semibold leading-6 text-white transition duration-200 ease-out">
-                                            <div>
-                                                <span className="absolute inset-0" />
-                                                {item.post_title}
-                                            </div>
-                                        </h3>
-                                    </div>
-                                </Link>
-                            );
-                        }
-                    })}
+                <div className="flex flex-nowrap overflow-hidden py-5 max-sm:flex-col max-sm:space-y-3 sm:mt-2 sm:space-x-2 sm:pt-4 md:space-x-3 lg:mx-0 lg:max-w-none lg:flex-row dark:border-gray-500">
+                    {all_posts
+                        ? all_posts?.map((item, index) => {
+                              if (index < 3) {
+                                  return (
+                                      <Link
+                                          to={`/bai-viet/${item.post_slug}`}
+                                          key={item._id}
+                                          className={`all-ease group relative flex h-56 w-full snap-start flex-col justify-between overflow-hidden rounded-md p-3 shadow-md transition duration-200`}
+                                      >
+                                          <img
+                                              src={item.post_image}
+                                              className="absolute left-0 top-0 h-full w-full object-cover object-center brightness-75 transition duration-500 ease-out group-hover:brightness-50"
+                                          />
+                                          <div className="z-10 flex items-center gap-x-4 text-xs">
+                                              <time className="text-gray-300 dark:text-stone-300">
+                                                  {moment()
+                                                      .locale('vi')
+                                                      .format('DD MMMM YYYY')}
+                                              </time>
+                                          </div>
+                                          <div className="group relative transition duration-500 ease-out">
+                                              <p className="mt-5 line-clamp-3 text-justify text-sm leading-6 text-gray-300 opacity-0 group-hover:opacity-100 dark:text-gray-100">
+                                                  {item.post_short_description}
+                                              </p>
+                                              <h3 className="mt-3 text-xl font-semibold leading-6 text-white transition duration-200 ease-out">
+                                                  <div>
+                                                      <span className="absolute inset-0" />
+                                                      {item.post_title}
+                                                  </div>
+                                              </h3>
+                                          </div>
+                                      </Link>
+                                  );
+                              }
+                          })
+                        : [0, 1, 2].map((item, index) => {
+                              return (
+                                  <Skeleton
+                                      count={1}
+                                      key={index}
+                                      containerClassName="w-full h-56"
+                                      height={'100%'}
+                                  />
+                              );
+                          })}
                 </div>
             </div>
         </div>

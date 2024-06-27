@@ -3,22 +3,26 @@ import Spring from "@components/Spring";
 import { toast } from "react-toastify";
 
 // hooks
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import emailjs from "@emailjs/browser";
 // utils
 import classNames from "classnames";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   findOneContact,
   updateOneContact,
 } from "../store/actions/contact-actions";
 import { useNavigate } from "react-router-dom";
+import { Editor } from "@tinymce/tinymce-react";
+import { useTheme } from "@contexts/themeContext";
 
 const ContactResponsing = ({ id }) => {
   const [data, setData] = useState(null);
   const navigate = useNavigate();
+  const editorRef = useRef(null);
+  const { theme } = useTheme();
   const defaultValues = {
     customer_content: "",
     customer_title: "",
@@ -36,6 +40,7 @@ const ContactResponsing = ({ id }) => {
     handleSubmit,
     setValue,
     watch,
+    control,
     formState: { errors },
   } = useForm({
     defaultResponses: defaultResponses,
@@ -63,6 +68,8 @@ const ContactResponsing = ({ id }) => {
   const contact_content = watch("customer_content");
   const contact_email = watch("customer_email");
   const contact_fullname = watch("customer_name");
+
+  const content = watch("content");
 
   // do something with the data
   const handlePublish = async (data) => {
@@ -155,10 +162,30 @@ const ContactResponsing = ({ id }) => {
                 <label className="field-label" htmlFor="customer_content">
                   Nội dung
                 </label>
-                <textarea
-                  className={`field-input !h-[160px] !py-[15px] !overflow-y-auto`}
-                  id="customer_content"
+                <Editor
+                  key={theme}
+                  apiKey="b6ic198ke2qcqbou4w6gx76a7tz5fx69qmclac76acprbgt4"
                   value={contact_content}
+                  init={{
+                    plugins:
+                      "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown",
+                    toolbar: false,
+                    menubar: false,
+                    statusbar: false,
+                    tinycomments_mode: "embedded",
+                    tinycomments_author: "Author name",
+                    mergetags_list: [
+                      {
+                        value: "First.Name",
+                        title: "First Name",
+                      },
+                      { value: "Email", title: "Email" },
+                    ],
+                    content_css: theme === "dark" ? "dark" : "default",
+                    skin: theme === "dark" ? "oxide-dark" : "oxide",
+                    icons: "material",
+                    language: "vi",
+                  }}
                   disabled
                 />
               </div>
@@ -206,14 +233,40 @@ const ContactResponsing = ({ id }) => {
                 <label className="field-label" htmlFor="content">
                   Nội dung
                 </label>
-                <textarea
-                  className={classNames(
-                    `field-input !h-[180px] !py-[15px] !overflow-y-auto`,
-                    { "field-input--error": errors.content }
+
+                <Controller
+                  name="content"
+                  control={control}
+                  rules={{ required: true }}
+                  defaultValue={defaultValues.content}
+                  render={({ field }) => (
+                    <Editor
+                      key={theme}
+                      apiKey="b6ic198ke2qcqbou4w6gx76a7tz5fx69qmclac76acprbgt4"
+                      value={content}
+                      ref={editorRef}
+                      init={{
+                        plugins:
+                          "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown",
+                        toolbar:
+                          "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
+                        tinycomments_mode: "embedded",
+                        tinycomments_author: "Author name",
+                        mergetags_list: [
+                          {
+                            value: "First.Name",
+                            title: "First Name",
+                          },
+                          { value: "Email", title: "Email" },
+                        ],
+                        content_css: theme === "dark" ? "dark" : "default",
+                        skin: theme === "dark" ? "oxide-dark" : "oxide",
+                        icons: "material",
+                        language: "vi",
+                      }}
+                      onEditorChange={field.onChange}
+                    />
                   )}
-                  id="content"
-                  defaultValue={defaultResponses.content}
-                  {...register("content", { required: true })}
                 />
               </div>
             </div>

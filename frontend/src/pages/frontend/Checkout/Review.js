@@ -259,7 +259,7 @@ export default function Review({
                                                             </p>
                                                         </div>
                                                         <div className="mt-1 text-sm text-gray-500 transition-colors duration-200 ease-out dark:text-gray-300">
-                                                            {product.product_option.map(
+                                                            {product?.product_option?.map(
                                                                 (
                                                                     option,
                                                                     index

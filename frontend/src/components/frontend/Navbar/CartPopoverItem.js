@@ -125,8 +125,8 @@ export default function CartPopoverItem({
             selected_sku._id.toString() !== selected_sku_old._id.toString() &&
             updateCart('updateItemSkuV2', {
                 productId: product.productId,
-                sku_id: selected_sku._id,
-                sku_id_old: selected_sku_old._id,
+                sku_id: selected_sku?._id,
+                sku_id_old: selected_sku_old?._id,
                 quantity: _quantity,
             }) &
             checkbox('variation', {
@@ -305,10 +305,62 @@ export default function CartPopoverItem({
                             )
                         )
                     ) : (
-                        <input
-                            type="checkbox"
-                            className="border-0 px-2 py-2 shadow-sm checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
-                        />
+                        selected_list.some(
+                            ({ productId }) => productId == product_item?.spu_info?._id
+                        ) == true ? (
+                            product_item && (
+                                <input
+                                    checked={true}
+                                    onChange={() =>
+                                        changeCheckbox(false, {
+                                            sku_id: null,
+                                            quantity: _quantity,
+                                            productId: product_item?.spu_info?._id,
+                                            price: price,
+                                            price_sale: sku_sale ? sku_sale.price_sale : null,
+                                            product_name:
+                                                product_item?.spu_info
+                                                    ?.product_name,
+                                            product_image:
+                                                product_item?.spu_info
+                                                    ?.product_thumb,
+                                            product_slug_id: `${product_item?.spu_info?.product_slug}-${product_item?.spu_info?._id}`,
+                                            product_variation: null,
+                                            product_option: null,
+                                        })
+                                    }
+                                    type="checkbox"
+                                    className="border-0 px-2 py-2 shadow-sm checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
+                                />
+                            )
+                        ) : (
+                            product_item && (
+                                <input
+                                    checked={false}
+                                    onChange={() =>
+                                        changeCheckbox(true, {
+                                            sku_id: null,
+                                            quantity: _quantity,
+                                            productId: product_item.spu_info._id,
+                                            price: price,
+                                            price_sale: sku_sale ? sku_sale.price_sale : null,
+
+                                            product_name:
+                                                product_item?.spu_info
+                                                    ?.product_name,
+                                            product_image:
+                                                product_item?.spu_info
+                                                    ?.product_thumb,
+                                            product_slug_id: `${product_item?.spu_info?.product_slug}-${product_item?.spu_info?._id}`,
+                                            product_variation: null,
+                                            product_option: null
+                                        })
+                                    }
+                                    type="checkbox"
+                                    className="border-0 px-2 py-2 shadow-sm checked:bg-magenta-500 checked:hover:bg-magenta-400 focus:border-0 focus:ring-0 checked:focus:bg-magenta-400"
+                                />
+                            )
+                        )
                     )}
                 </div>
             </div>
@@ -523,12 +575,12 @@ export default function CartPopoverItem({
                                         productId: product.productId,
                                         quantity: _quantity - 1,
                                         old_quantity: _quantity,
-                                        sku_id: selected_sku._id,
+                                        sku_id: selected_sku?._id,
                                     });
                                     changeQuantitySkuFromCart({
                                         productId: product.productId,
                                         quantity: _quantity - 1,
-                                        sku_id: selected_sku._id,
+                                        sku_id: selected_sku?._id,
                                         price: price,
                                         price_sale: sku_sale ? sku_sale.price_sale : null,
                                         product_name:
@@ -561,12 +613,12 @@ export default function CartPopoverItem({
                                         productId: product.productId,
                                         quantity: _quantity + 1,
                                         old_quantity: _quantity,
-                                        sku_id: selected_sku._id,
+                                        sku_id: selected_sku?._id,
                                     });
                                     changeQuantitySkuFromCart({
                                         productId: product?.productId,
                                         quantity: _quantity + 1,
-                                        sku_id: selected_sku._id,
+                                        sku_id: selected_sku?._id,
                                         price: price,
                                         price_sale: sku_sale ? sku_sale.price_sale : null,
 
@@ -577,7 +629,7 @@ export default function CartPopoverItem({
                                             product_item?.spu_info
                                                 ?.product_thumb,
                                         product_slug_id: `${product_item?.spu_info?.product_slug}-${product_item?.spu_info?._id}`,
-                                        product_variation: selected,
+                                        product_variation: selected ? selected : null,
                                         product_option:
                                             product_item?.spu_info
                                                 ?.product_variations,

@@ -587,7 +587,8 @@ const checkProductById = async ({ productId }) => {
 const checkProductByServer = async ({ products }) => {
   return await Promise.all(
     products.map(async (product) => {
-      if (product.sku_id) {
+      if (product?.sku_id !== null && product?.sku_id !== undefined) {
+        console.log("1")
         const foundSku = await oneSku({
           product_id: product.productId,
           sku_id: product.sku_id,
@@ -604,7 +605,7 @@ const checkProductByServer = async ({ products }) => {
         }
       } else {
         const foundProduct = await spuRepository.getProductById(
-          product.productId
+          { productId: product.productId }
         );
         if (foundProduct) {
           return {
@@ -643,41 +644,41 @@ const findAttributeBySpuId = async ({ spu_id }) => {
     return null;
   }
 };
-const updateQuantityAfterCheckout = async ({ item_products }) => {
-  try {
+// const updateQuantityAfterCheckout = async ({ item_products }) => {
+//   try {
 
-    if (item_products.length > 0) {
-      item_products.map((product) => {
-        if (product) {
+//     if (item_products.length > 0) {
+//       item_products.map((product) => {
+//         if (product) {
 
-        }
-      })
-    }
-    const { productId, quantity, sku_id } = product
-    const query = sku_id ? {
-      cart_userId: userId,
-      'cart_products.sku_id': sku_id,
-      cart_state: 'active'
-    } : {
-      cart_userId: userId,
-      'cart_products.productId': productId,
-      cart_state: 'active'
-    }, updateSet = {
-      $inc: {
-        'cart_products.$.quantity': quantity
-      }
-    }, options = {
-      upsert: true,
-      new: true
-    }
+//         }
+//       })
+//     }
+//     const { productId, quantity, sku_id } = product
+//     const query = sku_id ? {
+//       cart_userId: userId,
+//       'cart_products.sku_id': sku_id,
+//       cart_state: 'active'
+//     } : {
+//       cart_userId: userId,
+//       'cart_products.productId': productId,
+//       cart_state: 'active'
+//     }, updateSet = {
+//       $inc: {
+//         'cart_products.$.quantity': quantity
+//       }
+//     }, options = {
+//       upsert: true,
+//       new: true
+//     }
 
-    await SpuModel.findOneAndUpdate(query, updateSet, options)
+//     await SpuModel.findOneAndUpdate(query, updateSet, options)
 
-  } catch (error) {
-    console.log(`error`);
-    return null;
-  }
-};
+//   } catch (error) {
+//     console.log(`error`);
+//     return null;
+//   }
+// };
 
 const serverRPCRequest = async (payload) => {
   const { type, data } = payload;
