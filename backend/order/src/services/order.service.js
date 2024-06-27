@@ -94,7 +94,7 @@ class CheckoutService {
         return (
           acc +
           product.quantity *
-            (product.price_sale ? product.price_sale : product.price)
+          (product.price_sale ? product.price_sale : product.price)
         );
       },
       0
@@ -201,10 +201,10 @@ class CheckoutService {
 
     const query = { _id: order_id };
     const updateOrInsert = {
-        $set: {
-          order_status: order_status,
-        },
+      $set: {
+        order_status: order_status,
       },
+    },
       options = {
         upsert: true,
         new: true,
@@ -233,23 +233,23 @@ class CheckoutService {
   }
 
   async findOrderByStatus({ order_status }) {
-    const foundOrder = await OrderModel.find({ order_status });
+    const foundOrder = await OrderModel.find({ order_status }).lean();
     return foundOrder;
   }
   async findOrderByStatusAndAroundDay({ order_status, numberDay }) {
     let today = new Date();
     let old_day = get_old_day_of_time(numberDay, today);
     const foundOrder = await OrderModel.find({
-      order_status,
+      order_status: order_status,
       modifiedOn: {
         $lte: old_day,
       },
-    });
+    }).lean();
     return foundOrder;
   }
 
   async getAllOrder() {
-    const foundOrder = await OrderModel.find();
+    const foundOrder = await OrderModel.find().lean();
     return foundOrder;
   }
 
@@ -260,8 +260,7 @@ class CheckoutService {
       case "FIND_ORDER_BY_STATUS":
         return this.findOrderByStatus({ order_status });
       case "FIND_ORDER_BY_STATUS_AND_AROUND_DAY":
-        return this.findOrderByStatus({ order_status, numberDay });
-
+        return this.findOrderByStatusAndAroundDay({ order_status, numberDay });
       default:
         break;
     }

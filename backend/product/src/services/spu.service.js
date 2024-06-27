@@ -542,7 +542,7 @@ const findProductBestSelling = async ({
   const ordersBySuccessful = await RPCRequest("ORDER_RPC", {
     type: "FIND_ORDER_BY_STATUS_AND_AROUND_DAY",
     data: {
-      order_status: "review",
+      order_status: { $in: ["review", "successful"] },
       numberDay: 30,
     },
   });
