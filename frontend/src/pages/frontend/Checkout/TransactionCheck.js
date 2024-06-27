@@ -8,6 +8,9 @@ import {
 } from '../../../store/actions/payment-actions.js';
 import { useNavigate } from 'react-router';
 import DocumentTitle from '../../../components/frontend/DocumentTitle.js';
+import { getSelectedListFromCart } from '../../../utils/localStorage.js';
+import { DeleteToCartItem } from '../../../store/actions/cart-actions.js';
+import { toast } from 'react-toastify';
 
 export default function TransactionCheck() {
     const searchParams = new URLSearchParams(window.location.search);
@@ -15,6 +18,7 @@ export default function TransactionCheck() {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const { status } = useSelector((state) => state.paymentReducer);
+    const { userInfo } = useSelector((state) => state.userReducer)
 
     const dispatch = useDispatch();
 
@@ -43,8 +47,19 @@ export default function TransactionCheck() {
     // &extraData=
     // &signature=bbb84ba6afe4144bf8d783c1591910bea0a38a873fc04ef9a8b85a57b80e4123
 
+    const [selectedProductFromCart] = useState(getSelectedListFromCart);
+
+
+
+    const detetedItemCart = async () => {
+        for (let index = 0; index < selectedProductFromCart.length; index++) {
+            const item = selectedProductFromCart[index];
+            await dispatch(DeleteToCartItem({ userId: userInfo._id, productId: item.productId, sku_id: item.sku_id }))
+        }
+    }
+
+
     useEffect(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
         if (status == null) {
             searchParams.get('orderId') &&
                 dispatch(
@@ -66,16 +81,18 @@ export default function TransactionCheck() {
     }, [status]);
 
     useEffect(() => {
-        if (isLoading === true) {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        // if (isLoading == false) {
+        //     setTimeout(() => {
+        //         setIsLoading(true)
+        //     }, 2000);
+        // }
+        if (isLoading == true) {
             setTimeout(() => {
-                window.location.replace('/');
-            }, 2000);
-        }
-        if (isLoading === false) {
-            setTimeout(() => {
-                // navigate('/');
-                // toast.error('Thanh toán thất bại');
-            }, 10000);
+                detetedItemCart()
+                toast.success("Tạo đơn hàng thành công")
+                navigate('/');
+            }, 2000)
         }
     }, [isLoading]);
 

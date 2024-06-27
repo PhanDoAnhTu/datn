@@ -126,7 +126,7 @@ class DiscountService {
         })
 
         if (!foundDiscount) throw new errorResponse.NotFoundRequestError("discount not found")
-        console.log(foundDiscount)
+        // console.log(foundDiscount)
         const {
             discount_name,
             discount_description,

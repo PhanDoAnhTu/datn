@@ -11,6 +11,7 @@ import {
 } from '@heroicons/react/20/solid';
 import { Listbox, Transition } from '@headlessui/react';
 import { changeQuantitySkuFromCart } from '../../../utils';
+import { useNavigate } from 'react-router';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
@@ -23,6 +24,8 @@ export default function CartPopoverItem({
     selected_list,
 }) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const [product_item, setProductItem] = useState(null);
     const [selected, setSelected] = useState(null);
     const [selected_sku, setSelected_sku] = useState(null);
@@ -314,7 +317,11 @@ export default function CartPopoverItem({
                 <div>
                     <div className="flex justify-between text-base font-medium text-gray-900 transition-colors duration-200 ease-out dark:text-white">
                         <h3>
-                            <a href={''}>
+                            <button onClick={() =>
+                                navigate(
+                                    `/san-pham/${product_item.spu_info.product_slug}-${product_item.spu_info._id}`
+                                )
+                            }>
                                 {product_item &&
                                     (product_item.spu_info.product_name.length >
                                         25
@@ -326,7 +333,7 @@ export default function CartPopoverItem({
                                                 '...'
                                             )
                                         : product_item.spu_info.product_name)}
-                            </a>
+                            </button>
                         </h3>
                         <div className="flex flex-col ">
                             <p className="text-md font-medium text-gray-900 dark:text-white">

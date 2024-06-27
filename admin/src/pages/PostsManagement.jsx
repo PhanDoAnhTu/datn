@@ -1,11 +1,11 @@
 // components
 import PageHeader from "@layout/PageHeader";
 import Search from "@ui/Search";
-import { CSVLink } from "react-csv";
+// import { CSVLink } from "react-csv";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import PostManagementTable from "@widgets/PostsManagementTable";
-import posts_managements from "@db/posts_manangement";
+// import posts_managements from "@db/posts_manangement";
 
 const PostsManagement = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const PostsManagement = () => {
 
   return (
     <>
-      <PageHeader title="Posts Management" />
+      <PageHeader title="Bài viết"/>
       <div className="flex flex-col-reverse gap-4 mb-5 md:flex-col lg:flex-row lg:justify-between">
         <div className="flex flex-col gap-4 md:flex-row md:gap-[14px]">
           <button

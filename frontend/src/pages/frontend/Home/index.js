@@ -19,7 +19,6 @@ export default function Home() {
     const { all_products } = useSelector((state) => state.productReducer);
     const { category } = useSelector((state) => state.categoryReducer);
     const { slider } = useSelector((state) => state.sliderReducer);
-
     const { product_best_selling } = useSelector(
         (state) => state.productReducer
     );
