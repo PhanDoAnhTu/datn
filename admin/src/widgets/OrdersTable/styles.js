@@ -28,6 +28,9 @@ const StyledTable = styled(Table)`
 
   .ant-table-cell {
     border-color: var(--input-border) !important;
+    &:last-child {
+      text-align: right;
+    }
   }
 
   // large desktop
