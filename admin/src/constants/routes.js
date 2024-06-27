@@ -22,31 +22,6 @@ const ROUTES = [
     ],
   },
   {
-    name: "Marketing",
-    icon: "percent-solid",
-    links: [
-      { name: "Mã giảm giá", path: "/discounts-management" },
-      {
-        name: "Chương trình khuyễn mãi",
-        path: "/promotions-management",
-      },
-      { name: "Slider", path: "/sliders-management" },
-    ],
-  },
-  {
-    name: "Bài đăng & Chủ đề",
-    icon: "pen-solid",
-    links: [
-      { name: "Quản lý chủ đề", path: "/topics-management" },
-      { name: "Quản lý bài đăng", path: "/posts-management" },
-    ],
-  },
-  {
-    name: "Quản lý hãng",
-    icon: "shirt-solid",
-    path: "/brands-management",
-  },
-  {
     name: "Sản phẩm",
     icon: "boxes-stacked-regular",
     path: "/products-management",
@@ -57,14 +32,38 @@ const ROUTES = [
     path: "/orders",
   },
   {
-    name: "Hỗ trợ",
-    icon: "envelope-solid",
-    path: "/support",
+    name: "Marketing",
+    icon: "percent-solid",
+    links: [
+      { name: "Mã giảm giá", path: "/discounts-management" },
+      {
+        name: "Chương trình khuyến mãi",
+        path: "/promotions-management",
+      },
+      { name: "Slider", path: "/sliders-management" },
+    ],
   },
   {
-    name: "Customers",
+    name: "Quản lý hãng",
+    icon: "shirt-solid",
+    path: "/brands-management",
+  },
+  {
+    name: "Bài đăng & Chủ đề",
+    icon: "pen-solid",
+    links: [
+      { name: "Quản lý chủ đề", path: "/topics-management" },
+      { name: "Quản lý bài đăng", path: "/posts-management" },
+    ],
+  },
+
+  {
+    name: "Khách hàng",
     icon: "chart-user-regular",
-    path: "/customers",
+    links: [
+      { name: "Quản lý khách hàng", path: "/customers" },
+      { name: "Hỗ trơ", path: "/support" },
+    ],
   },
   {
     name: "Pages",

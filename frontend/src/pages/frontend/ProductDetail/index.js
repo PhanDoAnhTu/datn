@@ -735,7 +735,7 @@ export default function ProductDetail() {
                         </div>
                     </div>
                 </div>
-                <div className="mx-auto max-w-2xl space-y-4 px-4 pb-16 pt-10 sm:px-6 lg:max-w-7xl lg:px-8 lg:pb-24 lg:pt-16">
+                <div className="mx-auto max-w-2xl space-y-4 px-4 pb-16 pt-5 sm:px-6 lg:max-w-7xl lg:px-8 lg:pb-24 lg:pt-5">
                     <h1 className="border-b border-stone-500 py-5 text-4xl font-bold dark:text-white">
                         Mô tả sản phẩm
                     </h1>

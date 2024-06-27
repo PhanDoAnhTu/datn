@@ -1,19 +1,95 @@
 // components
 import PageHeader from "@layout/PageHeader";
 import CalendarSelector from "@components/CalendarSelector";
-import Select from "@ui/Select";
 import OrdersInfobox from "@components/OrdersInfobox";
 import OrdersTable from "@widgets/OrdersTable";
 
 // hooks
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // constants
-import { PRODUCT_CATEGORIES, ORDER_SORT_OPTIONS } from "@constants/options";
+import { useDispatch } from "react-redux";
+import { getAllOrder } from "../store/actions/order-actions";
+import FilterItem from "@ui/FilterItem";
+import dayjs from "dayjs";
 
 const Orders = () => {
-  const [category, setCategory] = useState(PRODUCT_CATEGORIES[0]);
-  const [sort, setSort] = useState(ORDER_SORT_OPTIONS[0]);
+  const dispatch = useDispatch();
+  const [data, setData] = useState([]);
+  const [og_data, setOGData] = useState([]);
+  const [all_data, setAllData] = useState([]);
+  const [range, setRange] = useState([dayjs().subtract(1, "month"), dayjs()]);
+
+  const fetchData = async () => {
+    const result = await dispatch(getAllOrder({}));
+    if (result) {
+      setData(result.payload.metaData);
+      setAllData(result.payload.metaData);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    setOGData(
+      all_data
+        ?.slice()
+        .filter(
+          (item) =>
+            dayjs(item.createdOn).isBefore(range[1].$d) &&
+            dayjs(item.createdOn).isAfter(range[0].$d)
+        )
+    );
+  }, [range, all_data]);
+
+  useEffect(() => {
+    setCategory("all");
+    setData(og_data);
+  }, [og_data]);
+
+  const [category, setCategory] = useState("all");
+
+  const getQty = (category) => {
+    if (category === "all") return og_data.length;
+    if (category === "confirmed")
+      return og_data?.filter((order) => order.order_status === "confirmed")
+        .length;
+    if (category === "pending")
+      return og_data?.filter((order) => order.order_status === "pending")
+        .length;
+    if (category === "successful")
+      return og_data?.filter(
+        (order) =>
+          order.order_status === "successful" || order.order_status === "review"
+      ).length;
+    if (category === "shipping")
+      return og_data?.filter((order) => order.order_status === "shipping")
+        .length;
+    if (category === "cancelled")
+      return og_data?.filter((order) => order.order_status === "cancelled")
+        .length;
+  };
+
+  useEffect(() => {
+    if (category === "all") setData(og_data);
+    if (category === "confirmed")
+      setData(og_data?.filter((order) => order.order_status === "confirmed"));
+    if (category === "pending")
+      setData(og_data?.filter((order) => order.order_status === "pending"));
+    if (category === "successful")
+      setData(
+        og_data?.filter(
+          (order) =>
+            order.order_status === "successful" ||
+            order.order_status === "review"
+        )
+      );
+    if (category === "shipping")
+      setData(og_data?.filter((order) => order.order_status === "shipping"));
+    if (category === "cancelled")
+      setData(og_data?.filter((order) => order.order_status === "cancelled"));
+  }, [category]);
 
   return (
     <>
@@ -26,36 +102,81 @@ const Orders = () => {
           <CalendarSelector
             wrapperClass="lg:max-w-[275px] lg:col-span-2 xl:col-span-4"
             id="ordersPeriodSelector"
+            label="Thời gian đặt"
+            onChange={setRange}
+            value={range}
           />
         </div>
         <div className="w-full widgets-grid grid-cols-1 xl:grid-cols-4">
           <div className="widgets-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:col-span-4">
             <OrdersInfobox
-              title="Completed"
-              count={2345}
+              title="đã hoàn thành"
+              count={
+                og_data
+                  ?.slice()
+                  .filter(
+                    (item) =>
+                      item.order_status === "review" ||
+                      item.order_status === "successful"
+                  )?.length
+              }
               icon={<i className="icon-check-to-slot-solid" />}
             />
             <OrdersInfobox
-              title="Confirmed"
-              count={323}
+              title="đã xác nhận"
+              count={
+                og_data
+                  ?.slice()
+                  .filter((item) => item.order_status === "confirmed")?.length
+              }
               color="green"
               icon={<i className="icon-list-check-solid" />}
             />
             <OrdersInfobox
-              title="Canceled"
-              count={17}
+              title="chờ xác nhận"
+              count={
+                og_data
+                  ?.slice()
+                  .filter((item) => item.order_status === "pending")?.length
+              }
+              color="badge-status-bg"
+              icon={<i className="icon-arrows-rotate-regular" />}
+            />
+            <OrdersInfobox
+              title="đã hủy"
+              count={
+                og_data
+                  ?.slice()
+                  .filter((item) => item.order_status === "cancelled")?.length
+              }
               color="red"
               icon={<i className="icon-ban-solid" />}
             />
-            <OrdersInfobox
-              title="Refunded"
-              count={2}
-              color="badge-status-bg"
-              icon={<i className="icon-rotate-left-solid" />}
-            />
           </div>
         </div>
-        <OrdersTable category={category} sort={sort} />
+        <div className="flex flex-wrap gap-2 -mb-5">
+          <span className="text-header">Đơn hàng:</span>
+          <div>
+            {[
+              { value: "all", label: "Tất cả" },
+              { value: "successful", label: "Đã hoàn thành" },
+              { value: "confirmed", label: "Đã xác nhận" },
+              { value: "pending", label: "Chờ xác nhận" },
+              { value: "shipping", label: "Đang giao" },
+              { value: "cancelled", label: "Đã hủy" },
+            ].map((option, index) => (
+              <FilterItem
+                key={`filter-${index}`}
+                text={option.label}
+                value={option.value}
+                qty={getQty(option.value)}
+                active={category}
+                onClick={setCategory}
+              />
+            ))}
+          </div>
+        </div>
+        <OrdersTable category={category} data={data} />
       </div>
     </>
   );

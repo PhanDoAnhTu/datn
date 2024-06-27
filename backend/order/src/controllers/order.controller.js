@@ -26,6 +26,12 @@ class OrderController {
       metaData: await this.service.changeStatusOrderByOrderId(req.body),
     }).send(res);
   };
+  getAllOrder = async (req, res, next) => {
+    return new successResponse.SuccessResponse({
+      message: "getAllOrder success",
+      metaData: await this.service.getAllOrder(req.body),
+    }).send(res);
+  };
   findOrderByUserId = async (req, res, next) => {
     return new successResponse.SuccessResponse({
       message: "getOrderByUserId success",

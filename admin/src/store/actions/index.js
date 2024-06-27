@@ -36,6 +36,8 @@ export const Action = {
   CLEAR_CART_ITEMS: "CLEAR_CART_ITEMS",
   //getdata
   CALL_DATA: "CALL_DATA",
+  //order
+  GET_ALL_ORDER: "GET_ALL_ORDER",
 
   //category
   CATEGORY_ALL: "CATEGORY_ALL",

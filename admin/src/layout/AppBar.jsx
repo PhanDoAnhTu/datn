@@ -72,9 +72,6 @@ const AppBar = () => {
               <i className="icon-bars-solid" />
             </button>
           )}
-          {width >= 768 && (
-            <Search wrapperClass="flex-1 max-w-[1054px] ml-5 mr-auto 4xl:ml-0" />
-          )}
           <div className="flex items-center gap-5 md:ml-5 xl:gap-[26px]">
             {/* <CustomTooltip title={<LocaleMenu active={locale} setActive={setLocale} />}>
                             <button className="w-6 h-6 rounded-full overflow-hidden xl:w-8 xl:h-8"
