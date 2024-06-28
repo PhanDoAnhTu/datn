@@ -13,6 +13,7 @@ router.post('/onChangeStatusSpecialOfferById', asynchandler(specialOfferControll
 router.get('/getAllSpecialOffer', asynchandler(specialOfferController.getAllSpecialOffer))
 router.post('/removeSpecialOfferById', asynchandler(specialOfferController.removeSpecialOfferById))
 router.post('/isTrashPromotion', asynchandler(specialOfferController.isTrashPromotion))
+router.post('/applyPromotion', asynchandler(specialOfferController.applyPromotion))
 
 
 module.exports = router

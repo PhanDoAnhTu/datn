@@ -105,6 +105,12 @@ class spuController {
       metaData: await SpuService.findProductBestSelling(req.body)
     }).send(res)
   }
+  updateQuantityAfterCheckout = async (req, res, next) => {
+    new successResponse.SuccessResponse({
+      message: 'updateQuantityAfterCheckout success',
+      metaData: await SpuService.updateQuantityAfterCheckout(req.body)
+    }).send(res)
+  }
 }
 
 module.exports = new spuController;

@@ -24,5 +24,6 @@ router.post("/spu/AllProductsOption", asynchandler(productController.AllProducts
 router.post("/spu/findProductBestSelling", asynchandler(productController.findProductBestSelling));
 router.post("/spu/OneProductDetail", asynchandler(productController.OneProductDetail));
 router.post("/spu/AllProducts_management", asynchandler(productController.AllProducts_management));
+router.post("/spu/updateQuantityAfterCheckout", asynchandler(productController.updateQuantityAfterCheckout));
 
 module.exports = router;

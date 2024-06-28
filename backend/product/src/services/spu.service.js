@@ -1,6 +1,6 @@
 "use strict";
 const { errorResponse } = require("../core");
-const { SpuModel, Spu_AttributeModel } = require("../database/models");
+const { SpuModel, Spu_AttributeModel, SkuModel } = require("../database/models");
 const {
   addImageBySkuList,
   addImageBySpuId,
@@ -644,41 +644,42 @@ const findAttributeBySpuId = async ({ spu_id }) => {
     return null;
   }
 };
-// const updateQuantityAfterCheckout = async ({ item_products }) => {
-//   try {
 
-//     if (item_products.length > 0) {
-//       item_products.map((product) => {
-//         if (product) {
 
-//         }
-//       })
-//     }
-//     const { productId, quantity, sku_id } = product
-//     const query = sku_id ? {
-//       cart_userId: userId,
-//       'cart_products.sku_id': sku_id,
-//       cart_state: 'active'
-//     } : {
-//       cart_userId: userId,
-//       'cart_products.productId': productId,
-//       cart_state: 'active'
-//     }, updateSet = {
-//       $inc: {
-//         'cart_products.$.quantity': quantity
-//       }
-//     }, options = {
-//       upsert: true,
-//       new: true
-//     }
+const updateQuantityProduct = async ({ productId, quantity }) => {
+  return await SpuModel.updateOne({
+    _id: productId
+  }, {
+    $inc: {
+      product_quantity: -quantity
+    }
+  })
+}
+const updateQuantitySku = async ({ sku_id, quantity }) => {
+  return await SkuModel.updateOne({
+    _id: sku_id
+  }, {
+    $inc: {
+      sku_stock: -quantity
+    }
+  })
+}
 
-//     await SpuModel.findOneAndUpdate(query, updateSet, options)
-
-//   } catch (error) {
-//     console.log(`error`);
-//     return null;
-//   }
-// };
+const updateQuantityAfterCheckout = async ({ item_products }) => {
+  try {
+    if (item_products.length > 0) {
+      item_products.map((product) => {
+        if (product?.sku_id !== null) {
+          updateQuantitySku({ sku_id: product.sku_id, quantity: product.quantity })
+        }
+        updateQuantityProduct({ productId: product.productId, quantity: product.quantity })
+      })
+    }
+  } catch (error) {
+    console.log(`error`);
+    return null;
+  }
+};
 
 const serverRPCRequest = async (payload) => {
   const { type, data } = payload;
@@ -688,6 +689,8 @@ const serverRPCRequest = async (payload) => {
       return checkProductByServer({ products });
     case "CHECK_PRODUCT_BY_ID":
       return checkProductById({ productId });
+    case "UPDATE_QUANTITY_AFTER_CHECKOUT":
+      return updateQuantityAfterCheckout({ item_products });
     default:
       break;
   }
@@ -713,4 +716,5 @@ module.exports = {
   isTrashProduct,
   OneProductDetail,
   AllProducts_management,
+  updateQuantityAfterCheckout
 };

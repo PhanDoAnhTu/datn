@@ -91,11 +91,6 @@ const PromotionAdd = () => {
             optionsString += `${variation?.options[foundSKU.sku_tier_idx[index]]}, `
             return
           })
-          // const option1 =
-          //   productInfo.product_variations[0]?.options[foundSKU.sku_tier_idx[0]];
-          // const option2 =
-          //   productInfo.product_variations[1]?.options[foundSKU.sku_tier_idx[1]];
-
           return {
             sku_id: foundSKU._id,
             sku_name: capitalize(optionsString),
@@ -104,7 +99,7 @@ const PromotionAdd = () => {
             sku_stock: foundSKU.sku_stock,
             price_sale: foundSKU.sku_price,
             percentage: 0,
-            quantity: 0,
+            quantity: foundSKU.sku_stock > 0 ? 1 : 0,
             quantity_sold: 0,
             is_active: false,
           };
@@ -118,7 +113,7 @@ const PromotionAdd = () => {
         is_Apply_To_ALl: false,
         price_sale: productInfo.product_price,
         percentage: 0,
-        quantity: 0,
+        quantity: productInfo.product_quantity > 0 ? 1 : 0,
         quantity_sold: 0,
         is_active: false,
         sku_list: updatedSKU,
@@ -300,9 +295,9 @@ const PromotionAdd = () => {
     setValue("special_offer_spu_list", updatedProducts);
   };
 
-  useEffect(() => {
-    console.log(product_ids);
-  }, [product_ids]);
+  // useEffect(() => {
+  //   console.log(product_ids);
+  // }, [product_ids]);
 
   const removeProductFromList = async (e, index) => {
     e.preventDefault();
@@ -508,7 +503,7 @@ const PromotionAdd = () => {
                         Sô lượng khuyến mãi
                       </label>
                       <input
-                        disabled={isDisablePriceApplyToAll}
+                        disabled={item.sku_list.length > 0 ? isDisablePriceApplyToAll : !isDisablePriceApplyToAll}
                         className={"field-input"}
                         id={`quantity-${item.quantity}`}
                         value={item.quantity}
@@ -532,7 +527,7 @@ const PromotionAdd = () => {
                         phần trăm giảm (%)
                       </label>
                       <input
-                        disabled={isDisablePriceApplyToAll}
+                        disabled={item.sku_list.length > 0 ? isDisablePriceApplyToAll : !isDisablePriceApplyToAll}
                         className={"field-input"}
                         id={`percentage-${item.product_id}`}
                         value={item.percentage}
@@ -555,7 +550,7 @@ const PromotionAdd = () => {
                         Giá sau giảm (đ)
                       </label>
                       <input
-                        disabled={isDisablePriceApplyToAll}
+                        disabled={item.sku_list.length > 0 ? isDisablePriceApplyToAll : !isDisablePriceApplyToAll}
                         className={"field-input"}
                         id={`price-sale-${item.product_id}`}
                         value={item.price_sale}

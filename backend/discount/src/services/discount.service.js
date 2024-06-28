@@ -192,6 +192,24 @@ class DiscountService {
             totalCheckout: totalOrder - amount
         }
     }
+    async applyDiscountCode({ discount_code, userId }) {
+        const foundDiscount = await DiscountModel.findOne({ discount_code })
+        if (!foundDiscount) {
+            throw new errorResponse.ForbiddenRequestError('Discount exists')
+        }
+        const result = await DiscountModel.findByIdAndUpdate(
+            foundDiscount._id, {
+            $push: {
+                discount_users_used: userId
+            },
+            $inc: {
+                discount_max_uses: -1,
+                discount_uses_count: +1
+            }
+        })
+        return result
+    }
+
 
     //xoa discount
     async deleteDiscountCode({ codeId }) {
@@ -201,13 +219,8 @@ class DiscountService {
         return deleted
     }
     //cancel 
-    async cancelDiscountCode({ codeId, userId }) {
-        const foundDiscount = await discountRepository.checkDiscountExists({
-            model: DiscountModel,
-            filter: {
-                discount_code: codeId
-            }
-        })
+    async cancelDiscountCode({ discount_code, userId }) {
+        const foundDiscount = await DiscountModel.findOne({ discount_code })
         if (!foundDiscount) {
             throw new errorResponse.ForbiddenRequestError('Discount exists')
         }
@@ -230,6 +243,9 @@ class DiscountService {
         switch (type) {
             case "GET_DISCOUNT_AMOUNT":
                 return this.getDiscountAmount({ codeId, userId, products })
+            case "APPLY_DISCOUNT_CODE":
+                return this.applyDiscountCode({ discount_code, userId })
+
             default:
                 break;
         }

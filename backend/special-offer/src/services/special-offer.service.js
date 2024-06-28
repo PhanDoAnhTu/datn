@@ -135,6 +135,47 @@ class SpecialOfferService {
         if (special.isPublished == true) throw new errorResponse.ForbiddenRequestError("active using")
         return await SpecialOfferModel.deleteOne({ _id: special_offer_id })
     }
+
+    async updateQuantityProduct({ promotion_id, productId, quantity }) {
+        return await SpecialOfferModel.updateOne({
+            _id: promotion_id,
+            "special_offer_spu_list.product_id": productId
+        }, {
+            $inc: {
+                "special_offer_spu_list.$.product_stock": -quantity,
+                "special_offer_spu_list.$.quantity": -quantity,
+                "special_offer_spu_list.$.quantity_sold": +quantity
+            }
+        })
+    }
+    async updateQuantitySku({ promotion_id, productId, sku_id, quantity }) {
+        return await SpecialOfferModel.findOneAndUpdate({
+            _id: promotion_id,
+            "special_offer_spu_list.product_id": productId,
+            "sku_id": sku_id
+        }, {
+            $inc: {
+                "sku_list.$.sku_stock": -quantity,
+                "sku_list.$.quantity": -quantity,
+                "sku_list.$.quantity_sold": +quantity
+            }
+        })
+    }
+    async applyPromotion({ promotion_id, item_products }) {
+        try {
+            if (item_products.length > 0) {
+                item_products.map((product) => {
+                    if (product?.sku_id !== null) {
+                        return this.updateQuantitySku({ promotion_id, productId: product.productId, sku_id: product.sku_id, quantity: product.quantity })
+                    }
+                    this.updateQuantityProduct({ promotion_id, productId: product.productId, quantity: product.quantity })
+                })
+            }
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
     async serverRPCRequest(payload) {
         const { type, data } = payload;
         const { special_offer_is_active, date, spu_id_list, spu_id } = data

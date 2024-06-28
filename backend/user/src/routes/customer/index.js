@@ -13,6 +13,10 @@ router.get(
   "/getNameAndAvatarCustomer",
   asynchandler(customerController.getNameAndAvatarCustomer)
 );
+router.post(
+  "/findCustomerById",
+  asynchandler(customerController.findCustomerById)
+);
 
 ///authentication
 router.use(authentication);
@@ -35,9 +39,6 @@ router.post(
   "/updateCustomerStatus",
   asynchandler(customerController.updateCustomerStatus)
 );
-router.post(
-  "/findCustomerById",
-  asynchandler(customerController.findCustomerById)
-);
+
 
 module.exports = router;
