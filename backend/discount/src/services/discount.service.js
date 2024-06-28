@@ -239,7 +239,7 @@ class DiscountService {
 
     async serverRPCRequest(payload) {
         const { type, data } = payload;
-        const { codeId, userId, products } = data
+        const { codeId, userId, products, discount_code } = data
         switch (type) {
             case "GET_DISCOUNT_AMOUNT":
                 return this.getDiscountAmount({ codeId, userId, products })

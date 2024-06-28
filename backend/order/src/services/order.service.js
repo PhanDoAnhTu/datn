@@ -31,7 +31,7 @@ class CheckoutService {
         products: item_products,
       },
     });
-     console.log('checkProductServer', checkProductServer)
+    console.log('checkProductServer', checkProductServer)
     if (!checkProductServer[0])
       throw new errorResponse.BadRequestError("order wrong");
     //tong don hang
@@ -56,7 +56,7 @@ class CheckoutService {
         date: Date.now(),
       },
     });
-    console.log("checkDateNow",checkDateNow)
+    console.log("checkDateNow", checkDateNow)
     if (checkDateNow) {
       checkProductServer.forEach((prod) => {
         const spu_sale = checkDateNow.special_offer_spu_list.find(
@@ -180,10 +180,29 @@ class CheckoutService {
       order_payment: user_payment,
       order_trackingNumber: order_trackingNumber,
     });
-    //neu them thanh cong remove pro co trong gio hanag
-    // if(){
 
-    // }
+    // const updateProduct = await RPCRequest("SPU_RPC", {
+    //   type: "UPDATE_QUANTITY_AFTER_CHECKOUT",
+    //   data: {
+    //     item_products: order_ids_new.item_products
+    //   },
+    // });
+    // const updatePromotion = await RPCRequest("SPECIAL_OFFER_RPC", {
+    //   type: "APPLY_PROMOTION",
+    //   data: {
+    //     promotion_id: order_ids_new.shop_discounts.codeId,
+    //     item_products: order_ids_new.item_products.filter((item) => item.price_sale)
+    //   },
+    // });
+    // const updateDiscount = await RPCRequest("DISCOUNT_RPC", {
+    //   type: "APPLY_DISCOUNT_CODE",
+    //   data: {
+    //     discount_code: order_ids_new.shop_discounts.codeId,
+    //     userId: userId
+    //   },
+    // });
+
+
     return newOrder;
   }
 

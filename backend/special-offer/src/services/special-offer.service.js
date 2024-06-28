@@ -144,33 +144,45 @@ class SpecialOfferService {
             $inc: {
                 "special_offer_spu_list.$.product_stock": -quantity,
                 "special_offer_spu_list.$.quantity": -quantity,
-                "special_offer_spu_list.$.quantity_sold": +quantity
+                "special_offer_spu_list.$.quantity_sold": quantity
             }
         })
     }
-    async updateQuantitySku({ promotion_id, productId, sku_id, quantity }) {
-        return await SpecialOfferModel.findOneAndUpdate({
+    async updateQuantitySku({ promotion_id, productId, sku_id, _quantity }) {
+
+        const promotion = await SpecialOfferModel.findOne({
             _id: promotion_id,
             "special_offer_spu_list.product_id": productId,
-            "sku_id": sku_id
-        }, {
-            $inc: {
-                "sku_list.$.sku_stock": -quantity,
-                "sku_list.$.quantity": -quantity,
-                "sku_list.$.quantity_sold": +quantity
-            }
+            "special_offer_spu_list.sku_list.sku_id": sku_id,
         })
+        const a = promotion.special_offer_spu_list.find((prod) => prod.product_id === productId)
+        const b = a.sku_list.map((sku) => {
+            if (sku.sku_id === sku_id) {
+                let sku_stock_old = sku.sku_stock
+                let quantity_old = sku.quantity
+                let quantity_sold_old = sku.quantity_sold
+                const { sku_stock, quantity, quantity_sold, ...skuNew } = sku
+                return { ...skuNew, sku_stock: sku_stock_old - _quantity, quantity: quantity_old - _quantity, quantity_sold: quantity_sold_old + _quantity }
+            }
+            return sku
+        })
+        const c = promotion.special_offer_spu_list.flatMap((prod) => prod.product_id)
+        const d = c.indexOf(productId)
+        promotion.special_offer_spu_list[d].sku_list = b
+
+        return await promotion.updateOne(promotion)
     }
     async applyPromotion({ promotion_id, item_products }) {
         try {
             if (item_products.length > 0) {
-                item_products.map((product) => {
+                item_products.map(async (product) => {
                     if (product?.sku_id !== null) {
-                        return this.updateQuantitySku({ promotion_id, productId: product.productId, sku_id: product.sku_id, quantity: product.quantity })
+                        await this.updateQuantitySku({ promotion_id, productId: product.productId, sku_id: product.sku_id, _quantity: product.quantity })
                     }
-                    this.updateQuantityProduct({ promotion_id, productId: product.productId, quantity: product.quantity })
+                    await this.updateQuantityProduct({ promotion_id, productId: product.productId, quantity: product.quantity })
                 })
             }
+            return true
         } catch (error) {
             console.log(error);
             return null;
@@ -186,6 +198,8 @@ class SpecialOfferService {
             //     return this.findSpecialOfferTodayBySpuIdList({ spu_id_list, special_offer_is_active })
             case "FIND_SPECIAL_OFFER_TODAY_BY_ID":
                 return this.findSpecialOfferBySpuId({ spu_id, special_offer_is_active })
+            case "APPLY_PROMOTION":
+                return this.applyPromotion({ promotion_id, item_products })
 
             default:
                 break;
