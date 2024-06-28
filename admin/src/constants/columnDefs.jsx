@@ -149,9 +149,9 @@ export const CUSTOMERS_COLUMN_DEFS = [
         {status === "pending"
           ? "Chờ xác nhận"
           : status === "active"
-          ? "Đang hoạt động"
+          ? "Hoạt động"
           : status === "block"
-          ? "Không hoạt động"
+          ? "Bị cấm"
           : ""}
       </span>
     ),

@@ -29,7 +29,6 @@ const DetailCustomer = ({ id }) => {
     name: "",
     email: "",
     phone: "",
-    createdOn: "",
     date_of_birth: "",
     gender: "",
     avatar: "",
@@ -44,11 +43,10 @@ const DetailCustomer = ({ id }) => {
     defaultValues: defaultValues,
   });
 
-  const name = watch("name");
   const email = watch("email");
   const phone = watch("phone");
-  const createdOn = watch("createdOn");
   const date_of_birth = watch("date_of_birth");
+  const gender = watch("gender");
   const avatar = watch("avatar");
 
   useEffect(() => {
@@ -67,13 +65,39 @@ const DetailCustomer = ({ id }) => {
   }, [id]);
 
   useEffect(() => {
-    setValue("email", customer && customer?.order_shipping.ship_to.email);
-    setValue("name", customer && customer?.order_shipping.ship_to.name);
-    setValue("address", customer && customer?.order_shipping.ship_to.address);
-    setValue("phone", customer && customer?.order_shipping.ship_to.phone);
+    setValue("email", customer && customer?.customer_email);
+    setValue("name", customer && customer?.customer_name);
     setValue(
-      "createdOn",
-      customer && dayjs(customer?.createdOn).format("hh:mmA DD/MM/YYYY")
+      "avatar",
+      customer
+        ? customer?.customer_avatar
+          ? customer?.customer_avatar
+          : "https://www.glopol.org/wp-content/uploads/2021/01/user-empty-avatar.png"
+        : "https://www.glopol.org/wp-content/uploads/2021/01/user-empty-avatar.png"
+    );
+    setValue(
+      "phone",
+      customer
+        ? customer?.customer_phone
+          ? customer?.customer_phone
+          : "Chưa đặt"
+        : "Chưa đặt"
+    );
+    setValue(
+      "date_of_birth",
+      customer
+        ? customer?.customer_date_of_birth
+          ? dayjs(customer?.customer_date_of_birth).format("DD/MM/YYYY")
+          : "Chưa đặt"
+        : "Chưa đặt"
+    );
+    setValue(
+      "gender",
+      customer
+        ? customer?.customer_sex
+          ? customer?.customer_sex
+          : "Chưa đặt"
+        : "Chưa đặt"
     );
   }, [customer]);
 
@@ -88,17 +112,17 @@ const DetailCustomer = ({ id }) => {
       );
       if (result) {
         toast.update(signal, {
-          render: "Thay đổi tình trạng đơn hàng thành công",
+          render: "Gỡ bỏ cấm người dùng thành công",
           type: "success",
           isLoading: false,
           closeOnClick: true,
           autoClose: 3000,
         });
-        navigate("/orders");
+        navigate("/customers");
       }
     } catch (error) {
       toast.update(id, {
-        render: "Thay đổi tình trạng đơn hàng không thành công",
+        render: "Gỡ bỏ cấm người dùng không thành công",
         type: "error",
         isLoading: false,
         closeOnClick: true,
@@ -118,17 +142,17 @@ const DetailCustomer = ({ id }) => {
       );
       if (result) {
         toast.update(signal, {
-          render: "Hủy đơn hàng thành công",
+          render: "Cấm người dùng thành công",
           type: "success",
           isLoading: false,
           closeOnClick: true,
           autoClose: 3000,
         });
-        navigate("/orders");
+        navigate("/customers");
       }
     } catch (error) {
       toast.update(id, {
-        render: "Hủy đơn hàng không thành công",
+        render: "Cấm người dùng không thành công",
         type: "error",
         isLoading: false,
         closeOnClick: true,
@@ -147,10 +171,10 @@ const DetailCustomer = ({ id }) => {
               <img
                 className="relative rounded-full w-[110px] h-[110px]"
                 src={avatar}
-                alt="Maria Smith"
+                alt={customer && customer?.customer_name}
               />
             </div>
-            <h4>Anh Tu</h4>
+            <h4>{customer && customer?.customer_name}</h4>
           </div>
 
           <div className="grid grid-cols-1 sm:col-span-3 gap-y-4 gap-x-2">
@@ -188,33 +212,33 @@ const DetailCustomer = ({ id }) => {
                   />
                 </div>
                 <div className="field-wrapper">
-                  <label className="field-label" htmlFor="createdOn">
+                  <label className="field-label" htmlFor="date_of_birth">
                     Ngày sinh
                   </label>
                   <input
                     className={classNames("field-input", {
-                      "field-input--error": errors.createdOn,
+                      "field-input--error": errors.date_of_birth,
                     })}
-                    id="createdOn"
-                    value={createdOn}
-                    defaultValue={defaultValues.createdOn}
+                    id="date_of_birth"
+                    value={date_of_birth}
+                    defaultValue={defaultValues.date_of_birth}
                     disabled
-                    {...register("createdOn", { required: true })}
+                    {...register("date_of_birth", { required: true })}
                   />
                 </div>
                 <div className="field-wrapper">
-                  <label className="field-label" htmlFor="createdOn">
+                  <label className="field-label" htmlFor="gender">
                     Giới tính
                   </label>
                   <input
                     className={classNames("field-input", {
-                      "field-input--error": errors.createdOn,
+                      "field-input--error": errors.gender,
                     })}
-                    id="createdOn"
-                    value={createdOn}
-                    defaultValue={defaultValues.createdOn}
+                    id="gender"
+                    value={gender}
+                    defaultValue={defaultValues.gender}
                     disabled
-                    {...register("createdOn", { required: true })}
+                    {...register("gender", { required: true })}
                   />
                 </div>
               </div>
@@ -226,7 +250,7 @@ const DetailCustomer = ({ id }) => {
             >
               {!isDelete ? (
                 <>
-                  {customer && customer?.customer_status !== "active" ? (
+                  {customer && customer?.customer_status === "active" ? (
                     <button
                       className="btn btn--outline red"
                       onClick={() => setIsDelete(true)}
@@ -236,12 +260,38 @@ const DetailCustomer = ({ id }) => {
                   ) : (
                     ""
                   )}
-                  {customer && customer?.customer_status === "pending" ? (
+                </>
+              ) : (
+                <>
+                  {customer && customer?.customer_status === "active" ? (
+                    <>
+                      {" "}
+                      <button
+                        className="btn btn--outline green"
+                        onClick={() => setIsDelete(false)}
+                      >
+                        Hủy bỏ
+                      </button>
+                      <button
+                        className="btn btn--outline red"
+                        onClick={handleCancel}
+                      >
+                        Xác nhận cấm người dùng này
+                      </button>
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </>
+              )}
+              {!isDelete ? (
+                <>
+                  {customer && customer?.customer_status === "block" ? (
                     <button
-                      className="btn btn--primary"
-                      onClick={handleConfirm}
+                      className="btn btn--outline red"
+                      onClick={() => setIsDelete(true)}
                     >
-                      Xác nhận đơn hàng
+                      Gỡ bỏ cấm người dùng
                     </button>
                   ) : (
                     ""
@@ -249,18 +299,24 @@ const DetailCustomer = ({ id }) => {
                 </>
               ) : (
                 <>
-                  <button
-                    className="btn btn--outline green"
-                    onClick={() => setIsDelete(false)}
-                  >
-                    Hủy bỏ
-                  </button>
-                  <button
-                    className="btn btn--outline red"
-                    onClick={handleCancel}
-                  >
-                    Xác nhận cấm người dùng này
-                  </button>
+                  {customer && customer?.customer_status === "block" ? (
+                    <>
+                      <button
+                        className="btn btn--outline green"
+                        onClick={() => setIsDelete(false)}
+                      >
+                        Hủy bỏ
+                      </button>
+                      <button
+                        className="btn btn--outline red"
+                        onClick={handleConfirm}
+                      >
+                        Xác nhận gỡ bỏ cấm người dùng này
+                      </button>
+                    </>
+                  ) : (
+                    ""
+                  )}
                 </>
               )}
             </div>
@@ -270,7 +326,11 @@ const DetailCustomer = ({ id }) => {
       <Spring className="flex-1 py-10">
         <h5 className="mb-[14px]">Lịch sử đặt hàng</h5>
         <div className="grid grid-cols-1 items-start gap-5 xl:gap-10">
-          <OrdersTable data={orders} />
+          <OrdersTable
+            data={orders?.sort((a, b) =>
+              dayjs(a.createdOn).isAfter(dayjs(b.createdOn)) ? -1 : 1
+            )}
+          />
         </div>
       </Spring>
     </>

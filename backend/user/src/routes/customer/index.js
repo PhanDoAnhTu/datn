@@ -17,6 +17,10 @@ router.post(
   "/findCustomerById",
   asynchandler(customerController.findCustomerById)
 );
+router.post(
+  "/updateCustomerStatus",
+  asynchandler(customerController.updateCustomerStatus)
+);
 
 ///authentication
 router.use(authentication);
@@ -35,10 +39,5 @@ router.post("/resetPassword", asynchandler(customerController.resetPassword));
 router.post("/verifyOtp", asynchandler(customerController.verifyOtp));
 router.post("/changePassword", asynchandler(customerController.changePassword));
 router.post("/checkPassword", asynchandler(customerController.checkPassword));
-router.post(
-  "/updateCustomerStatus",
-  asynchandler(customerController.updateCustomerStatus)
-);
-
 
 module.exports = router;

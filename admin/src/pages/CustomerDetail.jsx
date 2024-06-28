@@ -2,7 +2,6 @@
 
 import PageHeader from "@layout/PageHeader";
 import DetailCustomer from "@widgets/DetailCustomer";
-import DetailOrder from "@widgets/DetailOrder";
 import { useParams } from "react-router-dom";
 
 const CustomerDetail = () => {
