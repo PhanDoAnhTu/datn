@@ -42,3 +42,16 @@ export const changeStatusOrderByOrderId = (data) => async (dispatch) => {
     console.log(err);
   }
 };
+
+export const findOrderByUserId = (data) => async (dispatch) => {
+  try {
+    const response = await PostData("/order/v1/order/findOrderByUserId", data);
+    console.log("response:", response);
+    return dispatch({
+      type: Action.FIND_ORDER_BY_CUSTOMER_ID,
+      payload: response.data,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};

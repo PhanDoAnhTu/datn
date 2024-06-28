@@ -85,6 +85,7 @@ const SliderNew = lazy(() => import("@pages/NewSlider"));
 const SliderEdit = lazy(() => import("@pages/EditSlider"));
 const SliderDetail = lazy(() => import("@pages/DetailSlider"));
 const OrderDetail = lazy(() => import("@pages/OrderDetail"));
+const CustomerDetail = lazy(() => import("@pages/CustomerDetail"));
 
 const MenusManagement = lazy(() => import("@pages/MenusManagement"));
 const NewMenu = lazy(() => import("@pages/NewMenu"));
@@ -237,6 +238,10 @@ const App = () => {
                   <Route path="statistics" element={<Statistics />} />
                   <Route path="reviews" element={<Reviews />} />
                   <Route path="customers" element={<Customers />} />
+                  <Route
+                    path="customer-detail/:id"
+                    element={<CustomerDetail />}
+                  />
                   <Route path="transactions" element={<Transactions />} />
                   <Route
                     path="general-settings"

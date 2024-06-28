@@ -7,7 +7,7 @@ import Trend from "@ui/Trend";
 import Counter from "@components/Counter";
 
 // utils
-import { getCategory, getStatusColor, numFormatter } from "@utils/helpers";
+import { getStatusColor, numFormatter } from "@utils/helpers";
 import dayjs from "dayjs";
 import Actions from "@components/Actions";
 import EditBtn from "@components/EditBtn";
@@ -79,6 +79,90 @@ export const ORDERS_COLUMN_DEFS = [
       <div className="flex items-center justify-end gap-11">
         <NavLink
           to={`/order-detail/${record.order_trackingNumber}`}
+          className="btn btn--social"
+          aria-label="Edit"
+        >
+          <i className="icon icon-eye-regular text-lg leading-none" /> Chi tiết
+        </NavLink>
+      </div>
+    ),
+  },
+];
+
+export const CUSTOMERS_COLUMN_DEFS = [
+  {
+    title: "Khách hàng",
+    dataIndex: "customer_name",
+    width: "250px",
+    render: (text) => <span className="subheading-2">{text}</span>,
+  },
+
+  {
+    title: "Số điện thoại",
+    dataIndex: "customer_phone",
+    render: (customer_phone) => (
+      <div className="flex flex-col">
+        <span className="font-heading font-bold text-header">
+          {customer_phone ? customer_phone : "Chưa cập nhật"}
+        </span>
+      </div>
+    ),
+  },
+  {
+    title: "Giới tính",
+    dataIndex: "customer_sex",
+    render: (customer_sex) => (
+      <div className="flex flex-col">
+        <span className="font-heading font-bold text-header">
+          {customer_sex ? customer_sex : "Chưa cập nhật"}
+        </span>
+      </div>
+    ),
+    responsive: ["lg"],
+  },
+  {
+    title: "Ngày tạo",
+    dataIndex: "createdAt",
+    render: (date) => (
+      <div>
+        <span className="font-bold text-header">
+          {date && dayjs(date).format("hh:mm DD/MM/YYYY")
+            ? dayjs().diff(dayjs(date), "minute") < 60
+              ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
+              : dayjs().diff(dayjs(date), "hour") < 24
+              ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+              : dayjs(date).format("hh:mmA DD/MM/YYYY")
+            : ""}
+        </span>
+      </div>
+    ),
+    responsive: ["lg"],
+  },
+  {
+    title: "Tình trạng tài khoản",
+    dataIndex: "customer_status",
+    render: (status) => (
+      <span
+        className="badge-status badge-status--lg"
+        style={{ backgroundColor: `var(--${getStatusColor(status)})` }}
+      >
+        {status === "pending"
+          ? "Chờ xác nhận"
+          : status === "active"
+          ? "Đang hoạt động"
+          : status === "block"
+          ? "Không hoạt động"
+          : ""}
+      </span>
+    ),
+  },
+  {
+    title: "Chức năng",
+    dataIndex: "actions",
+    render: (text, record) => (
+      <div className="flex items-center justify-end gap-11">
+        <NavLink
+          to={`/customer-detail/${record._id}`}
           className="btn btn--social"
           aria-label="Edit"
         >

@@ -114,5 +114,9 @@ export const getStatusColor = (status) => {
       return "green";
     case "refunded":
       return "badge-status-bg";
+    case "active":
+      return "green";
+    case "block":
+      return "red";
   }
 };
