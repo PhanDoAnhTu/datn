@@ -10,20 +10,23 @@ import classNames from "classnames";
 import Select from "@ui/Select";
 import MediaDropPlaceholder from "@ui/MediaDropPlaceholder";
 import DropFiles from "@components/DropFiles";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
-  createPost,
   getListTopic,
   getOnePost,
   updateOnePost,
 } from "../store/actions/blog-actions";
 import { upLoadImageSingle } from "../store/actions/upload-actions";
+import { Editor } from "@tinymce/tinymce-react";
+import { useTheme } from "@contexts/themeContext";
 
 const PostEdit = ({ id }) => {
   const dispatch = useDispatch();
+  const { theme } = useTheme();
   const [data, setData] = useState({});
   const [topics_management, setTopicsManagement] = useState([]);
+  const editorRef = useRef(null);
   const defaultValues = {
     content: "",
     postTitle: "",
@@ -46,7 +49,6 @@ const PostEdit = ({ id }) => {
   const post_title = watch("postTitle");
   const post_content = watch("content");
   const post_short_description = watch("summary");
-  const post_topic = watch("topic");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -204,15 +206,41 @@ const PostEdit = ({ id }) => {
               <label className="field-label" htmlFor="content">
                 Nội dung
               </label>
-              <textarea
-                className={classNames(
-                  `field-input !h-[180px] !py-[15px] !overflow-y-auto`,
-                  { "field-input--error": errors.content }
-                )}
-                id="content"
-                value={post_content}
+              <Controller
+                name="content"
+                control={control}
+                rules={{ required: true }}
                 defaultValue={defaultValues.content}
-                {...register("content", { required: true })}
+                render={({ field }) => (
+                  <Editor
+                    key={theme}
+                    apiKey="b6ic198ke2qcqbou4w6gx76a7tz5fx69qmclac76acprbgt4"
+                    value={post_content}
+                    ref={editorRef}
+                    init={{
+                      plugins:
+                        "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown",
+                      toolbar:
+                        "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
+                      tinycomments_mode: "embedded",
+                      tinycomments_author: "Author name",
+                      extended_valid_elements:
+                        "iframe[src|frameborder|style|scrolling|class|width|height|name|align]",
+                      mergetags_list: [
+                        {
+                          value: "First.Name",
+                          title: "First Name",
+                        },
+                        { value: "Email", title: "Email" },
+                      ],
+                      content_css: theme === "dark" ? "dark" : "default",
+                      skin: theme === "dark" ? "oxide-dark" : "oxide",
+                      icons: "material",
+                      language: "vi",
+                    }}
+                    onEditorChange={field.onChange}
+                  />
+                )}
               />
             </div>
           </div>

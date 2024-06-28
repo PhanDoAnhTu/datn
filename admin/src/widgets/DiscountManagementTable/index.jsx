@@ -17,10 +17,15 @@ import { ADDITIONAL_OPTIONS, SELECT_OPTIONS } from "@constants/options";
 import discounts_manangement from "@db/discounts_managements";
 import { Switch } from "antd";
 import Actions from "@components/Actions";
-import { changeIsActiveDiscount, onGetAllDiscount, isTrashDiscount } from "../../store/actions";
+import {
+  changeIsActiveDiscount,
+  onGetAllDiscount,
+  isTrashDiscount,
+} from "../../store/actions";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
+import { NumericFormat } from "react-number-format";
 
 // data placeholder
 
@@ -45,6 +50,42 @@ const DiscountManagementTable = () => {
       ),
     },
     {
+      title: "Giảm ",
+      dataIndex: "discount_applies_to",
+      render: (text, record) => (
+        <span className="inline-block h6 !text-sm max-w-[150px]">
+          {record.discount_type === "fixed_amount" ? (
+            <NumericFormat
+              value={record.discount_value}
+              displayType="text"
+              thousandSeparator={true}
+              decimalScale={0}
+              id="price"
+              suffix={"đ"}
+            />
+          ) : (
+            record.discount_value + "%"
+          )}
+        </span>
+      ),
+    },
+    {
+      title: "Giảm tối đa",
+      dataIndex: "discount_applies_to",
+      render: (text, record) => (
+        <span className="inline-block h6 !text-sm max-w-[150px]">
+          <NumericFormat
+            value={record.discount_max_value}
+            displayType="text"
+            thousandSeparator={true}
+            decimalScale={0}
+            id="price"
+            suffix={"đ"}
+          />
+        </span>
+      ),
+    },
+    {
       title: "Áp dụng với",
       dataIndex: "discount_applies_to",
       render: (discount_applies_to) => (
@@ -56,7 +97,7 @@ const DiscountManagementTable = () => {
       ),
     },
     {
-      title: "Số lượng đã dùng",
+      title: "Đã dùng",
       dataIndex: "discount_uses_count",
       render: (discount_uses_count) => (
         <span className="inline-block h6 !text-sm max-w-[50px]">
@@ -72,18 +113,23 @@ const DiscountManagementTable = () => {
         <div>
           <div className="font-bold text-header">
             Bắt đầu:{" "}
-            {record && dayjs(record.discount_start_date).format("hh:mm DD/MM/YYYY")
+            {record && dayjs(record.discount_start_date).format("DD/MM/YYYY")
               ? dayjs().diff(dayjs(record.discount_start_date), "minute") < 60
-                ? `${dayjs().diff(dayjs(record.discount_start_date), "minute")} phút trước`
+                ? `${dayjs().diff(
+                    dayjs(record.discount_start_date),
+                    "minute"
+                  )} phút trước`
                 : dayjs().diff(dayjs(record.discount_start_date), "hour") < 24
-                  ? `${dayjs().diff(dayjs(record.discount_start_date), "hour")} giờ trước`
-                  : dayjs(record.discount_start_date).format("hh:mmA DD/MM/YYYY")
+                ? `${dayjs().diff(
+                    dayjs(record.discount_start_date),
+                    "hour"
+                  )} giờ trước`
+                : dayjs(record.discount_start_date).format("DD/MM/YYYY")
               : ""}
           </div>
           <div className="font-bold text-header">
             Kết thúc:{" "}
             {dayjs(record?.special_offer_end_date).format("DD/MM/YYYY")}
-
           </div>
         </div>
       ),
@@ -94,23 +140,23 @@ const DiscountManagementTable = () => {
       dataIndex: "isPublished",
       render: (status, record) => (
         <div>
-          {
-            record.isDeleted === false
-              ? <Switch
-                checkedChildren={"ON"}
-                unCheckedChildren={"OFF"}
-                onChange={(e) => handleChangeStatus(e, record?._id)}
-                loading={false}
-                checked={record?.isPublished}
-              />
-              : <Switch
-                disabled
-                checkedChildren={"ON"}
-                unCheckedChildren={"OFF"}
-                loading={false}
-                checked={false}
-              />
-          }
+          {record.isDeleted === false ? (
+            <Switch
+              checkedChildren={"ON"}
+              unCheckedChildren={"OFF"}
+              onChange={(e) => handleChangeStatus(e, record?._id)}
+              loading={false}
+              checked={record?.isPublished}
+            />
+          ) : (
+            <Switch
+              disabled
+              checkedChildren={"ON"}
+              unCheckedChildren={"OFF"}
+              loading={false}
+              checked={false}
+            />
+          )}
         </div>
       ),
     },
@@ -120,7 +166,16 @@ const DiscountManagementTable = () => {
       render: (text, record) => {
         return (
           <div className="flex items-center justify-end gap-11">
-            <Actions record={record} table={"Promotion"} handleTrash={() => record.isDeleted === true ? onRemovePromotion(record._id, false) : onRemovePromotion(record._id, true)} />
+            <button
+              className={`btn btn--social ${record.isDeleted ? "blue" : "red"}`}
+              onClick={() => onRemovePromotion(record._id, !record.isDeleted)}
+            >
+              {record.isDeleted ? (
+                <i className="icon icon-rotate-left-solid" />
+              ) : (
+                <i className="icon icon-trash-regular" />
+              )}
+            </button>
           </div>
         );
       },
@@ -128,7 +183,7 @@ const DiscountManagementTable = () => {
   ];
 
   const { width } = useWindowSize();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const defaultSort = {
     sortBy: ADDITIONAL_OPTIONS[0],
     sortOrder: SELECT_OPTIONS[0],
@@ -138,8 +193,6 @@ const DiscountManagementTable = () => {
   const [category, setCategory] = useState("all");
   const [sorts, setSorts] = useState(defaultSort);
   const [activeCollapse, setActiveCollapse] = useState("");
-
-
 
   const [isLoad, setIsLoad] = useState(false);
 
@@ -155,11 +208,14 @@ const DiscountManagementTable = () => {
   }, [isLoad]);
 
   const getQty = (category) => {
-    if (category === "all") return data.filter((product) => product.isDeleted === false).length;
-    if (category === "isPublished") return data.filter((product) => product.isPublished === true).length;
-    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true).length;
-    if (category === "isDraft") return data.filter((product) => product.isPublished === false).length;
-
+    if (category === "all")
+      return data.filter((product) => product.isDeleted === false).length;
+    if (category === "isPublished")
+      return data.filter((product) => product.isPublished === true).length;
+    if (category === "isDeleted")
+      return data.filter((product) => product.isDeleted === true).length;
+    if (category === "isDraft")
+      return data.filter((product) => product.isPublished === false).length;
   };
 
   const handleSortChange = ({ value, label }, name) => {
@@ -179,8 +235,8 @@ const DiscountManagementTable = () => {
                 ? 1
                 : -1
               : a.discount_name.toLowerCase() < b.discount_name.toLowerCase()
-                ? 1
-                : -1
+              ? 1
+              : -1
           )
       );
     }
@@ -196,8 +252,8 @@ const DiscountManagementTable = () => {
                 : -1
               : new Date(a.discount_start_date) >
                 new Date(b.discount_start_date)
-                ? 1
-                : -1
+              ? 1
+              : -1
           )
       );
     }
@@ -211,8 +267,8 @@ const DiscountManagementTable = () => {
                 ? 1
                 : -1
               : new Date(a.discount_end_date) > new Date(b.discount_end_date)
-                ? 1
-                : -1
+              ? 1
+              : -1
           )
       );
     }
@@ -226,8 +282,8 @@ const DiscountManagementTable = () => {
                 ? -1
                 : 1
               : a.discount_uses_count > b.discount_uses_count
-                ? -1
-                : 1
+              ? -1
+              : 1
           )
       );
     }
@@ -235,11 +291,14 @@ const DiscountManagementTable = () => {
   }, [sorts.sortBy.value, sorts.sortOrder.value]);
 
   const dataByStatus = (category) => {
-    if (category === "all") return data.filter((product) => product.isDeleted === false);
-    if (category === "isPublished") return data.filter((product) => product.isPublished === true);
-    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true);
-    if (category === "isDraft") return data.filter((product) => product.isPublished === false);
-
+    if (category === "all")
+      return data.filter((product) => product.isDeleted === false);
+    if (category === "isPublished")
+      return data.filter((product) => product.isPublished === true);
+    if (category === "isDeleted")
+      return data.filter((product) => product.isDeleted === true);
+    if (category === "isDraft")
+      return data.filter((product) => product.isPublished === false);
   };
 
   const pagination = usePagination(dataByStatus(category), 8);
@@ -267,8 +326,7 @@ const DiscountManagementTable = () => {
     );
     if (changeStatus?.payload?.status === (200 || 201)) {
       toast.update(id, {
-        render: `Mã giảm giá đã được ${e === false ? "tắt" : "áp dụng"
-          }`,
+        render: `Mã giảm giá đã được ${e === false ? "tắt" : "áp dụng"}`,
         type: "success",
         isLoading: false,
         closeOnClick: true,
@@ -295,7 +353,9 @@ const DiscountManagementTable = () => {
       (changeStatus?.payload?.metaData?.nModified === 1)
     ) {
       toast.update(id, {
-        render: `Mã giảm giá này vào thùng rác`,
+        render: isDeleted
+          ? `Mã giảm giá này vào thùng rác`
+          : `Khôi phục mã giảm giá thành công`,
         type: "success",
         isLoading: false,
         closeOnClick: true,
@@ -365,7 +425,7 @@ const DiscountManagementTable = () => {
             dataSource={pagination.currentItems()}
             rowKey={(record) => record.discount_code}
             locale={{
-              emptyText: <Empty text="No products found" />,
+              emptyText: <Empty text="Không có dữ liệu để hiển thị" />,
             }}
             rowSelection={{
               type: "checkbox",

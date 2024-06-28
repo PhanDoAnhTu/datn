@@ -13,63 +13,117 @@ import classNames from "classnames";
 // import categories_management from "@db/categories_management";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { createCategory, findAllCategory } from "../store/actions";
+import {
+  findAllCategory,
+  findCategoryById,
+  updateOneCategory,
+} from "../store/actions/category-action";
+import { upLoadImageSingle } from "../store/actions/upload-actions";
 
 const CategoryEdit = ({ item }) => {
-  const dispatch = useDispatch()
-  const [categories_management, setCategoriesManagement] = useState([])
-  const [categories_options, setCategories_options] = useState([])
+  const dispatch = useDispatch();
+  const [categories_management, setCategoriesManagement] = useState([]);
+  const [categories_options, setCategories_options] = useState([]);
+  const [data, setData] = useState(null);
 
   const fetchDataCategory = async () => {
-    const allCategory = await dispatch(findAllCategory())
-    setCategoriesManagement(allCategory?.payload?.metaData)
-  }
+    const allCategory = await dispatch(findAllCategory());
+    setCategoriesManagement(allCategory?.payload?.metaData);
+    const category = await dispatch(findCategoryById({ category_id: item }));
+    if (category) {
+      setData(category.payload.metaData);
+    }
+  };
   useEffect(() => {
-    fetchDataCategory()
-  }, [])
+    fetchDataCategory();
+  }, []);
   useEffect(() => {
-    setCategories_options(categories_management?.map((item) => ({
-      value: item._id,
-      label: item.category_name,
-    })))
-  }, [categories_management])
-
-  const productDescription = `Ut tortor ex, pellentesque nec volutpat vel, congue eu nibh. Sed posuere ipsum ut ornare ultrices. Aliquam condimentum ultricies lacinia. Aenean ac dolor mauris. Curabitur cursus mi ac urna vestibulum consectetur. Praesent vulputate eleifend ipsum at ultrices. Proin sed elementum diam, in ullamcorper risus`;
+    setCategories_options(
+      categories_management?.map((item) => ({
+        value: item._id,
+        label: item.category_name,
+      }))
+    );
+  }, [categories_management]);
 
   const defaultValues = {
-    image1: item ? item.category_image : undefined,
-    description: item ? item.category_description : productDescription,
-    categoryName: item ? item.category_name : "",
-    category: item
-      ? categories_options[
-      categories_management.findIndex(
-        (category) => category._id === item.category_parent_id
-      )
-      ]
-      : { value: null, label: "Không có" },
+    image1: "",
+    description: "",
+    categoryName: "",
+    category: "",
   };
   const {
     register,
     handleSubmit,
     watch,
     control,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: defaultValues,
   });
 
+  useEffect(() => {
+    setValue("description", data && data.category_description);
+    setValue("categoryName", data && data.category_name);
+    setValue(
+      "category",
+      data
+        ? categories_options
+            ?.slice()
+            .find((item) => item.value === data?.parent_id) !== undefined
+          ? categories_options
+              ?.slice()
+              .find((item) => item.value === data?.parent_id)
+          : { label: "Không có", value: null }
+        : { label: "Không có", value: null }
+    );
+  }, [data]);
+
   const image = watch("image1");
+  const description = watch("description");
+  const categoryName = watch("categoryName");
 
-  // do something with the data
-  const handlePublish = (data) => {
-    console.log(data);
-    toast.success("Product published successfully");
-  };
+  const handlePublish = async (data) => {
+    const signal = toast.loading("Vui lòng chờ...");
+    let imageSingle = null;
+    if (data?.image1?.length > 0) {
+      const image = new FormData();
+      image.append("file", data.image1[0]);
+      image.append("folderName", "outrunner/images/category");
+      const uploadImageSingle = await dispatch(upLoadImageSingle(image));
+      imageSingle =
+        uploadImageSingle && uploadImageSingle?.payload?.metaData?.thumb_url;
+    }
+    const updatedCategory = await dispatch(
+      updateOneCategory({
+        category_id: item,
+        category_name: data.categoryName,
+        category_description: data.description,
+        category_image: imageSingle,
+        parent_id: data.category.value,
+      })
+    );
 
-  // do something with the data
-  const handleSave = (data) => {
-    console.log(data);
-    toast.info("Product saved successfully");
+    // console.log(updatedCategory);
+
+    if (updatedCategory?.payload?.status === (200 || 201)) {
+      toast.update(signal, {
+        render: "Cập nhật danh mục thành công",
+        type: "success",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    } else {
+      toast.update(signal, {
+        render: "Cập nhật danh mục không thành công",
+        type: "error",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
+    }
   };
 
   return (
@@ -104,6 +158,7 @@ const CategoryEdit = ({ item }) => {
               className={classNames("field-input", {
                 "field-input--error": errors.categoryName,
               })}
+              value={categoryName}
               id="categoryName"
               defaultValue={defaultValues.categoryName}
               placeholder="VD: Túi xách, quần áo,..."
@@ -145,6 +200,7 @@ const CategoryEdit = ({ item }) => {
                     `field-input !h-[160px] !py-[15px] !overflow-y-auto`,
                     { "field-input--error": errors.description }
                   )}
+                  value={description}
                   id="description"
                   defaultValue={defaultValues.description}
                   {...register("description", { required: true })}
@@ -157,7 +213,7 @@ const CategoryEdit = ({ item }) => {
               className="btn btn--primary"
               onClick={handleSubmit(handlePublish)}
             >
-              Sửa
+              Cập nhật
             </button>
           </div>
         </div>

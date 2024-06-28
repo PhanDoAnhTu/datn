@@ -40,7 +40,7 @@ export const numFormatter = (num, fractionDigits = 0, prefix = "") => {
 };
 
 export const commaFormatter = (num) => {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
 // grid y-axis or x-axis points generator for recharts

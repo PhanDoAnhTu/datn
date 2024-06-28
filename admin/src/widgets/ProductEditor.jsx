@@ -37,7 +37,6 @@ const ProductEditor = () => {
   const [brand_management, setBrand_management] = useState([]);
   const [brand_options, setBrand_options] = useState([]);
   const { theme } = useTheme();
-  const [temp_description, setTempDescription] = useState();
 
   const fetchCategoriesOnloadPage = async () => {
     const repoCat = await dispact(findAllCategory({ isPublished: true }));

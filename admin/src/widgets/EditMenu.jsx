@@ -81,7 +81,7 @@ const EditMenu = ({ item }) => {
               className="btn btn--primary"
               onClick={handleSubmit(handlePublish)}
             >
-              Xuất bản
+              Cập nhật
             </button>
           </div>
         </div>

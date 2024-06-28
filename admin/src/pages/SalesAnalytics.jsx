@@ -9,9 +9,25 @@ import TotalBalance from "@components/Banners/TotalBalance";
 import { useWindowSize } from "react-use";
 import CustomerRetentionRate from "@widgets/CustomerRetentionRate";
 import DemographicSegmentation from "@widgets/DemographicSegmentation";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { getAllCustomers } from "../store/actions/user-actions";
 
 const SalesAnalytics = () => {
   const { width } = useWindowSize();
+
+  const dispatch = useDispatch();
+
+  const [customers, setCustomers] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await dispatch(getAllCustomers());
+      if (result) {
+        setCustomers(result.payload.metaData);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -31,7 +47,7 @@ const SalesAnalytics = () => {
           <CustomerRetentionRate />
         </div>
         <div className="xl:col-span-2">
-          <DemographicSegmentation />
+          <DemographicSegmentation customers={customers} />
         </div>
       </div>
     </>

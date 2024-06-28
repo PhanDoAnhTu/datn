@@ -35,7 +35,7 @@ const BrandsManagement = () => {
           wrapperClass="lg:w-[326px]"
           query={query}
           setQuery={setQuery}
-          placeholder="Search Brand"
+          placeholder="Tìm hãng"
         />
       </div>
       <BrandManagementTable searchQuery={query} />

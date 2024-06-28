@@ -20,8 +20,7 @@ import {
   onGetAllSpecialOffer,
   onChangeStatusSpecialOfferById,
   removeSpecialOfferById,
-  isTrashPromotion
-
+  isTrashPromotion,
 } from "../../store/actions";
 import { Link } from "react-router-dom";
 import { Switch } from "antd";
@@ -74,23 +73,24 @@ const PromotionMangementTable = () => {
       title: "Hoạt động",
       dataIndex: "status",
       render: (text, record) => (
-        <div>{
-          record.isDeleted === false
-            ? <Switch
+        <div>
+          {record.isDeleted === false ? (
+            <Switch
               checkedChildren={"ON"}
               unCheckedChildren={"OFF"}
               onChange={(e) => handleChangeStatus(e, record?._id)}
               loading={false}
               checked={record?.isPublished}
             />
-            : <Switch
+          ) : (
+            <Switch
               disabled
               checkedChildren={"ON"}
               unCheckedChildren={"OFF"}
               loading={false}
               checked={false}
             />
-        }
+          )}
         </div>
       ),
     },
@@ -100,7 +100,16 @@ const PromotionMangementTable = () => {
       render: (text, record) => {
         return (
           <div className="flex items-center justify-end gap-11">
-            <Actions record={record} table={"Promotion"} handleTrash={() => record.isDeleted === true ? onRemovePromotion(record._id, false) : onRemovePromotion(record._id, true)} />
+            <button
+              className={`btn btn--social ${record.isDeleted ? "blue" : "red"}`}
+              onClick={() => onRemovePromotion(record._id, !record.isDeleted)}
+            >
+              {record.isDeleted ? (
+                <i className="icon icon-rotate-left-solid" />
+              ) : (
+                <i className="icon icon-trash-regular" />
+              )}
+            </button>
           </div>
         );
       },
@@ -142,8 +151,9 @@ const PromotionMangementTable = () => {
     );
     if (changeStatus?.payload?.status === (200 || 201)) {
       toast.update(id, {
-        render: `Chương trình giảm giá đã được ${e === false ? "tắt" : "áp dụng"
-          }`,
+        render: `Chương trình giảm giá đã được ${
+          e === false ? "tắt" : "áp dụng"
+        }`,
         type: "success",
         isLoading: false,
         closeOnClick: true,
@@ -163,14 +173,19 @@ const PromotionMangementTable = () => {
   const onRemovePromotion = async (special_offer_id, isDeleted) => {
     const id = toast.loading("Vui lòng đợi...");
     const changeStatus = await dispatch(
-      isTrashPromotion({ special_offer_id: special_offer_id, isDeleted: isDeleted })
+      isTrashPromotion({
+        special_offer_id: special_offer_id,
+        isDeleted: isDeleted,
+      })
     );
     if (
       (changeStatus?.payload?.status === (200 || 201)) &
       (changeStatus?.payload?.metaData?.nModified === 1)
     ) {
       toast.update(id, {
-        render: `Đã chuyển chương trình giảm giá này vào thùng rác`,
+        render: isDeleted
+          ? `Đã chuyển chương trình giảm giá này vào thùng rác`
+          : `Đã khôi phục chương trình giảm giá này`,
         type: "success",
         isLoading: false,
         closeOnClick: true,
@@ -188,11 +203,14 @@ const PromotionMangementTable = () => {
     setIsLoad(!isLoad);
   };
   const getQty = (category) => {
-    if (category === "all") return data.filter((product) => product.isDeleted === false).length;
-    if (category === "isPublished") return data.filter((product) => product.isPublished === true).length;
-    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true).length;
-    if (category === "isDraft") return data.filter((product) => product.isPublished === false).length;
-
+    if (category === "all")
+      return data.filter((product) => product.isDeleted === false).length;
+    if (category === "isPublished")
+      return data.filter((product) => product.isPublished === true).length;
+    if (category === "isDeleted")
+      return data.filter((product) => product.isDeleted === true).length;
+    if (category === "isDraft")
+      return data.filter((product) => product.isPublished === false).length;
   };
 
   const handleSortChange = ({ value, label }, name) => {
@@ -214,8 +232,8 @@ const PromotionMangementTable = () => {
                 : -1
               : a.special_offer_name.toLowerCase() <
                 b.special_offer_name.toLowerCase()
-                ? 1
-                : -1
+              ? 1
+              : -1
           )
       );
     }
@@ -231,8 +249,8 @@ const PromotionMangementTable = () => {
                 : -1
               : new Date(a.special_offer_start_date) >
                 new Date(b.special_offer_start_date)
-                ? 1
-                : -1
+              ? 1
+              : -1
           )
       );
     }
@@ -248,8 +266,8 @@ const PromotionMangementTable = () => {
                 : -1
               : new Date(a.special_offer_end_date) >
                 new Date(b.special_offer_end_date)
-                ? 1
-                : -1
+              ? 1
+              : -1
           )
       );
     }
@@ -257,11 +275,14 @@ const PromotionMangementTable = () => {
   }, [sorts.sortBy.value, sorts.sortOrder.value]);
 
   const dataByStatus = (category) => {
-    if (category === "all") return data.filter((product) => product.isDeleted === false);
-    if (category === "isPublished") return data.filter((product) => product.isPublished === true);
-    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true);
-    if (category === "isDraft") return data.filter((product) => product.isPublished === false);
-
+    if (category === "all")
+      return data.filter((product) => product.isDeleted === false);
+    if (category === "isPublished")
+      return data.filter((product) => product.isPublished === true);
+    if (category === "isDeleted")
+      return data.filter((product) => product.isDeleted === true);
+    if (category === "isDraft")
+      return data.filter((product) => product.isPublished === false);
   };
 
   const pagination = usePagination(dataByStatus(category), 8);

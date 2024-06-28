@@ -26,12 +26,7 @@ const DiscountsManagement = () => {
           >
             Tạo mã giảm giá <i className="icon-circle-plus-regular" />
           </button>
-
-          <CSVLink className="btn btn--outline blue !h-[44px]" data={csvData}>
-            Xuất Excel <i className="icon-file-export-solid" />
-          </CSVLink>
         </div>
-        <Search wrapperClass="lg:w-[326px]" placeholder="Search Product" />
       </div>
       <DiscountManagementTable />
     </>

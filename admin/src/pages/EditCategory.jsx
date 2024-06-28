@@ -8,10 +8,7 @@ const EditCategory = () => {
   return (
     <>
       <PageHeader title="Sửa danh mục" />
-      <CategoryEdit
-        item={location.state ? location.state.record : ""}
-        title={location.state ? location.state.title : ""}
-      />
+      <CategoryEdit item={location.state ? location.state.record._id : ""} />
     </>
   );
 };

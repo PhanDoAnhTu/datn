@@ -79,14 +79,6 @@ const DetailMenu = ({ item }) => {
               {...register("path", { required: true })}
             />
           </div>
-          <div className="grid gap-2 mt-5 sm:mt-10 md:mt-11">
-            <button
-              className="btn btn--primary"
-              onClick={handleSubmit(handlePublish)}
-            >
-              Xuất bản
-            </button>
-          </div>
         </div>
       </form>
     </Spring>

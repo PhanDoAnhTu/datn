@@ -31,6 +31,18 @@ class CategoryController {
       metaData: await this.service.changeIsPublished(req.body),
     }).send(res);
   };
+  findCategoryById = async (req, res, next) => {
+    new successResponse.SuccessResponse({
+      message: "findCategoryById success",
+      metaData: await this.service.findCategoryById(req.body),
+    }).send(res);
+  };
+  updateOneCategory = async (req, res, next) => {
+    new successResponse.SuccessResponse({
+      message: "updateOneCategory success",
+      metaData: await this.service.updateOneCategory(req.body),
+    }).send(res);
+  };
   isTrashcategory = async (req, res, next) => {
     new successResponse.SuccessResponse({
       message: "isTrashcategory success",

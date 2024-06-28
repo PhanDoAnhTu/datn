@@ -7,7 +7,7 @@ const PostEditing = () => {
   const location = useLocation();
   return (
     <>
-      <PageHeader title="Tạo bài viết" />
+      <PageHeader title="Chỉnh sửa bài viết" />
       <PostEdit id={location.state ? location.state.record._id : ""} />
     </>
   );

@@ -10,13 +10,17 @@ import classNames from "classnames";
 import Select from "@ui/Select";
 import MediaDropPlaceholder from "@ui/MediaDropPlaceholder";
 import DropFiles from "@components/DropFiles";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { createPost, getListTopic } from "../store/actions/blog-actions";
 import { upLoadImageSingle } from "../store/actions/upload-actions";
+import { Editor } from "@tinymce/tinymce-react";
+import { useTheme } from "@contexts/themeContext";
 
 const PostEditor = () => {
   const dispatch = useDispatch();
+
+  const { theme } = useTheme();
   const [topics_management, setTopicsManagement] = useState([]);
   const defaultValues = {
     content: "",
@@ -26,14 +30,18 @@ const PostEditor = () => {
     topic: null,
   };
 
+  const editorRef = useRef(null);
+
   const {
     register,
     control,
+    watch,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: defaultValues,
   });
+  const content = watch("content");
   useEffect(() => {
     const fetchData = async () => {
       const result = await dispatch(getListTopic());
@@ -217,14 +225,39 @@ const PostEditor = () => {
               <label className="field-label" htmlFor="content">
                 Nội dung
               </label>
-              <textarea
-                className={classNames(
-                  `field-input !h-[180px] !py-[15px] !overflow-y-auto`,
-                  { "field-input--error": errors.content }
-                )}
-                id="content"
+              <Controller
+                name="content"
+                control={control}
+                rules={{ required: true }}
                 defaultValue={defaultValues.content}
-                {...register("content", { required: true })}
+                render={({ field }) => (
+                  <Editor
+                    key={theme}
+                    apiKey="b6ic198ke2qcqbou4w6gx76a7tz5fx69qmclac76acprbgt4"
+                    value={content}
+                    ref={editorRef}
+                    init={{
+                      plugins:
+                        "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown",
+                      toolbar:
+                        "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
+                      tinycomments_mode: "embedded",
+                      tinycomments_author: "Author name",
+                      mergetags_list: [
+                        {
+                          value: "First.Name",
+                          title: "First Name",
+                        },
+                        { value: "Email", title: "Email" },
+                      ],
+                      content_css: theme === "dark" ? "dark" : "default",
+                      skin: theme === "dark" ? "oxide-dark" : "oxide",
+                      icons: "material",
+                      language: "vi",
+                    }}
+                    onEditorChange={field.onChange}
+                  />
+                )}
               />
             </div>
           </div>

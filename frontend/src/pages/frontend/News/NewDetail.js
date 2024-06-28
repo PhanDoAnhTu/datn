@@ -7,6 +7,7 @@ import moment from 'moment';
 
 import 'moment/locale/vi';
 import DocumentTitle from '../../../components/frontend/DocumentTitle';
+import parse from 'html-react-parser';
 
 export default function NewDetail() {
     const navigate = useNavigate();
@@ -50,7 +51,7 @@ export default function NewDetail() {
                 </div>
 
                 <div className="p-2 text-justify leading-7 tracking-wide text-gray-900 md:p-5 dark:text-zinc-200">
-                    {current_post?.post.post_content}
+                    {parse(`${current_post?.post.post_content}`)}
                 </div>
             </div>
             <div className="pt-7">

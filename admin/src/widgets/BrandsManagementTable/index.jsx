@@ -12,15 +12,13 @@ import usePagination from "@hooks/usePagination";
 import { useWindowSize } from "react-use";
 
 // constants
-import {
-  MANAGEMENT_OPTIONS,
-  ADDITIONAL_OPTIONS,
-  SELECT_OPTIONS,
-} from "@constants/options";
-import { BRANDS_MANAGEMENT_COLUMN_DEFS } from "@constants/columnDefs";
-import brands_managements from "@db/brands_managements";
+import { ADDITIONAL_OPTIONS, SELECT_OPTIONS } from "@constants/options";
 import { useDispatch } from "react-redux";
-import { findAllBrand, changeIsPublishedBrand, isTrashBrand } from "../../store/actions";
+import {
+  findAllBrand,
+  changeIsPublishedBrand,
+  isTrashBrand,
+} from "../../store/actions";
 import dayjs from "dayjs";
 import Actions from "@components/Actions";
 import { Switch } from "antd";
@@ -61,8 +59,8 @@ const BrandManagementTable = ({ searchQuery }) => {
               ? dayjs().diff(dayjs(date), "minute") < 60
                 ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
                 : dayjs().diff(dayjs(date), "hour") < 24
-                  ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
-                  : dayjs(date).format("hh:mmA DD/MM/YYYY")
+                ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+                : dayjs(date).format("hh:mmA DD/MM/YYYY")
               : ""}
           </span>
         </div>
@@ -79,8 +77,8 @@ const BrandManagementTable = ({ searchQuery }) => {
               ? dayjs().diff(dayjs(date), "minute") < 60
                 ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
                 : dayjs().diff(dayjs(date), "hour") < 24
-                  ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
-                  : dayjs(date).format("hh:mmA DD/MM/YYYY")
+                ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
+                : dayjs(date).format("hh:mmA DD/MM/YYYY")
               : ""}
           </span>
         </div>
@@ -92,23 +90,23 @@ const BrandManagementTable = ({ searchQuery }) => {
       dataIndex: "isPublished",
       render: (status, record) => (
         <div>
-          {
-            record.isDeleted === false
-              ? <Switch
-                checkedChildren={"ON"}
-                unCheckedChildren={"OFF"}
-                onChange={(e) => handleChangeStatus(record?._id, e)}
-                loading={false}
-                value={record?.isPublished}
-              />
-              : <Switch
-                disabled
-                checkedChildren={"ON"}
-                unCheckedChildren={"OFF"}
-                loading={false}
-                checked={false}
-              />
-          }
+          {record.isDeleted === false ? (
+            <Switch
+              checkedChildren={"ON"}
+              unCheckedChildren={"OFF"}
+              onChange={(e) => handleChangeStatus(record?._id, e)}
+              loading={false}
+              value={record?.isPublished}
+            />
+          ) : (
+            <Switch
+              disabled
+              checkedChildren={"ON"}
+              unCheckedChildren={"OFF"}
+              loading={false}
+              checked={false}
+            />
+          )}
         </div>
       ),
     },
@@ -117,42 +115,57 @@ const BrandManagementTable = ({ searchQuery }) => {
       dataIndex: "actions",
       render: (text, record) => (
         <div className="flex items-center justify-end gap-11">
-          <Actions record={record} table={"brand"} handleTrash={() => record.isDeleted === true ? onRemove(record._id, false) : onRemove(record._id, true)} handleDraft={() => handleChangeStatus(record._id, false)} />
+          <Actions
+            record={record}
+            table={"brand"}
+            handleTrash={() =>
+              record.isDeleted === true
+                ? onRemove(record._id, false)
+                : onRemove(record._id, true)
+            }
+            handleDraft={() => handleChangeStatus(record._id, false)}
+          />
         </div>
       ),
     },
   ];
   const { width } = useWindowSize();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const defaultSort = {
     sortBy: ADDITIONAL_OPTIONS[0],
     sortOrder: SELECT_OPTIONS[0],
   };
 
-
-
-
-
-  const [data, setData] = useState(brands_managements);
+  const [data, setData] = useState([]);
+  const [og_data, setOGData] = useState([]);
   const [category, setCategory] = useState("all");
   const [sorts, setSorts] = useState(defaultSort);
   const [activeCollapse, setActiveCollapse] = useState("");
   const [isLoad, setIsLoad] = useState(false);
 
   const fetchDatabrand = async () => {
-    const allBrand = await dispatch(findAllBrand())
-    setData(allBrand?.payload?.metaData)
-  }
+    const allBrand = await dispatch(findAllBrand());
+    setData(allBrand?.payload?.metaData);
+    setOGData(allBrand?.payload?.metaData);
+  };
   useEffect(() => {
-    fetchDatabrand()
-  }, [isLoad])
+    fetchDatabrand();
+  }, [isLoad]);
 
   const getQty = (category) => {
-    if (category === "all") return data.filter((product) => product.isDeleted === false).length;
-    if (category === "isPublished") return data.filter((product) => product.isPublished === true).length;
-    if (category === "UnPublished") return data.filter((product) => product.isPublished === false & product.isDeleted === false).length;
-    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true).length;
-    if (category === "isDraft") return data.filter((product) => product.isDraft === true).length;
+    if (category === "all")
+      return data.filter((product) => product.isDeleted === false).length;
+    if (category === "isPublished")
+      return data.filter((product) => product.isPublished === true).length;
+    if (category === "UnPublished")
+      return data.filter(
+        (product) =>
+          (product.isPublished === false) & (product.isDeleted === false)
+      ).length;
+    if (category === "isDeleted")
+      return data.filter((product) => product.isDeleted === true).length;
+    if (category === "isDraft")
+      return data.filter((product) => product.isDraft === true).length;
   };
 
   const handleSortChange = ({ value, label }, name) => {
@@ -168,12 +181,12 @@ const BrandManagementTable = ({ searchQuery }) => {
           .slice()
           .sort((a, b) =>
             sorts.sortOrder.value === "ascending"
-              ? a.label.toLowerCase() > b.label.toLowerCase()
+              ? a.brand_name.toLowerCase() > b.brand_name.toLowerCase()
                 ? 1
                 : -1
-              : a.label.toLowerCase() < b.label.toLowerCase()
-                ? 1
-                : -1
+              : a.brand_name.toLowerCase() < b.brand_name.toLowerCase()
+              ? 1
+              : -1
           )
       );
     }
@@ -183,12 +196,12 @@ const BrandManagementTable = ({ searchQuery }) => {
           .slice()
           .sort((a, b) =>
             sorts.sortOrder.value === "ascending"
-              ? new Date(a.dateModified) < new Date(b.dateModified)
+              ? new Date(a.updatedAt) < new Date(b.updatedAt)
                 ? 1
                 : -1
-              : new Date(a.dateModified) > new Date(b.dateModified)
-                ? 1
-                : -1
+              : new Date(a.updatedAt) > new Date(b.updatedAt)
+              ? 1
+              : -1
           )
       );
     }
@@ -198,12 +211,12 @@ const BrandManagementTable = ({ searchQuery }) => {
           .slice()
           .sort((a, b) =>
             sorts.sortOrder.value === "ascending"
-              ? new Date(a.dateAdded) < new Date(b.dateAdded)
-                ? 1
-                : -1
-              : new Date(a.dateAdded) > new Date(b.dateAdded)
-                ? 1
-                : -1
+              ? new Date(a.createdAt) < new Date(b.createdAt)
+                ? -1
+                : 1
+              : new Date(a.createdAt) > new Date(b.createdAt)
+              ? -1
+              : 1
           )
       );
     }
@@ -213,22 +226,30 @@ const BrandManagementTable = ({ searchQuery }) => {
   useEffect(() => {
     if (searchQuery !== "") {
       setData(
-        data.filter((item) =>
-          item.label.toLowerCase().includes(searchQuery.toLowerCase())
+        og_data.filter((item) =>
+          item.brand_name.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
     } else {
-      setData(brands_managements);
+      setData(og_data);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const dataByStatus = (category) => {
-    if (category === "all") return data.filter((product) => product.isDeleted === false);
-    if (category === "isPublished") return data.filter((product) => product.isPublished === true);
-    if (category === "UnPublished") return data.filter((product) => product.isPublished === false & product.isDeleted === false);
-    if (category === "isDeleted") return data.filter((product) => product.isDeleted === true);
-    if (category === "isDraft") return data.filter((product) => product.isDraft === true);
+    if (category === "all")
+      return data.filter((product) => product.isDeleted === false);
+    if (category === "isPublished")
+      return data.filter((product) => product.isPublished === true);
+    if (category === "UnPublished")
+      return data.filter(
+        (product) =>
+          (product.isPublished === false) & (product.isDeleted === false)
+      );
+    if (category === "isDeleted")
+      return data.filter((product) => product.isDeleted === true);
+    if (category === "isDraft")
+      return data.filter((product) => product.isDraft === true);
   };
 
   const pagination = usePagination(dataByStatus(category), 8);
@@ -301,17 +322,17 @@ const BrandManagementTable = ({ searchQuery }) => {
     setIsLoad(!isLoad);
   };
 
-
   return (
     <div className="flex flex-col flex-1">
       <div className="flex flex-wrap gap-2 mb-4">
         <span className="text-header">Hãng:</span>
         <div>
-          {[{ value: "all", label: "Tất cả" },
-          { value: "isPublished", label: "Đang hoạt động" },
-          { value: "UnPublished", label: "Không hoạt động" },
-          { value: "isDraft", label: "Bản nháp" },
-          { value: "isDeleted", label: "Thùng rác" },
+          {[
+            { value: "all", label: "Tất cả" },
+            { value: "isPublished", label: "Đang hoạt động" },
+            { value: "UnPublished", label: "Không hoạt động" },
+            { value: "isDraft", label: "Bản nháp" },
+            { value: "isDeleted", label: "Thùng rác" },
           ].map((option, index) => (
             <FilterItem
               key={`filter-${index}`}
@@ -343,31 +364,18 @@ const BrandManagementTable = ({ searchQuery }) => {
         </div>
       </div>
       <div className="flex flex-1 flex-col gap-[22px]">
-        {width >= 768 ? (
-          <StyledTable
-            columns={BRANDS_MANAGEMENT_COLUMN_DEFS}
-            dataSource={pagination.currentItems()}
-            rowKey={(record) => record.id}
-            locale={{
-              emptyText: <Empty text="No products found" />,
-            }}
-            rowSelection={{
-              type: "checkbox",
-            }}
-            pagination={false}
-          />
-        ) : (
-          <div className="flex flex-col gap-5">
-            {pagination.currentItems().map((product, index) => (
-              <ProductManagementCollapseItem
-                key={`product-${index}`}
-                product={product}
-                handleCollapse={handleCollapse}
-                activeCollapse={activeCollapse}
-              />
-            ))}
-          </div>
-        )}
+        <StyledTable
+          columns={BRANDS_MANAGEMENT_COLUMN_DEFS}
+          dataSource={pagination.currentItems()}
+          rowKey={(record) => record.id}
+          locale={{
+            emptyText: <Empty text="Không có dữ liệu để hiển thị" />,
+          }}
+          rowSelection={{
+            type: "checkbox",
+          }}
+          pagination={false}
+        />
         {pagination.maxPage > 1 && <Pagination pagination={pagination} />}
       </div>
     </div>

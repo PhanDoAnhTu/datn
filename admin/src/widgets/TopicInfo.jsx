@@ -116,8 +116,8 @@ const TopicInfo = ({ item }) => {
               className="btn btn--secondary"
               onClick={(e) => {
                 e.preventDefault();
-                navigate(`/topic-editor`, {
-                  state: { record: item, title: `Topic Edit` },
+                navigate(`/topic-editor/${item._id}`, {
+                  state: { record: item },
                 });
               }}
             >
