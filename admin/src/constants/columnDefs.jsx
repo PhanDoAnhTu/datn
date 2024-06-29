@@ -989,9 +989,9 @@ export const PAGES_MANAGEMENT_COLUMN_DEFS = [
         <span className="font-bold text-header">
           {date && dayjs(date).format("hh:mm DD/MM/YYYY")
             ? dayjs().diff(dayjs(date), "minute") < 60
-              ? `${dayjs().diff(dayjs(date), "minute")} Minutes ago`
+              ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
               : dayjs().diff(dayjs(date), "hour") < 24
-              ? `${dayjs().diff(dayjs(date), "hour")} Hours ago`
+              ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
               : dayjs(date).format("hh:mmA DD/MM/YYYY")
             : ""}
         </span>
@@ -1018,21 +1018,21 @@ export const PAGES_MANAGEMENT_COLUMN_DEFS = [
 export const MENUS_MANAGEMENT_COLUMN_DEFS = [
   {
     title: "Tên",
-    dataIndex: "label",
+    dataIndex: "menu_label",
     render: (label) => (
       <span className="inline-block h6 !text-sm max-w-[150px]">{label}</span>
     ),
   },
   {
     title: "Đường dẫn",
-    dataIndex: "path",
+    dataIndex: "menu_path",
     render: (path) => (
       <span className="inline-block h6 !text-sm max-w-[150px]">{path}</span>
     ),
   },
   {
     title: "Ngày tạo",
-    dataIndex: "dateAdded",
+    dataIndex: "createdOn",
     render: (date) => (
       <div>
         <span className="font-bold text-header">
@@ -1044,15 +1044,15 @@ export const MENUS_MANAGEMENT_COLUMN_DEFS = [
   },
   {
     title: "Ngày chỉnh sửa",
-    dataIndex: "dateModified",
+    dataIndex: "modifiedOn",
     render: (date) => (
       <div>
         <span className="font-bold text-header">
           {date && dayjs(date).format("hh:mm DD/MM/YYYY")
             ? dayjs().diff(dayjs(date), "minute") < 60
-              ? `${dayjs().diff(dayjs(date), "minute")} Minutes ago`
+              ? `${dayjs().diff(dayjs(date), "minute")} phút trước`
               : dayjs().diff(dayjs(date), "hour") < 24
-              ? `${dayjs().diff(dayjs(date), "hour")} Hours ago`
+              ? `${dayjs().diff(dayjs(date), "hour")} giờ trước`
               : dayjs(date).format("hh:mmA DD/MM/YYYY")
             : ""}
         </span>
@@ -1065,11 +1065,6 @@ export const MENUS_MANAGEMENT_COLUMN_DEFS = [
     dataIndex: "menu",
     render: (text, record) => (
       <div className="flex items-center justify-end gap-11">
-        <EditBtn
-          link={"/menu-editor/" + record._id}
-          record={record}
-          title={"Page Edit"}
-        />
         <Actions record={record} table={"menu"} />
       </div>
     ),

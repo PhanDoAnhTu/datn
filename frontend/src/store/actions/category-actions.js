@@ -7,7 +7,7 @@ export const getCategoryByParentID = (data) => async (dispatch) => {
             '/category/v1/getListCategoryByParentId',
             data
         );
-        console.log('response:', response);
+
         return dispatch({
             type: Action.GET_CATEGORY_BY_PARENT_ID,
             payload: response.data,
@@ -21,7 +21,7 @@ export const getCategoryByParentID = (data) => async (dispatch) => {
 export const getAllCategory = (data) => async (dispatch) => {
     try {
         const response = await PostData('/category/v1/getAllCategory', data);
-        console.log('response:', response);
+
         return dispatch({
             type: Action.GET_ALL_CATEGORY,
             payload: response.data,

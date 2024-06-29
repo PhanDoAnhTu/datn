@@ -10,8 +10,6 @@ export const SetAuthToken = async (tokens) => {
   }
 
 }
-
-
 export const onLogin =
   ({ staff_email,
     staff_password, }) =>

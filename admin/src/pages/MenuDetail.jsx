@@ -8,10 +8,7 @@ const NewMenu = () => {
   return (
     <>
       <PageHeader title="Chỉnh sửa menu" />
-      <DetailMenu
-        item={location.state ? location.state.record : ""}
-        title={location.state ? location.state.title : ""}
-      />
+      <DetailMenu item={location.state ? location.state.record : ""} />
     </>
   );
 };

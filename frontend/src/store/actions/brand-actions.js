@@ -7,7 +7,7 @@ export const findListBrand = (data) => async (dispatch) => {
             '/product/v1/brand/findListBrand',
             data
         );
-        console.log('response:', response);
+
         return dispatch({
             type: Action.GET_ALL_BRAND,
             payload: response.data,

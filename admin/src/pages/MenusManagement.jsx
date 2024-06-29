@@ -31,12 +31,6 @@ const MenusManagement = () => {
             Export CSV <i className="icon-file-export-solid" />
           </CSVLink>
         </div>
-        <Search
-          wrapperClass="lg:w-[326px]"
-          query={query}
-          setQuery={setQuery}
-          placeholder="Search Page"
-        />
       </div>
       <MenuManagementTable searchQuery={query} />
     </>

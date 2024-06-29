@@ -17,7 +17,6 @@ export default function NewDetail() {
     const { current_post } = useSelector((state) => state.postReducer);
     useEffect(() => {
         dispatch(getSinglePost({ post_slug: slug }));
-        console.log(current_post);
     }, [slug]);
     return (
         <div className="mx-8 pb-7 pt-10 md:pt-24">

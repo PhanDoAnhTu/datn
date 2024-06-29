@@ -7,8 +7,11 @@ import { useForm } from "react-hook-form";
 
 // utils
 import classNames from "classnames";
+import { useDispatch } from "react-redux";
+import { createMenu } from "../store/actions/menu-actions";
 
 const MenuNew = () => {
+  const dispatch = useDispatch();
   const defaultValues = {
     description: "",
     pageName: "",
@@ -23,9 +26,15 @@ const MenuNew = () => {
   });
 
   // do something with the data
-  const handlePublish = (data) => {
-    console.log(data);
-    toast.success("Product published successfully");
+  const handlePublish = async (data) => {
+    await dispatch(
+      createMenu({
+        menu_label: data.pageName,
+        menu_description: data.description,
+        menu_path: data.path,
+      })
+    );
+    toast.success("Tạo thành công");
   };
 
   return (

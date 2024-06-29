@@ -1,27 +1,14 @@
-// components
-import posts_managements from "@db/posts_manangement";
 import PageHeader from "@layout/PageHeader";
 import PostDetail from "@widgets/PostDetail";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const EditPost = () => {
-  const params = useParams();
-  const [record, setRecord] = useState([]);
-  useEffect(() => {
-    const fetchRecord = async () => {
-      const fetchedRecord = await posts_managements.find(
-        (item) => item.id === params.id
-      );
-      setRecord(fetchedRecord);
-    };
-    fetchRecord();
-  }, [params]);
-  console.log(record);
+  const location = useLocation();
+
   return (
     <>
       <PageHeader title="Chi tiết bài viết" />
-      <PostDetail item={record ? record : ""} />
+      <PostDetail item={location.state ? location.state.record : ""} />
     </>
   );
 };
