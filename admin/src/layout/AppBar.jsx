@@ -80,15 +80,6 @@ const AppBar = () => {
                             </button>
                         </CustomTooltip> */}
             <div className="relative h-fit mt-1.5 xl:self-end xl:mt-0 xl:mr-1.5">
-              {width < 768 && (
-                <button
-                  className="text-[20px] leading-none text-gray dark:text-gray-red xl:text-2xl"
-                  aria-label="Open search"
-                  onClick={() => setSearchModalOpen(true)}
-                >
-                  <i className="icon-magnifying-glass-solid" />
-                </button>
-              )}
               <button
                 className="text-2xl leading-none text-gray dark:text-gray-red"
                 aria-label="Change theme"
@@ -100,18 +91,6 @@ const AppBar = () => {
                   }-regular`}
                 />
               </button>
-            </div>
-
-            <div className="relative">
-              <button
-                className="h-8 w-8 rounded-full bg-accent text-widget text-sm flex items-center
-                                    justify-center relative xl:w-11 xl:h-11 xl:text-lg"
-                onClick={() => navigate("/general-settings")}
-                aria-label="Account menu"
-              >
-                <i className="icon-user-solid" />
-              </button>
-              <span className="badge-online" />
             </div>
           </div>
         </div>

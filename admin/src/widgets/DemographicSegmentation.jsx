@@ -4,9 +4,7 @@ import LabeledProgressBar from "@components/LabeledProgressBar";
 
 // utils
 import { commaFormatter, getPercentage } from "@utils/helpers";
-import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
-import { getAllCustomers } from "../store/actions/user-actions";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 
