@@ -42,7 +42,8 @@ class CheckoutService {
     //tong tien truoc khi xuly
     checkout_oder.totalPrice = checkoutPrice;
     const itemCheckout = {
-      shop_discounts, //hmmmm
+      shop_discounts,
+      shop_promotion: null,//hmmmm
       priceRaw: checkoutPrice, //tien truoc khi giam gia
       priceApplySpecialOffer: checkoutPrice,
       priceApplyPromotionAndDiscount: checkoutPrice,
@@ -56,7 +57,7 @@ class CheckoutService {
         date: Date.now(),
       },
     });
-    console.log("checkDateNow", checkDateNow)
+    // console.log("checkDateNow", checkDateNow)
     if (checkDateNow) {
       checkProductServer.forEach((prod) => {
         const spu_sale = checkDateNow.special_offer_spu_list.find(
@@ -124,6 +125,10 @@ class CheckoutService {
     if (checkProductServerSpecialOffer.length > 0) {
       itemCheckout.item_products = checkProductServerSpecialOffer;
     }
+    if (checkout_oder.totalSpecialOffer > 0) {
+      itemCheckout.shop_promotion = checkDateNow?._id
+    }
+
 
     //tong thanh toan
     checkout_oder.totalCheckout =
@@ -181,27 +186,33 @@ class CheckoutService {
       order_trackingNumber: order_trackingNumber,
     });
 
-    // const updateProduct = await RPCRequest("SPU_RPC", {
-    //   type: "UPDATE_QUANTITY_AFTER_CHECKOUT",
-    //   data: {
-    //     item_products: order_ids_new.item_products
-    //   },
-    // });
-    // const updatePromotion = await RPCRequest("SPECIAL_OFFER_RPC", {
-    //   type: "APPLY_PROMOTION",
-    //   data: {
-    //     promotion_id: order_ids_new.shop_discounts.codeId,
-    //     item_products: order_ids_new.item_products.filter((item) => item.price_sale)
-    //   },
-    // });
-    // const updateDiscount = await RPCRequest("DISCOUNT_RPC", {
-    //   type: "APPLY_DISCOUNT_CODE",
-    //   data: {
-    //     discount_code: order_ids_new.shop_discounts.codeId,
-    //     userId: userId
-    //   },
-    // });
+    if (order_ids_new.item_products.length > 0) {
+      const updateProduct = await RPCRequest("SPU_RPC", {
+        type: "UPDATE_QUANTITY_AFTER_CHECKOUT",
+        data: {
+          item_products: order_ids_new.item_products
+        },
+      });
+    }
 
+    if (order_ids_new.shop_promotion) {
+      const updatePromotion = await RPCRequest("SPECIAL_OFFER_RPC", {
+        type: "APPLY_PROMOTION",
+        data: {
+          promotion_id: order_ids_new.shop_promotion,
+          item_products: order_ids_new.item_products.filter((item) => item.price_sale)
+        },
+      });
+    }
+    if (order_ids_new.shop_discounts.length > 0) {
+      const updateDiscount = await RPCRequest("DISCOUNT_RPC", {
+        type: "APPLY_DISCOUNT_CODE",
+        data: {
+          discount_code: order_ids_new.shop_discounts[0].codeId,
+          userId: userId
+        },
+      });
+    }
 
     return newOrder;
   }

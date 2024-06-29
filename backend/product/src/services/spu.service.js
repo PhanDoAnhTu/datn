@@ -683,7 +683,7 @@ const updateQuantityAfterCheckout = async ({ item_products }) => {
 
 const serverRPCRequest = async (payload) => {
   const { type, data } = payload;
-  const { products, productId } = data;
+  const { products, productId, item_products } = data;
   switch (type) {
     case "CHECK_PRODUCT_BY_SERVER":
       return checkProductByServer({ products });

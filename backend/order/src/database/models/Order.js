@@ -20,7 +20,7 @@ const orderSchema = new Schema(
         "successful",
         "review",
       ],
-      default: "pending",
+      default: "confirmed",
     },
   },
   {

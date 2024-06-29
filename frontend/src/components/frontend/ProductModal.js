@@ -74,6 +74,10 @@ export default function ProductModal() {
                 setPrice(resultProduct.sku_list[0]?.sku_price);
                 setStock(resultProduct.sku_list[0].sku_stock);
             } else {
+                setStock(resultProduct.product_detail.product_quantity);
+
+                setSelectedImage(resultProduct.product_detail.product_thumb);
+
                 setPrice(resultProduct.product_detail.product_price);
             }
             setProductImages(resultProduct?.product_images);
@@ -158,8 +162,8 @@ export default function ProductModal() {
                 setSelectedImage(
                     product_images?.find(
                         (item) => item?.sku_id === selected_sku?._id
-                    )
-                );
+                    )?.thumb_url
+                )
             }
             if (special_offer) {
                 if (special_offer?.sku_list?.length > 0) {
@@ -219,7 +223,7 @@ export default function ProductModal() {
             }
         } else {
             toast.error('Vui lòng đăng nhập để tiếp tục');
-            navigate('/login');
+            navigate('/dang-nhap');
         }
     };
     ////////////////wishList
@@ -259,8 +263,8 @@ export default function ProductModal() {
                 <div className="h-full w-full shadow-md sm:overflow-hidden sm:rounded-lg">
                     {selectedImage ? (
                         <img
-                            src={selectedImage && selectedImage.thumb_url}
-                            alt={selectedImage && selectedImage.thumb_url}
+                            src={selectedImage && selectedImage}
+                            alt={selectedImage && selectedImage}
                             className="h-full w-full object-fill object-center"
                         />
                     ) : (

@@ -7,7 +7,6 @@ import { toast } from 'react-toastify';
 const LoginSuccessSocial = () => {
     const { userInfo } = useSelector((state) => state.userReducer);
     const { userId, provider } = useParams();
-
     const dispatch = useDispatch();
 
     const callApiLogin = async () => {
@@ -18,6 +17,7 @@ const LoginSuccessSocial = () => {
                 );
                 if (facebook?.payload?.metaData?.customer) {
                     toast.success('Đăng nhập bằng facebook thành công');
+                    return
                 } else {
                     toast.error('Đăng nhập bằng facebook không thành công');
                 }
@@ -28,6 +28,7 @@ const LoginSuccessSocial = () => {
                 );
                 if (google?.payload?.metaData?.customer) {
                     toast.success('Đăng nhập bằng google thành công');
+                    return
                 } else {
                     toast.error('Đăng nhập bằng google không thành công');
                 }
@@ -37,15 +38,10 @@ const LoginSuccessSocial = () => {
     useEffect(() => {
         callApiLogin();
     }, [userId]);
-    // useEffect(() => {
-    //   if (userInfo) {
-    //     toast.success(`Đăng nhập bằng ${provider} thành công`)
-    //   } else {
-    //     toast.error(`Vui lòng đăng nhập lại`)
-    //   }
-    // }, [])
 
-    return userInfo ? <Navigate to="/" /> : <Navigate to="/dang-nhap" />;
+    return (
+        userInfo ? <Navigate to="/" /> : <Navigate to="/dang-nhap" />
+    )
 };
 
 export default LoginSuccessSocial;

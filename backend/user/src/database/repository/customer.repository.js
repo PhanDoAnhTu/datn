@@ -16,14 +16,14 @@ class CustomerRepository {
     async createCustomer({ customer_email, customer_name, customer_password }) {
         console.log(customer_email, customer_name, customer_password)
         const customer = await CustomerModel.create({
-            customer_email, customer_name, customer_password
+            customer_email, customer_name, customer_password, customer_status: "active"
         })
         console.log(customer)
         return customer
     }
     async createCustomerWithSocial({ customer_account_id, customer_provider, customer_avatar, customer_email, customer_name }) {
         const customer = await CustomerModel.create({
-            customer_account_id, customer_provider, customer_avatar, customer_email, customer_name
+            customer_account_id, customer_provider, customer_avatar, customer_email, customer_name, customer_status: "active"
         })
         console.log(customer)
         return customer

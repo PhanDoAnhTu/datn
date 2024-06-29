@@ -320,7 +320,7 @@ class CustomerService {
           customer_avatar: image,
         },
       },
-      { upsert: true, new: true }
+      { new: true }
     );
 
     return { customer: updateInfo };
@@ -336,7 +336,7 @@ class CustomerService {
           customer_password: passwordHash,
         },
       },
-      { upsert: true, new: true }
+      { new: true }
     );
 
     return updateInfo;
@@ -392,8 +392,8 @@ class CustomerService {
     customer_date_of_birth,
   }) {
     const query = {
-        _id: customer_id,
-      },
+      _id: customer_id,
+    },
       updateSet = {
         $set: {
           customer_name: customer_name,
@@ -403,7 +403,6 @@ class CustomerService {
         },
       },
       options = {
-        upsert: true,
         new: true,
       };
     const cus = await CustomerModel.findOneAndUpdate(query, updateSet, options);

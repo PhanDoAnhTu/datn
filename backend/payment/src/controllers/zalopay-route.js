@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
     description: `OUTRUNNER - Thanh toán cho đơn hàng #${order_trackingNumber}`,
     bank_code: "",
     callback_url:
-      "https://5553-115-75-223-147.ngrok-free.app/api/payment/zalopay/callback",
+      "https://71fd-115-75-223-147.ngrok-free.app/api/payment/zalopay/callback",
   };
 
   // appid|app_trans_id|appuser|amount|apptime|embeddata|item
