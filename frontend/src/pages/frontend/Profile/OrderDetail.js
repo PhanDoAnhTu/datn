@@ -54,7 +54,6 @@ export default function OrderDetail() {
     // }, [all_products]);
 
     useEffect(() => {
-        console.log(generatedReview);
         if (currentOrder) {
             if (all_products) {
                 setStatus(currentOrder.order_status);

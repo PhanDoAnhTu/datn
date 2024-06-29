@@ -7,7 +7,7 @@ export const getSliderByActive = (data) => async (dispatch) => {
             '/banner/v1/slider/getAllSliderByActive',
             data
         );
-        console.log('response:', response);
+
         return dispatch({
             type: Action.GET_ALL_SLIDER_BY_ACTIVE,
             payload: response.data,

@@ -10,9 +10,9 @@ import classNames from "classnames";
 
 const DetailMenu = ({ item }) => {
   const defaultValues = {
-    description: item ? item.description : "",
-    pageName: item ? item.label : "",
-    path: item ? item.path : "",
+    description: item ? item.menu_description : "",
+    pageName: item ? item.menu_label : "",
+    path: item ? item.menu_path : "",
   };
   const {
     register,

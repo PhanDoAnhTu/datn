@@ -18,26 +18,43 @@ import {
   SELECT_OPTIONS,
 } from "@constants/options";
 import { MENUS_MANAGEMENT_COLUMN_DEFS } from "@constants/columnDefs";
-import pages_management from "@db/pages_management";
+import { useDispatch } from "react-redux";
+import { getAllMenu } from "../../store/actions/menu-actions";
 
 // data placeholder
 
 const MenuManagementTable = ({ searchQuery }) => {
+  const dispatch = useDispatch();
   const { width } = useWindowSize();
   const defaultSort = {
     sortBy: ADDITIONAL_OPTIONS[0],
     sortOrder: SELECT_OPTIONS[0],
   };
 
-  const [data, setData] = useState(pages_management);
+  const [data, setData] = useState([]);
+  const [og_data, setOGData] = useState([]);
   const [category, setCategory] = useState("all");
   const [sorts, setSorts] = useState(defaultSort);
   const [activeCollapse, setActiveCollapse] = useState("");
 
   const getQty = (category) => {
     if (category === "all") return data.length;
-    return data.filter((item) => item.status === category).length;
+    if (category === "published")
+      return data.filter((product) => product.isPublished === true).length;
+
+    if (category === "trash")
+      return data.filter((product) => product.isDeleted === true).length;
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await dispatch(getAllMenu());
+      if (result) {
+        setData(result?.payload?.metaData);
+        setOGData(result?.payload?.metaData);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleSortChange = ({ value, label }, name) => {
     setSorts((prevState) => ({
@@ -52,10 +69,10 @@ const MenuManagementTable = ({ searchQuery }) => {
           .slice()
           .sort((a, b) =>
             sorts.sortOrder.value === "ascending"
-              ? a.label.toLowerCase() > b.label.toLowerCase()
+              ? a.menu_label.toLowerCase() > b.menu_label.toLowerCase()
                 ? 1
                 : -1
-              : a.label.toLowerCase() < b.label.toLowerCase()
+              : a.menu_label.toLowerCase() < b.menu_label.toLowerCase()
               ? 1
               : -1
           )
@@ -67,10 +84,10 @@ const MenuManagementTable = ({ searchQuery }) => {
           .slice()
           .sort((a, b) =>
             sorts.sortOrder.value === "ascending"
-              ? new Date(a.dateModified) < new Date(b.dateModified)
+              ? new Date(a.modifiedOn) < new Date(b.modifiedOn)
                 ? 1
                 : -1
-              : new Date(a.dateModified) > new Date(b.dateModified)
+              : new Date(a.modifiedOn) > new Date(b.modifiedOn)
               ? 1
               : -1
           )
@@ -82,10 +99,10 @@ const MenuManagementTable = ({ searchQuery }) => {
           .slice()
           .sort((a, b) =>
             sorts.sortOrder.value === "ascending"
-              ? new Date(a.dateAdded) < new Date(b.dateAdded)
+              ? new Date(a.createdOn) < new Date(b.createdOn)
                 ? 1
                 : -1
-              : new Date(a.dateAdded) > new Date(b.dateAdded)
+              : new Date(a.createdOn) > new Date(b.createdOn)
               ? 1
               : -1
           )
@@ -98,18 +115,22 @@ const MenuManagementTable = ({ searchQuery }) => {
     if (searchQuery !== "") {
       setData(
         data.filter((item) =>
-          item.label.toLowerCase().includes(searchQuery.toLowerCase())
+          item.menu_label.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
     } else {
-      setData(pages_management);
+      setData(og_data);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const dataByStatus = () => {
     if (category === "all") return data;
-    return data.filter((item) => item.status === category);
+    if (category === "publish")
+      return data.filter((product) => product.isPublished === true);
+
+    if (category === "trash")
+      return data.filter((product) => product.isDeleted === true);
   };
 
   const pagination = usePagination(dataByStatus(), 8);
@@ -132,7 +153,11 @@ const MenuManagementTable = ({ searchQuery }) => {
       <div className="flex flex-wrap gap-2 mb-4">
         <span className="text-header">Categories:</span>
         <div>
-          {MANAGEMENT_OPTIONS.map((option, index) => (
+          {[
+            { value: "all", label: "Tất cả" },
+            { value: "publish", label: "Xuất bản" },
+            { value: "trash", label: "Rác" },
+          ].map((option, index) => (
             <FilterItem
               key={`filter-${index}`}
               text={option.label}

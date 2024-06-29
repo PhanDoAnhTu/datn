@@ -4,7 +4,7 @@ import { Action } from "./index";
 export const allProducts = (data) => async (dispatch) => {
   try {
     const response = await PostData("/product/v1/spu/allproducts", data);
-    console.log("response:", response);
+
     return dispatch({ type: Action.ALL_PRODUCTS, payload: response.data });
   } catch (err) {
     console.log(err);
@@ -15,7 +15,7 @@ export const allProducts = (data) => async (dispatch) => {
 export const onAllProductsOption = (data) => async (dispatch) => {
   try {
     const response = await PostData("/product/v1/spu/AllProductsOption", data);
-    console.log("response:", response);
+
     return dispatch({ type: Action.ALL_PRODUCTS, payload: response.data });
   } catch (err) {
     console.log(err);
@@ -45,7 +45,7 @@ export const listImageByProductId = (product_id) => async (dispatch) => {
       "/product/v1/gallery/ListImageByProductId",
       { product_id: product_id }
     );
-    console.log("response:", response);
+
     return dispatch({
       type: Action.LIST_PRODUCT_IMAGE,
       payload: response.data,
@@ -59,7 +59,7 @@ export const listImageByProductId = (product_id) => async (dispatch) => {
 export const createSpu = (data) => async (dispatch) => {
   try {
     const response = await PostData("/product/v1/spu/create", data);
-    console.log("response:", response);
+
     return dispatch({ type: Action.CREATE_PRODUCT, payload: response.data });
   } catch (err) {
     console.log(err);
@@ -70,7 +70,7 @@ export const createSpu = (data) => async (dispatch) => {
 export const OneProductDetail = (data) => async (dispatch) => {
   try {
     const response = await PostData("/product/v1/spu/OneProductDetail", data);
-    console.log("response:", response);
+
     return dispatch({ type: Action.PRODUCT_DETAIL, payload: response.data });
   } catch (err) {
     console.log(err);
@@ -80,7 +80,7 @@ export const OneProductDetail = (data) => async (dispatch) => {
 export const PublishProduct = (data) => async (dispatch) => {
   try {
     const response = await PostData("/product/v1/spu/PublishProduct", data);
-    console.log("response:", response);
+
     return dispatch({
       type: Action.CHANGE_STATE_PRODUCT,
       payload: response.data,
@@ -94,7 +94,7 @@ export const PublishProduct = (data) => async (dispatch) => {
 export const UnPublishProduct = (data) => async (dispatch) => {
   try {
     const response = await PostData("/product/v1/spu/UnPublishProduct", data);
-    console.log("response:", response);
+
     return dispatch({
       type: Action.CHANGE_STATE_PRODUCT,
       payload: response.data,
@@ -108,7 +108,7 @@ export const UnPublishProduct = (data) => async (dispatch) => {
 export const isTrashProduct = (data) => async (dispatch) => {
   try {
     const response = await PostData("/product/v1/spu/isTrashProduct", data);
-    console.log("response:", response);
+
     return dispatch({
       type: Action.CHANGE_STATE_PRODUCT,
       payload: response.data,

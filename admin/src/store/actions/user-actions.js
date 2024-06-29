@@ -16,7 +16,7 @@ export const onSignup =
         customer_password,
         customer_name,
       });
-      console.log("response:", response);
+
       return dispatch({ type: Action.SIGNUP, payload: response.data });
     } catch (err) {
       console.log(err);

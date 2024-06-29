@@ -38,6 +38,28 @@ class MenuSevice {
       return null;
     }
   }
+  async getAllMenu() {
+    const menu = await MenuModel.find();
+    return menu;
+  }
+  async getOneMenu({ menu_id }) {
+    const menu = await MenuModel.find({ _id: menu_id });
+    return menu;
+  }
+  async updateOneMenu({
+    menu_id,
+    menu_label,
+    menu_description,
+    menu_position,
+    menu_path,
+  }) {
+    const menu = await MenuModel.findOneAndUpdate(
+      { _id: menu_id },
+      { menu_label, menu_description, menu_position, menu_path },
+      { new: true }
+    );
+    return menu;
+  }
 
   // async serverRPCRequest(payload) {
   //     const { type, data } = payload;

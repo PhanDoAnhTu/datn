@@ -7,7 +7,7 @@ export const upLoadProductImageList = (data) => async (dispatch) => {
       "/upload/v1/upload/product/uploadSkuImageList",
       data
     );
-    console.log("response:", response);
+
     return dispatch({
       type: Action.UPLOAD_PRODUCT_IMAGE_LIST,
       payload: response.data,
@@ -20,7 +20,6 @@ export const upLoadImageArray = (data) => async (dispatch) => {
   try {
     const response = await PostData("/upload/v1/upload/uploadImageArray", data);
 
-    console.log("response:", response);
     return dispatch({
       type: Action.UPLOAD_PRODUCT_IMAGE_LIST,
       payload: response.data,
@@ -31,9 +30,11 @@ export const upLoadImageArray = (data) => async (dispatch) => {
 };
 export const upLoadImageSingle = (data) => async (dispatch) => {
   try {
-    const response = await PostData("/upload/v1/upload/uploadSingleImage", data);
+    const response = await PostData(
+      "/upload/v1/upload/uploadSingleImage",
+      data
+    );
 
-    console.log("response:", response);
     return dispatch({
       type: Action.UPLOAD_PRODUCT_IMAGE_LIST,
       payload: response.data,

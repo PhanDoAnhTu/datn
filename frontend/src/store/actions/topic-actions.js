@@ -4,7 +4,7 @@ import { Action } from './index';
 export const getListTopic = (data) => async (dispatch) => {
     try {
         const response = await PostData('/blog/v1/topic/getListTopic', data);
-        console.log('response:', response);
+
         return dispatch({
             type: Action.GET_ALL_TOPIC,
             payload: response.data,

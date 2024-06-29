@@ -1,12 +1,14 @@
 // components
 import PageHeader from "@layout/PageHeader";
 import DetailProduct from "@widgets/DetailProduct";
+import { useLocation } from "react-router-dom";
 
 const ProductDetail = () => {
+  const location = useLocation();
   return (
     <>
-      <PageHeader title="Chỉnh sửa sản phẩm" />
-      <DetailProduct />
+      <PageHeader title="Chi tiết sản phẩm" />
+      <DetailProduct item={location.state ? location.state.record : ""} />
     </>
   );
 };

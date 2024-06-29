@@ -7,7 +7,7 @@ export const findAllAttribute = (data) => async (dispatch) => {
             '/product/v1/attribute/findAllAttribute',
             data
         );
-        console.log('response:', response);
+
         return dispatch({
             type: Action.GET_ALL_ATTRIBUTE,
             payload: response.data,
