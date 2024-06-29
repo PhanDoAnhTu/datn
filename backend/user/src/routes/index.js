@@ -12,7 +12,7 @@ module.exports = async (app, channel) => {
     RPCObserver("CUSTOMER_RPC", new CustomerService())
     //routes
     app.use('/v1/customer', require('./customer'))
-    // app.use('/v1/api/staff', require('./staff'))
+     app.use('/v1/staff', require('./staff'))
     app.use('/v1/rbac', require('./rbac'))
     app.use('/v1/profile', require('./profile'))
     app.use('/v1/template', require('./template'))

@@ -24,7 +24,7 @@ export default function Review({
     const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.userReducer);
 
-    const [selectedProductFromCart] = useState(getSelectedListFromCart);
+    const [selectedProductFromCart,setSelectedProductFromCart] = useState(getSelectedListFromCart());
     const [price_total, setprice_total] = useState(0);
     const createNewOrder = async () => {
         const id = toast.loading('Vui lòng chờ...');
@@ -79,6 +79,7 @@ export default function Review({
     };
 
     const handlePlaceOrder = async () => {
+        setSelectedProductFromCart(getSelectedListFromCart())
         if (paymentMethod === 'COD') {
             const onCreate = await createNewOrder();
             if (onCreate) {

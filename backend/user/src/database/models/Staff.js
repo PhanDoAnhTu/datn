@@ -7,7 +7,7 @@ const DOCUMENT_NAME = "staff"
 const COLLECTION_NAME = "staffs"
 
 const staffSchema = new Schema({
-    staff_id: { type: String, required: true, default: "1" },
+    staff_account_id: { type: String, default: "" },
     staff_slug: { type: String, default: "" },
     staff_name: { type: String, default: "" },
     staff_password: { type: String, default: "" },
@@ -17,7 +17,8 @@ const staffSchema = new Schema({
     staff_sex: { type: String, default: "" },
     staff_avatar: { type: String, default: "" },
     staff_date_of_birth: { type: Date, default: null },
-    staff_role: { type: Schema.Types.ObjectId, ref: "staff_role", require: true  },
+    staff_provider:{type: String, default: ""},
+    // staff_role: { type: Schema.Types.ObjectId, ref: "staff_role", require: true  },
     staff_status: { type: String, default: 'pending', enum: ['pending', 'active', 'block'] }
 },
     {
@@ -26,7 +27,7 @@ const staffSchema = new Schema({
     }
 )
 staffSchema.pre('save', function (next) {
-    this.user_slug = slugify(this.user_name, { lower: true })
+    this.staff_slug = slugify(this.staff_name, { lower: true })
     next();
 })
 

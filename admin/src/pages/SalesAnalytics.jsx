@@ -42,7 +42,7 @@ const SalesAnalytics = () => {
 
   return (
     <>
-      <PageHeader title="Biểu đồ" />
+      <PageHeader title="Biểu đồ thống kê" />
       <div
         className={`${
           width > 768 ? "widgets-grid" : ""

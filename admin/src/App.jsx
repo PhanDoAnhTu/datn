@@ -29,6 +29,7 @@ import { ToastContainer } from "react-toastify";
 import Sidebar from "@layout/Sidebar";
 import Copyright from "@components/Copyright";
 import AppBar from "@layout/AppBar";
+import PrivateRoute from "@components/PrivateRoute";
 
 // pages
 const Login = lazy(() => import("@pages/Login"));
@@ -126,128 +127,131 @@ const App = () => {
               <div className="main">
                 <Routes>
                   <Route path="/login" element={<Login />} />
-                  <Route path="/" element={<SalesAnalytics />} />
-                  <Route path="sellers-list" element={<SellersList />} />
-                  <Route path="sellers-table" element={<SellersTable />} />
-                  <Route path="sellers-grid" element={<SellersGrid />} />
-                  <Route
-                    path="products-management"
-                    element={<ProductsManagement />}
-                  />
-                  {/* Category */}
-                  <Route
-                    path="categories-management"
-                    element={<CategoriesManagement />}
-                  />
-                  <Route path="category-editor" element={<CategoryEditor />} />
-                  <Route
-                    path="category-editor/:id"
-                    element={<CategoryEdit />}
-                  />
-                  <Route
-                    path="category-detail/:id"
-                    element={<CategoryDetail />}
-                  />
-                  {/* Page */}
-                  <Route
-                    path="pages-management"
-                    element={<PagesManagement />}
-                  />
-                  <Route path="page-editor" element={<PageEditor />} />
-                  <Route path="page-detail/:id" element={<PageDetail />} />
-                  <Route path="page-editor/:id" element={<PageEdit />} />
-                  {/* Topic */}
-                  <Route
-                    path="topics-management"
-                    element={<TopicsManagement />}
-                  />
-                  <Route path="topic-editor" element={<TopicEditor />} />
-                  <Route path="topic-detail/:id" element={<TopicDetail />} />
-                  <Route path="topic-editor/:id" element={<TopicEdit />} />
-                  {/* Post */}
-                  <Route
-                    path="posts-management"
-                    element={<PostsManagement />}
-                  />
-                  <Route path="post-editor" element={<PostEditor />} />
-                  <Route path="post-detail/:id" element={<PostDetail />} />
-                  <Route path="post-editor/:id" element={<PostEdit />} />
-                  {/* Contact */}
-                  <Route path="support" element={<ContactsManagement />} />
-                  <Route path="support/res" element={<ContactResponse />} />
-                  {/* Brand */}
-                  <Route
-                    path="brands-management"
-                    element={<BrandsManagement />}
-                  />
-                  <Route path="brand-editor" element={<BrandEditor />} />
-                  <Route path="brand-detail/:id" element={<DetailBrand />} />
-                  <Route path="brand-editor/:id" element={<EditBrand />} />
-                  {/* Discount */}
-                  <Route
-                    path="discounts-management"
-                    element={<DiscountsManagement />}
-                  />
-                  <Route path="discount-editor" element={<AddDiscount />} />
+                  <Route path="/" element={<PrivateRoute />}>
+                    <Route index={true} path="/" element={<SalesAnalytics />} />
+                    <Route path="sellers-list" element={<SellersList />} />
+                    <Route path="sellers-table" element={<SellersTable />} />
+                    <Route path="sellers-grid" element={<SellersGrid />} />
+                    <Route
+                      path="products-management"
+                      element={<ProductsManagement />}
+                    />
+                    {/* Category */}
+                    <Route
+                      path="categories-management"
+                      element={<CategoriesManagement />}
+                    />
+                    <Route path="category-editor" element={<CategoryEditor />} />
+                    <Route
+                      path="category-editor/:id"
+                      element={<CategoryEdit />}
+                    />
+                    <Route
+                      path="category-detail/:id"
+                      element={<CategoryDetail />}
+                    />
+                    {/* Page */}
+                    <Route
+                      path="pages-management"
+                      element={<PagesManagement />}
+                    />
+                    <Route path="page-editor" element={<PageEditor />} />
+                    <Route path="page-detail/:id" element={<PageDetail />} />
+                    <Route path="page-editor/:id" element={<PageEdit />} />
+                    {/* Topic */}
+                    <Route
+                      path="topics-management"
+                      element={<TopicsManagement />}
+                    />
+                    <Route path="topic-editor" element={<TopicEditor />} />
+                    <Route path="topic-detail/:id" element={<TopicDetail />} />
+                    <Route path="topic-editor/:id" element={<TopicEdit />} />
+                    {/* Post */}
+                    <Route
+                      path="posts-management"
+                      element={<PostsManagement />}
+                    />
+                    <Route path="post-editor" element={<PostEditor />} />
+                    <Route path="post-detail/:id" element={<PostDetail />} />
+                    <Route path="post-editor/:id" element={<PostEdit />} />
+                    {/* Contact */}
+                    <Route path="support" element={<ContactsManagement />} />
+                    <Route path="support/res" element={<ContactResponse />} />
+                    {/* Brand */}
+                    <Route
+                      path="brands-management"
+                      element={<BrandsManagement />}
+                    />
+                    <Route path="brand-editor" element={<BrandEditor />} />
+                    <Route path="brand-detail/:id" element={<DetailBrand />} />
+                    <Route path="brand-editor/:id" element={<EditBrand />} />
+                    {/* Discount */}
+                    <Route
+                      path="discounts-management"
+                      element={<DiscountsManagement />}
+                    />
+                    <Route path="discount-editor" element={<AddDiscount />} />
 
-                  {/* Promotion */}
-                  <Route
-                    path="promotions-management"
-                    element={<PromotionsManagement />}
-                  />
+                    {/* Promotion */}
+                    <Route
+                      path="promotions-management"
+                      element={<PromotionsManagement />}
+                    />
 
-                  <Route path="promotion-editor" element={<AddPromotion />} />
+                    <Route path="promotion-editor" element={<AddPromotion />} />
 
-                  <Route
-                    path="sliders-management"
-                    element={<SlidersManagement />}
-                  />
-                  <Route path="slider-editor" element={<SliderNew />} />
-                  <Route path="slider-editor/:id" element={<SliderEdit />} />
-                  <Route path="slider-detail/:id" element={<SliderDetail />} />
+                    <Route
+                      path="sliders-management"
+                      element={<SlidersManagement />}
+                    />
+                    <Route path="slider-editor" element={<SliderNew />} />
+                    <Route path="slider-editor/:id" element={<SliderEdit />} />
+                    <Route path="slider-detail/:id" element={<SliderDetail />} />
 
-                  <Route path="menu-editor" element={<NewMenu />} />
-                  <Route path="menu-detail/:id" element={<MenuDetail />} />
-                  <Route path="menu-editor/:id" element={<MenuEdit />} />
-                  <Route
-                    path="menus-management"
-                    element={<MenusManagement />}
-                  />
+                    <Route path="menu-editor" element={<NewMenu />} />
+                    <Route path="menu-detail/:id" element={<MenuDetail />} />
+                    <Route path="menu-editor/:id" element={<MenuEdit />} />
+                    <Route
+                      path="menus-management"
+                      element={<MenusManagement />}
+                    />
 
-                  <Route
-                    path="revenue-by-period"
-                    element={<RevenueByPeriod />}
-                  />
-                  <Route path="seller-profile" element={<SellerProfile />} />
+                    <Route
+                      path="revenue-by-period"
+                      element={<RevenueByPeriod />}
+                    />
+                    <Route path="seller-profile" element={<SellerProfile />} />
 
-                  <Route path="top-products" element={<TopProducts />} />
+                    <Route path="top-products" element={<TopProducts />} />
 
-                  {/* PRODUCTS */}
-                  <Route path="products-grid" element={<ProductsGrid />} />
-                  <Route path="product-editor" element={<ProductEditor />} />
-                  <Route path="attribute-editor" element={<NewAttribute />} />
-                  <Route path="product-editor/:id" element={<ProductEdit />} />
-                  <Route
-                    path="product-detail/:id"
-                    element={<ProductDetail />}
-                  />
+                    {/* PRODUCTS */}
+                    <Route path="products-grid" element={<ProductsGrid />} />
+                    <Route path="product-editor" element={<ProductEditor />} />
+                    <Route path="attribute-editor" element={<NewAttribute />} />
+                    <Route path="product-editor/:id" element={<ProductEdit />} />
+                    <Route
+                      path="product-detail/:id"
+                      element={<ProductDetail />}
+                    />
 
-                  <Route path="banners" element={<Banners />} />
-                  <Route path="orders" element={<Orders />} />
-                  <Route path="order-detail/:id" element={<OrderDetail />} />
-                  <Route path="statistics" element={<Statistics />} />
-                  <Route path="reviews" element={<Reviews />} />
-                  <Route path="customers" element={<Customers />} />
-                  <Route
-                    path="customer-detail/:id"
-                    element={<CustomerDetail />}
-                  />
-                  <Route path="transactions" element={<Transactions />} />
-                  <Route
-                    path="general-settings"
-                    element={<GeneralSettings />}
-                  />
-                  <Route path="connected-apps" element={<ConnectedApps />} />
+                    <Route path="banners" element={<Banners />} />
+                    <Route path="orders" element={<Orders />} />
+                    <Route path="order-detail/:id" element={<OrderDetail />} />
+                    <Route path="statistics" element={<Statistics />} />
+                    <Route path="reviews" element={<Reviews />} />
+                    <Route path="customers" element={<Customers />} />
+                    <Route
+                      path="customer-detail/:id"
+                      element={<CustomerDetail />}
+                    />
+                    <Route path="transactions" element={<Transactions />} />
+                    <Route
+                      path="general-settings"
+                      element={<GeneralSettings />}
+                    />
+                    <Route path="connected-apps" element={<ConnectedApps />} />
+                  </Route>
+
                   <Route path="*" element={<Navigate to="/404" />} />
                   <Route path="/404" element={<PageNotFound />} />
                 </Routes>

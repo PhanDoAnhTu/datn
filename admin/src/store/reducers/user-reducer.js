@@ -7,28 +7,27 @@ const initialState = {
 const UserReducer = (state = initialState, action) => {
 
     switch (action.type) {
-        case Action.SIGNUP:
-            return state
-        case Action.LOGIN_WITH_FACEBOOK:
-            localStorage.setItem("userInfo", JSON.stringify(action.payload.metaData.customer));
-            return {
-                ...state,
-                userInfo: action.payload
-            }
-        case Action.LOGIN_WITH_GOOGLE:
-            localStorage.setItem("userInfo", JSON.stringify(action.payload.metaData.customer));
-            return {
-                ...state,
-                userInfo: action.payload
-            }
+        // case Action.SIGNUP:
+        //     return state
+        // case Action.LOGIN_WITH_FACEBOOK:
+        //     localStorage.setItem("userInfo", JSON.stringify(action.payload.metaData.staff));
+        //     return {
+        //         ...state,
+        //         userInfo: action.payload
+        //     }
+        // case Action.LOGIN_WITH_GOOGLE:
+        //     localStorage.setItem("userInfo", JSON.stringify(action.payload.metaData.staff));
+        //     return {
+        //         ...state,
+        //         userInfo: action.payload
+        //     }
         case Action.LOGIN:
-            localStorage.setItem("userInfo", JSON.stringify(action.payload.metaData.customer));
+            localStorage.setItem("userInfo", JSON.stringify(action.payload.metaData.staff));
             return {
                 ...state,
-                userInfo: action.payload
+                userInfo: action.payload.metaData.staff
             }
         case Action.LOGOUT:
-            localStorage.clear();
             return {
                 ...state,
                 userInfo: null

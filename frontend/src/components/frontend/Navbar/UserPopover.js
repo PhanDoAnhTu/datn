@@ -22,14 +22,14 @@ export default function UserPopover() {
         try {
             await dispatch(onLogout());
 
-            window.location.replace('/');
+            // window.location.replace('/');
             toast.success('Đăng xuất thành công', {
                 className: 'black-background',
                 bodyClassName: 'grow-font-size',
                 progressClassName: 'fancy-progress-bar',
                 autoClose: 2000,
             });
-
+            navigate('/')
             close();
         } catch (error) {
             console.error(error);
@@ -64,7 +64,7 @@ export default function UserPopover() {
                                                     {/* <UserIcon className="h-10 w-10 drop-shadow-md"  /> */}
                                                     <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-white">
                                                         {userInfo.customer_avatar !=
-                                                        '' ? (
+                                                            '' ? (
                                                             <img
                                                                 src={
                                                                     userInfo?.customer_avatar

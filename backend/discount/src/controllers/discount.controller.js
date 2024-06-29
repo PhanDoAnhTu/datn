@@ -50,6 +50,12 @@ class DiscountController {
             metaData: await this.service.deleteDiscountCode(req.body)
         }).send(res)
     }
+    applyDiscountCode = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: " applyDiscountCode  success",
+            metaData: await this.service.applyDiscountCode(req.body)
+        }).send(res)
+    }
 }
 
 module.exports = new DiscountController()

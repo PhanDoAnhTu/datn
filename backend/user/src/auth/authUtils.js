@@ -18,10 +18,10 @@ const authentication = asynchandler(async (req, res, next) => {
     if (!keyStore) throw new errorResponse.NotFoundRequestError("not found keyStore")
     const accessToken = req.headers[HEADER.AUTHORIZATION]
     if (!accessToken) throw new errorResponse.ForbiddenRequestError("invalid request")
-    console.log("keyStore", keyStore)
+    // console.log("keyStore", keyStore)
     try {
         const decodeUser = jwt.verify(accessToken, keyStore.publicKey)
-        console.log("decodeUser", decodeUser)
+        // console.log("decodeUser", decodeUser)
         if (decodeUser.staffId) {
             if (userId !== decodeUser.staffId) throw new errorResponse.ForbiddenRequestError("invalid request")
         }

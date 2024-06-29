@@ -84,7 +84,7 @@ class CategoryService {
           $in: category_id_list,
         },
       });
-      console.log("findCategoryByIdList", categories);
+      // console.log("findCategoryByIdList", categories);
       return categories;
     } catch (error) {
       console.log(error);

@@ -4,6 +4,7 @@ const { errorResponse } = require("../core");
 const { OrderModel } = require("../database/models");
 const { RPCRequest, get_old_day_of_time } = require("../utils");
 const { v4: uuidv4 } = require("uuid");
+const { PostData } = require("../utils/apicall");
 
 class CheckoutService {
   async checkoutReview({ cartId, userId, order_ids }) {
@@ -31,7 +32,7 @@ class CheckoutService {
         products: item_products,
       },
     });
-    console.log('checkProductServer', checkProductServer)
+    // console.log('checkProductServer', checkProductServer)
     if (!checkProductServer[0])
       throw new errorResponse.BadRequestError("order wrong");
     //tong don hang
@@ -187,13 +188,37 @@ class CheckoutService {
       order_trackingNumber: order_trackingNumber,
     });
 
+    if (order_ids_new.item_products.length > 0) {
+      const updateProduct = await PostData("/product/v1/spu/updateQuantityAfterCheckout", { item_products: order_ids_new.item_products })
+
+      // console.log("updateProduct", updateProduct)
+    }
+    if (order_ids_new.shop_promotion) {
+      const updatePromotion = await PostData("/special-offer/v1/applyPromotion", {
+        promotion_id: order_ids_new.shop_promotion,
+        item_products: order_ids_new.item_products.filter((item) => item.price_sale)
+      })
+    }
+    if (order_ids_new.shop_discounts.length > 0) {
+      const updateDiscount = await PostData("/discount/v1/applyDiscountCode", {
+        discount_code: order_ids_new.shop_discounts[0].codeId,
+        userId: userId
+      })
+    }
+
+
+
+    
+
     // if (order_ids_new.item_products.length > 0) {
     //   const updateProduct = await RPCRequest("SPU_RPC", {
     //     type: "UPDATE_QUANTITY_AFTER_CHECKOUT",
     //     data: {
     //       item_products: order_ids_new.item_products
-    //     },
-    //   });
+    //     }
+    //   })
+
+    //   console.log("updateProduct",updateProduct)
     // }
 
     // if (order_ids_new.shop_promotion) {
@@ -272,7 +297,7 @@ class CheckoutService {
     let today = new Date();
     let old_day = get_old_day_of_time(numberDay, today);
 
-    console.log(today, old_day)
+    // console.log(today, old_day)
     const foundOrder = await OrderModel.find({
       order_status: { $in: order_status },
       modifiedOn: {

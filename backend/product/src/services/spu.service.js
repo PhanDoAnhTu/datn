@@ -255,7 +255,7 @@ const AllProducts = async ({ sort = "ctime", isPublished = true }) => {
   return product_list.all_Products;
 };
 const getAllProductsByfilter = async ({
-  
+
   limit = 50,
   sort = "ctime",
   page = 1,
@@ -547,7 +547,7 @@ const findProductBestSelling = async ({
       numberDay: 30,
     },
   });
-  console.log("ordersBySuccessful", ordersBySuccessful)
+  // console.log("ordersBySuccessful", ordersBySuccessful)
   let listIdProduct = [];
   if (ordersBySuccessful.length > 0) {
     ordersBySuccessful.forEach((order) => {
@@ -589,7 +589,7 @@ const checkProductByServer = async ({ products }) => {
   return await Promise.all(
     products.map(async (product) => {
       if (product?.sku_id !== null && product?.sku_id !== undefined) {
-        console.log("1")
+        // console.log("1")
         const foundSku = await oneSku({
           product_id: product.productId,
           sku_id: product.sku_id,
@@ -667,6 +667,7 @@ const updateQuantitySku = async ({ sku_id, quantity }) => {
 }
 
 const updateQuantityAfterCheckout = async ({ item_products }) => {
+  console.log(item_products,"ss")
   try {
     if (item_products.length > 0) {
       item_products.map((product) => {

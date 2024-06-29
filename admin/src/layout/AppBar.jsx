@@ -31,9 +31,8 @@ const LocaleMenu = ({ active, setActive }) => {
             alt={locale.label}
           />
           <span
-            className={`text-sm font-medium transition group-hover:text-accent ${
-              active === locale.value ? "text-accent" : "text-header"
-            }`}
+            className={`text-sm font-medium transition group-hover:text-accent ${active === locale.value ? "text-accent" : "text-header"
+              }`}
           >
             {locale.label}
           </span>
@@ -86,13 +85,15 @@ const AppBar = () => {
                 onClick={toggleTheme}
               >
                 <i
-                  className={`icon-${
-                    theme === "light" ? "sun-bright" : "moon"
-                  }-regular`}
+                  className={`icon-${theme === "light" ? "sun-bright" : "moon"
+                    }-regular`}
                 />
               </button>
             </div>
+            {/* <button className="btn btn--secondary text-2xl leading-none text-gray dark:text-gray-red">Đăng xuất</button> */}
+
           </div>
+
         </div>
       </Headroom>
       {width < 768 && (

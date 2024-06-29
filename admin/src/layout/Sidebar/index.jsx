@@ -3,7 +3,7 @@ import Drawer from "./styles";
 
 // components
 import Logo from "@components/Logo";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Collapse from "@mui/material/Collapse";
 import { Fragment } from "react";
 
@@ -14,12 +14,16 @@ import { useWindowSize } from "react-use";
 
 // constants
 import ROUTES from "@constants/routes";
+import { onLogout } from "../../store/actions";
+import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
 
 const Sidebar = () => {
   const { width } = useWindowSize();
   const { open, setOpen } = useSidebar();
   const [active, setActive] = useState("Dashboard");
   const isPermanent = width >= 1920;
+  const { userInfo } = useSelector((state) => state.userReducer);
 
   useEffect(() => {
     window.addEventListener("resize", () => {
@@ -32,6 +36,30 @@ const Sidebar = () => {
       });
     };
   }, []);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+
+
+  useEffect(() => {
+    if (!userInfo) {
+      navigate('/login')
+    }
+  }, [userInfo])
+  const logoutHandler = async () => {
+    try {
+      await dispatch(onLogout());
+
+      toast.success('Đăng xuất thành công', {
+        className: 'black-background',
+        bodyClassName: 'grow-font-size',
+        progressClassName: 'fancy-progress-bar',
+        autoClose: 2000,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Drawer
@@ -52,9 +80,8 @@ const Sidebar = () => {
                 <>
                   <div>
                     <div
-                      className={`menu_item ${
-                        active === route.name ? "active" : ""
-                      }`}
+                      className={`menu_item ${active === route.name ? "active" : ""
+                        }`}
                       onClick={() =>
                         setActive(active === route.name ? "" : route.name)
                       }
@@ -122,7 +149,7 @@ const Sidebar = () => {
         <div className={`menu_item`}>
           <div className="flex items-center gap-2.5">
             <i className={`icon icon-`} />
-            <span className="text">Đăng xuất</span>
+            <button onClick={() => logoutHandler()} className="text">Đăng xuất</button>
           </div>
           <button className="xl:hidden 4xl:block" aria-label="Toggle submenu">
             <i className="icon icon-caret-right-solid" />
