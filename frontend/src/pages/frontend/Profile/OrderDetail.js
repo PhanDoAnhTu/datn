@@ -22,10 +22,9 @@ import {
 import { toast } from 'react-toastify';
 
 export default function OrderDetail() {
-    //Kiem tra neu userId cua currentOrder co bang voi user dang dang nhap hien tai khong
-    //neu co thi cho xem, khong thi cho ve lai trang profile.
     // eslint-disable-next-line react-hooks/exhaustive-deps
 
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     const { orderTrackingId } = useParams();
     const dispatch = useDispatch();
     const { currentOrder } = useSelector((state) => state.orderReducer);

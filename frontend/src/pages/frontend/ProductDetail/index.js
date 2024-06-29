@@ -27,6 +27,7 @@ import {
 } from '../../../utils';
 import HeartIcon from '../../../assets/HeartIcon.js';
 import DocumentTitle from '../../../components/frontend/DocumentTitle.js';
+import { UserIcon } from '@heroicons/react/24/outline';
 export default function ProductDetail() {
     const { userInfo } = useSelector((state) => state.userReducer);
     const { info_review_user } = useSelector((state) => state.userReducer);
@@ -308,11 +309,11 @@ export default function ProductDetail() {
                             </div>
                         </li>
                         {product_categories.length > 0 &&
-                            product_categories.map((breadcrumb) => (
+                            product_categories.map((breadcrumb, index) => (
                                 <li key={breadcrumb._id}>
                                     <div className="flex items-center">
                                         <Link
-                                            to={`/san-pham-theo-danh-muc/${breadcrumb.category_slug}`}
+                                            to={`/san-pham-theo-danh-muc/${(index === 0 || index === 1 || index === 2) && product_categories[0].category_slug}${(index === 1 || index === 2) && product_categories[1].category_slug ? `/${product_categories[1].category_slug}` : ''}${index === 2 && product_categories[2].category_slug ? `/${product_categories[2].category_slug}` : ''}`}
                                             className="mr-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                                         >
                                             {breadcrumb.category_name}
@@ -758,34 +759,71 @@ export default function ProductDetail() {
                                 review.map((rv, index) => (
                                     <div
                                         key={`review-${index}`}
-                                        className="grid gap-2 overflow-hidden rounded-md bg-zinc-200 p-4 shadow-md shadow-gray-400 dark:bg-zinc-800 dark:shadow-inner"
+                                        className="flex items-center space-x-4 overflow-hidden bg-zinc-200 p-4 shadow-md shadow-gray-400 dark:bg-zinc-800 dark:shadow-inner"
                                     >
-                                        <div className="text-lg font-bold text-gray-900 dark:text-white">
-                                            {(info_review_user &&
-                                                info_review_user.length > 0 &&
-                                                info_review_user.find(
-                                                    (u) =>
-                                                        u._id == rv.customer_id
-                                                )?.customer_name) ||
-                                                'Ẩn danh'}
-                                        </div>
-                                        <div className="flex">
-                                            {[1, 2, 3, 4, 5].map((rating) => (
-                                                <StarIcon
-                                                    key={rating}
-                                                    className={classNames(
-                                                        rv.rating_score >=
-                                                            rating
-                                                            ? 'text-xanthous-500'
-                                                            : 'text-gray-400',
-                                                        'h-5 w-5 flex-shrink-0'
-                                                    )}
-                                                    aria-hidden="true"
+                                        <div className=" h-20 w-20  overflow-hidden rounded-full max-sm:h-16 max-sm:w-16">
+                                            {' '}
+                                            {info_review_user &&
+                                            info_review_user.length > 0 &&
+                                            info_review_user.find(
+                                                (u) => u._id == rv.customer_id
+                                            )?.customer_avatar != '' ? (
+                                                <img
+                                                    src={
+                                                        info_review_user?.find(
+                                                            (u) =>
+                                                                u._id ==
+                                                                rv.customer_id
+                                                        )?.customer_avatar
+                                                    }
+                                                    alt={
+                                                        info_review_user?.find(
+                                                            (u) =>
+                                                                u._id ==
+                                                                rv.customer_id
+                                                        )?.customer_avatar
+                                                    }
+                                                    className="h-full w-full object-cover object-center"
                                                 />
-                                            ))}
+                                            ) : (
+                                                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-stone-300 text-gray-500 dark:bg-magenta-400 dark:text-white">
+                                                    <UserIcon className="h-10 w-10 drop-shadow-md" />
+                                                </div>
+                                            )}
                                         </div>
-                                        <div className="leading-5 text-gray-900 dark:text-white">
-                                            {rv.rating_content}
+                                        <div className="grid gap-2">
+                                            {' '}
+                                            <div className="text-lg font-bold text-gray-900 dark:text-white">
+                                                {(info_review_user &&
+                                                    info_review_user.length >
+                                                        0 &&
+                                                    info_review_user.find(
+                                                        (u) =>
+                                                            u._id ==
+                                                            rv.customer_id
+                                                    )?.customer_name) ||
+                                                    'Ẩn danh'}
+                                            </div>
+                                            <div className="flex">
+                                                {[1, 2, 3, 4, 5].map(
+                                                    (rating) => (
+                                                        <StarIcon
+                                                            key={rating}
+                                                            className={classNames(
+                                                                rv.rating_score >=
+                                                                    rating
+                                                                    ? 'text-xanthous-500'
+                                                                    : 'text-gray-400',
+                                                                'h-5 w-5 flex-shrink-0'
+                                                            )}
+                                                            aria-hidden="true"
+                                                        />
+                                                    )
+                                                )}
+                                            </div>
+                                            <div className="leading-5 text-gray-900 dark:text-white">
+                                                {rv.rating_content}
+                                            </div>
                                         </div>
                                     </div>
                                 ))

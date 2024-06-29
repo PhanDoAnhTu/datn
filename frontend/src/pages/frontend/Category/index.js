@@ -34,6 +34,7 @@ const sortOptions = [
 
 export default function Category() {
     const navigate = useNavigate();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     // eslint-disable-next-line no-unused-vars
     const limit = 8;
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -226,7 +227,7 @@ export default function Category() {
     useEffect(() => {
         setFilteredProducts(products);
     }, [products]);
-9
+    9;
     useEffect(() => {
         setPage(1);
         if (selectedBrands?.length === 0) {
@@ -394,8 +395,8 @@ export default function Category() {
                                     : 1
                                 : selectedSort === 'priceHighToLow'
                                   ? a.product_price < b.product_price
-                                      ? -1
-                                      : 1
+                                      ? 1
+                                      : -1
                                   : selectedSort === 'createdAt'
                                     ? 1
                                     : -1
@@ -425,8 +426,8 @@ export default function Category() {
                                     : 1
                                 : selectedSort === 'priceHighToLow'
                                   ? a.product_price < b.product_price
-                                      ? -1
-                                      : 1
+                                      ? 1
+                                      : -1
                                   : selectedSort === 'createdAt'
                                     ? 1
                                     : -1
@@ -446,8 +447,8 @@ export default function Category() {
                                     : 1
                                 : selectedSort === 'priceHighToLow'
                                   ? a.product_price < b.product_price
-                                      ? -1
-                                      : 1
+                                      ? 1
+                                      : -1
                                   : selectedSort === 'createdAt'
                                     ? 1
                                     : -1
@@ -618,8 +619,8 @@ export default function Category() {
                                     : 1
                                 : selectedSort === 'priceHighToLow'
                                   ? a.product_price < b.product_price
-                                      ? -1
-                                      : 1
+                                      ? 1
+                                      : -1
                                   : selectedSort === 'createdAt'
                                     ? 1
                                     : -1
@@ -648,8 +649,8 @@ export default function Category() {
                                     : 1
                                 : selectedSort === 'priceHighToLow'
                                   ? a.product_price < b.product_price
-                                      ? -1
-                                      : 1
+                                      ? 1
+                                      : -1
                                   : selectedSort === 'createdAt'
                                     ? 1
                                     : -1
@@ -675,8 +676,8 @@ export default function Category() {
                                     : 1
                                 : selectedSort === 'priceHighToLow'
                                   ? a.product_price < b.product_price
-                                      ? -1
-                                      : 1
+                                      ? 1
+                                      : -1
                                   : selectedSort === 'createdAt'
                                     ? 1
                                     : -1

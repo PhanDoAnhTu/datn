@@ -10,6 +10,7 @@ import DocumentTitle from '../../../components/frontend/DocumentTitle';
 import parse from 'html-react-parser';
 
 export default function NewDetail() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     const navigate = useNavigate();
     const { slug } = useParams();
     const dispatch = useDispatch();

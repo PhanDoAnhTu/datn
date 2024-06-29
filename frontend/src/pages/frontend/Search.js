@@ -8,6 +8,8 @@ import DocumentTitle from '../../components/frontend/DocumentTitle';
 
 export default function Search() {
     const navigate = useNavigate();
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     const { keyword } = useParams();
     const searchRef = useRef(null);
     const [products, setProducts] = useState(null);

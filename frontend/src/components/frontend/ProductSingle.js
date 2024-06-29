@@ -61,14 +61,11 @@ export default function ProductSingle({ product, reload }) {
         }
     }, [product]);
     useEffect(() => {
-        review?.length > 0 &&
-            setRating_score_avg(
-                review?.reduce(
-                    (partialSum, a) => partialSum + a?.rating_score,
-                    0
-                ) / review?.length
-            );
-    }, [review]);
+        setRating_score_avg(
+            review?.reduce((partialSum, a) => partialSum + a?.rating_score, 0) /
+                review?.length
+        );
+    }, [review, product]);
     useEffect(() => {
         if (special_offer?.sku_list?.length > 0) {
             const price_sale_arr = special_offer?.sku_list?.flatMap(
@@ -117,9 +114,9 @@ export default function ProductSingle({ product, reload }) {
     return (
         <div
             key={product._id}
-            className="group relative h-fit w-fit max-w-full rounded-md bg-gray-200 "
+            className="group relative h-fit w-fit max-w-full rounded-md bg-gray-200 dark:bg-zinc-800"
         >
-            <div className="h-56 w-56 max-w-full snap-start overflow-hidden rounded-md bg-gray-200 p-2  transition-all duration-200 ease-out group-hover:opacity-75 lg:h-56 lg:w-56">
+            <div className="h-56 w-56 max-w-full snap-start overflow-hidden rounded-md bg-gray-200 p-2 transition-all  duration-200 ease-out group-hover:opacity-75 lg:h-56 lg:w-56 dark:bg-zinc-800">
                 <img
                     src={product.product_thumb}
                     alt={product.product_slug}

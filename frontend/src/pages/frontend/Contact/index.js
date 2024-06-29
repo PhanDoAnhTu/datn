@@ -9,6 +9,8 @@ import { newContact } from '../../../store/actions/contact-actions';
 
 export default function Contact() {
     const dispatch = useDispatch();
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     // eslint-disable-next-line no-unused-vars
     const editorRef = useRef(null);
     const [emailContent, setEmailContent] = useState('');

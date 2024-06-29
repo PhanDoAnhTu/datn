@@ -13,6 +13,7 @@ import Skeleton from 'react-loading-skeleton';
 // import { findListBrand } from '../../../store/actions/brand-actions';
 
 export default function Home() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     const dispatch = useDispatch();
     const { all_products } = useSelector((state) => state.productReducer);
     const { category } = useSelector((state) => state.categoryReducer);
@@ -74,7 +75,7 @@ export default function Home() {
                                     summary={'Dựt deal ngay kẻo lỡ'}
                                     products={newProducts}
                                     className={
-                                        'mt-5 rounded-md bg-zinc-300 bg-[url("https://static.vecteezy.com/system/resources/previews/011/997/862/original/trendy-summer-sale-background-and-banner-design-for-doodle-geometric-background-contemporary-modern-trendy-illustrations-every-background-is-isolated-pastel-colors-free-vector.jpg")] bg-cover bg-no-repeat px-5 shadow-md'
+                                        'mt-5 rounded-md bg-zinc-300 bg-[url("https://png.pngtree.com/background/20210711/original/pngtree-creative-flat-gradient-new-product-sales-picture-image_1071356.jpg")] bg-cover bg-no-repeat px-5 shadow-md'
                                     }
                                 />
                             );
@@ -96,7 +97,7 @@ export default function Home() {
                                 (item?.slider_link ===
                                     '/san-pham-theo-danh-muc/nam' ||
                                     item?.slider_link ===
-                                    '/san-pham-theo-danh-muc/nu')
+                                        '/san-pham-theo-danh-muc/nu')
                         );
                     return fetchedSlider?.map((item) => (
                         <CategorySection item={item} key={item._id} />
@@ -108,7 +109,7 @@ export default function Home() {
                     product_best_selling?.length > 0 ? (
                         <ProductList
                             title={'Sản phẩm bán chạy'}
-                            summary={'Sản phảm hot hit'}
+                            summary={'Sản phẩm hot hit'}
                             products={product_best_selling?.slice(0, 10)}
                         />
                     ) : (
@@ -140,7 +141,7 @@ export default function Home() {
                                 (item?.slider_link ===
                                     '/san-pham-theo-danh-muc/nu/trang-suc-and-phu-kien/mu-and-mu-len' ||
                                     item?.slider_link ===
-                                    '/san-pham-theo-danh-muc/nu/thoi-trang/quan-djui')
+                                        '/san-pham-theo-danh-muc/nu/thoi-trang/quan-djui')
                         );
                     return fetchedSlider?.map((item) => (
                         <CategorySection item={item} key={item._id} />

@@ -12,6 +12,7 @@ import 'moment/locale/vi';
 import DocumentTitle from '../../../components/frontend/DocumentTitle';
 
 export default function News() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
     const [selectedTopic, setSelectedTopic] = useState('all');
     const dispatch = useDispatch();
