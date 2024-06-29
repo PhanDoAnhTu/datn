@@ -31,7 +31,7 @@ class CheckoutService {
         products: item_products,
       },
     });
-    console.log('checkProductServer', checkProductServer)
+    // console.log('checkProductServer', checkProductServer)
     if (!checkProductServer[0])
       throw new errorResponse.BadRequestError("order wrong");
     //tong don hang
@@ -186,33 +186,33 @@ class CheckoutService {
       order_trackingNumber: order_trackingNumber,
     });
 
-    if (order_ids_new.item_products.length > 0) {
-      const updateProduct = await RPCRequest("SPU_RPC", {
-        type: "UPDATE_QUANTITY_AFTER_CHECKOUT",
-        data: {
-          item_products: order_ids_new.item_products
-        },
-      });
-    }
+    // if (order_ids_new.item_products.length > 0) {
+    //   const updateProduct = await RPCRequest("SPU_RPC", {
+    //     type: "UPDATE_QUANTITY_AFTER_CHECKOUT",
+    //     data: {
+    //       item_products: order_ids_new.item_products
+    //     },
+    //   });
+    // }
 
-    if (order_ids_new.shop_promotion) {
-      const updatePromotion = await RPCRequest("SPECIAL_OFFER_RPC", {
-        type: "APPLY_PROMOTION",
-        data: {
-          promotion_id: order_ids_new.shop_promotion,
-          item_products: order_ids_new.item_products.filter((item) => item.price_sale)
-        },
-      });
-    }
-    if (order_ids_new.shop_discounts.length > 0) {
-      const updateDiscount = await RPCRequest("DISCOUNT_RPC", {
-        type: "APPLY_DISCOUNT_CODE",
-        data: {
-          discount_code: order_ids_new.shop_discounts[0].codeId,
-          userId: userId
-        },
-      });
-    }
+    // if (order_ids_new.shop_promotion) {
+    //   const updatePromotion = await RPCRequest("SPECIAL_OFFER_RPC", {
+    //     type: "APPLY_PROMOTION",
+    //     data: {
+    //       promotion_id: order_ids_new.shop_promotion,
+    //       item_products: order_ids_new.item_products.filter((item) => item.price_sale)
+    //     },
+    //   });
+    // }
+    // if (order_ids_new.shop_discounts.length > 0) {
+    //   const updateDiscount = await RPCRequest("DISCOUNT_RPC", {
+    //     type: "APPLY_DISCOUNT_CODE",
+    //     data: {
+    //       discount_code: order_ids_new.shop_discounts[0].codeId,
+    //       userId: userId
+    //     },
+    //   });
+    // }
 
     return newOrder;
   }
@@ -270,11 +270,13 @@ class CheckoutService {
   async findOrderByStatusAndAroundDay({ order_status, numberDay }) {
     let today = new Date();
     let old_day = get_old_day_of_time(numberDay, today);
+
+    console.log(today,old_day)
     const foundOrder = await OrderModel.find({
-      order_status: order_status,
+      // order_status: { $in: order_status },
       modifiedOn: {
         $lte: old_day,
-      },
+      }
     }).lean();
     return foundOrder;
   }
@@ -291,6 +293,7 @@ class CheckoutService {
       case "FIND_ORDER_BY_STATUS":
         return this.findOrderByStatus({ order_status });
       case "FIND_ORDER_BY_STATUS_AND_AROUND_DAY":
+        console.log(order_status, numberDay)
         return this.findOrderByStatusAndAroundDay({ order_status, numberDay });
       default:
         break;

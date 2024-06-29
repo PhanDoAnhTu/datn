@@ -25,7 +25,7 @@ export default function Home() {
         !all_products && dispatch(allProducts({}));
         // dispatch(findListBrand());
         !slider && dispatch(getSliderByActive({ slider_is_active: true }));
-        !product_best_selling && dispatch(findProductbestSelling({}));
+        dispatch(findProductbestSelling({}));
     };
 
     useEffect(() => {
@@ -96,7 +96,7 @@ export default function Home() {
                                 (item?.slider_link ===
                                     '/san-pham-theo-danh-muc/nam' ||
                                     item?.slider_link ===
-                                        '/san-pham-theo-danh-muc/nu')
+                                    '/san-pham-theo-danh-muc/nu')
                         );
                     return fetchedSlider?.map((item) => (
                         <CategorySection item={item} key={item._id} />
@@ -140,7 +140,7 @@ export default function Home() {
                                 (item?.slider_link ===
                                     '/san-pham-theo-danh-muc/nu/trang-suc-and-phu-kien/mu-and-mu-len' ||
                                     item?.slider_link ===
-                                        '/san-pham-theo-danh-muc/nu/thoi-trang/quan-djui')
+                                    '/san-pham-theo-danh-muc/nu/thoi-trang/quan-djui')
                         );
                     return fetchedSlider?.map((item) => (
                         <CategorySection item={item} key={item._id} />

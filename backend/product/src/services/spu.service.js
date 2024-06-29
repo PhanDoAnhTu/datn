@@ -255,6 +255,7 @@ const AllProducts = async ({ sort = "ctime", isPublished = true }) => {
   return product_list.all_Products;
 };
 const getAllProductsByfilter = async ({
+  
   limit = 50,
   sort = "ctime",
   page = 1,
@@ -542,11 +543,11 @@ const findProductBestSelling = async ({
   const ordersBySuccessful = await RPCRequest("ORDER_RPC", {
     type: "FIND_ORDER_BY_STATUS_AND_AROUND_DAY",
     data: {
-      order_status: { $in: ["review", "successful"] },
+      order_status: ["review", "successful"],
       numberDay: 30,
     },
   });
-  // console.log("ordersBySuccessful", ordersBySuccessful)
+  console.log("ordersBySuccessful", ordersBySuccessful)
   let listIdProduct = [];
   if (ordersBySuccessful.length > 0) {
     ordersBySuccessful.forEach((order) => {
