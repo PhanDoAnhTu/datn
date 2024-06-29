@@ -50,7 +50,6 @@ export default function TransactionCheck() {
     const [selectedProductFromCart] = useState(getSelectedListFromCart);
 
 
-
     const detetedItemCart = async () => {
         for (let index = 0; index < selectedProductFromCart.length; index++) {
             const item = selectedProductFromCart[index];
@@ -71,13 +70,16 @@ export default function TransactionCheck() {
                         apptransid: searchParams.get('apptransid'),
                     })
                 );
+            setTimeout(() => {
+              navigate("/")
+            }, 10000);
         }
         setTimeout(() => {
             status &&
                 (status.resultCode === 0 || status.return_code === 1
                     ? setIsLoading(true)
                     : setIsLoading(false));
-        }, 2000);
+        }, 1000);
     }, [status]);
 
     useEffect(() => {

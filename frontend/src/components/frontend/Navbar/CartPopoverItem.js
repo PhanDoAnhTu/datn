@@ -81,23 +81,23 @@ export default function CartPopoverItem({
         setQuantity(product.quantity);
     }, [state]);
 
-    // useEffect(() => {
-    //     if (special_offer) {
-    //         if (special_offer?.sku_list?.length > 0) {
-    //             special_offer?.sku_list.map((sku) => {
-    //                 if (
-    //                     sku.sku_tier_idx.toString() ==
-    //                     selected.toString()
-    //                 ) {
-    //                     setSku_sale(sku);
-    //                     return;
-    //                 }
-    //             });
-    //         } else {
-    //             setSku_sale(special_offer);
-    //         }
-    //     }
-    // }, [selected, special_offer]);
+    useEffect(() => {
+        if (special_offer) {
+            if (special_offer?.sku_list?.length > 0) {
+                special_offer?.sku_list.map((sku) => {
+                    if (
+                        sku?.sku_tier_idx?.toString() ==
+                        selected?.toString()
+                    ) {
+                        setSku_sale(sku);
+                        return;
+                    }
+                });
+            } else {
+                setSku_sale(special_offer);
+            }
+        }
+    }, [special_offer]);
 
     const changeVariation = async (value, variationOrder) => {
         setSelected((s) => {

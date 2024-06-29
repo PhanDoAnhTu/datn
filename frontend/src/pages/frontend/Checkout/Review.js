@@ -92,7 +92,7 @@ export default function Review({
                 const result = await dispatch(
                     paymentByMoMo({
                         orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
-                        amount: price_total,
+                        amount: information.price_total,
                         order_trackingNumber: onCreate?.order_trackingNumber,
                     })
                 );
@@ -106,7 +106,7 @@ export default function Review({
                 const result = await dispatch(
                     paymentByZaloPay({
                         orderInfo: 'Thanh toán đơn hàng OUTRUNNER',
-                        amount: price_total,
+                        amount: information.price_total,
                         order_trackingNumber: onCreate?.order_trackingNumber,
                     })
                 );
@@ -119,7 +119,7 @@ export default function Review({
         setprice_total(
             selectedProductFromCart?.reduce(
                 (accumulator, currentValue) =>
-                    accumulator + currentValue.price * currentValue.quantity,
+                    accumulator + (currentValue.price_sale ? currentValue.price_sale : currentValue.price) * currentValue.quantity,
                 0
             )
         );
@@ -129,7 +129,7 @@ export default function Review({
         <div
             className={`w-screen flex-shrink-0 px-4 md:px-32 ${step === 3 ? '' : 'hidden'}`}
         >
-                        <DocumentTitle title="Kiểm tra trước thanh toán" />
+            <DocumentTitle title="Kiểm tra trước thanh toán" />
 
             <button
                 onClick={() => setStep(step - 1)}
@@ -274,10 +274,10 @@ export default function Review({
                                                                             {
                                                                                 option
                                                                                     .options[
-                                                                                    product
-                                                                                        .product_variation[
-                                                                                        index
-                                                                                    ]
+                                                                                product
+                                                                                    .product_variation[
+                                                                                index
+                                                                                ]
                                                                                 ]
                                                                             }
                                                                         </p>

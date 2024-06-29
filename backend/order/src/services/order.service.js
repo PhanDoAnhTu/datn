@@ -31,7 +31,7 @@ class CheckoutService {
         products: item_products,
       },
     });
-    // console.log('checkProductServer', checkProductServer)
+    console.log('checkProductServer', checkProductServer)
     if (!checkProductServer[0])
       throw new errorResponse.BadRequestError("order wrong");
     //tong don hang
@@ -60,19 +60,19 @@ class CheckoutService {
     // console.log("checkDateNow", checkDateNow)
     if (checkDateNow) {
       checkProductServer.forEach((prod) => {
-        const spu_sale = checkDateNow.special_offer_spu_list.find(
+        const spu_in_sale = checkDateNow.special_offer_spu_list.find(
           (spu) => spu.product_id == prod.productId
         );
-        if (spu_sale) {
-          checkDateNow.special_offer_spu_list?.filter((spu_sale) => {
-            if (prod.sku_id === null) {
+        if (spu_in_sale) {
+          checkDateNow.special_offer_spu_list?.find((spu_sale) => {
+            if (spu_sale.product_id == prod.productId && prod.sku_id === null) {
               checkProductServerSpecialOffer.push({
                 ...prod,
                 price_sale: spu_sale.price_sale,
               });
               return;
             }
-            if (prod.sku_id !== null && spu_sale.sku_list.length > 0) {
+            if (spu_sale.product_id == prod.productId && prod.sku_id !== null && spu_sale.sku_list.length > 0) {
               const sku_sale = spu_sale.sku_list.find(
                 (sku) => sku.sku_id == prod.sku_id
               );
@@ -91,6 +91,7 @@ class CheckoutService {
         }
       });
     }
+    // console.log(checkProductServerSpecialOffer)
     itemCheckout.priceApplySpecialOffer = checkProductServerSpecialOffer.reduce(
       (acc, product) => {
         return (
@@ -271,11 +272,11 @@ class CheckoutService {
     let today = new Date();
     let old_day = get_old_day_of_time(numberDay, today);
 
-    console.log(today,old_day)
+    console.log(today, old_day)
     const foundOrder = await OrderModel.find({
-      // order_status: { $in: order_status },
+      order_status: { $in: order_status },
       modifiedOn: {
-        $lte: old_day,
+        $gte: old_day,
       }
     }).lean();
     return foundOrder;
@@ -293,7 +294,6 @@ class CheckoutService {
       case "FIND_ORDER_BY_STATUS":
         return this.findOrderByStatus({ order_status });
       case "FIND_ORDER_BY_STATUS_AND_AROUND_DAY":
-        console.log(order_status, numberDay)
         return this.findOrderByStatusAndAroundDay({ order_status, numberDay });
       default:
         break;
