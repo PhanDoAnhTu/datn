@@ -106,7 +106,7 @@ export default function TransactionCheck() {
                 {!isLoading ? (
                     <div className="flex flex-col items-center space-y-2">
                         <Loading className={'h-44 w-44 shadow-md'} />
-                        <span className="text-center text-2xl font-bold">
+                        <span className="text-center text-2xl font-bold text-gray-900 dark:text-white">
                             CHÚNG TÔI ĐANG KIỂM TRA ĐƠN CỦA BẠN
                         </span>
                     </div>
@@ -117,7 +117,7 @@ export default function TransactionCheck() {
                         <span className="text-center text-2xl font-bold">
                             CẢM ƠN BẠN ĐÃ ĐẶT HÀNG
                         </span>
-                        <span className="text-center text-xl max-md:text-sm">
+                        <span className="text-center text-xl max-md:text-sm dark:text-white text-gray-900">
                             Bạn sẽ được chuyển trang về trang chủ trong giây lát
                         </span>
                     </div>

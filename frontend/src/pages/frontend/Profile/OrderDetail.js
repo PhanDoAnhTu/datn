@@ -549,6 +549,7 @@ export default function OrderDetail() {
                                                                         changeStatusOrder(
                                                                             'successful'
                                                                         );
+                                                                        setOpen('')
                                                                     }
                                                                 }}
                                                             >

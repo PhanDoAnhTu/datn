@@ -26,11 +26,13 @@ import { findOneAddressByCustomerIdAndIsDefault } from '../../../store/actions';
 export default function Checkout() {
     const dispatch = useDispatch();
     const [step, setStep] = useState(1);
+
     const { discount } = useSelector((state) => state.discountReducer);
     const { userInfo } = useSelector((state) => state.userReducer);
-    const { addressDefault = null } = useSelector(
+    const { addressDefault } = useSelector(
         (state) => state.addressReducer
     );
+
 
     useEffect(() => {
         dispatch(getAllDiscount());
@@ -45,19 +47,21 @@ export default function Checkout() {
     }, []);
 
     const [email, setEmail] = useState(userInfo?.customer_email);
-    const [fullname, setFullName] = useState(
-        addressDefault ? addressDefault?.customer_name : ''
-    );
-    const [phonenumber, setPhoneNumber] = useState(
-        addressDefault
-            ? addressDefault?.phone_number
-            : userInfo?.customer_phone
-              ? userInfo?.customer_phone
-              : ''
-    );
-    const [address, setAddress] = useState(
-        addressDefault ? addressDefault?.street : ''
-    );
+    const [fullname, setFullName] = useState('');
+    const [phonenumber, setPhoneNumber] = useState('');
+    const [address, setAddress] = useState('');
+
+    useEffect(() => {
+        if (addressDefault) {
+            setFullName(addressDefault?.customer_name)
+            setPhoneNumber(addressDefault?.phone_number)
+            setAddress(addressDefault?.street)
+        }
+        if (!addressDefault) {
+            setFullName(userInfo?.customer_name)
+            setPhoneNumber(userInfo?.customer_phone)
+        }
+    }, [addressDefault])
     // const [cancelDiscount, setCancelDiscount] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState('COD');
     const [selectedProductFromCart] = useState(getSelectedListFromCart);
@@ -125,7 +129,7 @@ export default function Checkout() {
                     (currentValue.price_sale
                         ? currentValue.price_sale
                         : currentValue.price) *
-                        currentValue.quantity,
+                    currentValue.quantity,
                 0
             )
         );
@@ -261,10 +265,10 @@ export default function Checkout() {
                                                                                 {
                                                                                     option
                                                                                         .options[
-                                                                                        product
-                                                                                            .product_variation[
-                                                                                            index
-                                                                                        ]
+                                                                                    product
+                                                                                        .product_variation[
+                                                                                    index
+                                                                                    ]
                                                                                     ]
                                                                                 }
                                                                             </p>
@@ -304,31 +308,29 @@ export default function Checkout() {
                                                         <Listbox.Button className="relative w-full cursor-default py-2 pl-5 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-magenta-300 ui-disabled:brightness-50 sm:text-sm ">
                                                             <span className="block truncate font-semibold text-gray-900 dark:text-white">
                                                                 {selectedDiscount ==
-                                                                null
+                                                                    null
                                                                     ? 'Mã giảm giá'
-                                                                    : `${
-                                                                          discount
-                                                                              ?.slice()
-                                                                              .find(
-                                                                                  (
-                                                                                      item
-                                                                                  ) =>
-                                                                                      item.discount_code ===
-                                                                                      selectedDiscount.discount_code
-                                                                              )
-                                                                              .discount_code
-                                                                      } | ${
-                                                                          discount
-                                                                              ?.slice()
-                                                                              .find(
-                                                                                  (
-                                                                                      item
-                                                                                  ) =>
-                                                                                      item.discount_code ===
-                                                                                      selectedDiscount.discount_code
-                                                                              )
-                                                                              .discount_description
-                                                                      }`}
+                                                                    : `${discount
+                                                                        ?.slice()
+                                                                        .find(
+                                                                            (
+                                                                                item
+                                                                            ) =>
+                                                                                item.discount_code ===
+                                                                                selectedDiscount.discount_code
+                                                                        )
+                                                                        .discount_code
+                                                                    } | ${discount
+                                                                        ?.slice()
+                                                                        .find(
+                                                                            (
+                                                                                item
+                                                                            ) =>
+                                                                                item.discount_code ===
+                                                                                selectedDiscount.discount_code
+                                                                        )
+                                                                        .discount_description
+                                                                    }`}
                                                             </span>
                                                             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                                                 <ChevronUpIcon
@@ -348,10 +350,9 @@ export default function Checkout() {
                                                                     className={({
                                                                         active,
                                                                     }) =>
-                                                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                                                            active
-                                                                                ? 'bg-magenta-900    text-zinc-700'
-                                                                                : 'text-gray-900'
+                                                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${active
+                                                                            ? 'bg-magenta-900    text-zinc-700'
+                                                                            : 'text-gray-900'
                                                                         }`
                                                                     }
                                                                     value={null}
@@ -361,11 +362,10 @@ export default function Checkout() {
                                                                     }) => (
                                                                         <>
                                                                             <span
-                                                                                className={`block truncate ${
-                                                                                    selected
-                                                                                        ? 'font-medium'
-                                                                                        : 'font-normal'
-                                                                                }`}
+                                                                                className={`block truncate ${selected
+                                                                                    ? 'font-medium'
+                                                                                    : 'font-normal'
+                                                                                    }`}
                                                                             >
                                                                                 Không
                                                                                 áp
@@ -399,12 +399,12 @@ export default function Checkout() {
                                                                                         'millisecond'
                                                                                     ) <
                                                                                         0 &&
-                                                                                    dayjs(
-                                                                                        item.discount_end_date
-                                                                                    ).diff(
-                                                                                        dayjs(),
-                                                                                        'millisecond'
-                                                                                    ) >
+                                                                                        dayjs(
+                                                                                            item.discount_end_date
+                                                                                        ).diff(
+                                                                                            dayjs(),
+                                                                                            'millisecond'
+                                                                                        ) >
                                                                                         0
                                                                                         ? false
                                                                                         : true
@@ -412,10 +412,9 @@ export default function Checkout() {
                                                                                 className={({
                                                                                     active,
                                                                                 }) =>
-                                                                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                                                                        active
-                                                                                            ? 'bg-magenta-900    text-zinc-700'
-                                                                                            : 'text-gray-900'
+                                                                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${active
+                                                                                        ? 'bg-magenta-900    text-zinc-700'
+                                                                                        : 'text-gray-900'
                                                                                     } ui-disabled:opacity-50`
                                                                                 }
                                                                                 value={
@@ -427,33 +426,30 @@ export default function Checkout() {
                                                                                 }) => (
                                                                                     <>
                                                                                         <span
-                                                                                            className={`block truncate ${
-                                                                                                selected
-                                                                                                    ? 'font-medium'
-                                                                                                    : 'font-normal'
-                                                                                            }`}
+                                                                                            className={`block truncate ${selected
+                                                                                                ? 'font-medium'
+                                                                                                : 'font-normal'
+                                                                                                }`}
                                                                                         >
                                                                                             {
                                                                                                 item.discount_code
                                                                                             }
                                                                                         </span>
                                                                                         <span
-                                                                                            className={`block truncate ${
-                                                                                                selected
-                                                                                                    ? 'font-medium'
-                                                                                                    : 'font-normal'
-                                                                                            }`}
+                                                                                            className={`block truncate ${selected
+                                                                                                ? 'font-medium'
+                                                                                                : 'font-normal'
+                                                                                                }`}
                                                                                         >
                                                                                             {
                                                                                                 item.discount_description
                                                                                             }
                                                                                         </span>
                                                                                         <span
-                                                                                            className={`block truncate ${
-                                                                                                selected
-                                                                                                    ? 'font-medium'
-                                                                                                    : 'font-normal'
-                                                                                            }`}
+                                                                                            className={`block truncate ${selected
+                                                                                                ? 'font-medium'
+                                                                                                : 'font-normal'
+                                                                                                }`}
                                                                                         >
                                                                                             Giá
                                                                                             trị
